@@ -101,7 +101,6 @@ export async function Navbar({ locale = routing.defaultLocale }: { locale?: stri
             ]}
             listenHref={latestEpisodePath}
             listenLabel={t("listenNow")}
-            brandLabel={tb("decoder")}
             openNavigationAria={t("openNavigation")}
             closeNavigationAria={t("closeNavigation")}
           />

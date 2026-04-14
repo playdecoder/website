@@ -197,7 +197,7 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
         </div>
 
         <div
-          className="pointer-events-none absolute inset-0 z-[2] flex items-start justify-center overflow-hidden pt-6 select-none sm:pt-8 md:pt-14"
+          className="pointer-events-none absolute inset-0 z-[2] flex items-start justify-center overflow-hidden pt-20 select-none sm:pt-24 md:pt-28"
           aria-hidden
         >
           <span

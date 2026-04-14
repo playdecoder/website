@@ -129,7 +129,7 @@ export function formatCatalogHours(totalSeconds: number, locale: string): string
     minimumFractionDigits: 0,
     maximumFractionDigits: 1,
   }).format(rounded);
-  return locale.startsWith("cs") ? `${formatted} h` : `${formatted}h`;
+  return locale.startsWith("cs") ? `${formatted}\u00A0h` : `${formatted}h`;
 }
 
 export function getEpisodeArchiveFacets(eps: Episode[]) {

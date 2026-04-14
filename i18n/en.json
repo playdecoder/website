@@ -203,6 +203,11 @@
     "switchToLight": "Switch to light mode",
     "switchToDark": "Switch to dark mode",
     "titleLight": "Light mode",
-    "titleDark": "Dark mode"
+    "titleDark": "Dark mode",
+    "modeLight": "Light",
+    "modeDark": "Dark",
+    "modeDevice": "Device",
+    "switcherAria": "Switch theme. Currently {mode}. Cycles through light, dark, and device.",
+    "switcherTitle": "Theme: {mode}. Click to cycle."
   }
 }

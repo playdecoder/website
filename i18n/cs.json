@@ -204,6 +204,11 @@
     "switchToLight": "Přepnout do světlého režimu",
     "switchToDark": "Přepnout do tmavého režimu",
     "titleLight": "Světlý režim",
-    "titleDark": "Tmavý režim"
+    "titleDark": "Tmavý režim",
+    "modeLight": "Světlý",
+    "modeDark": "Tmavý",
+    "modeDevice": "Zařízení",
+    "switcherAria": "Přepínání vzhledu. Aktuálně {mode}. Prochází světlý, tmavý a podle zařízení.",
+    "switcherTitle": "Vzhled: {mode}. Kliknutím přepnete dál."
   }
 }
