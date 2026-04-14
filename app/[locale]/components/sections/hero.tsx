@@ -1,18 +1,12 @@
 import { getTranslations } from "next-intl/server";
-import type React from "react";
 
 import { Link } from "@/i18n/navigation";
-import {
-  barColorCss,
-  episodes,
-  episodeListenPathSegment,
-  getLatestEpisode,
-  waveformBars,
-} from "@/lib/episode-catalog";
+import { episodes, episodeListenPathSegment, getLatestEpisode } from "@/lib/episode-catalog";
 import { PAGE_SECTION_ID, ROUTES, listenEpisodePath } from "@/lib/routes";
 
 import { LogoD } from "../branding/logo-d";
 
+import { HeroWaveform } from "./hero-waveform";
 import { SignalLabelRail } from "./signal-label-rail";
 
 export async function Hero({ locale }: { locale: string }) {
@@ -74,29 +68,7 @@ export async function Hero({ locale }: { locale: string }) {
           {t("taglineLine2")}
         </p>
 
-        <div
-          className="hero-waveform mb-12 flex items-end gap-1 px-4"
-          style={{
-            height: 200,
-            animation: "fadeIn 1s ease both 0.4s",
-          }}
-          aria-hidden
-        >
-          {waveformBars.map((bar) => (
-            <div
-              key={`${bar.h}-${bar.dur}-${bar.delay}-${bar.color}`}
-              className="waveform-bar w-2 shrink-0"
-              style={
-                {
-                  height: bar.h,
-                  background: barColorCss[bar.color],
-                  "--duration": bar.dur,
-                  "--delay": bar.delay,
-                } as React.CSSProperties
-              }
-            />
-          ))}
-        </div>
+        <HeroWaveform />
 
         <div
           className="flex flex-col gap-3 sm:flex-row"

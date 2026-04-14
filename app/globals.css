@@ -28,6 +28,17 @@
   --waveform-primary: rgb(11 15 20 / 0.22);
   --waveform-secondary: var(--brand-primary);
   --waveform-accent: color-mix(in srgb, var(--brand-accent) 70%, #000000);
+  --waveform-secondary-glow: rgb(30 58 255 / 0.18);
+  --waveform-accent-glow: rgb(138 153 0 / 0.28);
+  /* Hero waveform only: ambient behind bars (avoid a flat blue “pool” on light gray) */
+  --hero-waveform-fog: color-mix(in srgb, var(--primary) 9%, transparent);
+  --hero-waveform-heat: color-mix(in srgb, var(--brand-accent) 22%, transparent);
+  --hero-waveform-floor: color-mix(in srgb, var(--surface-2) 92%, var(--primary) 8%);
+  --hero-bar-secondary-glow: color-mix(
+    in srgb,
+    var(--primary) 72%,
+    color-mix(in srgb, var(--brand-primary) 35%, var(--primary)) 28%
+  );
   --bar-motif-1: #0b0f14;
   --bar-motif-2: var(--brand-primary);
 }
@@ -43,6 +54,12 @@
   --dot-color: rgb(31 42 56 / 0.9);
   --waveform-primary: rgb(230 237 243 / 0.45);
   --waveform-accent: var(--brand-accent);
+  --waveform-secondary-glow: rgb(30 58 255 / 0.40);
+  --waveform-accent-glow: rgb(230 255 0 / 0.45);
+  --hero-waveform-fog: color-mix(in srgb, var(--primary) 14%, transparent);
+  --hero-waveform-heat: color-mix(in srgb, var(--brand-accent) 14%, transparent);
+  --hero-waveform-floor: color-mix(in srgb, var(--surface-2) 75%, var(--brand-primary) 25%);
+  --hero-bar-secondary-glow: color-mix(in srgb, var(--primary) 55%, rgb(96 124 255 / 0.35));
   --bar-motif-1: #e6edf3;
 }
 
@@ -81,6 +98,111 @@
   }
   88% {
     transform: scaleY(0.44);
+  }
+  100% {
+    transform: scaleY(0.12);
+  }
+}
+
+@keyframes listen-wave-0 {
+  0% {
+    transform: scaleY(0.12);
+  }
+  11% {
+    transform: scaleY(0.4);
+  }
+  21% {
+    transform: scaleY(0.74);
+  }
+  32% {
+    transform: scaleY(0.98);
+  }
+  41% {
+    transform: scaleY(0.58);
+  }
+  52% {
+    transform: scaleY(0.86);
+  }
+  61% {
+    transform: scaleY(0.32);
+  }
+  71% {
+    transform: scaleY(0.72);
+  }
+  82% {
+    transform: scaleY(0.24);
+  }
+  92% {
+    transform: scaleY(0.46);
+  }
+  100% {
+    transform: scaleY(0.12);
+  }
+}
+
+@keyframes listen-wave-1 {
+  0% {
+    transform: scaleY(0.12);
+  }
+  7% {
+    transform: scaleY(0.92);
+  }
+  13% {
+    transform: scaleY(0.34);
+  }
+  22% {
+    transform: scaleY(0.8);
+  }
+  28% {
+    transform: scaleY(0.26);
+  }
+  36% {
+    transform: scaleY(0.9);
+  }
+  44% {
+    transform: scaleY(0.38);
+  }
+  53% {
+    transform: scaleY(0.66);
+  }
+  66% {
+    transform: scaleY(0.2);
+  }
+  78% {
+    transform: scaleY(0.52);
+  }
+  88% {
+    transform: scaleY(0.16);
+  }
+  100% {
+    transform: scaleY(0.12);
+  }
+}
+
+@keyframes listen-wave-2 {
+  0% {
+    transform: scaleY(0.12);
+  }
+  17% {
+    transform: scaleY(0.3);
+  }
+  33% {
+    transform: scaleY(0.66);
+  }
+  47% {
+    transform: scaleY(0.92);
+  }
+  57% {
+    transform: scaleY(0.46);
+  }
+  68% {
+    transform: scaleY(0.76);
+  }
+  79% {
+    transform: scaleY(0.34);
+  }
+  89% {
+    transform: scaleY(0.56);
   }
   100% {
     transform: scaleY(0.12);
@@ -137,6 +259,54 @@
   from {
     opacity: 0;
     transform: scaleY(0.05);
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
+@keyframes heroBarWave {
+  0%   { transform: scaleY(0.08); }
+  6%   { transform: scaleY(0.38); }
+  14%  { transform: scaleY(0.72); }
+  22%  { transform: scaleY(0.94); }
+  30%  { transform: scaleY(1.00); }
+  38%  { transform: scaleY(0.84); }
+  46%  { transform: scaleY(0.52); }
+  54%  { transform: scaleY(0.20); }
+  62%  { transform: scaleY(0.40); }
+  70%  { transform: scaleY(0.68); }
+  78%  { transform: scaleY(0.82); }
+  86%  { transform: scaleY(0.46); }
+  92%  { transform: scaleY(0.16); }
+  96%  { transform: scaleY(0.11); }
+  100% { transform: scaleY(0.08); }
+}
+
+@keyframes heroBarWave2 {
+  0%   { transform: scaleY(0.12); }
+  9%   { transform: scaleY(0.60); }
+  18%  { transform: scaleY(0.88); }
+  26%  { transform: scaleY(1.00); }
+  36%  { transform: scaleY(0.76); }
+  46%  { transform: scaleY(0.34); }
+  54%  { transform: scaleY(0.14); }
+  62%  { transform: scaleY(0.44); }
+  72%  { transform: scaleY(0.78); }
+  80%  { transform: scaleY(0.90); }
+  88%  { transform: scaleY(0.62); }
+  94%  { transform: scaleY(0.30); }
+  100% { transform: scaleY(0.12); }
+}
+
+@keyframes heroBarIn {
+  from {
+    opacity: 0;
+    transform: scaleY(0.04);
+  }
+  60% {
+    opacity: 1;
   }
   to {
     opacity: 1;
@@ -515,18 +685,138 @@ body {
   will-change: transform;
 }
 
-.hero-waveform .waveform-bar {
+.hero-waveform {
+  position: relative;
+  overflow: visible;
+}
+
+.hero-waveform::before {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  z-index: -1;
+  /* Larger paint box + gradient mask: soft baseline without a hard slice at the bar row. */
+  top: -10%;
+  left: 0;
+  right: 0;
+  bottom: -42%;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    black 0%,
+    black 72%,
+    rgb(0 0 0 / 0.45) 88%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    black 0%,
+    black 72%,
+    rgb(0 0 0 / 0.45) 88%,
+    transparent 100%
+  );
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  background:
+    radial-gradient(
+      ellipse 72% 88% at 50% 78%,
+      var(--hero-waveform-fog) 0%,
+      transparent 58%
+    ),
+    radial-gradient(
+      ellipse 54% 62% at 50% 82%,
+      color-mix(in srgb, var(--hero-waveform-floor) 28%, transparent) 0%,
+      transparent 62%
+    ),
+    radial-gradient(
+      ellipse 38% 46% at 50% 86%,
+      var(--hero-waveform-heat) 0%,
+      transparent 72%
+    );
+  opacity: 1;
+}
+
+@media (min-width: 768px) {
+  .hero-waveform::before {
+    top: -12%;
+    bottom: -48%;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      black 0%,
+      black 68%,
+      rgb(0 0 0 / 0.5) 85%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      black 0%,
+      black 68%,
+      rgb(0 0 0 / 0.5) 85%,
+      transparent 100%
+    );
+    background:
+      radial-gradient(
+        ellipse 78% 92% at 50% 74%,
+        var(--hero-waveform-fog) 0%,
+        transparent 55%
+      ),
+      radial-gradient(
+        ellipse 58% 66% at 50% 78%,
+        color-mix(in srgb, var(--hero-waveform-floor) 34%, transparent) 0%,
+        transparent 58%
+      ),
+      radial-gradient(
+        ellipse 42% 50% at 50% 82%,
+        var(--hero-waveform-heat) 0%,
+        transparent 68%
+      );
+  }
+}
+
+.hero-waveform[data-motion-state="paused"] .hero-waveform__bar {
+  animation-play-state: paused;
+}
+
+/* Hero-only bars: do not use `.waveform-bar` — that class is shared with listen-page BG bars */
+.hero-waveform__bar {
+  transform-origin: bottom;
   opacity: 0;
+  border-radius: 3px 3px 0 0;
   animation:
-    heroWaveIntro 0.85s cubic-bezier(0.22, 1, 0.36, 1) both,
-    wave var(--duration, 2.8s) linear infinite 1s;
-  animation-delay: calc(0.24s + var(--delay, 0s)), calc(1s + var(--delay, 0s));
+    heroBarIn 1.05s cubic-bezier(0.34, 1.4, 0.64, 1) both,
+    heroBarWave var(--duration, 2.8s) ease-in-out infinite;
+  animation-delay:
+    calc(0.035s * var(--idx, 0)),
+    calc(1.05s + 0.035s * var(--idx, 0) + var(--delay, 0s));
+}
+
+.hero-waveform__bar[data-alt="true"] {
+  animation:
+    heroBarIn 1.05s cubic-bezier(0.34, 1.4, 0.64, 1) both,
+    heroBarWave2 var(--duration, 2.8s) ease-in-out infinite;
+  animation-delay:
+    calc(0.035s * var(--idx, 0)),
+    calc(1.05s + 0.035s * var(--idx, 0) + var(--delay, 0s));
+}
+
+.hero-waveform__bar[data-color="secondary"] {
+  box-shadow:
+    0 -6px 18px -2px color-mix(in srgb, var(--hero-bar-secondary-glow) 38%, transparent),
+    0 -14px 32px -8px color-mix(in srgb, var(--hero-bar-secondary-glow) 18%, transparent);
+}
+
+.hero-waveform__bar[data-color="accent"] {
+  box-shadow: 0 -10px 26px 5px var(--waveform-accent-glow);
 }
 
 .waveform-bar--listen-bg {
   animation: none;
   filter: saturate(0.85);
-  /* scaleY matches @keyframes wave endpoints so play doesn't jump from a mismatched idle pose */
+  /* min-height mirrors episode-listen-view; scaleY matches wave keyframes idle (avoids jump on play). */
+  min-height: 6px;
   transform: scaleY(0.12);
   opacity: 0.32;
   transition:
@@ -535,9 +825,20 @@ body {
 }
 
 html[data-episode-playing="true"] .waveform-bar--listen-bg {
-  animation: wave var(--listen-wave-dur, 3.6s) linear infinite;
+  animation-name: listen-wave-0;
+  animation-duration: var(--listen-wave-dur, 3.6s);
   animation-delay: var(--delay, 0s);
+  animation-iteration-count: infinite;
+  animation-timing-function: var(--listen-ease, cubic-bezier(0.45, 0, 0.55, 1));
   opacity: 1;
+}
+
+html[data-episode-playing="true"] .waveform-bar--listen-bg[data-motion="1"] {
+  animation-name: listen-wave-1;
+}
+
+html[data-episode-playing="true"] .waveform-bar--listen-bg[data-motion="2"] {
+  animation-name: listen-wave-2;
 }
 
 .listen-page-wave-layer {
@@ -546,6 +847,10 @@ html[data-episode-playing="true"] .waveform-bar--listen-bg {
 
 html:not([data-episode-playing="true"]) .listen-page-wave-layer {
   opacity: 0.45;
+}
+
+.dark html:not([data-episode-playing="true"]) .listen-page-wave-layer {
+  opacity: 0.3;
 }
 
 .waveform-bar--listen-bg {
@@ -616,7 +921,7 @@ html[data-episode-playing="true"] .waveform-bar--listen-bg {
     transform 0.55s ease;
 }
 
-.decoder-audio-player[data-playing="true"] .decoder-waveform-bar {
+.decoder-audio-player [data-waveform-playing="true"] .decoder-waveform-bar {
   animation: decoder-wave-pulse var(--wave-dur, 0.72s) ease-in-out infinite;
   animation-delay: var(--wave-delay, 0s);
   opacity: 0.88;
@@ -627,14 +932,10 @@ html[data-episode-playing="true"] .waveform-bar--listen-bg {
     transition: none;
   }
 
-  .decoder-audio-player[data-playing="true"] .decoder-waveform-bar {
+  .decoder-audio-player [data-waveform-playing="true"] .decoder-waveform-bar {
     animation: none;
     transform: scaleY(0.55);
     opacity: 0.65;
-  }
-
-  .decoder-audio-player[data-playing="true"] .decoder-play-ring {
-    animation: none;
   }
 
   .decoder-audio-player[data-playing="true"] .decoder-audio-progress:not(:disabled) {
@@ -667,35 +968,6 @@ html[data-episode-playing="true"] .waveform-bar--listen-bg {
     transform: scaleY(0.6);
     opacity: 0.85;
   }
-}
-
-@keyframes decoder-play-ring-out {
-  0% {
-    opacity: 0.62;
-    transform: scale(1);
-  }
-  55% {
-    opacity: 0.14;
-    transform: scale(1.55);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(1.9);
-  }
-}
-
-.decoder-play-ring {
-  position: absolute;
-  inset: -5px;
-  border-radius: 5px;
-  border: 1.5px solid var(--accent);
-  opacity: 0;
-  pointer-events: none;
-  will-change: opacity, transform;
-}
-
-.decoder-audio-player[data-playing="true"] .decoder-play-ring {
-  animation: decoder-play-ring-out 2.4s cubic-bezier(0.35, 0, 0.5, 1) infinite;
 }
 
 .decoder-audio-chip {
@@ -1203,7 +1475,7 @@ html[data-episode-playing="true"] .waveform-bar--listen-bg {
   .premium-cta::after,
   .hero-title__mark,
   .hero-title__word,
-  .hero-waveform .waveform-bar,
+  .hero-waveform__bar,
   .host-card,
   .host-card__photo,
   .host-card__content,
@@ -1220,7 +1492,6 @@ html[data-episode-playing="true"] .waveform-bar--listen-bg {
   .stat-card__rule,
   .stat-card__value,
   .tag-pill,
-  .decoder-play-ring,
   .decoder-audio-progress::-webkit-slider-thumb,
   .decoder-audio-volume::-webkit-slider-thumb {
     animation: none !important;

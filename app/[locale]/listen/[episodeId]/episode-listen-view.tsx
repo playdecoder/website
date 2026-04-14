@@ -16,7 +16,7 @@ import {
   getEpisodeNeighbors,
   getLatestEpisode,
   parseEpisodeIsoDate,
-  waveformBarsForEpisode,
+  listenBackgroundBarsForEpisode,
 } from "@/lib/episode-catalog";
 import { resolveEpisodeCoverImageUrl } from "@/lib/episode-cover";
 import { plainEpisodeDescription } from "@/lib/episode-description";
@@ -279,7 +279,7 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
   const seed = episodeLayoutSeed(episode.id);
   const { older, newer } = getEpisodeNeighbors(episode);
   const isLatest = getLatestEpisode(episodes)?.id === episode.id;
-  const bars = waveformBarsForEpisode(episode.id);
+  const bars = listenBackgroundBarsForEpisode(episode.id);
   const accentIsLeft = seed % 2 === 0;
   const bloomX = 12 + (seed % 55);
   const bloomY = 10 + ((seed >>> 8) % 60);
@@ -311,18 +311,21 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
           className="listen-page-wave-layer pointer-events-none fixed inset-0 z-[1] flex items-end overflow-hidden select-none"
           aria-hidden
         >
-          <div className="flex h-full min-h-0 w-full items-end gap-px px-0.5 opacity-[0.085] sm:gap-0.5 sm:px-2 dark:opacity-[0.11]">
-            {bars.map((bar) => (
+          <div className="flex h-full min-h-0 w-full items-end gap-px px-0.5 opacity-[0.085] sm:gap-0.5 sm:px-2 dark:opacity-[0.055]">
+            {bars.map((bar, i) => (
               <div
-                key={`bg-${episode.id}-${bar.h}-${bar.dur}-${bar.delay}-${bar.color}`}
-                className="waveform-bar waveform-bar--listen-bg max-w-[4vw] min-w-0 flex-1"
+                key={`bg-${episode.id}-${i}`}
+                className="waveform-bar waveform-bar--listen-bg max-w-[3.5vw] min-w-0"
+                data-motion={String(bar.motion)}
                 style={
                   {
+                    flex: `${bar.flexGrow} 1 0`,
                     height: `max(6px, min(22rem, ${(bar.h / 200) * 58}vh))`,
                     background: barColorCss[bar.color],
                     "--duration": bar.dur,
                     "--delay": bar.delay,
                     "--listen-wave-dur": listenWaveDuration(bar.dur),
+                    "--listen-ease": bar.ease,
                   } as React.CSSProperties
                 }
               />

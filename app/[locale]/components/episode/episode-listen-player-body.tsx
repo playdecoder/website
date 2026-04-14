@@ -72,13 +72,19 @@ export function EpisodeListenPlayerAndBody({
 
   useEffect(() => {
     document.documentElement.dataset.episodePlaying = isPlaying ? "true" : "false";
+  }, [isPlaying]);
+
+  useEffect(() => {
     return () => {
       document.documentElement.dataset.episodePlaying = "false";
       for (const bar of document.querySelectorAll<HTMLElement>(".waveform-bar--listen-bg")) {
-        bar.style.cssText = "";
+        bar.style.removeProperty("animation");
+        bar.style.removeProperty("transform");
+        bar.style.removeProperty("transition");
+        bar.style.removeProperty("opacity");
       }
     };
-  }, [isPlaying]);
+  }, []);
 
   const onChapterSeek = useCallback(
     (seconds: number, chapter: EpisodeChapter) => {

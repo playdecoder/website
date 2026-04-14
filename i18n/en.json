@@ -223,6 +223,7 @@
     "unmute": "Unmute",
     "volume": "Volume",
     "dismiss": "Stop and dismiss player",
-    "goToEpisodeAria": "Go to episode {id} — {title}"
+    "goToEpisodeAria": "Go to episode {id} — {title}",
+    "seekScrub": "Seek in episode"
   }
 }

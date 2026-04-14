@@ -228,39 +228,146 @@ export function episodeLayoutSeed(episodeId: string): number {
   return h >>> 0;
 }
 
-export const waveformBars: {
+export const heroWaveformBars: {
   h: number;
   dur: string;
   delay: string;
   color: BarColor;
+  alt?: boolean;
 }[] = [
-  { h: 22, dur: "4.0s", delay: "0s", color: "primary" },
-  { h: 38, dur: "3.6s", delay: "0.28s", color: "primary" },
-  { h: 55, dur: "3.2s", delay: "0.08s", color: "primary" },
-  { h: 44, dur: "3.8s", delay: "0.52s", color: "primary" },
-  { h: 72, dur: "2.9s", delay: "0.18s", color: "secondary" },
-  { h: 60, dur: "3.4s", delay: "0.64s", color: "primary" },
-  { h: 90, dur: "2.7s", delay: "0.12s", color: "primary" },
-  { h: 110, dur: "2.5s", delay: "0.40s", color: "secondary" },
-  { h: 148, dur: "2.3s", delay: "0.06s", color: "primary" },
-  { h: 180, dur: "2.2s", delay: "0.55s", color: "accent" },
-  { h: 200, dur: "2.0s", delay: "0s", color: "accent" },
-  { h: 175, dur: "2.2s", delay: "0.32s", color: "secondary" },
-  { h: 145, dur: "2.4s", delay: "0.16s", color: "primary" },
-  { h: 115, dur: "2.6s", delay: "0.46s", color: "primary" },
-  { h: 88, dur: "2.8s", delay: "0.08s", color: "secondary" },
-  { h: 65, dur: "3.2s", delay: "0.36s", color: "primary" },
-  { h: 50, dur: "3.5s", delay: "0.14s", color: "primary" },
-  { h: 35, dur: "3.8s", delay: "0.22s", color: "primary" },
-  { h: 24, dur: "4.2s", delay: "0.48s", color: "primary" },
-  { h: 14, dur: "4.5s", delay: "0.18s", color: "primary" },
+  { h: 8,   dur: "5.4s", delay: "0.02s", color: "primary" },
+  { h: 12,  dur: "5.1s", delay: "0.18s", color: "primary",   alt: true },
+  { h: 17,  dur: "4.9s", delay: "0.08s", color: "primary" },
+  { h: 22,  dur: "4.7s", delay: "0.32s", color: "primary",   alt: true },
+  { h: 28,  dur: "4.5s", delay: "0.12s", color: "primary" },
+  { h: 34,  dur: "4.3s", delay: "0.26s", color: "primary",   alt: true },
+  { h: 41,  dur: "4.1s", delay: "0.06s", color: "primary" },
+  { h: 48,  dur: "3.9s", delay: "0.40s", color: "primary",   alt: true },
+  { h: 56,  dur: "3.7s", delay: "0.14s", color: "primary" },
+  { h: 64,  dur: "3.5s", delay: "0.28s", color: "primary",   alt: true },
+  { h: 73,  dur: "3.4s", delay: "0.04s", color: "primary" },
+  { h: 82,  dur: "3.3s", delay: "0.22s", color: "primary",   alt: true },
+  { h: 92,  dur: "3.2s", delay: "0.36s", color: "secondary" },
+  { h: 102, dur: "3.1s", delay: "0.10s", color: "secondary", alt: true },
+  { h: 113, dur: "3.0s", delay: "0.24s", color: "secondary" },
+  { h: 124, dur: "2.9s", delay: "0.44s", color: "secondary", alt: true },
+  { h: 135, dur: "2.8s", delay: "0.08s", color: "secondary" },
+  { h: 146, dur: "2.7s", delay: "0.20s", color: "secondary", alt: true },
+  { h: 157, dur: "2.6s", delay: "0.34s", color: "secondary" },
+  { h: 167, dur: "2.5s", delay: "0.06s", color: "secondary", alt: true },
+  { h: 176, dur: "2.4s", delay: "0.18s", color: "secondary" },
+  { h: 184, dur: "2.3s", delay: "0.30s", color: "secondary", alt: true },
+  { h: 190, dur: "2.2s", delay: "0.04s", color: "accent" },
+  { h: 195, dur: "2.1s", delay: "0.14s", color: "accent",    alt: true },
+  { h: 198, dur: "2.0s", delay: "0.22s", color: "accent" },
+  { h: 200, dur: "1.9s", delay: "0.00s", color: "accent",    alt: true },
+  { h: 200, dur: "1.9s", delay: "0.10s", color: "accent" },
+  { h: 198, dur: "2.0s", delay: "0.16s", color: "accent",    alt: true },
+  { h: 195, dur: "2.1s", delay: "0.06s", color: "accent" },
+  { h: 190, dur: "2.2s", delay: "0.24s", color: "accent",    alt: true },
+  { h: 184, dur: "2.3s", delay: "0.12s", color: "secondary" },
+  { h: 176, dur: "2.4s", delay: "0.32s", color: "secondary", alt: true },
+  { h: 167, dur: "2.5s", delay: "0.04s", color: "secondary" },
+  { h: 157, dur: "2.6s", delay: "0.20s", color: "secondary", alt: true },
+  { h: 146, dur: "2.7s", delay: "0.36s", color: "secondary" },
+  { h: 135, dur: "2.8s", delay: "0.08s", color: "secondary", alt: true },
+  { h: 124, dur: "2.9s", delay: "0.22s", color: "secondary" },
+  { h: 113, dur: "3.0s", delay: "0.42s", color: "secondary", alt: true },
+  { h: 102, dur: "3.1s", delay: "0.14s", color: "secondary" },
+  { h: 92,  dur: "3.2s", delay: "0.28s", color: "primary",   alt: true },
+  { h: 82,  dur: "3.3s", delay: "0.02s", color: "primary" },
+  { h: 73,  dur: "3.4s", delay: "0.18s", color: "primary",   alt: true },
+  { h: 64,  dur: "3.5s", delay: "0.38s", color: "primary" },
+  { h: 56,  dur: "3.7s", delay: "0.10s", color: "primary",   alt: true },
+  { h: 48,  dur: "3.9s", delay: "0.26s", color: "primary" },
+  { h: 41,  dur: "4.1s", delay: "0.44s", color: "primary",   alt: true },
+  { h: 34,  dur: "4.3s", delay: "0.08s", color: "primary" },
+  { h: 28,  dur: "4.5s", delay: "0.20s", color: "primary",   alt: true },
+  { h: 22,  dur: "4.7s", delay: "0.34s", color: "primary" },
+  { h: 17,  dur: "4.9s", delay: "0.12s", color: "primary",   alt: true },
+  { h: 12,  dur: "5.1s", delay: "0.30s", color: "primary" },
+  { h: 8,   dur: "5.4s", delay: "0.16s", color: "primary",   alt: true },
 ];
 
-export function waveformBarsForEpisode(episodeId: string) {
-  const seed = episodeLayoutSeed(episodeId);
-  const n = waveformBars.length;
-  const offset = seed % n;
-  return [...waveformBars.slice(offset), ...waveformBars.slice(0, offset)];
+function mulberry32(initial: number) {
+  let a = initial >>> 0;
+  return () => {
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), a | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+export type ListenBackgroundMotion = 0 | 1 | 2;
+
+export interface ListenBackgroundBar {
+  h: number;
+  dur: string;
+  delay: string;
+  color: BarColor;
+  motion: ListenBackgroundMotion;
+  ease: string;
+  flexGrow: number;
+}
+
+const LISTEN_BG_BAR_COUNT = 26;
+
+const LISTEN_BG_EASINGS = [
+  "cubic-bezier(0.4, 0, 0.2, 1)",
+  "cubic-bezier(0.45, 0, 0.35, 1)",
+  "cubic-bezier(0.33, 0.1, 0.45, 1)",
+  "cubic-bezier(0.55, 0, 0.45, 1)",
+] as const;
+
+export function listenBackgroundBarsForEpisode(episodeId: string): ListenBackgroundBar[] {
+  const rand = mulberry32(episodeLayoutSeed(episodeId) ^ 0x9e3779b9);
+  const n = LISTEN_BG_BAR_COUNT;
+  const peak = 0.26 + rand() * 0.24;
+  const fatness = 2.6 + rand() * 1.75;
+  const tilt = 0.32 + rand() * 0.48;
+  const raw: number[] = [];
+
+  for (let i = 0; i < n; i++) {
+    const t = i / (n - 1);
+    const dist = Math.abs(t - peak);
+    const bump = Math.exp(-dist * dist * fatness);
+    const bassLift = tilt * Math.pow(1 - t, 1.22) * 0.44;
+    const air = (0.07 + 0.16 * t) * (0.55 + 0.45 * rand());
+    const grain = 0.52 + 0.68 * rand();
+    const spike = rand() > 0.92 ? 0.2 * rand() : 0;
+    raw.push(Math.min(1, bump * grain + bassLift + air * 0.38 + spike));
+  }
+
+  const heights: number[] = [];
+  for (let i = 0; i < n; i++) {
+    const prev = raw[i - 1] ?? raw[i];
+    const next = raw[i + 1] ?? raw[i];
+    const smooth = 0.17 * prev + 0.66 * raw[i] + 0.17 * next;
+    heights.push(Math.round(8 + smooth * 192));
+  }
+
+  return heights.map((h) => {
+    const durS = 2.05 + rand() * 4.25;
+    const delayS = rand() * 2.45;
+    const motion = Math.floor(rand() * 3) % 3 as ListenBackgroundMotion;
+    const ease = LISTEN_BG_EASINGS[Math.floor(rand() * LISTEN_BG_EASINGS.length) % LISTEN_BG_EASINGS.length];
+    const flexGrow = 0.36 + rand() * 0.94;
+    const hi = h / 200;
+    const r = rand();
+    const color: BarColor =
+      hi > 0.76 && r < 0.2 ? "accent" : hi > 0.44 && r < 0.3 ? "secondary" : "primary";
+
+    return {
+      h,
+      dur: `${durS.toFixed(2)}s`,
+      delay: `${delayS.toFixed(3)}s`,
+      color,
+      motion,
+      ease,
+      flexGrow,
+    };
+  });
 }
 
 export const HOST_PHOTOS = {

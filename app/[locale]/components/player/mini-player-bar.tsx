@@ -2,7 +2,7 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
-import { type CSSProperties, useEffect, useRef, useState } from "react";
+import { type CSSProperties, useCallback, useEffect, useRef, useState } from "react";
 
 import { episodeListenPathSegment } from "@/lib/episode-catalog";
 import { formatPlaybackTime } from "@/lib/format-playback-time";
@@ -22,6 +22,7 @@ const MINI_WAVEFORM_BARS = [
 ] as const;
 
 const SKIP_SEC = 15;
+const SCRUB_KEYBOARD_SEC = 5;
 
 export function MiniPlayerBar() {
   const ctx = usePlayerContext();
@@ -35,7 +36,28 @@ export function MiniPlayerBar() {
   const [show, setShow] = useState(false);
   const enterRafRef = useRef<number | null>(null);
 
-  const { episode, isPlaying, currentTime, duration, loadError, programmaticVolume } = ctx;
+  const { episode, isPlaying, currentTime, duration, loadError, programmaticVolume, seek } = ctx;
+
+  const [scrubPosition, setScrubPosition] = useState<number | null>(null);
+  const [isScrubbing, setIsScrubbing] = useState(false);
+  const progressTrackRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setScrubPosition(null);
+  }, [episode?.id]);
+
+  const seekFromClientX = useCallback(
+    (clientX: number) => {
+      const track = progressTrackRef.current;
+      if (!track || duration <= 0 || loadError) return;
+      const rect = track.getBoundingClientRect();
+      const ratio = rect.width > 0 ? (clientX - rect.left) / rect.width : 0;
+      const seconds = Math.max(0, Math.min(1, ratio)) * duration;
+      setScrubPosition(seconds);
+      seek(seconds);
+    },
+    [duration, loadError, seek],
+  );
 
   const onListenPage =
     episode !== null &&
@@ -80,7 +102,7 @@ export function MiniPlayerBar() {
     }
   };
 
-  useWaveformSettle(
+  const miniWavePlaying = useWaveformSettle(
     isPlaying,
     () => Array.from(waveformRef.current?.querySelectorAll<HTMLElement>(".mini-wf-bar") ?? []),
     { settleScale: "scaleY(0.15)", settleOpacity: 0.3 },
@@ -88,8 +110,11 @@ export function MiniPlayerBar() {
 
   if (!rendered || !episode) return null;
 
+  const displayTime = scrubPosition ?? currentTime;
   const progressPct =
-    duration > 0 ? Math.min(100, Math.max(0, (currentTime / duration) * 100)) : 0;
+    duration > 0 ? Math.min(100, Math.max(0, (displayTime / duration) * 100)) : 0;
+
+  const scrubDisabled = loadError || duration <= 0;
 
   const listenHref = `/${locale}${listenEpisodePath(episodeListenPathSegment(episode))}`;
 
@@ -102,18 +127,91 @@ export function MiniPlayerBar() {
         show ? "translate-y-0" : "translate-y-full"
       }`}
     >
-      <div className="relative h-px w-full overflow-hidden">
-        <div className="bg-edge/40 absolute inset-0" />
+      <div
+        ref={progressTrackRef}
+        role="slider"
+        tabIndex={scrubDisabled ? -1 : 0}
+        aria-valuemin={0}
+        aria-valuemax={duration > 0 ? Math.round(duration) : 0}
+        aria-valuenow={Math.round(displayTime)}
+        aria-valuetext={`${formatPlaybackTime(displayTime)} / ${formatPlaybackTime(duration)}`}
+        aria-label={t("seekScrub")}
+        aria-disabled={scrubDisabled}
+        className={`group relative h-2.5 w-full touch-none select-none overflow-visible motion-safe:transition-[height] motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)] ${isScrubbing ? "h-6" : ""} md:hover:h-6 ${
+          scrubDisabled ? "cursor-not-allowed opacity-40" : "cursor-grab active:cursor-grabbing"
+        }`}
+        onPointerDown={(e) => {
+          if (scrubDisabled) return;
+          e.preventDefault();
+          e.currentTarget.setPointerCapture(e.pointerId);
+          setIsScrubbing(true);
+          seekFromClientX(e.clientX);
+        }}
+        onPointerMove={(e) => {
+          if (!e.currentTarget.hasPointerCapture(e.pointerId)) return;
+          seekFromClientX(e.clientX);
+        }}
+        onPointerUp={(e) => {
+          if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+            e.currentTarget.releasePointerCapture(e.pointerId);
+          }
+          setIsScrubbing(false);
+          setScrubPosition(null);
+        }}
+        onPointerCancel={(e) => {
+          if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+            e.currentTarget.releasePointerCapture(e.pointerId);
+          }
+          setIsScrubbing(false);
+          setScrubPosition(null);
+        }}
+        onKeyDown={(e) => {
+          if (scrubDisabled) return;
+          if (e.key === "ArrowLeft" || e.key === "ArrowDown") {
+            e.preventDefault();
+            seek(Math.max(0, currentTime - SCRUB_KEYBOARD_SEC));
+          } else if (e.key === "ArrowRight" || e.key === "ArrowUp") {
+            e.preventDefault();
+            seek(Math.min(duration, currentTime + SCRUB_KEYBOARD_SEC));
+          } else if (e.key === "Home") {
+            e.preventDefault();
+            seek(0);
+          } else if (e.key === "End") {
+            e.preventDefault();
+            seek(duration);
+          }
+        }}
+      >
         <div
-          className="bg-accent absolute top-0 bottom-0 left-0 transition-[width] duration-300"
-          style={{ width: `${progressPct}%` }}
-          aria-hidden
-        />
+          className={`pointer-events-none absolute inset-x-0 bottom-0 w-full overflow-visible motion-safe:transition-[height] motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)] h-px ${isScrubbing ? "h-2.5" : ""} md:group-hover:h-2.5`}
+        >
+          <div className="relative h-full w-full overflow-visible">
+            <div
+              className={`absolute inset-0 rounded-full bg-edge/25 motion-safe:transition-[background-color,box-shadow] motion-safe:duration-300 motion-safe:ease-out md:group-hover:bg-edge/42 md:group-hover:shadow-[inset_0_1px_0_rgb(255_255_255/0.07)] ${isScrubbing ? "bg-edge/42 shadow-[inset_0_1px_0_rgb(255_255_255/0.07)]" : ""}`}
+              aria-hidden
+            />
+            <div
+              className={`bg-accent pointer-events-none absolute inset-y-0 left-0 rounded-l-full motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)] ${isScrubbing ? "motion-safe:transition-[height,filter,box-shadow]" : "motion-safe:transition-[height,width,filter,box-shadow]"} md:group-hover:rounded-l-[6px] md:group-hover:shadow-[inset_0_1px_0_rgb(255_255_255/0.38)] ${isScrubbing ? "rounded-l-[6px] shadow-[inset_0_1px_0_rgb(255_255_255/0.38)]" : ""}`}
+              style={{
+                width: `${progressPct}%`,
+                ...(progressPct >= 99.5
+                  ? { borderTopRightRadius: 9999, borderBottomRightRadius: 9999 }
+                  : {}),
+              }}
+              aria-hidden
+            />
+            <div
+              className={`pointer-events-none absolute top-1/2 z-10 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 scale-[0.38] rounded-full border-2 border-[color-mix(in_srgb,var(--surface)_58%,transparent)] bg-accent opacity-0 shadow-[0_2px_18px_-3px_color-mix(in_srgb,var(--accent)_58%,transparent),inset_0_1px_0_rgb(255_255_255/0.42)] motion-safe:transition-[transform,opacity,box-shadow] motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)] motion-safe:will-change-transform md:group-hover:scale-100 md:group-hover:opacity-100 md:group-hover:shadow-[0_3px_22px_-4px_color-mix(in_srgb,var(--accent)_62%,transparent),inset_0_1px_0_rgb(255_255_255/0.48)] ${isScrubbing ? "scale-100 opacity-100 shadow-[0_3px_22px_-4px_color-mix(in_srgb,var(--accent)_62%,transparent),inset_0_1px_0_rgb(255_255_255/0.48)] max-md:scale-110" : ""}`}
+              style={{ left: `${progressPct}%` }}
+              aria-hidden
+            />
+          </div>
+        </div>
       </div>
 
-      <div className="border-edge/60 bg-surface/[0.92] relative border-t backdrop-blur-xl">
+      <div className="border-edge/35 relative border-t bg-[color-mix(in_srgb,var(--surface)_48%,transparent)] shadow-[inset_0_1px_0_0_color-mix(in_srgb,var(--primary)_10%,transparent)] backdrop-blur-2xl backdrop-saturate-150 dark:bg-[color-mix(in_srgb,var(--surface)_38%,transparent)] dark:shadow-[inset_0_1px_0_0_rgb(255_255_255/0.06)]">
         <div
-          className="pointer-events-none absolute inset-0 opacity-[0.04] dark:opacity-[0.07]"
+          className="pointer-events-none absolute inset-0 opacity-[0.055] dark:opacity-[0.09]"
           style={{
             background:
               "radial-gradient(ellipse 60% 120% at 50% 200%, var(--accent), transparent)",
@@ -130,7 +228,7 @@ export function MiniPlayerBar() {
             <div
               ref={waveformRef}
               className="mini-player-waveform flex h-6 shrink-0 items-center gap-[2px]"
-              data-playing={isPlaying || undefined}
+              data-playing={miniWavePlaying || undefined}
               aria-hidden
             >
               {MINI_WAVEFORM_BARS.map((bar) => (
@@ -193,11 +291,6 @@ export function MiniPlayerBar() {
               className="group border-primary/10 bg-accent focus-visible:outline-accent relative flex size-9 shrink-0 items-center justify-center rounded-sm border text-[#0b0f14] shadow-[inset_0_1px_0_rgb(255_255_255/0.3)] transition-transform duration-200 hover:scale-[1.06] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 active:scale-[0.95] disabled:pointer-events-none disabled:opacity-40 sm:size-10"
               aria-label={isPlaying ? t("pause") : t("play")}
             >
-              <span
-                className="decoder-play-ring"
-                style={{ "--ring-color": "rgb(11 15 20 / 0.18)" } as CSSProperties}
-                aria-hidden
-              />
               {isPlaying ? (
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
                   <path d="M6 5h4v14H6V5zm8 0h4v14h-4V5z" />

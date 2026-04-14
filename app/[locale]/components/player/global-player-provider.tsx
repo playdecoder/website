@@ -79,6 +79,7 @@ export function GlobalPlayerProvider({ children }: { children: ReactNode }) {
   const [loadError, setLoadError] = useState(false);
   const [bufferedPct, setBufferedPct] = useState(0);
   const [resumeNotice, setResumeNotice] = useState<string | null>(null);
+  const [resumeHintVisible, setResumeHintVisible] = useState(false);
   const [hasClearableProgress, setHasClearableProgress] = useState(false);
   const [programmaticVolume, setProgrammaticVolume] = useState(true);
   const [prefs, setPrefs] = useState<AudioPrefs>({
@@ -144,6 +145,7 @@ export function GlobalPlayerProvider({ children }: { children: ReactNode }) {
     const onPlay = () => {
       setIsPlaying(true);
       setResumeNotice(null);
+      setResumeHintVisible(false);
     };
 
     const onPause = () => {
@@ -188,8 +190,12 @@ export function GlobalPlayerProvider({ children }: { children: ReactNode }) {
         el.currentTime = saved;
         setCurrentTime(saved);
         setResumeNotice(t("playerResumingFrom", { time: formatPlaybackTime(saved) }));
+      } else {
+        setResumeNotice(null);
       }
-      setHasClearableProgress(episodeHasStoredProgress(id));
+      const has = episodeHasStoredProgress(id);
+      setHasClearableProgress(has);
+      setResumeHintVisible(has);
     };
 
     const readBuffered = () => {
@@ -258,15 +264,17 @@ export function GlobalPlayerProvider({ children }: { children: ReactNode }) {
     el.currentTime = clamped;
     setCurrentTime(clamped);
     setResumeNotice(notice ?? null);
+    setResumeHintVisible(false);
   }, []);
 
-  const resetPlaybackState = useCallback(() => {
+   const resetPlaybackState = useCallback(() => {
     setIsPlaying(false);
     setCurrentTime(0);
     setDuration(0);
     setLoadError(false);
     setBufferedPct(0);
     setResumeNotice(null);
+    setResumeHintVisible(false);
     setHasClearableProgress(false);
   }, []);
 
@@ -377,6 +385,7 @@ export function GlobalPlayerProvider({ children }: { children: ReactNode }) {
       loadError,
       bufferedPct,
       resumeNotice,
+      resumeHintVisible,
       volume: prefs.volume,
       muted: prefs.muted,
       playbackRate,
@@ -401,6 +410,7 @@ export function GlobalPlayerProvider({ children }: { children: ReactNode }) {
       loadError,
       bufferedPct,
       resumeNotice,
+      resumeHintVisible,
       prefs.volume,
       prefs.muted,
       playbackRate,

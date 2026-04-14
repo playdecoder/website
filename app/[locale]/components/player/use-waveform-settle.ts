@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 
 interface WaveformSettleOptions {
   frozenOpacity?: number;
@@ -23,10 +23,12 @@ export function useWaveformSettle(
     settleTransition = DEFAULT_TRANSITION,
     cleanupMs = 1300,
   }: WaveformSettleOptions = {},
-) {
+): boolean {
+  const [cssWaveHold, setCssWaveHold] = useState(isPlaying);
   const getBarsRef = useRef(getBars);
   getBarsRef.current = getBars;
 
+  const wasPlayingRef = useRef(isPlaying);
   const rafRef = useRef<number | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -48,36 +50,55 @@ export function useWaveformSettle(
     }
   }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     cancel();
     const bars = getBarsRef.current();
 
     if (isPlaying) {
+      wasPlayingRef.current = true;
+      setCssWaveHold(true);
       bars.forEach(clearStyles);
-    } else {
-      if (bars.length === 0) return cancel;
-      bars.forEach((bar) => {
-        bar.style.animation = "none";
-        bar.style.transform = getComputedStyle(bar).transform;
-        bar.style.transition = "none";
-        bar.style.opacity = String(frozenOpacity);
-      });
-      rafRef.current = requestAnimationFrame(() => {
-        rafRef.current = requestAnimationFrame(() => {
-          rafRef.current = null;
-          bars.forEach((bar) => {
-            bar.style.transition = settleTransition;
-            bar.style.transform = settleScale;
-            bar.style.opacity = String(settleOpacity);
-          });
-          timerRef.current = setTimeout(() => {
-            bars.forEach(clearStyles);
-            timerRef.current = null;
-          }, cleanupMs);
-        });
-      });
+      return cancel;
     }
+
+    if (!wasPlayingRef.current) {
+      setCssWaveHold(false);
+      return cancel;
+    }
+    wasPlayingRef.current = false;
+
+    if (bars.length === 0) {
+      setCssWaveHold(false);
+      return cancel;
+    }
+
+    bars.forEach((bar) => {
+      const frozenTransform = getComputedStyle(bar).transform;
+      bar.style.animation = "none";
+      bar.style.transform = frozenTransform;
+      bar.style.transition = "none";
+      bar.style.opacity = String(frozenOpacity);
+    });
+
+    setCssWaveHold(false);
+
+    rafRef.current = requestAnimationFrame(() => {
+      rafRef.current = requestAnimationFrame(() => {
+        rafRef.current = null;
+        bars.forEach((bar) => {
+          bar.style.transition = settleTransition;
+          bar.style.transform = settleScale;
+          bar.style.opacity = String(settleOpacity);
+        });
+        timerRef.current = setTimeout(() => {
+          bars.forEach(clearStyles);
+          timerRef.current = null;
+        }, cleanupMs);
+      });
+    });
 
     return cancel;
   }, [isPlaying, frozenOpacity, settleTransition, settleScale, settleOpacity, cleanupMs, cancel, clearStyles]);
+
+  return isPlaying || cssWaveHold;
 }

@@ -224,6 +224,7 @@
     "unmute": "Zapnout zvuk",
     "volume": "Hlasitost",
     "dismiss": "Zastavit a zavřít přehrávač",
-    "goToEpisodeAria": "Přejít na epizodu {id} — {title}"
+    "goToEpisodeAria": "Přejít na epizodu {id} — {title}",
+    "seekScrub": "Posun v epizodě"
   }
 }

@@ -66,16 +66,16 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
 
     const waveformRef = useRef<HTMLDivElement>(null);
     const hashHandledRef = useRef(false);
-    const ctxDurationRef = useRef(ctx.duration);
+    const durationForHashRef = useRef(ctx.duration);
     useEffect(() => {
-      ctxDurationRef.current = ctx.duration;
+      durationForHashRef.current = ctx.duration;
     }, [ctx.duration]);
 
     const { programmaticVolume } = ctx;
     const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "error">("idle");
 
     const progressResumeCaption = useMemo(() => {
-      if (!ctx.hasClearableProgress) {
+      if (!ctx.resumeHintVisible || !ctx.hasClearableProgress) {
         return null;
       }
       if (ctx.resumeNotice) {
@@ -89,7 +89,7 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
         return t("playerResumingFrom", { time: formatPlaybackTime(saved) });
       }
       return t("playerSavedPlace");
-    }, [ctx.hasClearableProgress, ctx.resumeNotice, ctx.duration, episodeId, t]);
+    }, [ctx.resumeHintVisible, ctx.hasClearableProgress, ctx.resumeNotice, ctx.duration, episodeId, t]);
 
     const [scrubPosition, setScrubPosition] = useState<number | null>(null);
     const scrubValueRef = useRef(0);
@@ -111,12 +111,11 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
       [seek],
     );
 
-    useWaveformSettle(
+    const decoderWavePlaying = useWaveformSettle(
       ctx.isPlaying,
       () => Array.from(waveformRef.current?.querySelectorAll<HTMLElement>(".decoder-waveform-bar") ?? []),
     );
 
-    // Hash fragment wins over saved-position resume from `loadedmetadata` (provider).
     useEffect(() => {
       if (ctx.duration <= 0 || hashHandledRef.current) return;
       hashHandledRef.current = true;
@@ -138,10 +137,9 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
       seek(resolved.seconds, notice);
     }, [ctx.duration, chapters, t, seek]);
 
-    // Ref keeps duration out of deps so `hashchange` is not re-bound every tick.
     useEffect(() => {
       const onHashChange = () => {
-        const d = ctxDurationRef.current;
+        const d = durationForHashRef.current;
         if (d <= 0) return;
         const resolved = resolveEpisodeSeekFromHash(window.location.hash, chapters ?? [], d);
         if (resolved.seconds === null) return;
@@ -212,52 +210,50 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
                   </span>
                   {title}
                 </p>
-                <div
-                  className={`mt-2 inline-flex min-h-[1.125rem] max-w-full items-center gap-0.5 font-mono text-[10px] tracking-wide transition-opacity duration-500 sm:gap-1 sm:text-[11px] ${
-                    ctx.hasClearableProgress
-                      ? "text-muted/75 opacity-100"
-                      : "pointer-events-none opacity-0 select-none"
-                  }`}
-                >
-                  <p
-                    className="min-w-0 leading-snug"
-                    role="status"
-                    aria-hidden={!progressResumeCaption || undefined}
+                {ctx.hasClearableProgress ? (
+                  <div
+                    className="text-muted/75 mt-2 flex h-8 max-w-full items-center gap-0.5 font-mono text-[10px] tracking-wide sm:gap-1 sm:text-[11px]"
+                    aria-hidden={!ctx.resumeHintVisible || undefined}
                   >
-                    {progressResumeCaption ?? "\u00a0"}
-                  </p>
-                  {ctx.hasClearableProgress ? (
-                    <button
-                      type="button"
-                      onClick={ctx.clearProgress}
-                      disabled={ctx.loadError}
-                      title={t("playerClearProgress")}
-                      aria-label={t("playerClearProgressAria")}
-                      className="text-muted/50 hover:text-muted hover:bg-surface-2/75 focus-visible:ring-secondary/40 -mr-0.5 inline-flex size-6 shrink-0 items-center justify-center rounded-sm transition-colors focus-visible:ring-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-35"
-                    >
-                      <svg
-                        width="11"
-                        height="11"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        className="shrink-0"
-                        aria-hidden
-                      >
-                        <path
-                          d="M6 6l12 12M18 6L6 18"
-                          stroke="currentColor"
-                          strokeWidth="2.25"
-                          strokeLinecap="square"
-                        />
-                      </svg>
-                    </button>
-                  ) : null}
-                </div>
+                    {ctx.resumeHintVisible ? (
+                      <>
+                        <p className="min-w-0 flex-1 leading-snug line-clamp-1" role="status">
+                          {progressResumeCaption ?? "\u00a0"}
+                        </p>
+                        <button
+                          type="button"
+                          onClick={ctx.clearProgress}
+                          disabled={ctx.loadError}
+                          title={t("playerClearProgress")}
+                          aria-label={t("playerClearProgressAria")}
+                          className="text-muted/50 hover:text-muted hover:bg-surface-2/75 focus-visible:ring-secondary/40 -mr-0.5 inline-flex size-6 shrink-0 items-center justify-center rounded-sm transition-colors focus-visible:ring-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-35"
+                        >
+                          <svg
+                            width="11"
+                            height="11"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            className="shrink-0"
+                            aria-hidden
+                          >
+                            <path
+                              d="M6 6l12 12M18 6L6 18"
+                              stroke="currentColor"
+                              strokeWidth="2.25"
+                              strokeLinecap="square"
+                            />
+                          </svg>
+                        </button>
+                      </>
+                    ) : null}
+                  </div>
+                ) : null}
               </div>
 
               <div
                 ref={waveformRef}
                 className="flex h-8 shrink-0 items-center gap-[2px] sm:h-10 sm:gap-[3px]"
+                data-waveform-playing={decoderWavePlaying || undefined}
                 aria-hidden
               >
                 {WAVEFORM_BARS.map((bar) => (
@@ -380,7 +376,6 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
                     className="group border-primary/15 bg-accent focus-visible:outline-accent relative flex size-[3.75rem] shrink-0 items-center justify-center rounded-sm border-2 text-[#0b0f14] shadow-[inset_0_1px_0_rgb(255_255_255/0.35)] transition-transform duration-200 hover:scale-[1.04] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 active:scale-[0.97] disabled:pointer-events-none disabled:opacity-40"
                     aria-label={ctx.isPlaying ? t("playerPause") : t("playerPlay")}
                   >
-                    <span className="decoder-play-ring" aria-hidden />
                     {ctx.isPlaying ? (
                       <svg
                         width="20"
@@ -430,7 +425,6 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
                   className="group border-primary/15 bg-accent focus-visible:outline-accent relative hidden size-14 shrink-0 items-center justify-center rounded-sm border-2 text-[#0b0f14] shadow-[inset_0_1px_0_rgb(255_255_255/0.35)] transition-transform duration-200 hover:scale-[1.04] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 active:scale-[0.97] disabled:pointer-events-none disabled:opacity-40 sm:flex"
                   aria-label={ctx.isPlaying ? t("playerPause") : t("playerPlay")}
                 >
-                  <span className="decoder-play-ring" aria-hidden />
                   {ctx.isPlaying ? (
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
                       <path d="M6 5h4v14H6V5zm8 0h4v14h-4V5z" />
