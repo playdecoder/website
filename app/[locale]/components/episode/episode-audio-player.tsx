@@ -262,44 +262,38 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
                   </span>
                   {title}
                 </p>
-                {ctx.hasClearableProgress && isPageEpisodeActive ? (
-                  <div
-                    className="text-muted/75 mt-2 flex h-8 max-w-full items-center gap-0.5 font-mono text-[10px] tracking-wide sm:gap-1 sm:text-[11px]"
-                    aria-hidden={!ctx.resumeHintVisible || undefined}
+                <div
+                  className={`text-muted/75 mt-1 flex h-5 max-w-full items-center gap-1 font-mono text-[10px] tracking-wide sm:gap-1.5 sm:text-[11px]${ctx.hasClearableProgress && isPageEpisodeActive && ctx.resumeHintVisible ? "" : " invisible pointer-events-none select-none"}`}
+                  aria-hidden={!(ctx.hasClearableProgress && isPageEpisodeActive && ctx.resumeHintVisible) || undefined}
+                >
+                  <p className="min-w-0 shrink leading-snug line-clamp-1" role="status">
+                    {progressResumeCaption ?? "\u00a0"}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={ctx.clearProgress}
+                    disabled={ctx.loadError}
+                    title={t("playerClearProgress")}
+                    aria-label={t("playerClearProgressAria")}
+                    className="text-muted/50 hover:text-muted hover:bg-surface-2/75 focus-visible:ring-secondary/40 -mr-0.5 inline-flex size-6 shrink-0 items-center justify-center rounded-sm transition-colors focus-visible:ring-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-35"
                   >
-                    {ctx.resumeHintVisible ? (
-                      <>
-                        <p className="min-w-0 flex-1 leading-snug line-clamp-1" role="status">
-                          {progressResumeCaption ?? "\u00a0"}
-                        </p>
-                        <button
-                          type="button"
-                          onClick={ctx.clearProgress}
-                          disabled={ctx.loadError}
-                          title={t("playerClearProgress")}
-                          aria-label={t("playerClearProgressAria")}
-                          className="text-muted/50 hover:text-muted hover:bg-surface-2/75 focus-visible:ring-secondary/40 -mr-0.5 inline-flex size-6 shrink-0 items-center justify-center rounded-sm transition-colors focus-visible:ring-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-35"
-                        >
-                          <svg
-                            width="11"
-                            height="11"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            className="shrink-0"
-                            aria-hidden
-                          >
-                            <path
-                              d="M6 6l12 12M18 6L6 18"
-                              stroke="currentColor"
-                              strokeWidth="2.25"
-                              strokeLinecap="square"
-                            />
-                          </svg>
-                        </button>
-                      </>
-                    ) : null}
-                  </div>
-                ) : null}
+                    <svg
+                      width="11"
+                      height="11"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      className="shrink-0"
+                      aria-hidden
+                    >
+                      <path
+                        d="M6 6l12 12M18 6L6 18"
+                        stroke="currentColor"
+                        strokeWidth="2.25"
+                        strokeLinecap="square"
+                      />
+                    </svg>
+                  </button>
+                </div>
               </div>
 
               <div
