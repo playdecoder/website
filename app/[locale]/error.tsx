@@ -25,8 +25,6 @@ export default function ErrorPage({
 
   return (
     <div className="page-shell">
-      {/* Minimal header — avoids depending on the async Navbar server component
-          inside a client error boundary where async rendering is unavailable. */}
       <header className="border-edge bg-bg/90 fixed top-0 right-0 left-0 z-50 border-b backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-6xl items-center px-3 min-[400px]:px-4 sm:px-5">
           <Link

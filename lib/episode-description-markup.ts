@@ -1,4 +1,3 @@
-/** Inline episode copy: `**bold**`, `__bold__`, `*italic*`, `_italic_`. Nested spans are allowed. */
 export type EpisodeDescriptionSegment =
   | { kind: "text"; text: string }
   | { kind: "bold"; text: string }
@@ -79,7 +78,6 @@ function segmentPlain(seg: EpisodeDescriptionSegment): string {
   return plainEpisodeDescription(seg.text);
 }
 
-/** Plain text for RSS, meta tags, search, share, JSON-LD. */
 export function plainEpisodeDescription(source: string): string {
   return parseEpisodeDescriptionMarkup(source).map(segmentPlain).join("");
 }

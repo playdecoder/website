@@ -12,7 +12,6 @@ export function LogoD() {
         overflow: "visible",
       }}
     >
-      {/* D outline — stroke only, interior open */}
       <path
         d="M0 0 L0 140 L20 140 Q104 140 104 70 Q104 0 20 0 Z"
         fill="none"
@@ -29,7 +28,6 @@ export function LogoD() {
         strokeLinecap="round"
       />
 
-      {/* Three bars in solid palette colors — no faking cutouts */}
       <rect x="26" y="36" width="11" height="68" fill="var(--primary)" />
       <rect x="43" y="24" width="11" height="92" fill="var(--secondary)" />
       <rect x="60" y="48" width="11" height="44" fill="var(--primary)" />

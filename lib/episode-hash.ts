@@ -1,7 +1,3 @@
-/**
- * Episode URL hash: time (#t=…), chapter (#ch=…), or both (chapter wins).
- */
-
 import {
   clampEpisodeFragmentSeconds,
   parseTimeFragmentFromHash,
@@ -22,7 +18,6 @@ export function slugifyChapterKey(label: string): string {
   return s || "chapter";
 }
 
-/** Stable fragment keys for each chapter (sorted by start time). */
 export function chapterFragmentKeys(
   chapters: EpisodeHashChapter[],
 ): Map<string, EpisodeHashChapter> {
@@ -92,10 +87,6 @@ export interface ResolvedEpisodeHashSeek {
   chapterLabel: string | null;
 }
 
-/**
- * If `ch` matches a chapter, seek to that chapter's start (chapter wins over `t`).
- * Unknown `ch` falls back to `t` when present. Legacy `#t=npt:…` still works when no valid chapter.
- */
 export function resolveEpisodeSeekFromHash(
   hash: string,
   chapters: EpisodeHashChapter[] | undefined,

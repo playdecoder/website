@@ -50,6 +50,56 @@ function LatestDropBadge({ label, className }: { label: string; className?: stri
   );
 }
 
+function EpisodeListenTags({ tags, stagger }: { tags: string[]; stagger: (i: number) => string }) {
+  return (
+    <div className="flex flex-wrap items-center gap-2 md:gap-3">
+      {tags.map((tag, i) => (
+        <span key={tag} className="tag-pill" style={{ animationDelay: stagger(i) }}>
+          {tag}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function EpisodeListenMetadata({
+  episode,
+  locale,
+  shareLabel,
+  shareAria,
+}: {
+  episode: Episode;
+  locale: string;
+  shareLabel: string;
+  shareAria: string;
+}) {
+  return (
+    <div
+      className="text-muted flex flex-col gap-1.5 font-mono text-[11px] tracking-widest min-[380px]:flex-row min-[380px]:flex-wrap min-[380px]:items-center min-[380px]:gap-x-5 sm:gap-x-8 sm:text-xs"
+      style={{ animation: "fadeUp 0.6s ease both 0.14s" }}
+    >
+      <span className="inline-flex items-center gap-2 break-words">
+        <IconEpisodeAirDate size={13} className="text-secondary/65" />
+        {formatEpisodeDate(episode.date, locale)}
+      </span>
+      <span className="text-edge hidden min-[380px]:inline" aria-hidden>
+        ·
+      </span>
+      <span className="inline-flex items-center gap-2">
+        <IconEpisodeDuration size={13} className="text-secondary/65" />
+        {formatEpisodeDuration(episode.duration)}
+      </span>
+      <EpisodeShareButton
+        shareTitle={`${episode.id} — ${episode.title}`}
+        shareText={episode.description}
+        label={shareLabel}
+        labelAria={shareAria}
+        className="min-[380px]:ml-auto"
+      />
+    </div>
+  );
+}
+
 export async function EpisodeListenView({ episode, locale }: EpisodeListenViewProps) {
   const t = await getTranslations({ locale, namespace: "listen" });
   const descriptionPlain = plainEpisodeDescription(episode.description);
@@ -103,50 +153,11 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
     return `${Math.min(5.4, Math.max(2.9, scaled)).toFixed(2)}s`;
   }
 
-  // Call these functions at each use site — do not reuse one React element in two tree positions
-  // (reconciliation only keeps a single instance, which broke the mobile after-player slot).
-  const renderEpisodeTags = () => (
-    <div className="flex flex-wrap items-center gap-2 md:gap-3">
-      {episode.tags.map((tag, i) => (
-        <span key={tag} className="tag-pill" style={{ animationDelay: stagger(i) }}>
-          {tag}
-        </span>
-      ))}
-    </div>
-  );
-
-  const renderEpisodeMetadata = () => (
-    <div
-      className="text-muted flex flex-col gap-1.5 font-mono text-[11px] tracking-widest min-[380px]:flex-row min-[380px]:flex-wrap min-[380px]:items-center min-[380px]:gap-x-5 sm:gap-x-8 sm:text-xs"
-      style={{ animation: "fadeUp 0.6s ease both 0.14s" }}
-    >
-      <span className="inline-flex items-center gap-2 break-words">
-        <IconEpisodeAirDate size={13} className="text-secondary/65" />
-        {formatEpisodeDate(episode.date, locale)}
-      </span>
-      <span className="text-edge hidden min-[380px]:inline" aria-hidden>
-        ·
-      </span>
-      <span className="inline-flex items-center gap-2">
-        <IconEpisodeDuration size={13} className="text-secondary/65" />
-        {formatEpisodeDuration(episode.duration)}
-      </span>
-      <EpisodeShareButton
-        shareTitle={`${episode.id} — ${episode.title}`}
-        shareText={episode.description}
-        label={t("shareEpisode")}
-        labelAria={t("shareEpisodeAria")}
-        className="min-[380px]:ml-auto"
-      />
-    </div>
-  );
-
   return (
     <div className="page-shell">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(episodeJsonLd) }}
-      />
+      <script type="application/ld+json" suppressHydrationWarning>
+        {JSON.stringify(episodeJsonLd)}
+      </script>
       <Navbar locale={locale} />
 
       <DecoderPageFrame className="min-h-0" scanPeriodSec={16} scanOpacity={0.22}>
@@ -265,13 +276,7 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
               </div>
             </div>
 
-            {/*
-              Mobile order:  kicker → title → player → [lang+tags+meta via slot] → body → neighbor → CTAs
-              Desktop order: lang+tags → title → meta → player → body → neighbor → CTAs
-              Achieved with plain hidden/block — no flex ordering tricks.
-            */}
             <div className="space-y-6 lg:col-span-8 lg:space-y-10">
-              {/* Mobile kicker — hidden on desktop (sidebar handles it) */}
               <div
                 className="flex items-center justify-between gap-3 lg:hidden"
                 style={{ animation: "fadeUp 0.65s ease both 0.05s" }}
@@ -290,11 +295,10 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
                 {isLatest ? <LatestDropBadge label={t("latestDrop")} /> : null}
               </div>
 
-              {/* Desktop-only: lang note + tags — shown above the title on desktop */}
               <div className="hidden lg:block lg:space-y-6">
                 <EpisodeSpokenLangNote lang={episode.lang} locale={locale} variant="banner" />
                 <div style={{ animation: "fadeUp 0.6s ease both 0.08s" }}>
-                  {renderEpisodeTags()}
+                  <EpisodeListenTags tags={episode.tags} stagger={stagger} />
                 </div>
               </div>
 
@@ -308,12 +312,15 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
                 {episode.title}
               </h1>
 
-              {/* Desktop-only: meta (date / duration / share) — shown between title and player */}
-              <div className="hidden lg:block">{renderEpisodeMetadata()}</div>
+              <div className="hidden lg:block">
+                <EpisodeListenMetadata
+                  episode={episode}
+                  locale={locale}
+                  shareLabel={t("shareEpisode")}
+                  shareAria={t("shareEpisodeAria")}
+                />
+              </div>
 
-              {/* Player + body.
-                  afterPlayerSlot injects mobile-only content between the player card and the
-                  description/chapters body — hidden on desktop (already shown above). */}
               <EpisodeListenPlayerAndBody
                 episode={episode}
                 accentIsLeft={accentIsLeft}
@@ -330,8 +337,13 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
                       embedded
                       className="mb-0"
                     />
-                    {renderEpisodeTags()}
-                    {renderEpisodeMetadata()}
+                    <EpisodeListenTags tags={episode.tags} stagger={stagger} />
+                    <EpisodeListenMetadata
+                      episode={episode}
+                      locale={locale}
+                      shareLabel={t("shareEpisode")}
+                      shareAria={t("shareEpisodeAria")}
+                    />
                   </div>
                 }
               />

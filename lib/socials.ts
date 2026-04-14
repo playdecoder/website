@@ -1,7 +1,3 @@
-/**
- * Public contact email and social profile URLs (single place to update / audit).
- */
-
 const SITE_ORIGIN = "https://play-decoder.com";
 
 export const SITE_CONTACT_EMAIL = "hello@play-decoder.com";
@@ -11,14 +7,12 @@ export const SITE_CONTACT_MAILTO = `mailto:${SITE_CONTACT_EMAIL}`;
 export const PODCAST_SOCIAL_KEYS = ["socialTwitter", "socialInstagram", "socialLinkedin"] as const;
 export type PodcastSocialKey = (typeof PODCAST_SOCIAL_KEYS)[number];
 
-/** Public profile URLs — update when accounts are published. */
 export const PODCAST_SOCIAL_HREF: Record<PodcastSocialKey, string> = {
   socialTwitter: `${SITE_ORIGIN}/`,
   socialInstagram: `${SITE_ORIGIN}/`,
   socialLinkedin: `${SITE_ORIGIN}/`,
 };
 
-/** Host personal profiles (e.g. X) — keys match `hosts` i18n entries. */
 export const HOST_SOCIAL_X_HREF = {
   jan: "https://x.com/iantomasik",
   martin: "https://x.com/martindeveloper",

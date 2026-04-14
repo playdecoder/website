@@ -55,7 +55,7 @@ export const revalidate = false;
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html
-      lang="en"
+      lang="cs"
       data-scroll-behavior="smooth"
       className={`${syne.variable} ${jetbrainsMono.variable}`}
       suppressHydrationWarning

@@ -26,16 +26,18 @@ export function EpisodeShareButton({
   const [canShare, setCanShare] = useState(false);
 
   useEffect(() => {
-    if (typeof navigator === "undefined" || typeof navigator.share !== "function") {
-      return;
-    }
-    const url = window.location.href;
-    const text = shareText.slice(0, SHARE_TEXT_MAX);
-    const data: ShareData = { title: shareTitle, text, url };
-    if (typeof navigator.canShare === "function" && !navigator.canShare(data)) {
-      return;
-    }
-    setCanShare(true);
+    queueMicrotask(() => {
+      if (typeof navigator === "undefined" || typeof navigator.share !== "function") {
+        return;
+      }
+      const url = window.location.href;
+      const text = shareText.slice(0, SHARE_TEXT_MAX);
+      const data: ShareData = { title: shareTitle, text, url };
+      if (typeof navigator.canShare === "function" && !navigator.canShare(data)) {
+        return;
+      }
+      setCanShare(true);
+    });
   }, [shareTitle, shareText]);
 
   const onShare = useCallback(async () => {

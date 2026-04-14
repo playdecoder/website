@@ -66,7 +66,7 @@ export async function Hero({ locale }: { locale: string }) {
         </h1>
 
         <p
-          className="text-muted mb-12 max-w-md font-mono text-sm leading-relaxed md:text-base"
+          className="text-muted mb-12 max-w-xl font-mono text-sm leading-relaxed text-balance md:text-base"
           style={{ animation: "fadeUp 0.7s ease both 0.2s" }}
         >
           {t("taglineLine1")}

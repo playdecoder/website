@@ -66,7 +66,5 @@ export function writePlayerPreferences(prefs: PlayerPreferences): void {
         playbackRate: prefs.playbackRate,
       } satisfies StoreV1),
     );
-  } catch {
-    /* Quota / private mode */
-  }
+  } catch {}
 }

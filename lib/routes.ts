@@ -1,8 +1,3 @@
-/**
- * Central app paths (locale-relative; use with next-intl Link/redirect or next/link).
- * Folder names under app/[locale]/ should stay aligned with ROUTE_SEGMENTS.
- */
-
 export const ROUTE_SEGMENTS = {
   listen: "listen",
   episodes: "episodes",
@@ -14,7 +9,6 @@ export const ROUTES = {
   rssFeed: "/rss.xml",
 } as const;
 
-/** DOM id= values on the home page — keep in sync with section components. */
 export const PAGE_SECTION_ID = {
   top: "top",
   about: "about",
@@ -33,7 +27,6 @@ export function listenEpisodePath(pathSegment: string): string {
   return `/${ROUTE_SEGMENTS.listen}/${pathSegment}`;
 }
 
-/** Absolute episode page URL for feeds, sharing, etc. */
 export function absoluteListenEpisodeUrl(siteOrigin: string, pathSegment: string): string {
   const base = siteOrigin.replace(/\/$/, "");
   return `${base}${listenEpisodePath(pathSegment)}`;

@@ -16,17 +16,14 @@ export interface EpisodeChapter {
 }
 
 export interface Episode {
-  /** Canonical catalog id: `EP` + two-digit episode number (e.g. `EP05`). Matches listen URL prefix (`ep05-…`). */
   id: string;
   slug: string;
   lang: string;
   title: string;
   date: string;
   duration: number;
-  /** Short blurb. On the site: `**bold**`, `__bold__`, `*italic*`, `_italic_`. Feeds and meta use plain text. */
   description: string;
   tags: string[];
-  /** Episode artwork: absolute URL or site path (leading `/`). Omit or empty = wide logo PNG fallback. */
   coverImage?: string;
   links: EpisodeLinks;
   chapters?: EpisodeChapter[];
@@ -100,7 +97,6 @@ export function formatEpisodeDuration(totalSeconds: number): string {
   return "0m";
 }
 
-/** ISO 8601 duration for structured data (e.g. PT1H14M, PT45S). */
 export function formatEpisodeDurationIso8601(totalSeconds: number): string {
   const s = Math.max(0, Math.floor(totalSeconds));
   if (s === 0) {

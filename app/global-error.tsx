@@ -1,9 +1,5 @@
 "use client";
 
-// global-error.tsx wraps the root layout itself, so no providers, no context,
-// no CSS-in-JS, and no next-intl are available. We detect the locale from the
-// URL on mount and use hardcoded strings to stay self-contained.
-
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -42,7 +38,9 @@ export default function GlobalError({
   const [locale, setLocale] = useState<Locale>("cs");
 
   useEffect(() => {
-    setLocale(detectLocale());
+    queueMicrotask(() => {
+      setLocale(detectLocale());
+    });
     console.error(error);
   }, [error]);
 
@@ -69,7 +67,7 @@ export default function GlobalError({
             right: 0,
             height: 64,
             borderBottom: "1px solid rgba(255,255,255,0.08)",
-            backdropFilter: "blur(12px)",
+            backdropFilter: "blur(9px)",
             display: "flex",
             alignItems: "center",
             padding: "0 20px",

@@ -1,8 +1,3 @@
-/**
- * W3C Media Fragments–style temporal hash for episode pages: `#t=123` (seconds).
- * @see https://www.w3.org/TR/media-frags/#naming-time
- */
-
 export function formatEpisodeTimeHash(seconds: number): string {
   const s = Math.floor(Math.max(0, seconds));
   return `t=${s}`;
@@ -18,7 +13,6 @@ export function clampEpisodeFragmentSeconds(seconds: number, duration: number): 
   return seconds;
 }
 
-/** Parse `#t=…` / `t=…` from `location.hash` (or full hash string). Returns seconds or null. */
 export function parseTimeFragmentFromHash(hash: string): number | null {
   const body = hash.replace(/^#/, "").trim();
   if (!body) {

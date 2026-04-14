@@ -50,12 +50,6 @@ const WAVE_SETTLE_TRANSITION =
   "transform 1.1s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.9s ease 0.06s";
 const WAVE_SETTLE_CLEANUP_MS = 1300;
 
-/**
- * Simulated waveform bars for the in-player visualiser.
- * Heights follow a rough bell-curve envelope so the bars look like a real
- * audio waveform when fully expanded during playback. Each bar has its own
- * animation duration + delay so they move independently (organic feel).
- */
 const WAVEFORM_BARS = [
   { id: "wf-00", h: 22, dur: 0.72, delay: 0.0 },
   { id: "wf-01", h: 40, dur: 0.65, delay: 0.07 },
@@ -111,8 +105,6 @@ function initPlayerState(_episodeId: string): PlayerState {
     duration: 0,
     loadError: false,
     resumeNotice: null,
-    // Must stay false until after mount: localStorage is empty on the server, so reading
-    // progress here would mismatch hydration when the client has saved position.
     hasClearableProgress: false,
   };
 }
@@ -226,11 +218,20 @@ const EpisodeAudioPlayerImpl = forwardRef<EpisodeAudioPlayerHandle, EpisodeAudio
     const settleRafRef = useRef<number | null>(null);
     const settleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const [player, dispatchPlayer] = useReducer(playerReducer, episodeId, initPlayerState);
-    const [volume, setVolume] = useState(1);
-    const [muted, setMuted] = useState(false);
-    const [prefsHydrated, setPrefsHydrated] = useState(false);
+    type AudioUiPrefs = {
+      volume: number;
+      muted: boolean;
+      rateIdx: number;
+      prefsHydrated: boolean;
+    };
+    const [audioUi, setAudioUi] = useState<AudioUiPrefs>({
+      volume: 1,
+      muted: false,
+      rateIdx: 0,
+      prefsHydrated: false,
+    });
+    const { volume, muted, rateIdx, prefsHydrated } = audioUi;
     const scrubbingRef = useRef(false);
-    const [rateIdx, setRateIdx] = useState(0);
     const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "error">("idle");
     const [bufferedPct, setBufferedPct] = useState(0);
     const scrubValueRef = useRef(0);
@@ -248,11 +249,16 @@ const EpisodeAudioPlayerImpl = forwardRef<EpisodeAudioPlayerHandle, EpisodeAudio
     }, [onPlayingChange]);
 
     useEffect(() => {
-      const p = readPlayerPreferences();
-      setVolume(p.volume);
-      setMuted(p.muted);
-      setRateIdx(playbackRateToIndex(p.playbackRate));
-      setPrefsHydrated(true);
+      queueMicrotask(() => {
+        const p = readPlayerPreferences();
+        setAudioUi((prev) => ({
+          ...prev,
+          volume: p.volume,
+          muted: p.muted,
+          rateIdx: playbackRateToIndex(p.playbackRate),
+          prefsHydrated: true,
+        }));
+      });
     }, []);
 
     useEffect(() => {
@@ -321,7 +327,6 @@ const EpisodeAudioPlayerImpl = forwardRef<EpisodeAudioPlayerHandle, EpisodeAudio
       const bars = Array.from(container.querySelectorAll<HTMLElement>(".decoder-waveform-bar"));
       if (bars.length === 0) return;
 
-      // Capture from actively animating state before React removes [data-playing="true"].
       bars.forEach((bar) => {
         const liveTransform = getComputedStyle(bar).transform;
         bar.style.animation = "none";
@@ -513,9 +518,6 @@ const EpisodeAudioPlayerImpl = forwardRef<EpisodeAudioPlayerHandle, EpisodeAudio
       el.addEventListener("progress", readBuffered);
       el.addEventListener("error", onErr);
 
-      // Metadata may already be available when the effect runs (cached audio).
-      // In that case `loadedmetadata` already fired and the listener above won't
-      // be invoked, so we call the handler directly to restore the resume position.
       if (el.readyState >= HTMLMediaElement.HAVE_METADATA) {
         onMeta();
         readBuffered();
@@ -618,15 +620,16 @@ const EpisodeAudioPlayerImpl = forwardRef<EpisodeAudioPlayerHandle, EpisodeAudio
     );
 
     const toggleMute = useCallback(() => {
-      if (muted) {
-        setMuted(false);
-      } else if (volume > 0) {
-        setMuted(true);
-      } else {
-        setVolume(0.85);
-        setMuted(false);
-      }
-    }, [muted, volume]);
+      setAudioUi((prev) => {
+        if (prev.muted) {
+          return { ...prev, muted: false };
+        }
+        if (prev.volume > 0) {
+          return { ...prev, muted: true };
+        }
+        return { ...prev, volume: 0.85, muted: false };
+      });
+    }, []);
 
     useEffect(() => {
       const onKey = (e: KeyboardEvent) => {
@@ -664,8 +667,6 @@ const EpisodeAudioPlayerImpl = forwardRef<EpisodeAudioPlayerHandle, EpisodeAudio
 
     const onProgressCommit = () => {
       const el = audioRef.current;
-      // Clear the ref before setting currentTime so the resulting `seeked` event
-      // is handled normally (syncFromAudio no longer bails, persistNow runs).
       scrubbingRef.current = false;
       if (el && player.duration > 0) {
         const targetTime = (scrubValueRef.current / 100) * player.duration;
@@ -677,7 +678,10 @@ const EpisodeAudioPlayerImpl = forwardRef<EpisodeAudioPlayerHandle, EpisodeAudio
     };
 
     const cycleRate = () => {
-      setRateIdx((i) => (i + 1) % PLAYBACK_RATES.length);
+      setAudioUi((prev) => ({
+        ...prev,
+        rateIdx: (prev.rateIdx + 1) % PLAYBACK_RATES.length,
+      }));
     };
 
     const rateLabel = playbackRate === 1 ? "1×" : `${playbackRate}×`;
@@ -740,7 +744,6 @@ const EpisodeAudioPlayerImpl = forwardRef<EpisodeAudioPlayerHandle, EpisodeAudio
                   role="status"
                   aria-hidden={!player.resumeNotice || undefined}
                 >
-                  {/* Non-breaking space keeps the line height reserved when notice is absent */}
                   {player.resumeNotice ?? "\u00a0"}
                 </p>
               </div>
@@ -812,14 +815,7 @@ const EpisodeAudioPlayerImpl = forwardRef<EpisodeAudioPlayerHandle, EpisodeAudio
               </div>
             ) : null}
 
-            {/*
-              Transport area.
-              Mobile  (default)  : flex-col — scrubber on top, play trio centered below.
-              Desktop (sm:)      : flex-row — play button left, scrubber right.
-              CSS order properties flip the visual order on desktop without moving DOM nodes.
-            */}
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-              {/* DOM-first = visually first on mobile; sm:order-2 pushes it right on desktop */}
               <div className="min-w-0 space-y-2 sm:order-2 sm:flex-1 sm:space-y-2.5">
                 <div className="text-muted flex items-center justify-between gap-3 font-mono text-[11px] tracking-widest tabular-nums sm:text-xs">
                   <span className="text-primary">{formatPlaybackTime(player.position)}</span>
@@ -878,7 +874,6 @@ const EpisodeAudioPlayerImpl = forwardRef<EpisodeAudioPlayerHandle, EpisodeAudio
                 </div>
               </div>
 
-              {/* DOM-second = visually second on mobile (below scrubber); sm:order-1 moves it left on desktop */}
               <div className="shrink-0 sm:order-1">
                 <div className="flex items-center justify-center gap-3 sm:hidden">
                   <button
@@ -976,11 +971,6 @@ const EpisodeAudioPlayerImpl = forwardRef<EpisodeAudioPlayerHandle, EpisodeAudio
               </div>
             </div>
 
-            {/*
-              Controls row.
-              Mobile  : rate + copy-moment only (skip buttons live in the transport trio above).
-              Desktop : skip + rate + copy-moment + volume inline.
-            */}
             <div className="flex items-center gap-2 sm:gap-3">
               <div className="hidden sm:contents">
                 <button
@@ -1009,7 +999,6 @@ const EpisodeAudioPlayerImpl = forwardRef<EpisodeAudioPlayerHandle, EpisodeAudio
                 </button>
               </div>
 
-              {/* Mobile-only: unified pill — rate + moment as two equal halves */}
               <div className="border-edge/60 flex h-11 w-full overflow-hidden rounded-sm border bg-[color-mix(in_srgb,var(--surface-2)_88%,transparent)] sm:hidden">
                 <button
                   type="button"
@@ -1060,7 +1049,6 @@ const EpisodeAudioPlayerImpl = forwardRef<EpisodeAudioPlayerHandle, EpisodeAudio
                 </button>
               </div>
 
-              {/* Desktop-only: individual chips */}
               <button
                 type="button"
                 onClick={cycleRate}
@@ -1135,8 +1123,7 @@ const EpisodeAudioPlayerImpl = forwardRef<EpisodeAudioPlayerHandle, EpisodeAudio
                   disabled={player.loadError}
                   onChange={(e) => {
                     const v = Number(e.target.value);
-                    setVolume(v);
-                    setMuted(v === 0);
+                    setAudioUi((prev) => ({ ...prev, volume: v, muted: v === 0 }));
                   }}
                   className="decoder-audio-volume flex-1 disabled:opacity-35 sm:max-w-[10rem]"
                   style={{ "--decoder-vol": `${(muted ? 0 : volume) * 100}%` } as CSSProperties}
@@ -1164,8 +1151,7 @@ const EpisodeAudioPlayerImpl = forwardRef<EpisodeAudioPlayerHandle, EpisodeAudio
                 disabled={player.loadError}
                 onChange={(e) => {
                   const v = Number(e.target.value);
-                  setVolume(v);
-                  setMuted(v === 0);
+                  setAudioUi((prev) => ({ ...prev, volume: v, muted: v === 0 }));
                 }}
                 className="decoder-audio-volume flex-1 disabled:opacity-35"
                 style={{ "--decoder-vol": `${(muted ? 0 : volume) * 100}%` } as CSSProperties}

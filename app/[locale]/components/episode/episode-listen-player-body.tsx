@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 
 import type { Episode, EpisodeChapter } from "@/lib/episode-catalog";
 import { EpisodeDescriptionRich } from "@/lib/episode-description";
@@ -50,7 +50,6 @@ export function EpisodeListenPlayerAndBody({
   ];
 
   const [activeTab, setActiveTab] = useState<TabId>("about");
-  // Once the transcript tab is activated keep it mounted so load state is preserved
   const [transcriptMounted, setTranscriptMounted] = useState(false);
 
   function handleTabChange(tab: TabId) {
@@ -86,14 +85,11 @@ export function EpisodeListenPlayerAndBody({
       cancelBgSettle();
 
       if (playing) {
-        // Clear only settle-related properties — leave React-managed ones (height, vars) intact
         document
           .querySelectorAll<HTMLElement>(".waveform-bar--listen-bg")
           .forEach(clearBgSettleStyles);
         document.documentElement.dataset.episodePlaying = "true";
       } else {
-        // Capture each bar's live animated height via computed style and freeze it inline.
-        // Use individual properties, not cssText, so React-managed styles are preserved.
         const bars = Array.from(document.querySelectorAll<HTMLElement>(".waveform-bar--listen-bg"));
         bars.forEach((bar) => {
           const liveTransform = getComputedStyle(bar).transform;
@@ -103,11 +99,8 @@ export function EpisodeListenPlayerAndBody({
           bar.style.opacity = "1";
         });
 
-        // Keep explicit "false" state for predictable CSS selectors
         document.documentElement.dataset.episodePlaying = "false";
 
-        // Double-rAF: commit the frozen state in one frame, then in the next set target
-        // values so the CSS transition fires from the frozen position downward.
         settleRafRef.current = requestAnimationFrame(() => {
           settleRafRef.current = requestAnimationFrame(() => {
             settleRafRef.current = null;
@@ -116,7 +109,6 @@ export function EpisodeListenPlayerAndBody({
               bar.style.transform = "scaleY(0.12)";
               bar.style.opacity = "0.32";
             });
-            // After transition completes, clear inline styles so CSS owns the bars again
             settleTimerRef.current = setTimeout(() => {
               bars.forEach(clearBgSettleStyles);
               settleTimerRef.current = null;
@@ -160,6 +152,7 @@ export function EpisodeListenPlayerAndBody({
   return (
     <>
       <EpisodeAudioPlayer
+        key="listen-audio"
         ref={playerRef}
         src={episode.links.mp3}
         episodeId={episode.id}
@@ -169,9 +162,12 @@ export function EpisodeListenPlayerAndBody({
         onPlayingChange={onPlayingChange}
       />
 
-      {afterPlayerSlot}
+      {afterPlayerSlot != null ? (
+        <Fragment key="listen-after-player">{afterPlayerSlot}</Fragment>
+      ) : null}
 
       <div
+        key="listen-tabs"
         className={`border-edge bg-surface/80 dark:bg-surface/50 relative overflow-hidden rounded-sm border backdrop-blur-sm transition-colors duration-300 ${
           accentIsLeft ? "border-l-accent border-l-[3px]" : "border-t-accent border-t-[3px]"
         }`}
@@ -257,6 +253,7 @@ export function EpisodeListenPlayerAndBody({
           >
             {transcriptMounted && (
               <EpisodeTranscriptPanel
+                key={transcriptUrl}
                 transcriptUrl={transcriptUrl}
                 seekToSeconds={(s) => playerRef.current?.seekToSeconds(s)}
               />

@@ -55,9 +55,7 @@ function persist(items: EpisodeProgressEntry[]): void {
   }
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ v: 1, items }));
-  } catch {
-    /* Quota / private mode — ignore failed persist */
-  }
+  } catch {}
 }
 
 export function writeProgressSnapshot(id: string, currentTime: number, duration: number): void {

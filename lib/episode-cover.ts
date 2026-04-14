@@ -2,7 +2,6 @@ import type { Episode } from "@/lib/episode-catalog";
 
 import { absoluteFromPath } from "./site";
 
-/** Raster fallback when `Episode.coverImage` is empty (generated from wide SVG). */
 export const FALLBACK_EPISODE_COVER_PATH = "/logo/wide-fallback-og.png";
 
 function imageMimeFromPathOrUrl(pathOrUrl: string): string {
@@ -22,7 +21,6 @@ function imageMimeFromPathOrUrl(pathOrUrl: string): string {
   return "image/jpeg";
 }
 
-/** Absolute URL for episode art (OG, JSON-LD, RSS). */
 export function resolveEpisodeCoverImageUrl(episode: Episode): string {
   const raw = episode.coverImage?.trim() ?? "";
   if (raw) {
@@ -35,7 +33,6 @@ export function resolveEpisodeCoverImageUrl(episode: Episode): string {
   return absoluteFromPath(FALLBACK_EPISODE_COVER_PATH);
 }
 
-/** Paths for Next `metadata` / `metadataBase` (relative when same-origin). */
 export function resolveEpisodeCoverForMeta(episode: Episode): {
   url: string;
   absolute: string;

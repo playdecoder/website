@@ -9,7 +9,7 @@ import { ROUTES, homeSectionPath, listenEpisodePath } from "@/lib/routes";
 import { LangSwitcher } from "../../lang-switcher";
 import { ThemeToggle } from "../../theme-toggle";
 
-import { MobileNavDrawer } from "./mobile-nav-drawer";
+import { MobileNavTray } from "./mobile-nav-tray";
 
 const NAV_LOGOS = [
   {
@@ -91,7 +91,7 @@ export async function Navbar({ locale = routing.defaultLocale }: { locale?: stri
         </div>
 
         <div className="flex h-10 shrink-0 items-center gap-1.5 sm:gap-2">
-          <MobileNavDrawer
+          <MobileNavTray
             items={[
               { href: ROUTES.home, label: t("home") },
               { href: homeSectionPath("about"), label: t("about") },

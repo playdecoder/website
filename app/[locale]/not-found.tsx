@@ -10,7 +10,6 @@ import { DecoderNotFoundView } from "./components/not-found-view";
 type AppLocale = (typeof routing.locales)[number];
 
 type Props = {
-  /** Omitted during some prerender passes; fall back to default locale. */
   params?: Promise<{ locale: string }>;
 };
 
@@ -22,8 +21,6 @@ async function localeFromContext(params: Props["params"]): Promise<AppLocale> {
   if (params) {
     const { locale: raw } = await params;
     const resolved = resolveLocale(raw);
-    // Only trust params when they look like a real locale, not an artefact of
-    // static generation where Next.js may pass an empty or default value.
     if (resolved !== routing.defaultLocale || raw === routing.defaultLocale) {
       return resolved;
     }

@@ -8,8 +8,6 @@ const intlMiddleware = createMiddleware(routing);
 
 export default function proxy(req: NextRequest) {
   const response = intlMiddleware(req);
-  // Forward the raw pathname so that not-found.tsx (which receives no route
-  // params) can still derive the active locale.
   response.headers.set(INCOMING_PATHNAME_HEADER, req.nextUrl.pathname);
   return response;
 }

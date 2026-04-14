@@ -24,7 +24,6 @@ const linkClass: Record<Variant, string> = {
     "platform-link group/p flex min-h-11 items-center justify-center gap-2 px-4 py-2.5 border border-edge hover:border-primary/30 active:bg-surface-2 text-muted hover:text-primary font-mono text-[10px] md:text-xs tracking-widest uppercase rounded-sm transition-all duration-200 sm:justify-start",
 };
 
-/** De-emphasized chips for secondary placement (e.g. off-site platforms below primary content). */
 const episodeLinkQuiet =
   "platform-link group/p flex min-h-9 items-center justify-center gap-1.5 border border-edge/20 px-3 py-1.5 text-muted/60 hover:border-edge/35 hover:bg-surface/20 hover:text-muted/85 active:bg-surface/30 dark:border-edge/25 dark:text-muted/55 dark:hover:border-edge/40 dark:hover:text-muted/80 font-mono text-[9px] tracking-[0.18em] uppercase rounded-sm transition-colors duration-200 sm:min-h-10 sm:justify-start sm:px-3.5 sm:py-2 sm:text-[10px] sm:tracking-widest md:text-[11px]";
 
@@ -73,7 +72,6 @@ interface EpisodeListenPlatformLinksProps {
   links: EpisodeLinks;
   getLabel: (key: EpisodeListenPlatformKey) => string;
   className?: string;
-  /** Softer visual weight — avoids competing with primary on-page content. */
   tone?: "default" | "quiet";
 }
 

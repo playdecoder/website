@@ -1,5 +1,3 @@
-/** Decoder show hosts — single source for RSS, metadata, JSON-LD, and English taglines. */
-
 export const SHOW_HOST_NAMES = ["Jan Tomášik", "Martin Pernica"] as const;
 
 export function showHostsEnglishAnd(): string {

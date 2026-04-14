@@ -4,8 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
 
-import { usePathname } from "@/i18n/navigation";
-
 export interface MobileNavLink {
   href: string;
   label: string;
@@ -28,15 +26,10 @@ export function MobileNavDrawer({
   openNavigationAria,
   closeNavigationAria,
 }: MobileNavDrawerProps) {
-  const pathname = usePathname();
   const panelId = useId();
   const [open, setOpen] = useState(false);
   const openBtnRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    setOpen(false);
-  }, [pathname]);
 
   useEffect(() => {
     if (!open) {
@@ -63,7 +56,6 @@ export function MobileNavDrawer({
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
 
-  /** Outside tap: header siblings (lang/theme/play) sit above the scrim; capture covers the full viewport. */
   useEffect(() => {
     if (!open) {
       return;
