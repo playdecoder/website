@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 
 import { routing } from "@/i18n/routing";
 
+import { GlobalPlayerProvider } from "./components/player/global-player-provider";
 import { Footer } from "./components/layout/footer";
 import { HtmlLangSync } from "./html-lang-sync";
 
@@ -39,8 +40,10 @@ export default async function LocaleLayout({
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
       <HtmlLangSync />
-      {children}
-      <Footer locale={locale} />
+      <GlobalPlayerProvider>
+        {children}
+        <Footer locale={locale} />
+      </GlobalPlayerProvider>
     </NextIntlClientProvider>
   );
 }

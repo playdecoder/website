@@ -19,13 +19,12 @@ export function EpisodeChapterList({
   onSeek,
 }: EpisodeChapterListProps) {
   const t = useTranslations("listen");
-  const sorted = [...chapters].sort((a, b) => a.t - b.t);
-  const activeIdx = sorted.reduce((acc, ch, i) => (ch.t <= currentTime + 0.25 ? i : acc), -1);
+  const activeIdx = chapters.reduce((acc, ch, i) => (ch.t <= currentTime + 0.25 ? i : acc), -1);
 
   return (
     <div className="space-y-3">
       <ol className="m-0 grid list-none gap-1 p-0 sm:gap-1.5">
-        {sorted.map((ch, i) => {
+        {chapters.map((ch, i) => {
           const isActive = i === activeIdx;
           return (
             <li key={`${ch.t}-${ch.label}`}>

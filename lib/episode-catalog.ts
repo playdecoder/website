@@ -15,6 +15,11 @@ export interface EpisodeChapter {
   label: string;
 }
 
+export interface EpisodeHost {
+  fullName: string;
+  link: string;
+}
+
 export interface Episode {
   id: string;
   slug: string;
@@ -27,6 +32,7 @@ export interface Episode {
   coverImage?: string;
   links: EpisodeLinks;
   chapters?: EpisodeChapter[];
+  hosts?: EpisodeHost[];
 }
 
 export const episodes: Episode[] = episodesJson;

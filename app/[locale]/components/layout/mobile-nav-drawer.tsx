@@ -11,7 +11,6 @@ const PANEL_MS = 420;
 const ITEM_STAGGER_MS = 40;
 const ITEM_BASE_DELAY_MS = 64;
 const ITEM_TRANSITION_MS = 320;
-/** Must cover last stagger + item transition + small buffer */
 const UNMOUNT_AFTER_MS = 480;
 
 export interface MobileNavLink {
@@ -42,22 +41,36 @@ export function MobileNavDrawer({
   const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    let cancelled = false;
     if (open) {
-      setMounted(true);
-      setEntered(false);
+      queueMicrotask(() => {
+        if (cancelled) return;
+        setMounted(true);
+        setEntered(false);
+      });
       let innerRaf = 0;
       const outerRaf = requestAnimationFrame(() => {
-        innerRaf = requestAnimationFrame(() => setEntered(true));
+        innerRaf = requestAnimationFrame(() => {
+          if (!cancelled) setEntered(true);
+        });
       });
       return () => {
+        cancelled = true;
         cancelAnimationFrame(outerRaf);
         cancelAnimationFrame(innerRaf);
       };
     }
 
-    setEntered(false);
-    const t = window.setTimeout(() => setMounted(false), UNMOUNT_AFTER_MS);
-    return () => window.clearTimeout(t);
+    queueMicrotask(() => {
+      if (!cancelled) setEntered(false);
+    });
+    const t = window.setTimeout(() => {
+      if (!cancelled) setMounted(false);
+    }, UNMOUNT_AFTER_MS);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(t);
+    };
   }, [open]);
 
   useEffect(() => {
@@ -152,11 +165,7 @@ export function MobileNavDrawer({
       {mounted && typeof document !== "undefined"
         ? createPortal(
             <>
-              {/*
-                Portaled to body so `fixed` is not trapped by the header’s backdrop-filter
-                stacking context. Scrim starts below the navbar (top-16): bar stays sharp,
-                page content underneath is blurred.
-              */}
+              {/* Portal: header `backdrop-filter` creates a containing block for `fixed` children. */}
               <div
                 className="fixed top-16 right-0 bottom-0 left-0 z-40 bg-[color-mix(in_srgb,var(--bg)_38%,transparent)] backdrop-blur-xl backdrop-saturate-150 transition-opacity duration-[var(--mobile-nav-scrim-ms,340ms)] ease-out motion-reduce:transition-none dark:bg-[color-mix(in_srgb,var(--bg)_52%,transparent)]"
                 style={

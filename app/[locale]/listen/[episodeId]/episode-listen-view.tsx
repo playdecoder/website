@@ -5,6 +5,7 @@ import type React from "react";
 import { getPathname } from "@/i18n/navigation";
 import {
   type Episode,
+  type EpisodeHost,
   barColorCss,
   episodes,
   episodeLayoutSeed,
@@ -14,6 +15,7 @@ import {
   formatEpisodeDurationIso8601,
   getEpisodeNeighbors,
   getLatestEpisode,
+  parseEpisodeIsoDate,
   waveformBarsForEpisode,
 } from "@/lib/episode-catalog";
 import { resolveEpisodeCoverImageUrl } from "@/lib/episode-cover";
@@ -29,11 +31,31 @@ import { EpisodeSpokenLangNote } from "../../components/episode/episode-spoken-l
 import { Navbar } from "../../components/layout/navbar";
 import { DecoderPageFrame } from "../../components/layout/page-frame";
 import { BarMotif } from "../../components/ui/bar-motif";
-import { IconEpisodeAirDate, IconEpisodeDuration, IconLatestDrop } from "../../components/ui/icons";
+import {
+  IconEpisodeAirDate,
+  IconEpisodeDuration,
+  IconExternalLink,
+  IconLatestDrop,
+} from "../../components/ui/icons";
 
 interface EpisodeListenViewProps {
   episode: Episode;
   locale: string;
+}
+
+function episodeAirDateSpine(isoDate: string, locale: string): string {
+  const d = parseEpisodeIsoDate(isoDate);
+  if (!d) {
+    return isoDate.replaceAll("-", "·");
+  }
+  const monthShort = new Intl.DateTimeFormat(locale, { month: "short" })
+    .format(d)
+    .replace(/\./g, "")
+    .trim()
+    .toLocaleUpperCase(locale);
+  const day = String(d.getDate()).padStart(2, "0");
+  const year = d.getFullYear();
+  return `${day}·${monthShort}·${year}`;
 }
 
 function LatestDropBadge({ label, className }: { label: string; className?: string }) {
@@ -47,6 +69,118 @@ function LatestDropBadge({ label, className }: { label: string; className?: stri
       />
       {label}
     </div>
+  );
+}
+
+function hostInitials(fullName: string): string {
+  const parts = fullName.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) {
+    return "?";
+  }
+  if (parts.length === 1) {
+    return parts[0].slice(0, 2).toUpperCase();
+  }
+  return `${parts[0][0] ?? ""}${parts[parts.length - 1]?.[0] ?? ""}`.toUpperCase();
+}
+
+function isHttpUrl(link: string): boolean {
+  try {
+    const u = new URL(link);
+    return u.protocol === "http:" || u.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
+function trimEpisodeHosts(episode: Episode): EpisodeHost[] {
+  if (!episode.hosts?.length) {
+    return [];
+  }
+  return episode.hosts
+    .map((h) => ({
+      fullName: h.fullName?.trim() ?? "",
+      link: h.link?.trim() ?? "",
+    }))
+    .filter((h) => h.fullName && h.link);
+}
+
+function listenWaveDuration(dur: string): string {
+  const n = parseFloat(dur);
+  if (!Number.isFinite(n)) {
+    return "3.8s";
+  }
+  const scaled = n * 2.4;
+  return `${Math.min(5.4, Math.max(2.9, scaled)).toFixed(2)}s`;
+}
+
+function EpisodeListenHosts({
+  hosts,
+  heading,
+  profileAria,
+  stagger,
+}: {
+  hosts: EpisodeHost[];
+  heading: string;
+  profileAria: (name: string) => string;
+  stagger: (i: number) => string;
+}) {
+  if (hosts.length === 0) {
+    return null;
+  }
+
+  return (
+    <section
+      className="border-edge/20 from-surface-2/40 text-primary rounded-sm border bg-gradient-to-br to-transparent px-3 py-2.5 sm:px-3.5 sm:py-3"
+      style={{ animation: "fadeUp 0.62s ease both 0.12s" }}
+      aria-label={heading}
+    >
+      <h2 className="text-muted mb-2 font-mono text-[9px] tracking-[0.22em] uppercase sm:text-[10px] sm:tracking-[0.26em]">
+        {heading}
+      </h2>
+      <ul className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-2.5" role="list">
+        {hosts.map((host, i) => {
+          const hrefOk = isHttpUrl(host.link);
+          const delay = stagger(i + 2);
+          return (
+            <li
+              key={`${host.fullName}-${host.link}`}
+              className="min-w-0 sm:max-w-xs"
+              style={{ animation: `fadeUp 0.55s ease both ${delay}` }}
+            >
+              <div className="border-edge/30 bg-surface/60 hover:border-accent-text/35 group flex min-h-10 items-center gap-2 rounded-sm border px-2 py-1.5 transition-[border-color,background-color] duration-200 sm:min-h-9 sm:py-1.5">
+                <span
+                  className="font-display text-accent-text bg-surface-2/80 border-edge/40 flex h-8 w-8 shrink-0 items-center justify-center rounded-sm border text-[10px] font-bold leading-none tracking-tight"
+                  aria-hidden
+                >
+                  {hostInitials(host.fullName)}
+                </span>
+                <div className="min-w-0 flex-1">
+                  {hrefOk ? (
+                    <a
+                      href={host.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-display text-primary group-hover:text-accent-text inline-flex min-h-10 w-full items-center gap-1 text-sm font-semibold tracking-tight transition-colors sm:min-h-9"
+                      aria-label={profileAria(host.fullName)}
+                    >
+                      <span className="truncate">{host.fullName}</span>
+                      <IconExternalLink
+                        size={12}
+                        className="text-secondary/55 group-hover:text-accent-text shrink-0 transition-colors"
+                      />
+                    </a>
+                  ) : (
+                    <span className="font-display text-primary block truncate text-sm font-semibold tracking-tight">
+                      {host.fullName}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
   );
 }
 
@@ -108,6 +242,14 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
   const episodeCoverUrl = resolveEpisodeCoverImageUrl(episode);
   const seriesCoverUrl = getPodcastCoverAbsoluteUrl();
   const seriesUrl = `${getPublicSiteUrl()}/`;
+  const displayHosts = trimEpisodeHosts(episode);
+  const episodeContributors = displayHosts
+    .filter((h) => isHttpUrl(h.link))
+    .map((h) => ({
+      "@type": "Person" as const,
+      name: h.fullName,
+      url: h.link,
+    }));
   const episodeJsonLd = {
     "@context": "https://schema.org",
     "@type": "PodcastEpisode",
@@ -121,6 +263,7 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
     inLanguage: episode.lang,
     image: episodeCoverUrl,
     author: showHostsSchemaPersons(),
+    ...(episodeContributors.length > 0 ? { contributor: episodeContributors } : {}),
     associatedMedia: {
       "@type": "MediaObject",
       contentUrl: episode.links.mp3,
@@ -143,15 +286,6 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
   const bloom2X = 85 - (seed % 40);
   const bloom2Y = 75 - ((seed >>> 16) % 35);
   const stagger = (i: number) => `${0.04 * i + (seed % 7) * 0.01}s`;
-
-  function listenWaveDuration(dur: string): string {
-    const n = parseFloat(dur);
-    if (!Number.isFinite(n)) {
-      return "3.8s";
-    }
-    const scaled = n * 2.4;
-    return `${Math.min(5.4, Math.max(2.9, scaled)).toFixed(2)}s`;
-  }
 
   return (
     <div className="page-shell">
@@ -201,7 +335,7 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
           aria-hidden
         >
           <span
-            className="font-display text-edge/[0.12] dark:text-edge/[0.18] max-w-[100vw] px-2 leading-none font-extrabold tracking-tighter whitespace-nowrap"
+            className="font-display text-edge/[0.12] dark:text-edge/[0.065] max-w-[100vw] px-2 leading-none font-extrabold tracking-tighter whitespace-nowrap"
             style={{
               fontSize: "clamp(2.75rem, 18vw, 16rem)",
               transform: `translateX(clamp(-4%, ${(seed % 5) - 2}%, 4%)) rotate(${(seed % 3) - 1}deg)`,
@@ -263,7 +397,7 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
               </div>
 
               <div
-                className="text-edge/25 dark:text-edge/35 hidden font-mono leading-[0.85] font-bold tracking-tight select-none lg:flex"
+                className="text-edge/25 dark:text-edge/[0.12] hidden font-mono leading-[0.85] font-bold tracking-tight select-none lg:flex"
                 style={{
                   writingMode: "vertical-rl",
                   transform: "rotate(180deg)",
@@ -272,7 +406,7 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
                 }}
                 aria-hidden
               >
-                {episode.id}
+                {episodeAirDateSpine(episode.date, locale)}
               </div>
             </div>
 
@@ -311,6 +445,15 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
               >
                 {episode.title}
               </h1>
+
+              {displayHosts.length > 0 ? (
+                <EpisodeListenHosts
+                  hosts={displayHosts}
+                  heading={t("episodeHostsHeading")}
+                  profileAria={(name) => t("episodeHostProfileAria", { name })}
+                  stagger={stagger}
+                />
+              ) : null}
 
               <div className="hidden lg:block">
                 <EpisodeListenMetadata

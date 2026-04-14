@@ -143,6 +143,7 @@
     "playerLoadErrorKicker": "Problém se streamem",
     "playerLoadError": "Audio se nepodařilo načíst. Zkuste to za chvíli znovu, nebo použijte některý z odkazů níže.",
     "playerClearProgress": "Smazat pozici",
+    "playerSavedPlace": "Uložená pozice",
     "playerClearProgressAria": "Smazat uloženou pozici přehrávání u této epizody",
     "playerResumingFrom": "Navazujeme od {time}",
     "playerPlaybackRateAria": "Rychlost přehrávání {rate}",
@@ -162,6 +163,8 @@
     "chaptersWaitForLoad": "Nejdřív načtěte audio, pak můžete skákat po kapitolách.",
     "shareEpisode": "Sdílet",
     "shareEpisodeAria": "Sdílet tuto epizodu přes systémové menu",
+    "episodeHostsHeading": "Hosté epizody",
+    "episodeHostProfileAria": "{name} — otevře profil v novém panelu",
     "tabAbout": "O epizodě",
     "tabChapters": "Kapitoly",
     "tabTranscript": "Přepis",
@@ -210,5 +213,17 @@
     "modeDevice": "Zařízení",
     "switcherAria": "Přepínání vzhledu. Aktuálně {mode}. Prochází světlý, tmavý a podle zařízení.",
     "switcherTitle": "Vzhled: {mode}. Kliknutím přepnete dál."
+  },
+  "miniPlayer": {
+    "regionAria": "Mini přehrávač",
+    "play": "Přehrát",
+    "pause": "Pozastavit",
+    "skipBack": "O 15 s zpět",
+    "skipForward": "O 15 s vpřed",
+    "mute": "Ztlumit",
+    "unmute": "Zapnout zvuk",
+    "volume": "Hlasitost",
+    "dismiss": "Zastavit a zavřít přehrávač",
+    "goToEpisodeAria": "Přejít na epizodu {id} — {title}"
   }
 }

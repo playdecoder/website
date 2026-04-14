@@ -11,7 +11,6 @@
 }
 
 :root {
-  /* ── Brand primitives: change ONLY these two lines for a full palette swap ── */
   --brand-primary: #1e3aff;
   --brand-accent: #e6ff00;
 
@@ -22,13 +21,12 @@
   --primary: #0b0f14;
   --secondary: var(--brand-primary);
   --accent: var(--brand-accent);
-  /* Acid yellow is near-white luminance — use dark olive-gold for inline text on light bg */
+  /* Near-white accent: readable text on light bg needs a darker token than --accent */
   --accent-text: #3d4400;
   --muted: rgb(11 15 20 / 0.55);
   --dot-color: rgb(11 15 20 / 0.08);
   --waveform-primary: rgb(11 15 20 / 0.22);
   --waveform-secondary: var(--brand-primary);
-  /* Darkened accent for small waveform bars on light backgrounds */
   --waveform-accent: color-mix(in srgb, var(--brand-accent) 70%, #000000);
   --bar-motif-1: #0b0f14;
   --bar-motif-2: var(--brand-primary);
@@ -240,7 +238,7 @@
   }
 }
 
-/* Nav “listen” CTA: soft accent halo — opacity only (scale inflates scroll overflow / scrollbars) */
+/* Opacity-only pulse: scaling the halo inflates scroll overflow / scrollbars */
 @keyframes nav-cta-glow-pulse {
   0%,
   100% {
@@ -328,7 +326,7 @@ body {
 .nav-cta-glow-wrap::before {
   content: "";
   position: absolute;
-  /* inset: 0 — halo is box-shadow only; negative inset + animated scale caused page scrollbars */
+  /* Box-shadow halo only: negative inset + animated scale caused page scrollbars */
   inset: 0;
   z-index: 0;
   border-radius: inherit;
@@ -342,7 +340,6 @@ body {
   will-change: opacity;
 }
 
-/* Navbar: slightly softer pulse baseline */
 .nav-cta-glow-wrap.nav-cta-glow-wrap--header::before {
   opacity: 0.42;
 }
@@ -379,7 +376,6 @@ body {
   --host-tint-strong: 0%;
   --host-tint-mid: 0%;
   --host-tint-soft: 0%;
-  /* Sharp "glass plate" veils — no backdrop blur, image stays crisp */
   --host-glass-frost-top: rgb(255 255 255 / 0.32);
   --host-glass-frost-mid: rgb(255 255 255 / 0.12);
   --host-glass-frost-bottom: rgb(255 255 255 / 0.05);
@@ -394,7 +390,6 @@ body {
 
 .host-photo-shell--tint-secondary {
   --host-tint: var(--secondary);
-  /* Jan: graphic blue block wash */
   --host-tint-strong: 44%;
   --host-tint-mid: 28%;
   --host-tint-soft: 14%;
@@ -402,7 +397,6 @@ body {
 
 .host-photo-shell--tint-accent {
   --host-tint: var(--accent);
-  /* Martin: graphic lime block wash */
   --host-tint-strong: 38%;
   --host-tint-mid: 24%;
   --host-tint-soft: 11%;
@@ -440,7 +434,6 @@ body {
   z-index: 1;
   pointer-events: none;
   border-radius: inherit;
-  /* Beveled "pane" rim; depth without touching underlying pixels */
   box-shadow:
     inset 0 1px 0 var(--host-glass-edge),
     inset 0 -1px 0 var(--host-glass-rim-low);
@@ -531,14 +524,9 @@ body {
 }
 
 .waveform-bar--listen-bg {
-  /* Override the unconditional animation from .waveform-bar — bg bars only move when playing */
   animation: none;
   filter: saturate(0.85);
-  /*
-    Resting transform matches the wave keyframe 0%/100% floor (scaleY 0.12) so there is
-    no position jump when the animation starts on cold play.
-    Keep a soft idle presence so bars settle instead of vanishing on stop.
-  */
+  /* scaleY matches @keyframes wave endpoints so play doesn't jump from a mismatched idle pose */
   transform: scaleY(0.12);
   opacity: 0.32;
   transition:
@@ -552,7 +540,6 @@ html[data-episode-playing="true"] .waveform-bar--listen-bg {
   opacity: 1;
 }
 
-/* BG waveform: animate only during playback, fade in/out smoothly */
 .listen-page-wave-layer {
   transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -610,18 +597,6 @@ html[data-episode-playing="true"] .waveform-bar--listen-bg {
   }
 }
 
-/* ═══ IN-PLAYER WAVEFORM VISUALISER ════════════════════════════════════════ */
-
-/*
-  Each bar has a fixed height that defines its "amplitude" in the waveform shape.
-  At rest (not playing): all bars are squished to a thin flatline via scaleY(0.1),
-  making the waveform shape invisible. transform-origin: center gives symmetric
-  vertical expansion.
-  On play: the animation expands each bar from scaleY(0.1) to scaleY(1), revealing
-  the waveform shape. Because the keyframe 0%/100% matches the resting scaleY there
-  is no positional jump on cold start.
-*/
-
 @keyframes decoder-wave-pulse {
   0%,
   100% {
@@ -667,7 +642,32 @@ html[data-episode-playing="true"] .waveform-bar--listen-bg {
   }
 }
 
-/* ═══ PLAY BUTTON PULSE RING ════════════════════════════════════════════════ */
+.mini-wf-bar {
+  transform-origin: center;
+  transform: scaleY(0.15);
+  opacity: 0.3;
+  transition:
+    opacity 0.7s ease,
+    transform 0.55s ease;
+}
+
+.mini-player-waveform[data-playing="true"] .mini-wf-bar {
+  animation: decoder-wave-pulse var(--wave-dur, 0.72s) ease-in-out infinite;
+  animation-delay: var(--wave-delay, 0s);
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mini-wf-bar {
+    transition: none;
+  }
+
+  .mini-player-waveform[data-playing="true"] .mini-wf-bar {
+    animation: none;
+    transform: scaleY(0.6);
+    opacity: 0.85;
+  }
+}
 
 @keyframes decoder-play-ring-out {
   0% {
@@ -697,8 +697,6 @@ html[data-episode-playing="true"] .waveform-bar--listen-bg {
 .decoder-audio-player[data-playing="true"] .decoder-play-ring {
   animation: decoder-play-ring-out 2.4s cubic-bezier(0.35, 0, 0.5, 1) infinite;
 }
-
-/* ═══════════════════════════════════════════════════════════════════════════ */
 
 .decoder-audio-chip {
   align-items: center;
@@ -741,7 +739,6 @@ html[data-episode-playing="true"] .waveform-bar--listen-bg {
 }
 
 .decoder-audio-progress {
-  /* Mobile-first: larger touch target */
   --decoder-track-h: 5px;
   --decoder-thumb: 22px;
   -webkit-appearance: none;
@@ -750,11 +747,9 @@ html[data-episode-playing="true"] .waveform-bar--listen-bg {
   height: var(--decoder-thumb);
   background: transparent;
   cursor: pointer;
-  /* Prevent the browser from treating horizontal drag as a page-scroll gesture */
   touch-action: none;
 }
 
-/* Desktop: more refined proportions */
 @media (min-width: 640px) {
   .decoder-audio-progress {
     --decoder-thumb: 16px;
@@ -767,27 +762,24 @@ html[data-episode-playing="true"] .waveform-bar--listen-bg {
   outline-offset: 3px;
 }
 
-/* Gradient fill: secondary (blue) → accent (lime); buffered zone between fill and empty */
 .decoder-audio-progress::-webkit-slider-runnable-track {
   height: var(--decoder-track-h);
   border-radius: 999px;
   background: linear-gradient(
     to right,
-    /* played: blue → lime */ var(--secondary) 0%,
+    var(--secondary) 0%,
     color-mix(in srgb, var(--accent) 80%, var(--secondary)) var(--decoder-progress, 0%),
-    /* buffered (ahead of playhead): very subtle highlight */
     color-mix(in srgb, var(--primary) 10%, color-mix(in srgb, var(--surface-2) 75%, var(--edge)))
       var(--decoder-progress, 0%),
     color-mix(in srgb, var(--primary) 10%, color-mix(in srgb, var(--surface-2) 75%, var(--edge)))
       var(--decoder-buffered, var(--decoder-progress, 0%)),
-    /* unbuffered */ color-mix(in srgb, var(--surface-2) 75%, var(--edge))
+    color-mix(in srgb, var(--surface-2) 75%, var(--edge))
       var(--decoder-buffered, var(--decoder-progress, 0%)),
     color-mix(in srgb, var(--surface-2) 75%, var(--edge)) 100%
   );
   transition: box-shadow 0.3s ease;
 }
 
-/* Round pill thumb with double-ring glow */
 .decoder-audio-progress::-webkit-slider-thumb {
   -webkit-appearance: none;
   box-sizing: border-box;
@@ -818,7 +810,6 @@ html[data-episode-playing="true"] .waveform-bar--listen-bg {
   transform: scale(1.05);
 }
 
-/* Subtle glow on the filled track when playing */
 .decoder-audio-player[data-playing="true"] .decoder-audio-progress:not(:disabled) {
   filter: drop-shadow(0 0 4px color-mix(in srgb, var(--accent) 36%, transparent));
 }
@@ -826,7 +817,7 @@ html[data-episode-playing="true"] .waveform-bar--listen-bg {
 .decoder-audio-progress::-moz-range-track {
   height: var(--decoder-track-h);
   border-radius: 999px;
-  /* buffered zone drawn on the track; moz-range-progress overlays the played portion on top */
+  /* Track = buffered; ::-moz-range-progress draws played segment on top */
   background: linear-gradient(
     to right,
     color-mix(in srgb, var(--primary) 10%, color-mix(in srgb, var(--surface-2) 75%, var(--edge))) 0%,

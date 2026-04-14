@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 
 type ThemePreference = "light" | "dark" | "system";
 
@@ -70,14 +70,14 @@ function IconDevice({ className }: { className?: string }) {
   );
 }
 
+function subscribeToNothing() {
+  return () => {};
+}
+
 export function ThemeToggle() {
   const t = useTranslations("theme");
   const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useSyncExternalStore(subscribeToNothing, () => true, () => false);
 
   const preference: ThemePreference =
     theme === "light" || theme === "dark" || theme === "system" ? theme : "system";

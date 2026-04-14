@@ -69,6 +69,24 @@ export function IconEpisodeDuration({ size = 14, className, ...props }: IconProp
   );
 }
 
+export function IconExternalLink({ size = 14, className, ...props }: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      className={cn("shrink-0", className)}
+      aria-hidden
+      {...strokeProps}
+      {...props}
+    >
+      <path d="M14.25 4.75H19.25V9.75" />
+      <path d="M10.5 13.5 19.2 4.8" />
+      <path d="M18.25 12.75v5.5a2 2 0 0 1-2 2h-10.5a2 2 0 0 1-2-2v-10.5a2 2 0 0 1 2-2h5.5" />
+    </svg>
+  );
+}
+
 export function IconShare({ size = 14, className, ...props }: IconProps) {
   return (
     <svg
@@ -92,6 +110,7 @@ export const icons = {
   episodeAirDate: IconEpisodeAirDate,
   episodeDuration: IconEpisodeDuration,
   latestDrop: IconLatestDrop,
+  externalLink: IconExternalLink,
   share: IconShare,
 } as const;
 

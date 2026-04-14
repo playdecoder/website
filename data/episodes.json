@@ -9,6 +9,16 @@
     "description": "Jan breaks down why procedural generation fails more often than it succeeds — and Martin argues the tech is way ahead of the *design thinking*. A **heated** one.",
     "tags": ["Game Design", "Algorithms"],
     "coverImage": "",
+    "hosts": [
+      {
+        "fullName": "Tim Cain",
+        "link": "https://en.wikipedia.org/wiki/Tim_Cain"
+      },
+      {
+        "fullName": "Kate Edwards",
+        "link": "https://en.wikipedia.org/wiki/Kate_Edwards"
+      }
+    ],
     "chapters": [
       { "t": 0, "label": "Cold open — why this episode got heated" },
       { "t": 47, "label": "When procedural worlds still feel hollow" },

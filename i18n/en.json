@@ -142,6 +142,7 @@
     "playerLoadErrorKicker": "Stream fault",
     "playerLoadError": "Could not load this audio file. Try again later or use another link below.",
     "playerClearProgress": "Clear progress",
+    "playerSavedPlace": "Saved position",
     "playerClearProgressAria": "Clear saved playback position for this episode",
     "playerResumingFrom": "Resuming from {time}",
     "playerPlaybackRateAria": "Playback speed {rate}",
@@ -161,6 +162,8 @@
     "chaptersWaitForLoad": "Load the audio to jump to chapters.",
     "shareEpisode": "Share",
     "shareEpisodeAria": "Share this episode using your device",
+    "episodeHostsHeading": "Featuring",
+    "episodeHostProfileAria": "{name} — opens profile in a new tab",
     "tabAbout": "About",
     "tabChapters": "Chapters",
     "tabTranscript": "Transcript",
@@ -209,5 +212,17 @@
     "modeDevice": "Device",
     "switcherAria": "Switch theme. Currently {mode}. Cycles through light, dark, and device.",
     "switcherTitle": "Theme: {mode}. Click to cycle."
+  },
+  "miniPlayer": {
+    "regionAria": "Mini audio player",
+    "play": "Play",
+    "pause": "Pause",
+    "skipBack": "Back 15 seconds",
+    "skipForward": "Forward 15 seconds",
+    "mute": "Mute",
+    "unmute": "Unmute",
+    "volume": "Volume",
+    "dismiss": "Stop and dismiss player",
+    "goToEpisodeAria": "Go to episode {id} — {title}"
   }
 }

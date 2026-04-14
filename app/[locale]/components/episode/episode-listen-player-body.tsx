@@ -1,21 +1,21 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Fragment, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 
 import type { Episode, EpisodeChapter } from "@/lib/episode-catalog";
 import { EpisodeDescriptionRich } from "@/lib/episode-description";
 import { formatChapterHash, getChapterFragmentKey } from "@/lib/episode-hash";
 
+import { usePlayerContext } from "../player/player-context";
+import { useWaveformSettle } from "../player/use-waveform-settle";
 import { EpisodeListenPlatformLinks } from "../sections/podcast-platform-links";
 
-import { EpisodeAudioPlayer, type EpisodeAudioPlayerHandle } from "./episode-audio-player";
+import { EpisodeAudioPlayer } from "./episode-audio-player";
 import { EpisodeChapterList } from "./episode-chapter-list";
 import { EpisodeTranscriptPanel } from "./episode-transcript-panel";
 
 type TabId = "about" | "chapters" | "transcript";
-const BG_SETTLE_TRANSITION = "transform 1.3s cubic-bezier(0.22, 1, 0.36, 1), opacity 1s ease 0.08s";
-const BG_SETTLE_CLEANUP_MS = 1500;
 
 interface EpisodeListenPlayerAndBodyProps {
   episode: Episode;
@@ -32,14 +32,12 @@ export function EpisodeListenPlayerAndBody({
 }: EpisodeListenPlayerAndBodyProps) {
   const t = useTranslations("listen");
   const tContact = useTranslations("contact");
+  const { loadEpisode, seek, isPlaying, currentTime, duration } = usePlayerContext();
 
-  const playerRef = useRef<EpisodeAudioPlayerHandle>(null);
-  const [playbackCurrent, setPlaybackCurrent] = useState(0);
-  const [playbackDuration, setPlaybackDuration] = useState(0);
-  const settleRafRef = useRef<number | null>(null);
-  const settleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const chapters = episode.chapters ?? [];
+  const chapters = useMemo(
+    () => [...(episode.chapters ?? [])].sort((a, b) => a.t - b.t),
+    [episode.chapters],
+  );
   const hasChapters = chapters.length > 0;
   const hasTranscript = Boolean(transcriptUrl);
 
@@ -57,109 +55,51 @@ export function EpisodeListenPlayerAndBody({
     if (tab === "transcript") setTranscriptMounted(true);
   }
 
-  const onTick = useCallback((currentTime: number, dur: number) => {
-    setPlaybackCurrent(currentTime);
-    setPlaybackDuration(dur);
-  }, []);
+  useEffect(() => {
+    loadEpisode(episode);
+  }, [episode, loadEpisode]);
 
-  const clearBgSettleStyles = useCallback((bar: HTMLElement) => {
-    bar.style.animation = "";
-    bar.style.transform = "";
-    bar.style.transition = "";
-    bar.style.opacity = "";
-  }, []);
-
-  const cancelBgSettle = useCallback(() => {
-    if (settleRafRef.current !== null) {
-      cancelAnimationFrame(settleRafRef.current);
-      settleRafRef.current = null;
-    }
-    if (settleTimerRef.current !== null) {
-      clearTimeout(settleTimerRef.current);
-      settleTimerRef.current = null;
-    }
-  }, []);
-
-  const onPlayingChange = useCallback(
-    (playing: boolean) => {
-      cancelBgSettle();
-
-      if (playing) {
-        document
-          .querySelectorAll<HTMLElement>(".waveform-bar--listen-bg")
-          .forEach(clearBgSettleStyles);
-        document.documentElement.dataset.episodePlaying = "true";
-      } else {
-        const bars = Array.from(document.querySelectorAll<HTMLElement>(".waveform-bar--listen-bg"));
-        bars.forEach((bar) => {
-          const liveTransform = getComputedStyle(bar).transform;
-          bar.style.animation = "none";
-          bar.style.transform = liveTransform;
-          bar.style.transition = "none";
-          bar.style.opacity = "1";
-        });
-
-        document.documentElement.dataset.episodePlaying = "false";
-
-        settleRafRef.current = requestAnimationFrame(() => {
-          settleRafRef.current = requestAnimationFrame(() => {
-            settleRafRef.current = null;
-            bars.forEach((bar) => {
-              bar.style.transition = BG_SETTLE_TRANSITION;
-              bar.style.transform = "scaleY(0.12)";
-              bar.style.opacity = "0.32";
-            });
-            settleTimerRef.current = setTimeout(() => {
-              bars.forEach(clearBgSettleStyles);
-              settleTimerRef.current = null;
-            }, BG_SETTLE_CLEANUP_MS);
-          });
-        });
-      }
+  useWaveformSettle(
+    isPlaying,
+    () => Array.from(document.querySelectorAll<HTMLElement>(".waveform-bar--listen-bg")),
+    {
+      frozenOpacity: 1,
+      settleScale: "scaleY(0.12)",
+      settleTransition: "transform 1.3s cubic-bezier(0.22, 1, 0.36, 1), opacity 1s ease 0.08s",
+      cleanupMs: 1500,
     },
-    [cancelBgSettle, clearBgSettleStyles],
   );
 
   useEffect(() => {
+    document.documentElement.dataset.episodePlaying = isPlaying ? "true" : "false";
     return () => {
-      cancelBgSettle();
-      document
-        .querySelectorAll<HTMLElement>(".waveform-bar--listen-bg")
-        .forEach(clearBgSettleStyles);
       document.documentElement.dataset.episodePlaying = "false";
+      for (const bar of document.querySelectorAll<HTMLElement>(".waveform-bar--listen-bg")) {
+        bar.style.cssText = "";
+      }
     };
-  }, [cancelBgSettle, clearBgSettleStyles]);
-
-  const audioReady = playbackDuration > 0;
-  const sortedChapters = useMemo(
-    () => [...(episode.chapters ?? [])].sort((a, b) => a.t - b.t),
-    [episode.chapters],
-  );
+  }, [isPlaying]);
 
   const onChapterSeek = useCallback(
     (seconds: number, chapter: EpisodeChapter) => {
-      playerRef.current?.seekToSeconds(seconds);
-      if (sortedChapters.length > 0) {
-        const key = getChapterFragmentKey(chapter, sortedChapters);
+      seek(seconds);
+      if (chapters.length > 0) {
+        const key = getChapterFragmentKey(chapter, chapters);
         const url = new URL(window.location.href);
         url.hash = formatChapterHash(key);
         window.history.replaceState(null, "", url.toString());
       }
     },
-    [sortedChapters],
+    [chapters, seek],
   );
 
   return (
     <>
       <EpisodeAudioPlayer
-        key="listen-audio"
-        ref={playerRef}
-        src={episode.links.mp3}
+        key={`listen-audio-${episode.id}`}
         episodeId={episode.id}
         title={episode.title}
-        chapters={chapters.length > 0 ? chapters : undefined}
-        onPlaybackTick={onTick}
-        onPlayingChange={onPlayingChange}
+        chapters={hasChapters ? chapters : undefined}
       />
 
       {afterPlayerSlot != null ? (
@@ -237,8 +177,8 @@ export function EpisodeListenPlayerAndBody({
             <div className="p-5 sm:p-6 md:p-8">
               <EpisodeChapterList
                 chapters={chapters}
-                currentTime={playbackCurrent}
-                audioReady={audioReady}
+                currentTime={currentTime}
+                audioReady={duration > 0}
                 onSeek={onChapterSeek}
               />
             </div>
@@ -255,7 +195,7 @@ export function EpisodeListenPlayerAndBody({
               <EpisodeTranscriptPanel
                 key={transcriptUrl}
                 transcriptUrl={transcriptUrl}
-                seekToSeconds={(s) => playerRef.current?.seekToSeconds(s)}
+                seekToSeconds={seek}
               />
             )}
           </div>
