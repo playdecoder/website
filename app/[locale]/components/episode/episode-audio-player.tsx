@@ -185,6 +185,17 @@ function shortcutConsumingTarget(el: EventTarget | null): boolean {
   );
 }
 
+function isIosLikeWebKitNoProgrammaticVolume(): boolean {
+  if (typeof navigator === "undefined") {
+    return false;
+  }
+  const ua = navigator.userAgent || "";
+  if (/iP(ad|hone|od)/i.test(ua)) {
+    return true;
+  }
+  return navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1;
+}
+
 function VolumeIcon({ muted, volume }: { muted: boolean; volume: number }) {
   if (muted || volume === 0) {
     return (
@@ -231,6 +242,7 @@ const EpisodeAudioPlayerImpl = forwardRef<EpisodeAudioPlayerHandle, EpisodeAudio
       prefsHydrated: false,
     });
     const { volume, muted, rateIdx, prefsHydrated } = audioUi;
+    const [programmaticVolume, setProgrammaticVolume] = useState(true);
     const scrubbingRef = useRef(false);
     const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "error">("idle");
     const [bufferedPct, setBufferedPct] = useState(0);
@@ -259,6 +271,12 @@ const EpisodeAudioPlayerImpl = forwardRef<EpisodeAudioPlayerHandle, EpisodeAudio
           prefsHydrated: true,
         }));
       });
+    }, []);
+
+    useEffect(() => {
+      if (isIosLikeWebKitNoProgrammaticVolume()) {
+        setProgrammaticVolume(false);
+      }
     }, []);
 
     useEffect(() => {
@@ -596,9 +614,15 @@ const EpisodeAudioPlayerImpl = forwardRef<EpisodeAudioPlayerHandle, EpisodeAudio
       if (!el) {
         return;
       }
-      el.volume = volume;
+      if (programmaticVolume) {
+        el.volume = volume;
+      } else {
+        el.volume = 1;
+      }
       el.muted = muted;
-    }, [volume, muted]);
+    }, [volume, muted, programmaticVolume]);
+
+    const volumeIconLevel = programmaticVolume ? volume : muted ? 0 : 1;
 
     const togglePlay = useCallback(() => {
       const el = audioRef.current;
@@ -1012,6 +1036,20 @@ const EpisodeAudioPlayerImpl = forwardRef<EpisodeAudioPlayerHandle, EpisodeAudio
                   </span>
                 </button>
                 <span className="bg-edge/50 w-px self-stretch" aria-hidden />
+                {!programmaticVolume ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={toggleMute}
+                      disabled={player.loadError}
+                      className="text-muted hover:bg-surface-2/60 active:bg-surface-2 flex w-[2.75rem] shrink-0 items-center justify-center transition-colors disabled:opacity-35"
+                      aria-label={muted || volume === 0 ? t("playerUnmute") : t("playerMute")}
+                    >
+                      <VolumeIcon muted={muted} volume={volumeIconLevel} />
+                    </button>
+                    <span className="bg-edge/50 w-px self-stretch" aria-hidden />
+                  </>
+                ) : null}
                 <button
                   type="button"
                   onClick={copyEpisodeLink}
@@ -1061,6 +1099,18 @@ const EpisodeAudioPlayerImpl = forwardRef<EpisodeAudioPlayerHandle, EpisodeAudio
                 </span>
               </button>
 
+              {!programmaticVolume ? (
+                <button
+                  type="button"
+                  onClick={toggleMute}
+                  disabled={player.loadError}
+                  className="decoder-audio-chip hidden w-[2.75rem] shrink-0 justify-center sm:inline-flex"
+                  aria-label={muted || volume === 0 ? t("playerUnmute") : t("playerMute")}
+                >
+                  <VolumeIcon muted={muted} volume={volumeIconLevel} />
+                </button>
+              ) : null}
+
               <button
                 type="button"
                 onClick={copyEpisodeLink}
@@ -1104,7 +1154,38 @@ const EpisodeAudioPlayerImpl = forwardRef<EpisodeAudioPlayerHandle, EpisodeAudio
                 </span>
               </button>
 
-              <div className="hidden sm:ml-auto sm:flex sm:min-w-[min(100%,12rem)] sm:flex-1 sm:items-center sm:justify-end sm:gap-2">
+              {programmaticVolume ? (
+                <div className="hidden sm:ml-auto sm:flex sm:min-w-[min(100%,12rem)] sm:flex-1 sm:items-center sm:justify-end sm:gap-2">
+                  <button
+                    type="button"
+                    onClick={toggleMute}
+                    disabled={player.loadError}
+                    className="border-edge text-muted hover:border-secondary/40 hover:text-primary active:bg-surface-2 flex size-11 shrink-0 items-center justify-center rounded-sm border transition-colors disabled:opacity-35"
+                    aria-label={muted || volume === 0 ? t("playerUnmute") : t("playerMute")}
+                  >
+                    <VolumeIcon muted={muted} volume={volumeIconLevel} />
+                  </button>
+                  <input
+                    type="range"
+                    min={0}
+                    max={1}
+                    step={0.02}
+                    value={muted ? 0 : volume}
+                    disabled={player.loadError}
+                    onChange={(e) => {
+                      const v = Number(e.target.value);
+                      setAudioUi((prev) => ({ ...prev, volume: v, muted: v === 0 }));
+                    }}
+                    className="decoder-audio-volume flex-1 disabled:opacity-35 sm:max-w-[10rem]"
+                    style={{ "--decoder-vol": `${(muted ? 0 : volume) * 100}%` } as CSSProperties}
+                    aria-label={t("playerVolume")}
+                  />
+                </div>
+              ) : null}
+            </div>
+
+            {programmaticVolume ? (
+              <div className="flex items-center gap-2 sm:hidden">
                 <button
                   type="button"
                   onClick={toggleMute}
@@ -1112,7 +1193,7 @@ const EpisodeAudioPlayerImpl = forwardRef<EpisodeAudioPlayerHandle, EpisodeAudio
                   className="border-edge text-muted hover:border-secondary/40 hover:text-primary active:bg-surface-2 flex size-11 shrink-0 items-center justify-center rounded-sm border transition-colors disabled:opacity-35"
                   aria-label={muted || volume === 0 ? t("playerUnmute") : t("playerMute")}
                 >
-                  <VolumeIcon muted={muted} volume={volume} />
+                  <VolumeIcon muted={muted} volume={volumeIconLevel} />
                 </button>
                 <input
                   type="range"
@@ -1125,39 +1206,12 @@ const EpisodeAudioPlayerImpl = forwardRef<EpisodeAudioPlayerHandle, EpisodeAudio
                     const v = Number(e.target.value);
                     setAudioUi((prev) => ({ ...prev, volume: v, muted: v === 0 }));
                   }}
-                  className="decoder-audio-volume flex-1 disabled:opacity-35 sm:max-w-[10rem]"
+                  className="decoder-audio-volume flex-1 disabled:opacity-35"
                   style={{ "--decoder-vol": `${(muted ? 0 : volume) * 100}%` } as CSSProperties}
                   aria-label={t("playerVolume")}
                 />
               </div>
-            </div>
-
-            <div className="flex items-center gap-2 sm:hidden">
-              <button
-                type="button"
-                onClick={toggleMute}
-                disabled={player.loadError}
-                className="border-edge text-muted hover:border-secondary/40 hover:text-primary active:bg-surface-2 flex size-11 shrink-0 items-center justify-center rounded-sm border transition-colors disabled:opacity-35"
-                aria-label={muted || volume === 0 ? t("playerUnmute") : t("playerMute")}
-              >
-                <VolumeIcon muted={muted} volume={volume} />
-              </button>
-              <input
-                type="range"
-                min={0}
-                max={1}
-                step={0.02}
-                value={muted ? 0 : volume}
-                disabled={player.loadError}
-                onChange={(e) => {
-                  const v = Number(e.target.value);
-                  setAudioUi((prev) => ({ ...prev, volume: v, muted: v === 0 }));
-                }}
-                className="decoder-audio-volume flex-1 disabled:opacity-35"
-                style={{ "--decoder-vol": `${(muted ? 0 : volume) * 100}%` } as CSSProperties}
-                aria-label={t("playerVolume")}
-              />
-            </div>
+            ) : null}
 
             <details className="group border-edge/50 mt-0.5 hidden border-t pt-3 sm:block">
               <summary className="text-muted/55 hover:text-muted flex cursor-pointer list-none items-center gap-2 font-mono text-[10px] tracking-[0.18em] uppercase transition-colors select-none [&::-webkit-details-marker]:hidden">
