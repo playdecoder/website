@@ -1,0 +1,45 @@
+import type { Metadata } from "next";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+
+import { showTaglineEn } from "@/lib/show";
+
+import { Episodes } from "./components/episode/episodes";
+import { Navbar } from "./components/layout/navbar";
+import { About } from "./components/sections/about";
+import { Contact } from "./components/sections/contact";
+import { Hero } from "./components/sections/hero";
+import { Hosts } from "./components/sections/hosts";
+
+export const dynamic = "force-static";
+export const revalidate = false;
+
+interface PageProps {
+  params: Promise<{ locale: string }>;
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "metadata" });
+  return {
+    title: t("homeTitle"),
+    description: locale === "en" ? showTaglineEn() : t("siteDescription"),
+  };
+}
+
+export default async function HomePage({ params }: PageProps) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
+  return (
+    <div className="page-shell">
+      <Navbar locale={locale} />
+      <main>
+        <Hero locale={locale} />
+        <About locale={locale} />
+        <Hosts locale={locale} />
+        <Episodes locale={locale} />
+        <Contact locale={locale} />
+      </main>
+    </div>
+  );
+}

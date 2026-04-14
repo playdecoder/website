@@ -1,0 +1,36 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": [
+    "typescript",
+    "unicorn",
+    "oxc",
+    "react",
+    "import",
+    "nextjs",
+    "jsx-a11y",
+    "promise",
+    "react-perf",
+    "jsdoc"
+  ],
+  "categories": {
+    "correctness": "error"
+  },
+  "env": {
+    "builtin": true,
+    "browser": true
+  },
+  "overrides": [
+    {
+      "files": ["app/**/episode-listen-view.tsx"],
+      "rules": {
+        "react/no-danger": "off"
+      }
+    },
+    {
+      "files": ["**/episode-audio-player.tsx"],
+      "rules": {
+        "jsx-a11y/media-has-caption": "off"
+      }
+    }
+  ]
+}

@@ -1,0 +1,123 @@
+[
+  {
+    "id": "EP05",
+    "slug": "the-procedural-generation-problem",
+    "lang": "cs",
+    "title": "The Procedural Generation Problem",
+    "date": "2026-04-07",
+    "duration": 828,
+    "description": "Jan breaks down why procedural generation fails more often than it succeeds — and Martin argues the tech is way ahead of the *design thinking*. A **heated** one.",
+    "tags": ["Game Design", "Algorithms"],
+    "coverImage": "",
+    "chapters": [
+      { "t": 0, "label": "Cold open — why this episode got heated" },
+      { "t": 47, "label": "When procedural worlds still feel hollow" },
+      { "t": 183, "label": "The failure modes nobody budgets for" },
+      { "t": 401, "label": "The tooling is fine — the design brief isn't" },
+      { "t": 612, "label": "What we'd ship differently next time" }
+    ],
+    "links": {
+      "spotify": "https://open.spotify.com/episode/7Gk8WxDecoderE005XX",
+      "applePodcasts": "https://podcasts.apple.com/podcast/decoder/id0000000000?i=1000050000005",
+      "youtube": "https://www.youtube.com/watch?v=Dec0d3rE005",
+      "mp3": "http://cdn.play-decoder.com/podcast/episodes/ep00-test-dev.mp3",
+      "transcript": "https://cdn.play-decoder.com/podcast/transcripts/ep00-test-dev.transcript.json"
+    }
+  },
+  {
+    "id": "EP04",
+    "slug": "funding-indie-games-in-2026",
+    "lang": "cs",
+    "title": "Funding Indie Games in 2026",
+    "date": "2026-03-24",
+    "duration": 3480,
+    "description": "The funding landscape has shifted. Who's still __investing__, who vanished, and what it means for studios trying to build something _real_.",
+    "tags": ["Business", "Indie"],
+    "coverImage": "",
+    "chapters": [
+      { "t": 0, "label": "The new normal" },
+      { "t": 480, "label": "Who is still writing checks" },
+      { "t": 1180, "label": "What investors actually want now" },
+      { "t": 2080, "label": "Survival strategies for small teams" },
+      { "t": 2880, "label": "Predictions and parting shots" }
+    ],
+    "links": {
+      "spotify": "https://open.spotify.com/episode/8Hl9YzDecoderE004XX",
+      "applePodcasts": "https://podcasts.apple.com/podcast/decoder/id0000000000?i=1000050000004",
+      "youtube": "https://www.youtube.com/watch?v=Dec0d3rE004",
+      "mp3": "https://media.play-decoder.com/episodes/E004.mp3"
+    }
+  },
+  {
+    "id": "EP03",
+    "slug": "ai-as-a-co-designer",
+    "lang": "cs",
+    "title": "AI as a Co-Designer",
+    "date": "2026-03-10",
+    "duration": 3720,
+    "description": "Not a threat, not a savior. AI as a design partner — *practical* applications, weird experiments, and where the **ethical edges** are.",
+    "tags": ["AI", "Design"],
+    "coverImage": "",
+    "chapters": [
+      { "t": 0, "label": "Framing the co-designer idea" },
+      { "t": 540, "label": "What actually works in production" },
+      { "t": 1420, "label": "Experiments that surprised us" },
+      { "t": 2320, "label": "Ethics without the theatre" },
+      { "t": 3180, "label": "Where this is heading" }
+    ],
+    "links": {
+      "spotify": "https://open.spotify.com/episode/9Im0ZaDecoderE003XX",
+      "applePodcasts": "https://podcasts.apple.com/podcast/decoder/id0000000000?i=1000050000003",
+      "youtube": "https://www.youtube.com/watch?v=Dec0d3rE003",
+      "mp3": "https://media.play-decoder.com/episodes/E003.mp3"
+    }
+  },
+  {
+    "id": "EP02",
+    "slug": "building-a-game-studio-from-zero",
+    "lang": "cs",
+    "title": "Building a Game Studio from Zero",
+    "date": "2026-02-24",
+    "duration": 2820,
+    "description": "Martin shares the founder's journey — the decisions that nearly **killed** the studio and the ones that _saved_ it.",
+    "tags": ["Startup", "Founder"],
+    "coverImage": "",
+    "chapters": [
+      { "t": 0, "label": "Why start at all" },
+      { "t": 420, "label": "First bets and first scars" },
+      { "t": 1120, "label": "The decisions that hurt" },
+      { "t": 1880, "label": "What turned it around" },
+      { "t": 2480, "label": "Advice in hindsight" }
+    ],
+    "links": {
+      "spotify": "https://open.spotify.com/episode/0Jn1AbDecoderE002XX",
+      "applePodcasts": "https://podcasts.apple.com/podcast/decoder/id0000000000?i=1000050000002",
+      "youtube": "https://www.youtube.com/watch?v=Dec0d3rE002",
+      "mp3": "https://media.play-decoder.com/episodes/E002.mp3"
+    }
+  },
+  {
+    "id": "EP01",
+    "slug": "why-games-matter-more-than-ever",
+    "lang": "cs",
+    "title": "Why Games Matter More Than Ever",
+    "date": "2026-02-10",
+    "duration": 3120,
+    "description": "The debut episode. Jan and Martin set the stage — what **Decoder** is, why they're making it, and what games tell us about _everything else_.",
+    "tags": ["Intro", "Culture"],
+    "coverImage": "",
+    "chapters": [
+      { "t": 0, "label": "What Decoder is" },
+      { "t": 520, "label": "Why games, why now" },
+      { "t": 1320, "label": "How we work together" },
+      { "t": 2220, "label": "What to expect from the feed" },
+      { "t": 2780, "label": "Sign-off" }
+    ],
+    "links": {
+      "spotify": "https://open.spotify.com/episode/1Ko2BcDecoderE001XX",
+      "applePodcasts": "https://podcasts.apple.com/podcast/decoder/id0000000000?i=1000050000001",
+      "youtube": "https://www.youtube.com/watch?v=Dec0d3rE001",
+      "mp3": "https://media.play-decoder.com/episodes/E001.mp3"
+    }
+  }
+]

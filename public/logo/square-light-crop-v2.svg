@@ -1,0 +1,27 @@
+<svg width="228" height="236" viewBox="56 44 228 236" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="256" cy="52" r="2.5" fill="#7B2CFF"/>
+  <circle cx="268" cy="52" r="3" fill="#D7263D"/>
+
+  <path d="M64 80 Q136 80 136 140 Q136 200 64 200 L64 80 Z"
+        stroke="#D7263D" stroke-width="4" fill="none"/>
+
+  <rect x="80" y="110" width="6" height="60" fill="#0B0F14"/>
+  <rect x="96" y="100" width="6" height="80" fill="#7B2CFF"/>
+  <rect x="112" y="120" width="6" height="40" fill="#0B0F14"/>
+
+  <text x="64" y="248"
+        fill="#0B0F14"
+        font-family="Inter, system-ui, sans-serif"
+        font-size="36"
+        font-weight="600">
+    Decoder
+  </text>
+
+  <text x="64" y="272"
+        fill="#0B0F14" opacity="0.6"
+        font-family="JetBrains Mono, monospace"
+        font-size="12"
+        letter-spacing="1.2">
+    GAMES " TECH " INSIGHT
+  </text>
+</svg>

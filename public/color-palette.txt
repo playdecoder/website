@@ -1,0 +1,17 @@
+Light
+	•	Primary: #0B0F14
+	•	Secondary: #5B4DFF
+	•	Accent: #D4FF3F
+	•	Background: #F7F9FC
+	•	Surface: #FFFFFF
+	•	Border: #D0D7DE
+	•	Muted Text: #0B0F1499
+
+Dark
+	•	Primary: #E6EDF3
+	•	Secondary: #5B4DFF
+	•	Accent: #D4FF3F
+	•	Background: #0B0F14
+	•	Surface: #121821
+	•	Border: #1F2A38
+	•	Muted Text: #E6EDF399

@@ -1,0 +1,47 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "printWidth": 100,
+  "tabWidth": 2,
+  "useTabs": false,
+  "semi": true,
+  "singleQuote": false,
+  "quoteProps": "as-needed",
+  "trailingComma": "all",
+  "bracketSpacing": true,
+  "bracketSameLine": false,
+  "arrowParens": "always",
+  "endOfLine": "lf",
+  "insertFinalNewline": true,
+  "embeddedLanguageFormatting": "auto",
+  "experimentalSortImports": {
+    "groups": [
+      ["side_effect"],
+      ["builtin"],
+      ["external", "type-external"],
+      ["internal", "type-internal"],
+      ["parent", "type-parent"],
+      ["sibling", "type-sibling"],
+      ["index", "type-index"]
+    ],
+    "internalPattern": ["@/"],
+    "newlinesBetween": true,
+    "removeUnusedImports": true
+  },
+  "experimentalSortPackageJson": true,
+  "experimentalTailwindcss": {
+    "enabled": true,
+    "classRegex": "className[s]?\\s*[:=]\\s*['\"`]([^'\"`]*)['\"`]"
+  },
+  "ignorePatterns": [
+    "node_modules/**",
+    ".next/**",
+    "dist/**",
+    "build/**",
+    "*.min.js",
+    "coverage/**",
+    "*.lock",
+    "bun.lock",
+    "db/drizzle/migrations/**",
+    "next-env.d.ts"
+  ]
+}
