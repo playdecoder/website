@@ -10,6 +10,8 @@ interface EpisodeChapterListProps {
   currentTime: number;
   audioReady: boolean;
   onSeek: (seconds: number, chapter: EpisodeChapter) => void;
+  /** When false, the “wait for load” hint is hidden (e.g. another episode is playing). */
+  showLoadHint?: boolean;
 }
 
 export function EpisodeChapterList({
@@ -17,6 +19,7 @@ export function EpisodeChapterList({
   currentTime,
   audioReady,
   onSeek,
+  showLoadHint = true,
 }: EpisodeChapterListProps) {
   const t = useTranslations("listen");
   const activeIdx = chapters.reduce((acc, ch, i) => (ch.t <= currentTime + 0.25 ? i : acc), -1);
@@ -53,7 +56,7 @@ export function EpisodeChapterList({
           );
         })}
       </ol>
-      {!audioReady ? (
+      {!audioReady && showLoadHint ? (
         <p className="text-muted/70 font-mono text-[10px] tracking-wide">
           {t("chaptersWaitForLoad")}
         </p>

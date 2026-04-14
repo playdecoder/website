@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import {
   forwardRef,
+  useCallback,
   useEffect,
   useImperativeHandle,
   useMemo,
@@ -11,6 +12,7 @@ import {
   type CSSProperties,
 } from "react";
 
+import type { Episode } from "@/lib/episode-catalog";
 import type { EpisodeHashChapter } from "@/lib/episode-hash";
 import { resolveEpisodeSeekFromHash } from "@/lib/episode-hash";
 import { getSavedPosition } from "@/lib/episode-progress-storage";
@@ -52,17 +54,19 @@ export interface EpisodeAudioPlayerHandle {
 }
 
 interface EpisodeAudioPlayerProps {
-  episodeId: string;
-  title: string;
+  episode: Episode;
   chapters?: EpisodeHashChapter[];
 }
 
 
 export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAudioPlayerProps>(
-  function EpisodeAudioPlayer({ episodeId, title, chapters }, ref) {
+  function EpisodeAudioPlayer({ episode, chapters }, ref) {
     const t = useTranslations("listen");
     const ctx = usePlayerContext();
-    const seek = ctx.seek;
+    const { seek, loadEpisode, togglePlay, episode: ctxEpisode } = ctx;
+    const episodeId = episode.id;
+    const title = episode.title;
+    const isPageEpisodeActive = ctxEpisode?.id === episodeId;
 
     const waveformRef = useRef<HTMLDivElement>(null);
     const hashHandledRef = useRef(false);
@@ -75,7 +79,7 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
     const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "error">("idle");
 
     const progressResumeCaption = useMemo(() => {
-      if (!ctx.resumeHintVisible || !ctx.hasClearableProgress) {
+      if (!isPageEpisodeActive || !ctx.resumeHintVisible || !ctx.hasClearableProgress) {
         return null;
       }
       if (ctx.resumeNotice) {
@@ -89,19 +93,29 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
         return t("playerResumingFrom", { time: formatPlaybackTime(saved) });
       }
       return t("playerSavedPlace");
-    }, [ctx.resumeHintVisible, ctx.hasClearableProgress, ctx.resumeNotice, ctx.duration, episodeId, t]);
+    }, [
+      isPageEpisodeActive,
+      ctx.resumeHintVisible,
+      ctx.hasClearableProgress,
+      ctx.resumeNotice,
+      ctx.duration,
+      episodeId,
+      t,
+    ]);
 
     const [scrubPosition, setScrubPosition] = useState<number | null>(null);
     const scrubValueRef = useRef(0);
 
-    const displayPosition = scrubPosition ?? ctx.currentTime;
+    const displayPosition = isPageEpisodeActive ? (scrubPosition ?? ctx.currentTime) : 0;
+    const timelineDuration = isPageEpisodeActive ? ctx.duration : 0;
     const progressPct = useMemo(() => {
-      if (ctx.duration <= 0) return 0;
-      return Math.min(100, Math.max(0, (displayPosition / ctx.duration) * 100));
-    }, [displayPosition, ctx.duration]);
+      if (timelineDuration <= 0) return 0;
+      return Math.min(100, Math.max(0, (displayPosition / timelineDuration) * 100));
+    }, [displayPosition, timelineDuration]);
 
     const rateLabel = ctx.playbackRate === 1 ? "1×" : `${ctx.playbackRate}×`;
     const volumeIconLevel = programmaticVolume ? ctx.volume : ctx.muted ? 0 : 1;
+    const mainTransportShowsPause = isPageEpisodeActive && ctx.isPlaying;
 
     useImperativeHandle(
       ref,
@@ -111,13 +125,20 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
       [seek],
     );
 
+    const onMainPlayPause = useCallback(() => {
+      if (ctxEpisode?.id !== episode.id) {
+        loadEpisode(episode);
+      }
+      togglePlay();
+    }, [ctxEpisode?.id, episode, loadEpisode, togglePlay]);
+
     const decoderWavePlaying = useWaveformSettle(
-      ctx.isPlaying,
+      isPageEpisodeActive && ctx.isPlaying,
       () => Array.from(waveformRef.current?.querySelectorAll<HTMLElement>(".decoder-waveform-bar") ?? []),
     );
 
     useEffect(() => {
-      if (ctx.duration <= 0 || hashHandledRef.current) return;
+      if (!isPageEpisodeActive || ctx.duration <= 0 || hashHandledRef.current) return;
       hashHandledRef.current = true;
 
       const resolved = resolveEpisodeSeekFromHash(
@@ -135,10 +156,11 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
         : t("playerResumeFromShare", { time: formatPlaybackTime(resolved.seconds) });
 
       seek(resolved.seconds, notice);
-    }, [ctx.duration, chapters, t, seek]);
+    }, [isPageEpisodeActive, ctx.duration, chapters, t, seek]);
 
     useEffect(() => {
       const onHashChange = () => {
+        if (ctxEpisode?.id !== episodeId) return;
         const d = durationForHashRef.current;
         if (d <= 0) return;
         const resolved = resolveEpisodeSeekFromHash(window.location.hash, chapters ?? [], d);
@@ -147,23 +169,24 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
       };
       window.addEventListener("hashchange", onHashChange);
       return () => window.removeEventListener("hashchange", onHashChange);
-    }, [seek, chapters]);
+    }, [seek, chapters, ctxEpisode?.id, episodeId]);
 
     const onProgressChange = (v: number) => {
       scrubValueRef.current = v;
-      if (ctx.duration > 0) {
-        setScrubPosition((v / 100) * ctx.duration);
+      if (timelineDuration > 0) {
+        setScrubPosition((v / 100) * timelineDuration);
       }
     };
 
     const onProgressCommit = () => {
-      if (ctx.duration > 0) {
-        ctx.seek((scrubValueRef.current / 100) * ctx.duration);
+      if (timelineDuration > 0) {
+        seek((scrubValueRef.current / 100) * timelineDuration);
       }
       setScrubPosition(null);
     };
 
     const copyEpisodeLink = async () => {
+      if (!isPageEpisodeActive) return;
       try {
         const url = new URL(window.location.href);
         url.hash = formatEpisodeTimeHash(ctx.currentTime);
@@ -184,7 +207,7 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
             : "border-edge bg-surface/85 dark:bg-surface/55 hover:border-secondary/35 hover:shadow-[0_0_0_1px_color-mix(in_srgb,var(--secondary)_12%,transparent)]"
         }`}
         style={{ animation: "fadeUp 0.7s ease both 0.18s" }}
-        data-playing={ctx.isPlaying}
+        data-playing={isPageEpisodeActive && ctx.isPlaying}
         data-load-error={ctx.loadError || undefined}
         aria-label={t("playerAriaLabel", { id: episodeId })}
       >
@@ -210,7 +233,7 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
                   </span>
                   {title}
                 </p>
-                {ctx.hasClearableProgress ? (
+                {ctx.hasClearableProgress && isPageEpisodeActive ? (
                   <div
                     className="text-muted/75 mt-2 flex h-8 max-w-full items-center gap-0.5 font-mono text-[10px] tracking-wide sm:gap-1 sm:text-[11px]"
                     aria-hidden={!ctx.resumeHintVisible || undefined}
@@ -327,7 +350,7 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
                   <span className="text-edge shrink-0 justify-self-center" aria-hidden>
                     /
                   </span>
-                  <span className="min-w-0 text-right">{formatPlaybackTime(ctx.duration)}</span>
+                  <span className="min-w-0 text-right">{formatPlaybackTime(timelineDuration)}</span>
                 </div>
 
                 <input
@@ -336,7 +359,7 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
                   max={100}
                   step={0.1}
                   value={progressPct}
-                  disabled={ctx.loadError || ctx.duration <= 0}
+                  disabled={ctx.loadError || timelineDuration <= 0}
                   onPointerDown={() => {
                     scrubValueRef.current = progressPct;
                   }}
@@ -359,7 +382,7 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
                   <button
                     type="button"
                     onClick={() => ctx.skip(-SKIP_SEC)}
-                    disabled={ctx.loadError || ctx.duration <= 0}
+                    disabled={ctx.loadError || !isPageEpisodeActive || timelineDuration <= 0}
                     className="border-edge text-muted hover:border-secondary/40 hover:text-primary active:bg-surface-2 flex size-12 shrink-0 items-center justify-center gap-1 rounded-sm border transition-colors disabled:pointer-events-none disabled:opacity-35"
                     aria-label={t("playerSkipBack")}
                   >
@@ -371,12 +394,18 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
 
                   <button
                     type="button"
-                    onClick={ctx.togglePlay}
+                    onClick={onMainPlayPause}
                     disabled={ctx.loadError}
                     className="group border-primary/15 bg-accent focus-visible:outline-accent relative flex size-[3.75rem] shrink-0 items-center justify-center rounded-sm border-2 text-[#0b0f14] shadow-[inset_0_1px_0_rgb(255_255_255/0.35)] transition-transform duration-200 hover:scale-[1.04] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 active:scale-[0.97] disabled:pointer-events-none disabled:opacity-40"
-                    aria-label={ctx.isPlaying ? t("playerPause") : t("playerPlay")}
+                    aria-label={
+                      mainTransportShowsPause
+                        ? t("playerPause")
+                        : isPageEpisodeActive
+                          ? t("playerPlay")
+                          : t("playerPlayThisEpisode")
+                    }
                   >
-                    {ctx.isPlaying ? (
+                    {mainTransportShowsPause ? (
                       <svg
                         width="20"
                         height="20"
@@ -407,7 +436,7 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
                   <button
                     type="button"
                     onClick={() => ctx.skip(SKIP_SEC)}
-                    disabled={ctx.loadError || ctx.duration <= 0}
+                    disabled={ctx.loadError || !isPageEpisodeActive || timelineDuration <= 0}
                     className="border-edge text-muted hover:border-secondary/40 hover:text-primary active:bg-surface-2 flex size-12 shrink-0 items-center justify-center gap-1 rounded-sm border transition-colors disabled:pointer-events-none disabled:opacity-35"
                     aria-label={t("playerSkipForward")}
                   >
@@ -420,12 +449,18 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
 
                 <button
                   type="button"
-                  onClick={ctx.togglePlay}
+                  onClick={onMainPlayPause}
                   disabled={ctx.loadError}
                   className="group border-primary/15 bg-accent focus-visible:outline-accent relative hidden size-14 shrink-0 items-center justify-center rounded-sm border-2 text-[#0b0f14] shadow-[inset_0_1px_0_rgb(255_255_255/0.35)] transition-transform duration-200 hover:scale-[1.04] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 active:scale-[0.97] disabled:pointer-events-none disabled:opacity-40 sm:flex"
-                  aria-label={ctx.isPlaying ? t("playerPause") : t("playerPlay")}
+                  aria-label={
+                    mainTransportShowsPause
+                      ? t("playerPause")
+                      : isPageEpisodeActive
+                        ? t("playerPlay")
+                        : t("playerPlayThisEpisode")
+                  }
                 >
-                  {ctx.isPlaying ? (
+                  {mainTransportShowsPause ? (
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
                       <path d="M6 5h4v14H6V5zm8 0h4v14h-4V5z" />
                     </svg>
@@ -454,7 +489,7 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
                 <button
                   type="button"
                   onClick={() => ctx.skip(-SKIP_SEC)}
-                  disabled={ctx.loadError || ctx.duration <= 0}
+                  disabled={ctx.loadError || !isPageEpisodeActive || timelineDuration <= 0}
                   className="decoder-audio-chip inline-flex"
                   aria-label={t("playerSkipBack")}
                 >
@@ -466,7 +501,7 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
                 <button
                   type="button"
                   onClick={() => ctx.skip(SKIP_SEC)}
-                  disabled={ctx.loadError || ctx.duration <= 0}
+                  disabled={ctx.loadError || !isPageEpisodeActive || timelineDuration <= 0}
                   className="decoder-audio-chip inline-flex"
                   aria-label={t("playerSkipForward")}
                 >
@@ -507,7 +542,7 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
                 <button
                   type="button"
                   onClick={copyEpisodeLink}
-                  disabled={ctx.loadError}
+                  disabled={ctx.loadError || !isPageEpisodeActive}
                   className="hover:bg-surface-2/60 active:bg-surface-2 flex flex-1 items-center justify-center gap-1.5 transition-colors disabled:opacity-35"
                   aria-label={t("playerCopyMomentAria", {
                     time: formatPlaybackTime(ctx.currentTime),
@@ -568,7 +603,7 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
               <button
                 type="button"
                 onClick={copyEpisodeLink}
-                disabled={ctx.loadError}
+                disabled={ctx.loadError || !isPageEpisodeActive}
                 className="decoder-audio-chip decoder-audio-moment-link border-primary/10 from-surface-2 relative hidden min-w-[9.5rem] overflow-hidden bg-gradient-to-br to-transparent px-2.5 py-1.5 pl-2 sm:inline-flex"
                 aria-label={t("playerCopyMomentAria", {
                   time: formatPlaybackTime(ctx.currentTime),

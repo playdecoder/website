@@ -349,13 +349,6 @@ export function GlobalPlayerProvider({ children }: { children: ReactNode }) {
   }, [seek]);
 
   useEffect(() => {
-    document.body.style.paddingBottom = episode ? "80px" : "";
-    return () => {
-      document.body.style.paddingBottom = "";
-    };
-  }, [episode]);
-
-  useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.defaultPrevented) return;
       if (isTypingTarget(e.target)) return;

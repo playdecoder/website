@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Fragment, useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 
 import type { Episode, EpisodeChapter } from "@/lib/episode-catalog";
 import { EpisodeDescriptionRich } from "@/lib/episode-description";
@@ -32,7 +32,14 @@ export function EpisodeListenPlayerAndBody({
 }: EpisodeListenPlayerAndBodyProps) {
   const t = useTranslations("listen");
   const tContact = useTranslations("contact");
-  const { loadEpisode, seek, isPlaying, currentTime, duration } = usePlayerContext();
+  const { loadEpisode, seek, isPlaying, currentTime, duration, episode: playingEpisode } =
+    usePlayerContext();
+
+  const playingRef = useRef(playingEpisode);
+  playingRef.current = playingEpisode;
+
+  const isPageEpisodeActive = playingEpisode?.id === episode.id;
+  const chaptersCanSeek = isPageEpisodeActive && duration > 0;
 
   const chapters = useMemo(
     () => [...(episode.chapters ?? [])].sort((a, b) => a.t - b.t),
@@ -56,11 +63,18 @@ export function EpisodeListenPlayerAndBody({
   }
 
   useEffect(() => {
-    loadEpisode(episode);
+    const loaded = playingRef.current;
+    if (loaded == null) {
+      loadEpisode(episode);
+      return;
+    }
+    if (loaded.id === episode.id) {
+      loadEpisode(episode);
+    }
   }, [episode, loadEpisode]);
 
   useWaveformSettle(
-    isPlaying,
+    isPlaying && isPageEpisodeActive,
     () => Array.from(document.querySelectorAll<HTMLElement>(".waveform-bar--listen-bg")),
     {
       frozenOpacity: 1,
@@ -71,8 +85,9 @@ export function EpisodeListenPlayerAndBody({
   );
 
   useEffect(() => {
-    document.documentElement.dataset.episodePlaying = isPlaying ? "true" : "false";
-  }, [isPlaying]);
+    document.documentElement.dataset.episodePlaying =
+      isPlaying && isPageEpisodeActive ? "true" : "false";
+  }, [isPlaying, isPageEpisodeActive]);
 
   useEffect(() => {
     return () => {
@@ -103,8 +118,7 @@ export function EpisodeListenPlayerAndBody({
     <>
       <EpisodeAudioPlayer
         key={`listen-audio-${episode.id}`}
-        episodeId={episode.id}
-        title={episode.title}
+        episode={episode}
         chapters={hasChapters ? chapters : undefined}
       />
 
@@ -184,7 +198,8 @@ export function EpisodeListenPlayerAndBody({
               <EpisodeChapterList
                 chapters={chapters}
                 currentTime={currentTime}
-                audioReady={duration > 0}
+                audioReady={chaptersCanSeek}
+                showLoadHint={isPageEpisodeActive}
                 onSeek={onChapterSeek}
               />
             </div>
@@ -201,7 +216,7 @@ export function EpisodeListenPlayerAndBody({
               <EpisodeTranscriptPanel
                 key={transcriptUrl}
                 transcriptUrl={transcriptUrl}
-                seekToSeconds={seek}
+                seekToSeconds={isPageEpisodeActive ? seek : undefined}
               />
             )}
           </div>

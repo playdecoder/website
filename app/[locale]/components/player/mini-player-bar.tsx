@@ -96,6 +96,13 @@ export function MiniPlayerBar() {
     };
   }, [visible]);
 
+  useEffect(() => {
+    document.body.style.paddingBottom = visible ? "80px" : "";
+    return () => {
+      document.body.style.paddingBottom = "";
+    };
+  }, [visible]);
+
   const handleTransitionEnd = (e: React.TransitionEvent) => {
     if (e.propertyName === "transform" && !visible) {
       setRendered(false);
