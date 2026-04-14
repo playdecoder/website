@@ -1,11 +1,12 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { type CSSProperties, useCallback, useEffect, useRef, useState } from "react";
 
 import { episodeListenPathSegment } from "@/lib/episode-catalog";
 import { formatPlaybackTime } from "@/lib/format-playback-time";
+import { linkLocale } from "@/lib/link-locale";
 import { listenEpisodePath } from "@/lib/routes";
 import { usePathname } from "@/i18n/navigation";
 
@@ -28,6 +29,7 @@ export function MiniPlayerBar() {
   const ctx = usePlayerContext();
   const t = useTranslations("miniPlayer");
   const locale = useLocale();
+  const hrefLocale = linkLocale(locale);
   const pathname = usePathname();
 
   const waveformRef = useRef<HTMLDivElement>(null);
@@ -123,7 +125,7 @@ export function MiniPlayerBar() {
 
   const scrubDisabled = loadError || duration <= 0;
 
-  const listenHref = `/${locale}${listenEpisodePath(episodeListenPathSegment(episode))}`;
+  const listenHref = listenEpisodePath(episodeListenPathSegment(episode));
 
   return (
     <div
@@ -229,6 +231,7 @@ export function MiniPlayerBar() {
         <div className="relative mx-auto flex max-w-6xl items-center gap-2 px-3 py-2 sm:gap-3 sm:px-5">
           <Link
             href={listenHref}
+            locale={hrefLocale}
             className="group flex min-w-0 flex-1 items-center gap-2.5 sm:gap-3"
             aria-label={t("goToEpisodeAria", { id: episode.id, title: episode.title })}
           >

@@ -1,7 +1,8 @@
 import { getTranslations } from "next-intl/server";
-import Link from "next/link";
 
+import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
+import { linkLocale } from "@/lib/link-locale";
 import { ROUTES } from "@/lib/routes";
 
 import { Navbar } from "./layout/navbar";
@@ -10,6 +11,7 @@ import { SignalLabelRail } from "./sections/signal-label-rail";
 
 export async function DecoderNotFoundView({ locale = routing.defaultLocale }: { locale?: string }) {
   const t = await getTranslations({ locale, namespace: "notFound" });
+  const hrefLocale = linkLocale(locale);
 
   return (
     <div className="page-shell">
@@ -71,12 +73,14 @@ export async function DecoderNotFoundView({ locale = routing.defaultLocale }: { 
           >
             <Link
               href={ROUTES.home}
+              locale={hrefLocale}
               className="cta-on-lime rounded-sm px-8 py-3.5 text-center font-mono text-xs font-medium tracking-widest uppercase transition-all duration-200 hover:scale-[1.02] hover:opacity-90 active:scale-[0.98]"
             >
               {t("backHome")}
             </Link>
             <Link
               href={ROUTES.episodes}
+              locale={hrefLocale}
               className="border-edge text-muted hover:border-primary/40 hover:text-primary rounded-sm border px-8 py-3.5 text-center font-mono text-xs tracking-widest uppercase transition-all duration-200"
             >
               {t("latestEpisodes")}

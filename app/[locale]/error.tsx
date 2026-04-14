@@ -1,10 +1,11 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useEffect } from "react";
 
 import { ROUTES } from "@/lib/routes";
+import { linkLocale } from "@/lib/link-locale";
 
 import { DecoderPageFrame } from "./components/layout/page-frame";
 import { SignalLabelRail } from "./components/sections/signal-label-rail";
@@ -17,6 +18,7 @@ export default function ErrorPage({
   reset: () => void;
 }) {
   const locale = useLocale();
+  const hrefLocale = linkLocale(locale);
   const t = useTranslations("error");
 
   useEffect(() => {
@@ -29,6 +31,7 @@ export default function ErrorPage({
         <div className="mx-auto flex h-16 max-w-6xl items-center px-3 min-[400px]:px-4 sm:px-5">
           <Link
             href={ROUTES.home}
+            locale={hrefLocale}
             className="font-display text-primary text-lg font-extrabold tracking-tight"
             lang={locale}
           >
@@ -77,6 +80,7 @@ export default function ErrorPage({
             </button>
             <Link
               href={ROUTES.home}
+              locale={hrefLocale}
               className="border-edge text-muted hover:border-primary/40 hover:text-primary rounded-sm border px-8 py-3.5 text-center font-mono text-xs tracking-widest uppercase transition-all duration-200"
             >
               {t("backHome")}

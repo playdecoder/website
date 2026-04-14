@@ -1,6 +1,6 @@
-import Link from "next/link";
-
+import { Link } from "@/i18n/navigation";
 import { episodeListenPathSegment, type Episode } from "@/lib/episode-catalog";
+import { linkLocale } from "@/lib/link-locale";
 import { listenEpisodePath } from "@/lib/routes";
 
 interface NeighborLabels {
@@ -11,6 +11,7 @@ interface NeighborLabels {
 }
 
 interface EpisodeNeighborNavProps {
+  locale?: string;
   newer?: Episode;
   older?: Episode;
   labels: NeighborLabels;
@@ -26,14 +27,19 @@ const titleClass =
   "font-display font-semibold text-primary text-base sm:text-lg leading-snug group-hover:text-secondary transition-colors text-pretty";
 const idClass = "font-mono text-xs text-muted tracking-widest mt-2 block";
 
-export function EpisodeNeighborNav({ newer, older, labels }: EpisodeNeighborNavProps) {
+export function EpisodeNeighborNav({ locale, newer, older, labels }: EpisodeNeighborNavProps) {
+  const hrefLocale = linkLocale(locale);
   return (
     <div
       className="grid grid-cols-1 gap-3 pt-2 sm:grid-cols-2 sm:gap-4"
       style={{ animation: "fadeUp 0.65s ease both 0.28s" }}
     >
       {newer ? (
-        <Link href={listenEpisodePath(episodeListenPathSegment(newer))} className={cardLink}>
+        <Link
+          href={listenEpisodePath(episodeListenPathSegment(newer))}
+          locale={hrefLocale}
+          className={cardLink}
+        >
           <span className={labelClass}>{labels.newer}</span>
           <span className={titleClass}>{newer.title}</span>
           <span className={idClass}>{newer.id}</span>
@@ -49,6 +55,7 @@ export function EpisodeNeighborNav({ newer, older, labels }: EpisodeNeighborNavP
       {older ? (
         <Link
           href={listenEpisodePath(episodeListenPathSegment(older))}
+          locale={hrefLocale}
           className={`${cardLink} sm:text-right`}
         >
           <span className={labelClass}>{labels.older}</span>

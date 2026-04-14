@@ -1,9 +1,11 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import type { CSSProperties } from "react";
 import { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+
+import { linkLocale } from "@/lib/link-locale";
 
 const PANEL_EASE = "cubic-bezier(0.32, 0.72, 0, 1)";
 const SCRIM_MS = 340;
@@ -19,6 +21,7 @@ export interface MobileNavLink {
 }
 
 interface MobileNavDrawerProps {
+  locale?: string;
   items: MobileNavLink[];
   listenHref: string;
   listenLabel: string;
@@ -27,12 +30,14 @@ interface MobileNavDrawerProps {
 }
 
 export function MobileNavDrawer({
+  locale,
   items,
   listenHref,
   listenLabel,
   openNavigationAria,
   closeNavigationAria,
 }: MobileNavDrawerProps) {
+  const hrefLocale = linkLocale(locale);
   const panelId = useId();
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -211,6 +216,7 @@ export function MobileNavDrawer({
                       <Link
                         key={item.href}
                         href={item.href}
+                        locale={hrefLocale}
                         onClick={() => setOpen(false)}
                         className="border-edge/60 text-primary hover:bg-surface-2/90 rounded-sm border-b px-4 py-3.5 font-mono text-xs tracking-[0.2em] uppercase transition-[opacity,transform,background-color,color] motion-reduce:!translate-x-0 motion-reduce:!opacity-100 motion-reduce:!delay-0 motion-reduce:transition-none last:border-b-0"
                         style={{
@@ -238,6 +244,7 @@ export function MobileNavDrawer({
                     <span className="nav-cta-glow-wrap block w-full">
                       <Link
                         href={listenHref}
+                        locale={hrefLocale}
                         onClick={() => setOpen(false)}
                         className="premium-cta cta-on-lime relative z-[1] flex w-full items-center justify-center gap-2 rounded-sm px-4 py-3.5 font-mono text-xs font-medium tracking-widest uppercase shadow-[inset_0_1px_0_rgb(255_255_255/0.38),0_4px_14px_-4px_var(--accent)] transition-all duration-200 hover:scale-[1.01] hover:opacity-95 focus-visible:ring-2 focus-visible:ring-[#0b0f14]/45 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--accent)] focus-visible:outline-none active:scale-[0.99]"
                       >

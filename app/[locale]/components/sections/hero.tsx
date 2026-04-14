@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 
 import { Link } from "@/i18n/navigation";
 import { episodes, episodeListenPathSegment, getLatestEpisode } from "@/lib/episode-catalog";
+import { linkLocale } from "@/lib/link-locale";
 import { PAGE_SECTION_ID, ROUTES, listenEpisodePath } from "@/lib/routes";
 
 import { LogoD } from "../branding/logo-d";
@@ -11,6 +12,7 @@ import { SignalLabelRail } from "./signal-label-rail";
 
 export async function Hero({ locale }: { locale: string }) {
   const t = await getTranslations({ locale, namespace: "hero" });
+  const hrefLocale = linkLocale(locale);
   const latestEpisode = getLatestEpisode(episodes);
   if (!latestEpisode) {
     return null;
@@ -76,12 +78,14 @@ export async function Hero({ locale }: { locale: string }) {
         >
           <Link
             href={listenEpisodePath(episodeListenPathSegment(latestEpisode))}
+            locale={hrefLocale}
             className="premium-cta cta-on-lime rounded-sm px-8 py-3.5 font-mono text-xs font-medium tracking-widest uppercase transition-all duration-200 hover:scale-[1.02] hover:opacity-90 active:scale-[0.98]"
           >
             {t("latestEpisode")}
           </Link>
           <Link
             href={ROUTES.episodes}
+            locale={hrefLocale}
             className="border-edge text-muted hover:border-primary/40 hover:text-primary rounded-sm border px-8 py-3.5 font-mono text-xs tracking-widest uppercase transition-all duration-200"
           >
             {t("allEpisodes")}

@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
-import Link from "next/link";
+
+import { Link } from "@/i18n/navigation";
 
 import {
   episodes,
@@ -9,6 +10,7 @@ import {
   getLatestEpisode,
 } from "@/lib/episode-catalog";
 import { EpisodeDescriptionRich } from "@/lib/episode-description";
+import { linkLocale } from "@/lib/link-locale";
 import { PAGE_SECTION_ID, ROUTES, listenEpisodePath } from "@/lib/routes";
 
 import { IconEpisodeAirDate, IconEpisodeDuration } from "../ui/icons";
@@ -18,6 +20,7 @@ import { EpisodeSpokenLangNote } from "./episode-spoken-lang-note";
 
 export async function Episodes({ locale }: { locale: string }) {
   const t = await getTranslations({ locale, namespace: "episodesSection" });
+  const hrefLocale = linkLocale(locale);
   const latestEpisode = getLatestEpisode(episodes);
   if (!latestEpisode) {
     return null;
@@ -79,6 +82,7 @@ export async function Episodes({ locale }: { locale: string }) {
                 </span>
                 <Link
                   href={listenEpisodePath(episodeListenPathSegment(latestEpisode))}
+                  locale={hrefLocale}
                   className="premium-cta cta-on-lime ml-auto flex items-center gap-2 rounded-sm px-5 py-2.5 font-mono text-xs font-medium tracking-widest uppercase transition-all hover:scale-[1.02] hover:opacity-90 active:scale-[0.98]"
                 >
                   <svg width="11" height="13" viewBox="0 0 12 14" fill="currentColor" aria-hidden>
@@ -96,6 +100,7 @@ export async function Episodes({ locale }: { locale: string }) {
             <Link
               key={ep.id}
               href={listenEpisodePath(episodeListenPathSegment(ep))}
+              locale={hrefLocale}
               className="episode-row group border-edge hover:bg-surface/60 -mx-3 flex cursor-pointer flex-col gap-2 border-b px-3 py-5 transition-colors duration-200 sm:flex-row sm:items-center sm:gap-6"
               style={{ animationDelay: `${0.05 * i}s` }}
             >
@@ -151,6 +156,7 @@ export async function Episodes({ locale }: { locale: string }) {
           <div className="border-edge scroll-reveal mt-10 flex justify-center border-t pt-8">
             <Link
               href={ROUTES.episodes}
+              locale={hrefLocale}
               className="premium-cta text-secondary border-secondary/35 hover:bg-secondary/10 rounded-sm border px-5 py-3 font-mono text-xs tracking-widest uppercase transition-colors"
             >
               {t("archiveLink")}

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
+import { ROUTES } from "@/lib/routes";
+import { localizedAlternates } from "@/lib/metadata-alternates";
 import { showTaglineEn } from "@/lib/show";
 
 import { Episodes } from "./components/episode/episodes";
@@ -23,6 +25,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: t("homeTitle"),
     description: locale === "en" ? showTaglineEn() : t("siteDescription"),
+    alternates: localizedAlternates(ROUTES.home, locale),
   };
 }
 

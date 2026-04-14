@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useMemo, useState } from "react";
 
 import {
@@ -13,6 +13,7 @@ import {
   getLatestEpisode,
 } from "@/lib/episode-catalog";
 import { EpisodeDescriptionRich, plainEpisodeDescription } from "@/lib/episode-description";
+import { linkLocale } from "@/lib/link-locale";
 import { listenEpisodePath } from "@/lib/routes";
 
 import { IconEpisodeAirDate, IconEpisodeDuration } from "../ui/icons";
@@ -25,6 +26,7 @@ interface EpisodesArchiveClientProps {
 
 export function EpisodesArchiveClient({ episodes: allEpisodes }: EpisodesArchiveClientProps) {
   const locale = useLocale();
+  const hrefLocale = linkLocale(locale);
   const t = useTranslations("episodesPage");
   const tSection = useTranslations("episodesSection");
   const { tags: facetTags, langs: facetLangs } = useMemo(
@@ -230,6 +232,7 @@ export function EpisodesArchiveClient({ episodes: allEpisodes }: EpisodesArchive
                 >
                   <Link
                     href={listenEpisodePath(episodeListenPathSegment(ep))}
+                    locale={hrefLocale}
                     className="focus-visible:outline-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                   >
                     {ep.title}
@@ -251,6 +254,7 @@ export function EpisodesArchiveClient({ episodes: allEpisodes }: EpisodesArchive
                   </span>
                   <Link
                     href={listenEpisodePath(episodeListenPathSegment(ep))}
+                    locale={hrefLocale}
                     className="cta-on-lime ml-auto inline-flex items-center gap-2 rounded-sm px-5 py-2.5 font-mono text-xs font-medium tracking-widest uppercase transition-all hover:scale-[1.02] hover:opacity-90 active:scale-[0.98]"
                   >
                     <svg width="11" height="13" viewBox="0 0 12 14" fill="currentColor" aria-hidden>

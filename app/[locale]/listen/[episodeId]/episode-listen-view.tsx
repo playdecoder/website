@@ -1,8 +1,7 @@
 import { getTranslations } from "next-intl/server";
-import Link from "next/link";
 import type React from "react";
 
-import { getPathname } from "@/i18n/navigation";
+import { getPathname, Link } from "@/i18n/navigation";
 import {
   type Episode,
   type EpisodeHost,
@@ -20,6 +19,7 @@ import {
 } from "@/lib/episode-catalog";
 import { resolveEpisodeCoverImageUrl } from "@/lib/episode-cover";
 import { plainEpisodeDescription } from "@/lib/episode-description";
+import { linkLocale } from "@/lib/link-locale";
 import { listenEpisodePath, ROUTES, homeSectionPath } from "@/lib/routes";
 import { showHostsSchemaPersons } from "@/lib/show";
 import { absoluteFromPath, getPodcastCoverAbsoluteUrl, getPublicSiteUrl } from "@/lib/site";
@@ -236,6 +236,7 @@ function EpisodeListenMetadata({
 
 export async function EpisodeListenView({ episode, locale }: EpisodeListenViewProps) {
   const t = await getTranslations({ locale, namespace: "listen" });
+  const hrefLocale = linkLocale(locale);
   const descriptionPlain = plainEpisodeDescription(episode.description);
   const segment = episodeListenPathSegment(episode);
   const canonicalUrl = absoluteFromPath(getPathname({ locale, href: listenEpisodePath(segment) }));
@@ -356,6 +357,7 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
           >
             <Link
               href={ROUTES.home}
+              locale={hrefLocale}
               className="hover-underline hover:text-primary -my-1.5 inline-flex min-h-11 items-center py-1.5 transition-colors"
             >
               {t("breadcrumbDecoder")}
@@ -363,6 +365,7 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
             <span className="text-edge">/</span>
             <Link
               href={ROUTES.episodes}
+              locale={hrefLocale}
               className="hover-underline hover:text-primary -my-1.5 inline-flex min-h-11 items-center py-1.5 transition-colors"
             >
               {t("breadcrumbEpisodes")}
@@ -495,6 +498,7 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
               />
 
               <EpisodeNeighborNav
+                locale={hrefLocale}
                 newer={newer}
                 older={older}
                 labels={{
@@ -511,12 +515,14 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
               >
                 <Link
                   href={ROUTES.episodes}
+                  locale={hrefLocale}
                   className="premium-cta cta-on-lime inline-flex min-h-11 w-full items-center justify-center rounded-sm px-6 py-3 font-mono text-xs font-medium tracking-widest uppercase transition-all duration-200 hover:scale-[1.02] hover:opacity-90 active:scale-[0.98] min-[420px]:w-auto"
                 >
                   {t("allEpisodes")}
                 </Link>
                 <Link
                   href={homeSectionPath("contact")}
+                  locale={hrefLocale}
                   className="border-edge text-muted hover:border-primary/40 hover:text-primary active:bg-surface-2 inline-flex min-h-11 w-full items-center justify-center rounded-sm border px-6 py-3 font-mono text-xs tracking-widest uppercase transition-all duration-200 min-[420px]:w-auto"
                 >
                   {t("getInTouch")}

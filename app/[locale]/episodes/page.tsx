@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { episodes } from "@/lib/episode-catalog";
+import { localizedAlternates } from "@/lib/metadata-alternates";
+import { ROUTES } from "@/lib/routes";
 
 import { EpisodesArchiveClient } from "../components/episode/episodes-archive-client";
 import { Navbar } from "../components/layout/navbar";
@@ -21,6 +23,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: t("episodesArchiveTitle"),
     description: t("episodesArchiveDescription"),
+    alternates: localizedAlternates(ROUTES.episodes, locale),
     openGraph: {
       title: t("episodesArchiveTitle"),
       description: t("episodesArchiveDescription"),
