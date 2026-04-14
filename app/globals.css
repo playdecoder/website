@@ -1010,9 +1010,19 @@ html[data-episode-playing="true"] .waveform-bar--listen-bg {
   );
 }
 
-.decoder-audio-progress {
+.decoder-audio-seek-wrap {
   --decoder-track-h: 5px;
   --decoder-thumb: 22px;
+}
+
+@media (min-width: 640px) {
+  .decoder-audio-seek-wrap {
+    --decoder-thumb: 16px;
+    --decoder-track-h: 4px;
+  }
+}
+
+.decoder-audio-progress {
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
@@ -1022,19 +1032,14 @@ html[data-episode-playing="true"] .waveform-bar--listen-bg {
   touch-action: none;
 }
 
-@media (min-width: 640px) {
-  .decoder-audio-progress {
-    --decoder-thumb: 16px;
-    --decoder-track-h: 4px;
-  }
-}
-
 .decoder-audio-progress:focus-visible {
   outline: 2px solid var(--secondary);
   outline-offset: 3px;
 }
 
-.decoder-audio-progress::-webkit-slider-runnable-track {
+/* Custom visual track — sits at z-0; chapter ticks at z-1; thumb (via input) at z-2 */
+.decoder-audio-custom-track {
+  top: calc((var(--decoder-thumb) - var(--decoder-track-h)) / 2);
   height: var(--decoder-track-h);
   border-radius: 999px;
   background: linear-gradient(
@@ -1049,7 +1054,22 @@ html[data-episode-playing="true"] .waveform-bar--listen-bg {
       var(--decoder-buffered, var(--decoder-progress, 0%)),
     color-mix(in srgb, var(--surface-2) 75%, var(--edge)) 100%
   );
+  z-index: 0;
+  pointer-events: none;
   transition: box-shadow 0.3s ease;
+}
+
+/* Range input: transparent track — only the thumb paints (z-2) */
+.decoder-audio-seek-wrap .decoder-audio-progress {
+  position: relative;
+  z-index: 2;
+  isolation: isolate;
+}
+
+.decoder-audio-progress::-webkit-slider-runnable-track {
+  height: var(--decoder-track-h);
+  border-radius: 999px;
+  background: transparent;
 }
 
 .decoder-audio-progress::-webkit-slider-thumb {
@@ -1083,31 +1103,161 @@ html[data-episode-playing="true"] .waveform-bar--listen-bg {
 }
 
 .decoder-audio-player[data-playing="true"] .decoder-audio-progress:not(:disabled) {
-  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--accent) 36%, transparent));
+  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--accent) 42%, transparent));
 }
 
+.decoder-audio-player[data-playing="true"] .decoder-audio-custom-track {
+  box-shadow: 0 0 6px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
+/* Chapter marks: z-1 = above custom track (z-0), below thumb input (z-2) */
+.decoder-audio-chapter-ticks {
+  pointer-events: none;
+  z-index: 1;
+}
+
+.decoder-chapter-tick {
+  --cue-color: color-mix(in srgb, var(--primary) 60%, var(--edge) 40%);
+  --cue-fade: color-mix(in srgb, var(--primary) 22%, transparent);
+  position: absolute;
+  /* Float above the track: bottom of tick aligned to track top edge */
+  top: 50%;
+  transform: translate(-50%, calc(-100% - var(--decoder-track-h) / 2));
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 10px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  opacity: 0.55;
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+}
+
+.decoder-chapter-tick__cue {
+  position: relative;
+  display: block;
+  width: 4px;
+  height: 10px;
+}
+
+/* Stem: thin vertical bar fading downward */
+.decoder-chapter-tick__cue::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 50%;
+  width: 1.5px;
+  height: 7px;
+  margin-left: -0.75px;
+  border-radius: 0 0 1px 1px;
+  background: linear-gradient(
+    180deg,
+    var(--cue-color) 0%,
+    var(--cue-fade) 100%
+  );
+}
+
+/* Cap dot: small circle at the top */
+.decoder-chapter-tick__cue::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  margin-left: -2px;
+  border-radius: 999px;
+  background: var(--cue-color);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--bg) 55%, transparent);
+}
+
+@media (min-width: 640px) {
+  .decoder-chapter-tick__cue {
+    width: 3px;
+    height: 8px;
+  }
+
+  .decoder-chapter-tick__cue::before {
+    width: 3px;
+    height: 3px;
+    margin-left: -1.5px;
+  }
+
+  .decoder-chapter-tick__cue::after {
+    top: 2.5px;
+    height: 5.5px;
+    width: 1.5px;
+    margin-left: -0.75px;
+  }
+}
+
+.dark .decoder-chapter-tick {
+  --cue-color: color-mix(in srgb, var(--primary) 65%, var(--edge) 35%);
+  --cue-fade: color-mix(in srgb, var(--primary) 18%, transparent);
+}
+
+.decoder-chapter-tick--past {
+  opacity: 0.34;
+}
+
+.dark .decoder-chapter-tick--past {
+  opacity: 0.3;
+}
+
+.decoder-chapter-tick--current {
+  z-index: 3;
+  opacity: 1;
+  --cue-color: color-mix(in srgb, var(--accent) 70%, var(--primary) 30%);
+  --cue-fade: color-mix(in srgb, var(--accent) 28%, transparent);
+}
+
+.decoder-chapter-tick--current .decoder-chapter-tick__cue::before {
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent) 30%, var(--bg) 70%),
+    0 0 8px color-mix(in srgb, var(--accent) 45%, transparent);
+}
+
+.decoder-audio-player[data-playing="true"] .decoder-chapter-tick:not(.decoder-chapter-tick--past):not(.decoder-chapter-tick--current) {
+  opacity: 0.6;
+}
+
+.decoder-audio-player[data-playing="true"] .decoder-chapter-tick--current {
+  transform: translate(-50%, calc(-100% - var(--decoder-track-h) / 2 - 1px));
+}
+
+.decoder-audio-seek-wrap:hover .decoder-chapter-tick:not(.decoder-chapter-tick--current) {
+  opacity: 0.72;
+}
+
+.decoder-audio-seek-wrap:hover .decoder-chapter-tick--past:not(.decoder-chapter-tick--current) {
+  opacity: 0.45;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .decoder-chapter-tick {
+    transition: none;
+  }
+
+  .decoder-audio-player[data-playing="true"] .decoder-chapter-tick--current {
+    transform: translate(-50%, calc(-100% - var(--decoder-track-h) / 2));
+  }
+}
+
+/* Firefox: transparent track — visual track is rendered by .decoder-audio-custom-track */
 .decoder-audio-progress::-moz-range-track {
   height: var(--decoder-track-h);
   border-radius: 999px;
-  /* Track = buffered; ::-moz-range-progress draws played segment on top */
-  background: linear-gradient(
-    to right,
-    color-mix(in srgb, var(--primary) 10%, color-mix(in srgb, var(--surface-2) 75%, var(--edge))) 0%,
-    color-mix(in srgb, var(--primary) 10%, color-mix(in srgb, var(--surface-2) 75%, var(--edge)))
-      var(--decoder-buffered, 0%),
-    color-mix(in srgb, var(--surface-2) 75%, var(--edge)) var(--decoder-buffered, 0%),
-    color-mix(in srgb, var(--surface-2) 75%, var(--edge)) 100%
-  );
+  background: transparent;
 }
 
 .decoder-audio-progress::-moz-range-progress {
   height: var(--decoder-track-h);
   border-radius: 999px;
-  background: linear-gradient(
-    to right,
-    var(--secondary),
-    color-mix(in srgb, var(--accent) 80%, var(--secondary))
-  );
+  background: transparent;
 }
 
 .decoder-audio-progress::-moz-range-thumb {

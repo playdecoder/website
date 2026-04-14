@@ -113,6 +113,35 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
       return Math.min(100, Math.max(0, (displayPosition / timelineDuration) * 100));
     }, [displayPosition, timelineDuration]);
 
+    const chapterTimelineMarkers = useMemo(() => {
+      if (!chapters?.length || timelineDuration <= 0) return [];
+      const d = timelineDuration;
+      const padStart = 0.85;
+      const padEnd = 0.65;
+      return chapters
+        .filter((ch) => ch.t >= padStart && ch.t <= d - padEnd)
+        .map((ch, i) => {
+          const pct = Math.min(100, Math.max(0, (ch.t / d) * 100));
+          return {
+            t: ch.t,
+            pct,
+            label: ch.label,
+            key: `ch-mark-${ch.t}-${i}-${ch.label}`,
+          };
+        });
+    }, [chapters, timelineDuration]);
+
+    /** Start time of the chapter we're in (same rule as chapter list: last with t ≤ playhead). */
+    const activeChapterStartT = useMemo(() => {
+      if (!chapters?.length || timelineDuration <= 0) return null;
+      const sorted = [...chapters].sort((a, b) => a.t - b.t);
+      let start: number | null = null;
+      for (const ch of sorted) {
+        if (ch.t <= displayPosition + 0.25) start = ch.t;
+      }
+      return start;
+    }, [chapters, displayPosition, timelineDuration]);
+
     const rateLabel = ctx.playbackRate === 1 ? "1×" : `${ctx.playbackRate}×`;
     const volumeIconLevel = programmaticVolume ? ctx.volume : ctx.muted ? 0 : 1;
     const mainTransportShowsPause = isPageEpisodeActive && ctx.isPlaying;
@@ -353,28 +382,53 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
                   <span className="min-w-0 text-right">{formatPlaybackTime(timelineDuration)}</span>
                 </div>
 
-                <input
-                  type="range"
-                  min={0}
-                  max={100}
-                  step={0.1}
-                  value={progressPct}
-                  disabled={ctx.loadError || timelineDuration <= 0}
-                  onPointerDown={() => {
-                    scrubValueRef.current = progressPct;
-                  }}
-                  onChange={(e) => onProgressChange(Number(e.target.value))}
-                  onPointerUp={onProgressCommit}
-                  onPointerCancel={onProgressCommit}
-                  className="decoder-audio-progress w-full cursor-pointer disabled:cursor-not-allowed disabled:opacity-35"
+                <div
+                  className="decoder-audio-seek-wrap relative w-full"
                   style={
                     {
                       "--decoder-progress": `${progressPct}%`,
                       "--decoder-buffered": `${Math.max(progressPct, ctx.bufferedPct)}%`,
                     } as CSSProperties
                   }
-                  aria-label={t("playerSeek")}
-                />
+                >
+                  <div className="decoder-audio-custom-track absolute inset-x-0" aria-hidden />
+                  {chapterTimelineMarkers.length > 0 ? (
+                    <div className="decoder-audio-chapter-ticks absolute inset-0" aria-hidden>
+                      {chapterTimelineMarkers.map((m) => {
+                        const isPast = m.pct < progressPct - 0.02;
+                        const isCurrent =
+                          activeChapterStartT != null &&
+                          Math.abs(m.t - activeChapterStartT) < 0.03;
+                        return (
+                          <span
+                            key={m.key}
+                            title={m.label}
+                            className={`decoder-chapter-tick${isPast ? " decoder-chapter-tick--past" : ""}${isCurrent ? " decoder-chapter-tick--current" : ""}`}
+                            style={{ left: `${m.pct}%` }}
+                          >
+                            <span className="decoder-chapter-tick__cue" />
+                          </span>
+                        );
+                      })}
+                    </div>
+                  ) : null}
+                  <input
+                    type="range"
+                    min={0}
+                    max={100}
+                    step={0.1}
+                    value={progressPct}
+                    disabled={ctx.loadError || timelineDuration <= 0}
+                    onPointerDown={() => {
+                      scrubValueRef.current = progressPct;
+                    }}
+                    onChange={(e) => onProgressChange(Number(e.target.value))}
+                    onPointerUp={onProgressCommit}
+                    onPointerCancel={onProgressCommit}
+                    className="decoder-audio-progress w-full cursor-pointer disabled:cursor-not-allowed disabled:opacity-35"
+                    aria-label={t("playerSeek")}
+                  />
+                </div>
               </div>
 
               <div className="shrink-0 sm:order-1">
