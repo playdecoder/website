@@ -394,14 +394,20 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
                           activeChapterStartT != null &&
                           Math.abs(m.t - activeChapterStartT) < 0.03;
                         return (
-                          <span
+                          <button
                             key={m.key}
-                            title={m.label}
+                            type="button"
+                            tabIndex={-1}
+                            onClick={() => {
+                              if (!isPageEpisodeActive) loadEpisode(episode);
+                              seek(m.t);
+                            }}
                             className={`decoder-chapter-tick${isPast ? " decoder-chapter-tick--past" : ""}${isCurrent ? " decoder-chapter-tick--current" : ""}`}
                             style={{ left: `${m.pct}%` }}
                           >
                             <span className="decoder-chapter-tick__cue" />
-                          </span>
+                            <span className="decoder-chapter-tick__tooltip">{m.label}</span>
+                          </button>
                         );
                       })}
                     </div>
