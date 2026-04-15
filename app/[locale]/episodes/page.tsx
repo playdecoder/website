@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
+import { brandInterpolation } from "@/lib/brand";
 import { episodes } from "@/lib/episode-catalog";
 import { localizedAlternates } from "@/lib/metadata-alternates";
 import { ROUTES } from "@/lib/routes";
@@ -20,13 +21,14 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "metadata" });
+  const b = brandInterpolation(locale);
   return {
-    title: t("episodesArchiveTitle"),
-    description: t("episodesArchiveDescription"),
+    title: t("episodesArchiveTitle", b),
+    description: t("episodesArchiveDescription", b),
     alternates: localizedAlternates(ROUTES.episodes, locale),
     openGraph: {
-      title: t("episodesArchiveTitle"),
-      description: t("episodesArchiveDescription"),
+      title: t("episodesArchiveTitle", b),
+      description: t("episodesArchiveDescription", b),
     },
   };
 }

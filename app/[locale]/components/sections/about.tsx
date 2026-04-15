@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 
+import { brandInterpolation } from "@/lib/brand";
 import { episodes, formatCatalogHours, totalEpisodeCatalogSeconds } from "@/lib/episode-catalog";
 import { PAGE_SECTION_ID } from "@/lib/routes";
 
@@ -7,6 +8,7 @@ import { SectionHeading } from "../ui/section-heading";
 
 export async function About({ locale }: { locale: string }) {
   const t = await getTranslations({ locale, namespace: "about" });
+  const b = brandInterpolation(locale);
 
   const catalogSeconds = totalEpisodeCatalogSeconds(episodes);
   const stats = [
@@ -57,7 +59,7 @@ export async function About({ locale }: { locale: string }) {
           </div>
 
           <div className="scroll-reveal space-y-5">
-            <p className="text-muted text-base leading-[1.8] md:text-lg">{t("p1")}</p>
+            <p className="text-muted text-base leading-[1.8] md:text-lg">{t("p1", b)}</p>
             <p className="text-muted text-base leading-[1.8] md:text-lg">{t("p2")}</p>
             <p className="text-muted text-base leading-[1.8] md:text-lg">{t("p3")}</p>
 

@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 
 import { Link } from "@/i18n/navigation";
 import { episodes, episodeListenPathSegment, getLatestEpisode } from "@/lib/episode-catalog";
+import { BRAND_NAME } from "@/lib/brand";
 import { linkLocale } from "@/lib/link-locale";
 import { PAGE_SECTION_ID, ROUTES, listenEpisodePath } from "@/lib/routes";
 
@@ -47,6 +48,7 @@ export async function Hero({ locale }: { locale: string }) {
         />
 
         <h1
+          aria-label={BRAND_NAME}
           className="font-display text-primary mb-6 leading-none font-bold tracking-tight whitespace-nowrap select-none"
           style={{
             fontSize: "clamp(2.5rem, 14vw, 13rem)",
@@ -57,7 +59,9 @@ export async function Hero({ locale }: { locale: string }) {
             <span className="hero-title__mark">
               <LogoD />
             </span>
-            <span className="hero-title__word">ECODER</span>
+            <span className="hero-title__word">
+              {BRAND_NAME.slice(1).toLocaleUpperCase("cs-CZ")}
+            </span>
           </span>
         </h1>
 

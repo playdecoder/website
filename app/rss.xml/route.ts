@@ -2,7 +2,8 @@ import { episodeListenPathSegment, episodes, type Episode } from "@/lib/episode-
 import { resolveEpisodeCoverImageUrl } from "@/lib/episode-cover";
 import { plainEpisodeDescription } from "@/lib/episode-description";
 import { absoluteListenEpisodeUrl } from "@/lib/routes";
-import { showHostsAmpersand, showTaglineEn } from "@/lib/show";
+import { showHostsAmpersand, showTaglineCs } from "@/lib/show";
+import { BRAND_NAME, BRAND_PODCAST } from "@/lib/brand";
 import { absoluteFromPath, getPodcastCoverAbsoluteUrl, getPublicSiteUrl } from "@/lib/site";
 import { SITE_CONTACT_EMAIL } from "@/lib/socials";
 
@@ -78,11 +79,11 @@ export function GET() {
   xmlns:podcast="https://podcastindex.org/namespace/1.0">
 
   <channel>
-    <title>Decoder</title>
+    <title>${escapeXml(BRAND_NAME)}</title>
     <link>${SITE_URL}</link>
-    <description>${escapeXml(showTaglineEn())}</description>
+    <description>${escapeXml(showTaglineCs())}</description>
     <language>cs</language>
-    <copyright>© ${new Date().getFullYear()} Decoder Podcast</copyright>
+    <copyright>© ${new Date().getFullYear()} ${escapeXml(BRAND_PODCAST)}</copyright>
     <lastBuildDate>${lastBuildDate}</lastBuildDate>
     <managingEditor>${SITE_CONTACT_EMAIL} (${escapeXml(showHostsAmpersand())})</managingEditor>
     <webMaster>${SITE_CONTACT_EMAIL}</webMaster>
@@ -90,12 +91,12 @@ export function GET() {
 
     <image>
       <url>${COVER_ART_URL}</url>
-      <title>Decoder</title>
+      <title>${escapeXml(BRAND_NAME)}</title>
       <link>${SITE_URL}</link>
     </image>
 
     <itunes:author>${escapeXml(showHostsAmpersand())}</itunes:author>
-    <itunes:summary>${escapeXml(showTaglineEn())}</itunes:summary>
+    <itunes:summary>${escapeXml(showTaglineCs())}</itunes:summary>
     <itunes:type>episodic</itunes:type>
     <itunes:image href="${COVER_ART_URL}" />
     <itunes:category text="Technology" />
@@ -104,7 +105,7 @@ export function GET() {
     </itunes:category>
     <itunes:explicit>no</itunes:explicit>
     <itunes:owner>
-      <itunes:name>Decoder Podcast</itunes:name>
+      <itunes:name>${escapeXml(BRAND_PODCAST)}</itunes:name>
       <itunes:email>${SITE_CONTACT_EMAIL}</itunes:email>
     </itunes:owner>
 

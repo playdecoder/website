@@ -19,6 +19,7 @@ import {
 } from "@/lib/episode-catalog";
 import { resolveEpisodeCoverImageUrl } from "@/lib/episode-cover";
 import { plainEpisodeDescription } from "@/lib/episode-description";
+import { BRAND_NAME } from "@/lib/brand";
 import { linkLocale } from "@/lib/link-locale";
 import { listenEpisodePath, ROUTES, homeSectionPath } from "@/lib/routes";
 import { showHostsSchemaPersons } from "@/lib/show";
@@ -272,7 +273,7 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
     },
     partOfSeries: {
       "@type": "PodcastSeries",
-      name: "Decoder",
+      name: BRAND_NAME,
       url: seriesUrl,
       image: seriesCoverUrl,
     },
@@ -360,7 +361,7 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
               locale={hrefLocale}
               className="hover-underline hover:text-primary -my-1.5 inline-flex min-h-11 items-center py-1.5 transition-colors"
             >
-              {t("breadcrumbDecoder")}
+              {BRAND_NAME}
             </Link>
             <span className="text-edge">/</span>
             <Link

@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { headers } from "next/headers";
 
 import { routing } from "@/i18n/routing";
+import { brandInterpolation } from "@/lib/brand";
 import { INCOMING_PATHNAME_HEADER, localeFromIncomingPathname } from "@/lib/incoming-pathname";
 
 import { DecoderNotFoundView } from "./components/not-found-view";
@@ -37,9 +38,10 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   const locale = await localeFromContext(props.params);
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "metadata" });
+  const b = brandInterpolation(locale);
   return {
-    title: t("notFoundTitle"),
-    description: t("notFoundDescription"),
+    title: t("notFoundTitle", b),
+    description: t("notFoundDescription", b),
   };
 }
 

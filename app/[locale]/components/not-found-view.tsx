@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 
 import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
+import { brandInterpolation } from "@/lib/brand";
 import { linkLocale } from "@/lib/link-locale";
 import { ROUTES } from "@/lib/routes";
 
@@ -11,6 +12,7 @@ import { SignalLabelRail } from "./sections/signal-label-rail";
 
 export async function DecoderNotFoundView({ locale = routing.defaultLocale }: { locale?: string }) {
   const t = await getTranslations({ locale, namespace: "notFound" });
+  const b = brandInterpolation(locale);
   const hrefLocale = linkLocale(locale);
 
   return (
@@ -76,7 +78,7 @@ export async function DecoderNotFoundView({ locale = routing.defaultLocale }: { 
               locale={hrefLocale}
               className="cta-on-lime rounded-sm px-8 py-3.5 text-center font-mono text-xs font-medium tracking-widest uppercase transition-all duration-200 hover:scale-[1.02] hover:opacity-90 active:scale-[0.98]"
             >
-              {t("backHome")}
+              {t("backHome", b)}
             </Link>
             <Link
               href={ROUTES.episodes}

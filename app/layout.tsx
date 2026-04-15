@@ -6,7 +6,8 @@ import type { Metadata, Viewport } from "next";
 import { Syne, JetBrains_Mono } from "next/font/google";
 import type { ReactNode } from "react";
 
-import { showTaglineEn } from "@/lib/show";
+import { BRAND_NAME } from "@/lib/brand";
+import { showTaglineCs } from "@/lib/show";
 import { getPublicSiteUrl } from "@/lib/site";
 
 import { ThemeProvider } from "./[locale]/theme-provider";
@@ -27,8 +28,8 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(getPublicSiteUrl()),
-  title: "Decoder — Games | Tech | Insight",
-  description: showTaglineEn(),
+  title: `${BRAND_NAME} — Hry | Technologie | Kontext`,
+  description: showTaglineCs(),
   icons: {
     icon: [
       { url: "/icon.svg", media: "(prefers-color-scheme: light)", type: "image/svg+xml" },
@@ -36,8 +37,8 @@ export const metadata: Metadata = {
     ],
   },
   openGraph: {
-    title: "Decoder — Games | Tech | Insight",
-    description: showTaglineEn(),
+    title: `${BRAND_NAME} — Hry | Technologie | Kontext`,
+    description: showTaglineCs(),
     type: "website",
   },
 };

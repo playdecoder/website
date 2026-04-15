@@ -4,6 +4,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useEffect } from "react";
 
+import { BRAND_NAME, brandInterpolation } from "@/lib/brand";
 import { ROUTES } from "@/lib/routes";
 import { linkLocale } from "@/lib/link-locale";
 
@@ -20,6 +21,7 @@ export default function ErrorPage({
   const locale = useLocale();
   const hrefLocale = linkLocale(locale);
   const t = useTranslations("error");
+  const b = brandInterpolation(locale);
 
   useEffect(() => {
     console.error(error);
@@ -35,7 +37,7 @@ export default function ErrorPage({
             className="font-display text-primary text-lg font-extrabold tracking-tight"
             lang={locale}
           >
-            Decoder
+            {BRAND_NAME}
           </Link>
         </div>
       </header>
@@ -83,7 +85,7 @@ export default function ErrorPage({
               locale={hrefLocale}
               className="border-edge text-muted hover:border-primary/40 hover:text-primary rounded-sm border px-8 py-3.5 text-center font-mono text-xs tracking-widest uppercase transition-all duration-200"
             >
-              {t("backHome")}
+              {t("backHome", b)}
             </Link>
           </div>
 

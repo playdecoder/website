@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
+import { brandInterpolation } from "@/lib/brand";
 import { ROUTES } from "@/lib/routes";
 import { localizedAlternates } from "@/lib/metadata-alternates";
 import { showTaglineEn } from "@/lib/show";
@@ -22,8 +23,9 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "metadata" });
+  const b = brandInterpolation(locale);
   return {
-    title: t("homeTitle"),
+    title: t("homeTitle", b),
     description: locale === "en" ? showTaglineEn() : t("siteDescription"),
     alternates: localizedAlternates(ROUTES.home, locale),
   };

@@ -113,11 +113,11 @@
     "title": "Why Games Matter More Than Ever",
     "date": "2026-02-10",
     "duration": 3120,
-    "description": "The debut episode. Jan and Martin set the stage — what **Decoder** is, why they're making it, and what games tell us about _everything else_.",
+    "description": "The debut episode. Jan and Martin set the stage — what **Dekodér** is, why they're making it, and what games tell us about _everything else_.",
     "tags": ["Intro", "Culture"],
     "coverImage": "",
     "chapters": [
-      { "t": 0, "label": "What Decoder is" },
+      { "t": 0, "label": "What Dekodér is" },
       { "t": 520, "label": "Why games, why now" },
       { "t": 1320, "label": "How we work together" },
       { "t": 2220, "label": "What to expect from the feed" },

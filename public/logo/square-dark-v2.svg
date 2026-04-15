@@ -19,7 +19,7 @@
         font-family="Inter, system-ui, sans-serif"
         font-size="36"
         font-weight="600">
-    Decoder
+    Dekodér
   </text>
 
   <text x="64" y="272"
@@ -27,6 +27,6 @@
         font-family="JetBrains Mono, monospace"
         font-size="12"
         letter-spacing="1.2">
-    GAMES • TECH • INSIGHT
+    HRY • TECH • KONTEXT
   </text>
 </svg>

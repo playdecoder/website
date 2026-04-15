@@ -3,6 +3,7 @@ import Image from "next/image";
 
 import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
+import { BRAND_NAME } from "@/lib/brand";
 import { episodes, episodeListenPathSegment, getLatestEpisode } from "@/lib/episode-catalog";
 import { linkLocale } from "@/lib/link-locale";
 import { ROUTES, homeSectionPath, listenEpisodePath } from "@/lib/routes";
@@ -41,7 +42,6 @@ const NAV_LOGOS = [
 
 export async function Navbar({ locale = routing.defaultLocale }: { locale?: string }) {
   const t = await getTranslations({ locale, namespace: "nav" });
-  const tb = await getTranslations({ locale, namespace: "brand" });
   const latest = getLatestEpisode(episodes);
   const hrefLocale = linkLocale(locale);
   const latestEpisodePath = latest
@@ -56,7 +56,7 @@ export async function Navbar({ locale = routing.defaultLocale }: { locale?: stri
             <Image
               key={logo.src}
               src={logo.src}
-              alt={tb("decoder")}
+              alt={BRAND_NAME}
               width={logo.width}
               height={logo.height}
               priority

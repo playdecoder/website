@@ -15,6 +15,7 @@ import { resolveEpisodeCoverForMeta } from "@/lib/episode-cover";
 import { plainEpisodeDescription } from "@/lib/episode-description";
 import { listenEpisodePath } from "@/lib/routes";
 import { showHostsForMetadata, showHostsForOpenGraphArticle } from "@/lib/show";
+import { BRAND_NAME, BRAND_PODCAST, brandInterpolation } from "@/lib/brand";
 import { absoluteFromPath } from "@/lib/site";
 
 import { EpisodeListenView } from "./episode-listen-view";
@@ -42,9 +43,10 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, episodeId } = await params;
   const t = await getTranslations({ locale, namespace: "metadata" });
+  const b = brandInterpolation(locale);
   const resolved = resolveListenEpisodeParam(episodeId);
   if (!resolved) {
-    return { title: t("episodeFallbackTitle") };
+    return { title: t("episodeFallbackTitle", b) };
   }
   const { episode, canonicalSegment } = resolved;
   const listenHref = listenEpisodePath(canonicalSegment);
@@ -62,24 +64,24 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const ogLocale = locale === "cs" ? "cs_CZ" : "en_US";
   const ogAlternateLocales = locale === "cs" ? ["en_US"] : ["cs_CZ"];
 
-  const pageTitle = `${episode.id} — ${episode.title} | Decoder`;
+  const pageTitle = `${episode.id} — ${episode.title} | ${BRAND_NAME}`;
   const ogTitle = `${episode.id} — ${episode.title}`;
   const description = plainEpisodeDescription(episode.description);
-  const imageAlt = `${episode.id} — ${episode.title} — Decoder`;
+  const imageAlt = `${episode.id} — ${episode.title} — ${BRAND_NAME}`;
 
   return {
     title: pageTitle,
     description,
-    applicationName: "Decoder",
+    applicationName: BRAND_NAME,
     authors: showHostsForMetadata(),
-    creator: "Decoder Podcast",
-    publisher: "Decoder Podcast",
+    creator: BRAND_PODCAST,
+    publisher: BRAND_PODCAST,
     robots: {
       index: true,
       follow: true,
       googleBot: { index: true, follow: true },
     },
-    keywords: [...episode.tags, "podcast", "Decoder"],
+    keywords: [...episode.tags, "podcast", BRAND_NAME],
     alternates: {
       canonical: canonicalUrl,
       languages,
@@ -89,7 +91,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: ogTitle,
       description,
       url: canonicalUrl,
-      siteName: "Decoder",
+      siteName: BRAND_NAME,
       locale: ogLocale,
       alternateLocale: ogAlternateLocales,
       publishedTime,

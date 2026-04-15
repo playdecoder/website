@@ -1,12 +1,12 @@
 {
   "metadata": {
-    "siteTitle": "Decoder — Games | Tech | Insight",
-    "homeTitle": "Decoder — Games | Tech | Insight",
-    "episodeFallbackTitle": "Episode — Decoder",
-    "notFoundTitle": "404 — Page not found | Decoder",
-    "notFoundDescription": "This page could not be found. Return to Decoder — Games, Tech, Insight.",
-    "episodesArchiveTitle": "Episodes — Decoder",
-    "episodesArchiveDescription": "Browse every Decoder episode — filter by language and topic, search the archive, and play in full."
+    "siteTitle": "{brand} — Games | Tech | Context",
+    "homeTitle": "{brand} — Games | Tech | Context",
+    "episodeFallbackTitle": "Episode — {brand}",
+    "notFoundTitle": "404 — Page not found | {brand}",
+    "notFoundDescription": "This page could not be found. Return to {brand} — Games, Tech, Context.",
+    "episodesArchiveTitle": "Episodes — {brand}",
+    "episodesArchiveDescription": "Browse every {brand} episode — filter by language and topic, search the archive, and play in full."
   },
   "common": {
     "switchToLanguage": "Switch to {language}",
@@ -14,9 +14,6 @@
       "en": "English",
       "cs": "Czech"
     }
-  },
-  "brand": {
-    "decoder": "Decoder"
   },
   "nav": {
     "home": "Home",
@@ -29,8 +26,8 @@
     "closeNavigation": "Close site navigation"
   },
   "hero": {
-    "badge": "Games • Tech • Insight",
-    "taglineLine1": "Where game design meets technology.",
+    "badge": "Dekodér • Games • Tech • Context",
+    "taglineLine1": "We unpack games, technology, and the craft in between.",
     "taglineLine2": "Deep conversations, once a month.",
     "latestEpisode": "Latest Episode \u2197",
     "allEpisodes": "All Episodes",
@@ -46,7 +43,7 @@
     "statContent": "Content",
     "statListeners": "Monthly",
     "statValueListeners": "1x",
-    "p1": "Decoder is a podcast for people who build things — and for those curious about what goes into the games and tech they love. We go beyond the surface, beyond the press releases, and into the actual craft.",
+    "p1": "{brand} is a podcast for people who build things — and for those curious about what goes into the games and tech they love. We go beyond the surface, beyond the press releases, and into the actual craft.",
     "p2": "Each episode is an honest conversation between a game designer and a technologist — two different lenses on the same evolving landscape. We argue, we agree, and we always learn something.",
     "p3": "No fluff. No filler. Just ideas worth your time.",
     "cadence": "New episodes once a month"
@@ -60,7 +57,7 @@
       "lastName": "Tomášik",
       "bio": "Game designer with twenty years of experience crafting interactive systems. Jan has shipped titles across mobile, PC, and console — and never stopped asking why players do what they do. His obsession: the invisible rules that make games feel alive.",
       "specialtyTopics": "Systems design, player psychology, game feel",
-      "imageAlt": "Portrait of {name}, Decoder co-host"
+      "imageAlt": "Portrait of {name}, {brand} co-host"
     },
     "martin": {
       "rolePrimary": "Founder",
@@ -69,7 +66,7 @@
       "lastName": "Pernica",
       "bio": "Founder and technical architect who builds the infrastructure games run on. Martin has gone from writing assembly code to leading product teams — and finds the intersection of engineering and creativity the most interesting place to be.",
       "specialtyTopics": "Platform architecture, tooling, tech strategy",
-      "imageAlt": "Portrait of {name}, Decoder co-host"
+      "imageAlt": "Portrait of {name}, {brand} co-host"
     },
     "specialty": "SPECIALTY",
     "socials": "SOCIALS",
@@ -112,11 +109,10 @@
     "socialTwitter": "X",
     "socialInstagram": "Instagram",
     "socialLinkedin": "LinkedIn",
-    "footerBrand": "DECODER PODCAST",
-    "footerTagline": "GAMES • TECH • INSIGHT"
+    "footerBrand": "{brandUpper} PODCAST",
+    "footerTagline": "GAMES • TECH • CONTEXT"
   },
   "listen": {
-    "breadcrumbDecoder": "Decoder",
     "breadcrumbEpisodes": "Episodes",
     "breadcrumbAria": "Breadcrumb",
     "onTheWire": "On the wire",
@@ -128,7 +124,7 @@
     "debutEpisodeStub": "Debut episode",
     "allEpisodes": "All episodes",
     "getInTouch": "Got a counterpoint? Let us know!",
-    "footerPodcast": "DECODER PODCAST",
+    "footerPodcast": "{brandUpper} PODCAST",
     "playerKicker": "Player",
     "playerAriaLabel": "Episode audio player — {id}",
     "playerPlay": "Play",
@@ -188,7 +184,7 @@
     "errorCode": "Error 404",
     "srOnly": "404 — Page not found",
     "body": "This frequency is not in our feed. The URL may be wrong, or the page was moved.",
-    "backHome": "Back to Decoder",
+    "backHome": "Back to {brand}",
     "latestEpisodes": "Latest episodes"
   },
   "error": {
@@ -196,7 +192,7 @@
     "heading": "We hit a snag decoding this page.",
     "body": "Something went wrong on our side. You can try again — if it keeps happening, head back home and we will be right there.",
     "tryAgain": "Try again",
-    "backHome": "Back to Decoder"
+    "backHome": "Back to {brand}"
   },
   "episodeLanguage": {
     "banner": "This episode is in Czech.",

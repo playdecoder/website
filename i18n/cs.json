@@ -1,13 +1,13 @@
 {
   "metadata": {
-    "siteTitle": "Decoder — Hry | Technologie | Kontext",
+    "siteTitle": "{brand} — Hry | Technologie | Kontext",
     "siteDescription": "Podcast, kde se herní design potkává s technologiemi. Otevřené, hluboké rozhovory s Janem Tomášikem a Martinem Pernicou. Jednou měsíčně.",
-    "homeTitle": "Decoder — Hry | Technologie | Kontext",
-    "episodeFallbackTitle": "Epizoda — Decoder",
-    "notFoundTitle": "404 — Stránka nenalezena | Decoder",
-    "notFoundDescription": "Tuto stránku jsme nenašli. Vraťte se na Decoder — hry, technologie, kontext.",
-    "episodesArchiveTitle": "Epizody — Decoder",
-    "episodesArchiveDescription": "Projděte si všechny epizody Decoderu — filtrujte podle jazyka a tématu, hledejte v archivu a přehrávejte v plné délce."
+    "homeTitle": "{brand} — Hry | Technologie | Kontext",
+    "episodeFallbackTitle": "Epizoda — {brand}",
+    "notFoundTitle": "404 — Stránka nenalezena | {brand}",
+    "notFoundDescription": "Tuto stránku jsme nenašli. Vraťte se na {brand} — hry, technologie, kontext.",
+    "episodesArchiveTitle": "Epizody — {brand}",
+    "episodesArchiveDescription": "Projděte si všechny epizody {brandGenitive} — filtrujte podle jazyka a tématu, hledejte v archivu a přehrávejte v plné délce."
   },
   "common": {
     "switchToLanguage": "Přepnout na {language}",
@@ -15,9 +15,6 @@
       "en": "angličtinu",
       "cs": "češtinu"
     }
-  },
-  "brand": {
-    "decoder": "Decoder"
   },
   "nav": {
     "home": "Domů",
@@ -30,8 +27,8 @@
     "closeNavigation": "Zavřít navigaci"
   },
   "hero": {
-    "badge": "Hry • Technologie • Kontext",
-    "taglineLine1": "Kde se herní design potkává s technologiemi.",
+    "badge": "Dekodér • Hry • Technologie • Kontext",
+    "taglineLine1": "Rozplétáme hry, technologie a řemeslo na jejich pomezí.",
     "taglineLine2": "Hluboké rozhovory. Jednou měsíčně.",
     "latestEpisode": "Nejnovější epizoda \u2197",
     "allEpisodes": "Všechny epizody",
@@ -47,7 +44,7 @@
     "statContent": "Obsah",
     "statListeners": "měsíčně",
     "statValueListeners": "1x",
-    "p1": "Decoder je podcast pro lidi, kteří něco staví, tvoří nebo chtějí chápat, jak věci pod povrchem opravdu fungují. Jdeme za kulisy her a technologií, které máme rádi, a místo omáčky řešíme řemeslo.",
+    "p1": "{brand} je podcast pro lidi, kteří něco staví, tvoří nebo chtějí chápat, jak věci pod povrchem opravdu fungují. Jdeme za kulisy her a technologií, které máme rádi, a místo omáčky řešíme řemeslo.",
     "p2": "Každá epizoda je poctivý rozhovor mezi herním designérem a technologem. Dva odlišné pohledy, jeden rychle se měnící svět. Někdy se přeme, někdy se shodneme, ale pokaždé z toho něco vypadne.",
     "p3": "Bez vaty. Bez výplně. Jen myšlenky, které mají váhu.",
     "cadence": "Nové epizody jednou měsíčně"
@@ -61,7 +58,7 @@
       "lastName": "Tomášik",
       "bio": "Herní designér s dvacetiletou zkušeností s navrhováním interaktivních systémů. Jan má za sebou hry pro mobil, PC i konzole a pořád ho zajímá stejná věc: proč hráči dělají to, co dělají. Fascinují ho neviditelná pravidla, díky kterým hry opravdu žijí.",
       "specialtyTopics": "Design systémů, psychologie hráče, herní pocit",
-      "imageAlt": "Portrét — {name}, spoluhostitel podcastu Decoder"
+      "imageAlt": "Portrét — {name}, spoluhostitel podcastu {brand}"
     },
     "martin": {
       "rolePrimary": "Zakladatel",
@@ -70,7 +67,7 @@
       "lastName": "Pernica",
       "bio": "Zakladatel a technický architekt, který staví infrastrukturu, na které hry běží. Martin prošel cestu od psaní v assembly až k vedení produktových týmů a nejvíc ho pořád baví místo, kde se potkává inženýrství s kreativitou.",
       "specialtyTopics": "Architektura platforem, nástroje, technická strategie",
-      "imageAlt": "Portrét — {name}, spoluhostitel podcastu Decoder"
+      "imageAlt": "Portrét — {name}, spoluhostitel podcastu {brand}"
     },
     "specialty": "OBOR",
     "socials": "S\u00edt\u011b",
@@ -113,11 +110,10 @@
     "socialTwitter": "X",
     "socialInstagram": "Instagram",
     "socialLinkedin": "LinkedIn",
-    "footerBrand": "PODCAST DECODER",
+    "footerBrand": "PODCAST {brandUpper}",
     "footerTagline": "HRY • TECHNOLOGIE • KONTEXT"
   },
   "listen": {
-    "breadcrumbDecoder": "Decoder",
     "breadcrumbEpisodes": "Epizody",
     "breadcrumbAria": "Drobečková navigace",
     "onTheWire": "Na vlně",
@@ -129,7 +125,7 @@
     "debutEpisodeStub": "Úplně první epizoda",
     "allEpisodes": "Všechny epizody",
     "getInTouch": "Máte protiargument? Dejte nám vědět!",
-    "footerPodcast": "PODCAST DECODER",
+    "footerPodcast": "PODCAST {brandUpper}",
     "playerKicker": "Přehrávač",
     "playerAriaLabel": "Přehrávač epizody — {id}",
     "playerPlay": "Přehrát",
@@ -189,7 +185,7 @@
     "errorCode": "Chyba 404",
     "srOnly": "404 — Stránka nenalezena",
     "body": "Na téhle frekvenci nic nevysíláme. URL může být špatně, nebo se stránka přesunula jinam.",
-    "backHome": "Zpět na Decoder",
+    "backHome": "Zpět na {brand}",
     "latestEpisodes": "Nejnovější epizody"
   },
   "error": {
@@ -197,7 +193,7 @@
     "heading": "Tuhle stránku se nepodařilo dekódovat.",
     "body": "Něco se pokazilo na naší straně. Zkuste to znovu. Když to nepovolí, vraťte se na úvod a chytněte další stopu odtamtud.",
     "tryAgain": "Zkusit znovu",
-    "backHome": "Zpět na Decoder"
+    "backHome": "Zpět na {brand}"
   },
   "episodeLanguage": {
     "banner": "Tato epizoda je v češtině.",

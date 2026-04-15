@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 import Image from "next/image";
 import type { ReactNode } from "react";
 
+import { brandInterpolation } from "@/lib/brand";
 import { HOST_PHOTOS } from "@/lib/episode-catalog";
 import { PAGE_SECTION_ID } from "@/lib/routes";
 import { SHOW_HOST_NAMES } from "@/lib/show";
@@ -69,6 +70,7 @@ function HostSocialsStrip({
 
 export async function Hosts({ locale }: { locale: string }) {
   const t = await getTranslations({ locale, namespace: "hosts" });
+  const b = brandInterpolation(locale);
 
   return (
     <section
@@ -88,7 +90,7 @@ export async function Hosts({ locale }: { locale: string }) {
               <div className="host-card__photo host-photo-shell host-photo-shell--tint-secondary border-edge/70 bg-surface group-hover:border-secondary/45 relative mx-auto aspect-[3/4] w-full max-w-[min(100%,17.5rem)] shrink-0 overflow-hidden rounded-sm border shadow-[inset_0_0_0_1px_rgba(255,255,255,0.04)] transition-[border-color,box-shadow] duration-300 md:mx-0 md:aspect-auto md:min-h-[17.5rem] md:w-[min(42%,13.75rem)] md:max-w-none md:self-stretch">
                 <Image
                   src={HOST_PHOTOS.jan}
-                  alt={t("jan.imageAlt", { name: SHOW_HOST_NAMES[0] })}
+                  alt={t("jan.imageAlt", { name: SHOW_HOST_NAMES[0], ...b })}
                   fill
                   sizes="(max-width: 768px) 280px, 220px"
                   className="relative z-0 object-cover object-[66%_22%] transition-transform duration-700 ease-out group-hover:scale-[1.04]"
@@ -142,7 +144,7 @@ export async function Hosts({ locale }: { locale: string }) {
               <div className="host-card__photo host-photo-shell host-photo-shell--tint-accent border-edge/70 bg-surface group-hover:border-accent/45 relative mx-auto aspect-[3/4] w-full max-w-[min(100%,17.5rem)] shrink-0 overflow-hidden rounded-sm border shadow-[inset_0_0_0_1px_rgba(255,255,255,0.04)] transition-[border-color,box-shadow] duration-300 md:mx-0 md:aspect-auto md:min-h-[17.5rem] md:w-[min(42%,13.75rem)] md:max-w-none md:self-stretch">
                 <Image
                   src={HOST_PHOTOS.martin}
-                  alt={t("martin.imageAlt", { name: SHOW_HOST_NAMES[1] })}
+                  alt={t("martin.imageAlt", { name: SHOW_HOST_NAMES[1], ...b })}
                   fill
                   sizes="(max-width: 768px) 280px, 220px"
                   className="relative z-0 origin-center scale-[1.08] object-cover object-[69%_22%] transition-transform duration-700 ease-out group-hover:scale-[1.11]"

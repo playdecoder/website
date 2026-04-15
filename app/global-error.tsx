@@ -3,20 +3,22 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import { BRAND_NAME } from "@/lib/brand";
+
 const MESSAGES = {
   en: {
     badge: "Transmission error",
     heading: "We hit a snag decoding this page.",
     body: "Something went wrong on our side. You can try again — if it keeps happening, head back home and we will be right there.",
     tryAgain: "Try again",
-    backHome: "Back to Decoder",
+    backHome: `Back to ${BRAND_NAME}`,
   },
   cs: {
     badge: "Chyba přenosu",
     heading: "Tuhle stránku se nepodařilo dekódovat.",
     body: "Něco se pokazilo na naší straně. Zkuste to znovu. Když to nepovolí, vraťte se na úvod a chytněte další stopu odtamtud.",
     tryAgain: "Zkusit znovu",
-    backHome: "Zpět na Decoder",
+    backHome: `Zpět na ${BRAND_NAME}`,
   },
 } as const;
 
@@ -86,7 +88,7 @@ export default function GlobalError({
               letterSpacing: "-0.03em",
             }}
           >
-            Decoder
+            {BRAND_NAME}
           </Link>
         </header>
 
