@@ -30,8 +30,8 @@
       "spotify": "https://open.spotify.com/episode/7Gk8WxDecoderE005XX",
       "applePodcasts": "https://podcasts.apple.com/podcast/decoder/id0000000000?i=1000050000005",
       "youtube": "https://www.youtube.com/watch?v=Dec0d3rE005",
-      "mp3": "http://cdn.dekoder.fm/podcast/episodes/ep00-test-dev.mp3",
-      "transcript": "https://cdn.dekoder.fm/podcast/transcripts/ep00-test-dev.transcript.json"
+      "mp3": "https://cdn.play-decoder.com/podcast/episodes/ep00-test-dev.mp3",
+      "transcript": "https://cdn.play-decoder.com/podcast/transcripts/ep00-test-dev.transcript.json"
     }
   },
   {
