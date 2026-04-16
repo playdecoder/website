@@ -32,8 +32,15 @@ export function EpisodeListenPlayerAndBody({
 }: EpisodeListenPlayerAndBodyProps) {
   const t = useTranslations("listen");
   const tContact = useTranslations("contact");
-  const { loadEpisode, seek, isPlaying, currentTime, duration, episode: playingEpisode } =
-    usePlayerContext();
+  const {
+    loadEpisode,
+    seek,
+    isPlaying,
+    currentTime,
+    duration,
+    episode: playingEpisode,
+    isSeekBuffering,
+  } = usePlayerContext();
 
   const isPageEpisodeActive = playingEpisode?.id === episode.id;
   const chaptersCanSeek = isPageEpisodeActive && duration > 0;
@@ -71,7 +78,7 @@ export function EpisodeListenPlayerAndBody({
   }, [episode, loadEpisode, playingEpisode]);
 
   useWaveformSettle(
-    isPlaying && isPageEpisodeActive,
+    isPlaying && isPageEpisodeActive && !isSeekBuffering,
     () => Array.from(document.querySelectorAll<HTMLElement>(".waveform-bar--listen-bg")),
     {
       frozenOpacity: 1,
@@ -83,8 +90,8 @@ export function EpisodeListenPlayerAndBody({
 
   useEffect(() => {
     document.documentElement.dataset.episodePlaying =
-      isPlaying && isPageEpisodeActive ? "true" : "false";
-  }, [isPlaying, isPageEpisodeActive]);
+      isPlaying && isPageEpisodeActive && !isSeekBuffering ? "true" : "false";
+  }, [isPlaying, isPageEpisodeActive, isSeekBuffering]);
 
   useEffect(() => {
     return () => {

@@ -153,6 +153,7 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
     const rateLabel = ctx.playbackRate === 1 ? "1×" : `${ctx.playbackRate}×`;
     const volumeIconLevel = programmaticVolume ? ctx.volume : ctx.muted ? 0 : 1;
     const mainTransportShowsPause = isPageEpisodeActive && ctx.isPlaying;
+    const showSeekBuffering = isPageEpisodeActive && ctx.isSeekBuffering && !ctx.loadError;
 
     useImperativeHandle(
       ref,
@@ -170,7 +171,7 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
     }, [ctxEpisode?.id, episode, loadEpisode, togglePlay]);
 
     const decoderWavePlaying = useWaveformSettle(
-      isPageEpisodeActive && ctx.isPlaying,
+      isPageEpisodeActive && ctx.isPlaying && !ctx.isSeekBuffering,
       () => Array.from(waveformRef.current?.querySelectorAll<HTMLElement>(".decoder-waveform-bar") ?? []),
     );
 
@@ -262,6 +263,7 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
         }`}
         style={{ animation: "fadeUp 0.7s ease both 0.18s" }}
         data-playing={isPageEpisodeActive && ctx.isPlaying}
+        data-seek-buffering={showSeekBuffering || undefined}
         data-load-error={ctx.loadError || undefined}
         aria-label={t("playerAriaLabel", { id: episodeId })}
       >
@@ -403,6 +405,7 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
 
                 <div
                   className="decoder-audio-seek-wrap relative w-full"
+                  aria-busy={showSeekBuffering}
                   style={
                     {
                       "--decoder-progress": `${progressPct}%`,
@@ -410,6 +413,11 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
                     } as CSSProperties
                   }
                 >
+                  {showSeekBuffering ? (
+                    <span className="sr-only" role="status" aria-live="polite">
+                      {t("playerSeekBuffering")}
+                    </span>
+                  ) : null}
                   <div className="decoder-audio-custom-track absolute inset-x-0" aria-hidden />
                   {chapterTimelineMarkers.length > 0 ? (
                     <div className="decoder-audio-chapter-ticks absolute inset-0" aria-hidden>

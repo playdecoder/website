@@ -9,12 +9,52 @@ import type { Dispatch, MutableRefObject } from "react";
 
 export const GLOBAL_PLAYER_PERSIST_THROTTLE_MS = 2000;
 
+const BUFFER_EDGE_SLOP_SEC = 0.45;
+/** Margin past `max(buffered.end)` when `readyState` is too low for a precise range membership check. */
+const BUFFER_AHEAD_MARGIN_SEC = 0.35;
+
+export function getBufferedMaxEndSec(el: HTMLMediaElement): number {
+  const ranges = el.buffered;
+  let max = 0;
+  for (let i = 0; i < ranges.length; i++) {
+    max = Math.max(max, ranges.end(i));
+  }
+  return max;
+}
+
+export function timeIsBuffered(el: HTMLAudioElement, targetSec: number): boolean {
+  if (!Number.isFinite(targetSec) || targetSec < 0) return true;
+  const d = el.duration;
+  if (!Number.isFinite(d) || d <= 0) return true;
+  const ranges = el.buffered;
+  if (ranges.length === 0) {
+    return el.readyState < HTMLMediaElement.HAVE_CURRENT_DATA;
+  }
+  for (let i = 0; i < ranges.length; i++) {
+    const start = ranges.start(i);
+    const end = ranges.end(i);
+    if (targetSec + BUFFER_EDGE_SLOP_SEC >= start && targetSec - BUFFER_EDGE_SLOP_SEC <= end) {
+      return true;
+    }
+  }
+  return false;
+}
+
+export function inferSeekNeedsBuffer(el: HTMLAudioElement, targetSec: number): boolean {
+  const d = el.duration;
+  if (!Number.isFinite(d) || d <= 0) return false;
+  const t = Math.max(0, Math.min(d, targetSec));
+  if (el.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) return !timeIsBuffered(el, t);
+  return t > getBufferedMaxEndSec(el) + BUFFER_AHEAD_MARGIN_SEC;
+}
+
 export interface MediaState {
   isPlaying: boolean;
   currentTime: number;
   duration: number;
   loadError: boolean;
   bufferedPct: number;
+  isSeekBuffering: boolean;
   resumeNotice: string | null;
   resumeHintVisible: boolean;
   hasClearableProgress: boolean;
@@ -27,6 +67,7 @@ export function initialMediaState(): MediaState {
     duration: 0,
     loadError: false,
     bufferedPct: 0,
+    isSeekBuffering: false,
     resumeNotice: null,
     resumeHintVisible: false,
     hasClearableProgress: false,
@@ -91,7 +132,15 @@ export function subscribeGlobalPlayerAudio(
 
   const onSeeked = () => {
     const d = Number.isFinite(el.duration) ? el.duration : 0;
-    dispatchMedia({ type: "patch", patch: { currentTime: el.currentTime, duration: d } });
+    const canKnowBuffer = d > 0 && el.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA;
+    dispatchMedia({
+      type: "patch",
+      patch: {
+        currentTime: el.currentTime,
+        duration: d,
+        ...(canKnowBuffer ? { isSeekBuffering: inferSeekNeedsBuffer(el, el.currentTime) } : {}),
+      },
+    });
     lastPersistAtRef.current = Date.now();
     persistNow();
   };
@@ -99,12 +148,12 @@ export function subscribeGlobalPlayerAudio(
   const onMeta = () => {
     const d = Number.isFinite(el.duration) ? el.duration : 0;
     if (d <= 0) {
-      dispatchMedia({ type: "patch", patch: { duration: d } });
+      dispatchMedia({ type: "patch", patch: { duration: d, isSeekBuffering: false } });
       return;
     }
     const id = getEpisodeId();
     if (!id) {
-      dispatchMedia({ type: "patch", patch: { duration: d } });
+      dispatchMedia({ type: "patch", patch: { duration: d, isSeekBuffering: false } });
       return;
     }
     const saved = getSavedPosition(id, d);
@@ -116,6 +165,7 @@ export function subscribeGlobalPlayerAudio(
       resumeNotice = t("playerResumingFrom", { time: formatPlaybackTime(saved) });
     }
     const has = episodeHasStoredProgress(id);
+    const resumeNeedsBuffer = inferSeekNeedsBuffer(el, currentTime);
     dispatchMedia({
       type: "patch",
       patch: {
@@ -124,18 +174,27 @@ export function subscribeGlobalPlayerAudio(
         resumeNotice,
         hasClearableProgress: has,
         resumeHintVisible: has,
+        isSeekBuffering: resumeNeedsBuffer,
       },
     });
   };
 
-  const readBuffered = () => {
+  const patchBufferTelemetry = () => {
     if (!Number.isFinite(el.duration) || el.duration <= 0) return;
-    let maxEnd = 0;
-    for (let i = 0; i < el.buffered.length; i++) {
-      maxEnd = Math.max(maxEnd, el.buffered.end(i));
-    }
+    const maxEnd = getBufferedMaxEndSec(el);
     const pct = Math.min(100, (maxEnd / el.duration) * 100);
-    dispatchMedia({ type: "patch", patch: { bufferedPct: pct } });
+    const canKnowBuffer = el.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA;
+    dispatchMedia({
+      type: "patch",
+      patch: {
+        bufferedPct: pct,
+        ...(canKnowBuffer ? { isSeekBuffering: inferSeekNeedsBuffer(el, el.currentTime) } : {}),
+      },
+    });
+  };
+
+  const onWaiting = () => {
+    dispatchMedia({ type: "patch", patch: { isSeekBuffering: true } });
   };
 
   el.addEventListener("play", onPlay);
@@ -144,13 +203,16 @@ export function subscribeGlobalPlayerAudio(
   el.addEventListener("timeupdate", onTime);
   el.addEventListener("seeked", onSeeked);
   el.addEventListener("loadedmetadata", onMeta);
-  el.addEventListener("progress", readBuffered);
-  const onError = () => dispatchMedia({ type: "patch", patch: { loadError: true } });
+  el.addEventListener("progress", patchBufferTelemetry);
+  el.addEventListener("waiting", onWaiting);
+  el.addEventListener("stalled", onWaiting);
+  const onError = () =>
+    dispatchMedia({ type: "patch", patch: { loadError: true, isSeekBuffering: false } });
   el.addEventListener("error", onError);
 
   if (el.readyState >= HTMLMediaElement.HAVE_METADATA) {
     onMeta();
-    readBuffered();
+    patchBufferTelemetry();
   }
 
   return () => {
@@ -160,7 +222,9 @@ export function subscribeGlobalPlayerAudio(
     el.removeEventListener("timeupdate", onTime);
     el.removeEventListener("seeked", onSeeked);
     el.removeEventListener("loadedmetadata", onMeta);
-    el.removeEventListener("progress", readBuffered);
+    el.removeEventListener("progress", patchBufferTelemetry);
+    el.removeEventListener("waiting", onWaiting);
+    el.removeEventListener("stalled", onWaiting);
     el.removeEventListener("error", onError);
   };
 }

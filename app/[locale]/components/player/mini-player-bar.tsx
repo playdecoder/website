@@ -181,7 +181,16 @@ export function MiniPlayerBar() {
   const { rendered, expanded: show } = dock;
   const enterRafRef = useRef<number | null>(null);
 
-  const { episode, isPlaying, currentTime, duration, loadError, programmaticVolume, seek } = ctx;
+  const {
+    episode,
+    isPlaying,
+    isSeekBuffering,
+    currentTime,
+    duration,
+    loadError,
+    programmaticVolume,
+    seek,
+  } = ctx;
 
   const onListenPage =
     episode !== null &&
@@ -234,7 +243,7 @@ export function MiniPlayerBar() {
   };
 
   const miniWavePlaying = useWaveformSettle(
-    isPlaying,
+    isPlaying && !isSeekBuffering,
     () => Array.from(waveformRef.current?.querySelectorAll<HTMLElement>(".mini-wf-bar") ?? []),
     { settleScale: "scaleY(0.15)", settleOpacity: 0.3 },
   );

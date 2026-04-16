@@ -16,7 +16,12 @@ import { clearEpisodeProgress, writeProgressSnapshot } from "@/lib/episode-progr
 import { isIosLikeWebKitNoProgrammaticVolume } from "@/lib/ios-webkit";
 import { readPlayerPreferences, writePlayerPreferences } from "@/lib/player-preferences-storage";
 
-import { initialMediaState, mediaReducer, subscribeGlobalPlayerAudio } from "./global-player-media";
+import {
+  inferSeekNeedsBuffer,
+  initialMediaState,
+  mediaReducer,
+  subscribeGlobalPlayerAudio,
+} from "./global-player-media";
 import { MiniPlayerBar } from "./mini-player-bar";
 import { PlayerContext } from "./player-context";
 const PLAYBACK_RATES = [1, 1.25, 1.5, 1.75, 2] as const;
@@ -154,6 +159,7 @@ export function GlobalPlayerProvider({ children }: { children: ReactNode }) {
     if (!el) return;
     const d = Number.isFinite(el.duration) && el.duration > 0 ? el.duration : 0;
     const clamped = d > 0 ? Math.max(0, Math.min(d, seconds)) : Math.max(0, seconds);
+    const needsSeekBuffer = d > 0 ? inferSeekNeedsBuffer(el, clamped) : false;
     el.currentTime = clamped;
     dispatchMedia({
       type: "patch",
@@ -161,6 +167,7 @@ export function GlobalPlayerProvider({ children }: { children: ReactNode }) {
         currentTime: clamped,
         resumeNotice: notice ?? null,
         resumeHintVisible: false,
+        ...(d > 0 ? { isSeekBuffering: needsSeekBuffer } : {}),
       },
     });
   }, []);
@@ -176,6 +183,7 @@ export function GlobalPlayerProvider({ children }: { children: ReactNode }) {
     if (!el.paused) el.pause();
     setEpisode(ep);
     resetPlaybackState();
+    dispatchMedia({ type: "patch", patch: { isSeekBuffering: true } });
     el.dataset.episodeId = ep.id;
     el.src = ep.links.mp3;
     el.load();
@@ -185,7 +193,9 @@ export function GlobalPlayerProvider({ children }: { children: ReactNode }) {
     const el = audioRef.current;
     if (!el || loadErrorRef.current) return;
     if (el.paused) {
-      el.play().catch(() => dispatchMedia({ type: "patch", patch: { loadError: true } }));
+      el.play().catch(() =>
+        dispatchMedia({ type: "patch", patch: { loadError: true, isSeekBuffering: false } }),
+      );
     } else {
       el.pause();
     }
@@ -279,6 +289,7 @@ export function GlobalPlayerProvider({ children }: { children: ReactNode }) {
       duration: media.duration,
       loadError: media.loadError,
       bufferedPct: media.bufferedPct,
+      isSeekBuffering: media.isSeekBuffering,
       resumeNotice: media.resumeNotice,
       resumeHintVisible: media.resumeHintVisible,
       volume: prefs.volume,
@@ -304,6 +315,7 @@ export function GlobalPlayerProvider({ children }: { children: ReactNode }) {
       media.duration,
       media.loadError,
       media.bufferedPct,
+      media.isSeekBuffering,
       media.resumeNotice,
       media.resumeHintVisible,
       prefs.volume,

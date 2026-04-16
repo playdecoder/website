@@ -212,6 +212,7 @@ function EpisodeListenMetadata({
   shareLabel,
   shareAria,
   copyLabel,
+  copyLabelCompact,
   copyAria,
   copiedLabel,
   copyFailedLabel,
@@ -221,25 +222,26 @@ function EpisodeListenMetadata({
   shareLabel: string;
   shareAria: string;
   copyLabel: string;
+  copyLabelCompact: string;
   copyAria: string;
   copiedLabel: string;
   copyFailedLabel: string;
 }) {
   return (
     <div
-      className="text-muted flex flex-col gap-1.5 font-mono text-[11px] tracking-widest sm:text-xs min-[380px]:flex-row min-[380px]:flex-wrap min-[380px]:items-center min-[380px]:gap-x-4"
+      className="text-muted flex flex-col gap-3 font-mono text-[11px] tracking-widest sm:text-xs md:flex-row md:flex-wrap md:items-center md:gap-x-6"
       style={{ animation: "fadeUp 0.6s ease both 0.14s" }}
     >
-      <div className="flex flex-col gap-1.5 min-[380px]:flex-row min-[380px]:flex-wrap min-[380px]:items-center min-[380px]:gap-x-3">
-        <span className="inline-flex items-center gap-2 break-words">
-          <IconEpisodeAirDate size={13} className="text-secondary/65" />
-          {formatEpisodeDate(episode.date, locale)}
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+        <span className="inline-flex min-w-0 items-center gap-2">
+          <IconEpisodeAirDate size={13} className="shrink-0 text-secondary/65" />
+          <span className="break-words">{formatEpisodeDate(episode.date, locale)}</span>
         </span>
-        <span className="text-edge hidden min-[380px]:inline" aria-hidden>
+        <span className="text-edge/80 shrink-0 select-none" aria-hidden>
           ·
         </span>
         <span className="inline-flex items-center gap-2">
-          <IconEpisodeDuration size={13} className="text-secondary/65" />
+          <IconEpisodeDuration size={13} className="shrink-0 text-secondary/65" />
           {formatEpisodeDuration(episode.duration)}
         </span>
       </div>
@@ -249,10 +251,11 @@ function EpisodeListenMetadata({
         label={shareLabel}
         labelAria={shareAria}
         copyLabel={copyLabel}
+        copyLabelCompact={copyLabelCompact}
         copyAria={copyAria}
         copiedLabel={copiedLabel}
         copyFailedLabel={copyFailedLabel}
-        className="min-[380px]:ml-auto"
+        className="w-full md:ml-auto md:w-auto md:shrink-0"
       />
     </div>
   );
@@ -315,6 +318,7 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
     shareLabel: t("shareEpisode"),
     shareAria: t("shareEpisodeAria"),
     copyLabel: t("playerCopyLink"),
+    copyLabelCompact: t("copyEpisodeLinkShort"),
     copyAria: t("playerCopyLinkAria"),
     copiedLabel: t("playerCopied"),
     copyFailedLabel: t("playerCopyFailed"),

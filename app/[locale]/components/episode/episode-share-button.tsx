@@ -15,6 +15,7 @@ interface EpisodeShareButtonProps {
   label: string;
   labelAria: string;
   copyLabel: string;
+  copyLabelCompact?: string;
   copyAria: string;
   copiedLabel: string;
   copyFailedLabel: string;
@@ -22,7 +23,7 @@ interface EpisodeShareButtonProps {
 }
 
 const chipBtn =
-  "border-edge text-muted hover:border-primary/40 hover:text-primary active:bg-surface-2 inline-flex min-h-11 items-center gap-2 rounded-sm border px-3 py-2 font-mono text-[11px] tracking-widest uppercase transition-colors sm:text-xs";
+  "border-edge text-muted hover:border-primary/40 hover:text-primary active:bg-surface-2 inline-flex min-h-10 w-full min-w-0 items-center justify-center gap-2 rounded-sm border px-2.5 py-2 font-mono text-[10px] tracking-wide uppercase transition-colors md:min-h-11 md:px-3 md:text-xs md:tracking-widest md:w-auto";
 
 export function EpisodeShareButton({
   shareTitle,
@@ -30,6 +31,7 @@ export function EpisodeShareButton({
   label,
   labelAria,
   copyLabel,
+  copyLabelCompact,
   copyAria,
   copiedLabel,
   copyFailedLabel,
@@ -99,11 +101,17 @@ export function EpisodeShareButton({
     copyStatus === "copied" ? copiedLabel : copyStatus === "error" ? copyFailedLabel : copyLabel;
 
   return (
-    <div className={cn("flex flex-wrap items-center gap-2", className)}>
+    <div
+      className={cn(
+        "w-full gap-2",
+        canShare ? "grid grid-cols-2 md:flex md:w-auto md:flex-row md:flex-wrap md:items-stretch" : "flex",
+        className,
+      )}
+    >
       {canShare ? (
         <button type="button" onClick={onShare} aria-label={labelAria} className={chipBtn}>
-          <IconShare size={15} className="text-secondary/65" />
-          {label}
+          <IconShare size={15} className="shrink-0 text-secondary/65" />
+          <span className="min-w-0 truncate">{label}</span>
         </button>
       ) : null}
       <button
@@ -116,8 +124,15 @@ export function EpisodeShareButton({
           copyStatus === "error" && "border-secondary/40 text-secondary",
         )}
       >
-        <IconCopyLink size={15} className="text-secondary/65" />
-        {copyVisible}
+        <IconCopyLink size={15} className="shrink-0 text-secondary/65" />
+        {copyStatus === "idle" && copyLabelCompact ? (
+          <>
+            <span className="min-w-0 truncate md:hidden">{copyLabelCompact}</span>
+            <span className="hidden min-w-0 max-w-[15rem] truncate md:inline">{copyVisible}</span>
+          </>
+        ) : (
+          <span className="min-w-0 truncate">{copyVisible}</span>
+        )}
       </button>
     </div>
   );

@@ -11,6 +11,7 @@ export interface GlobalPlayerState {
   duration: number;
   loadError: boolean;
   bufferedPct: number;
+  isSeekBuffering: boolean;
   resumeNotice: string | null;
   resumeHintVisible: boolean;
   volume: number;
@@ -44,6 +45,7 @@ export const defaultPlayerState: GlobalPlayerState = {
   duration: 0,
   loadError: false,
   bufferedPct: 0,
+  isSeekBuffering: false,
   resumeNotice: null,
   resumeHintVisible: false,
   volume: 1,
