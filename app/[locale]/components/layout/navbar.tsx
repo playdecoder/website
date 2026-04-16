@@ -27,15 +27,15 @@ const NAV_LOGOS = [
     className: "hidden dark:block dark:md:hidden h-11 w-11 object-contain",
   },
   {
-    src: "/logo/wide-light-crop-v3.svg",
-    width: 272,
-    height: 74,
+    src: "/logo/wide-light-crop-v4.svg",
+    width: 359,
+    height: 113,
     className: "hidden md:block dark:md:hidden h-11 w-auto max-h-11 object-contain object-left",
   },
   {
-    src: "/logo/wide-dark-crop-v3.svg",
-    width: 272,
-    height: 74,
+    src: "/logo/wide-dark-crop-v4.svg",
+    width: 359,
+    height: 113,
     className: "hidden dark:md:block h-11 w-auto max-h-11 object-contain object-left",
   },
 ] as const;

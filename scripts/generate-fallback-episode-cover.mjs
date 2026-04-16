@@ -10,7 +10,7 @@ import sharp from "sharp";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, "..");
-const input = join(root, "public/logo/wide-light-crop-v3.svg");
+const input = join(root, "public/logo/wide-light-crop-v4.svg");
 const output = join(root, "public/logo/wide-fallback-og.png");
 
 const width = 1200;
