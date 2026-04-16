@@ -529,6 +529,7 @@ body {
 
 .hero-title__mark {
   display: inline-flex;
+  align-items: baseline;
   animation: heroMarkIn 0.9s cubic-bezier(0.22, 1, 0.36, 1) both 0.08s;
   transform-origin: center;
 }
