@@ -74,7 +74,7 @@ export default async function TopicsIndexPage({ params }: TopicsIndexPageProps) 
                   {t("indexTitleAccent")}
                 </span>
               </h1>
-              <p className="text-muted max-w-2xl text-base leading-relaxed md:text-lg">
+              <p className="font-body text-muted max-w-2xl text-base leading-relaxed md:text-lg">
                 {t("indexIntro")}
               </p>
               <Link
@@ -110,7 +110,7 @@ export default async function TopicsIndexPage({ params }: TopicsIndexPageProps) 
                   locale={hrefLocale}
                   prefetch
                   aria-label={`${label}. ${t("indexEpisodeCount", { count: episodeCount })}. ${t("indexOpenTopic")}.`}
-                  className={`topics-topic-card group border-edge/75 text-primary focus-visible:outline-secondary relative flex min-h-[4.75rem] w-full items-stretch overflow-hidden rounded-sm border bg-gradient-to-br from-[color-mix(in_srgb,var(--surface)_52%,transparent)] to-transparent shadow-[inset_0_1px_0_color-mix(in_srgb,var(--primary)_5%,transparent)] transition-[border-color,box-shadow,transform] duration-300 hover:border-secondary/45 hover:shadow-[0_20px_56px_-28px_color-mix(in_srgb,var(--secondary)_42%,transparent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 active:scale-[0.985] dark:from-[color-mix(in_srgb,var(--surface-2)_28%,transparent)] ${
+                  className={`topics-topic-card group border-edge/75 text-primary focus-visible:outline-secondary relative flex min-h-[4.75rem] w-full items-stretch overflow-hidden rounded-sm border bg-gradient-to-br from-[color-mix(in_srgb,var(--surface)_52%,transparent)] to-transparent shadow-[inset_0_1px_0_color-mix(in_srgb,var(--primary)_5%,transparent)] transition-[border-color,box-shadow,transform] duration-300 hover:border-secondary/45 hover:shadow-[0_20px_56px_-28px_color-mix(in_srgb,var(--secondary)_42%,transparent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 active:scale-[0.985] active:border-secondary/50 dark:from-[color-mix(in_srgb,var(--surface-2)_28%,transparent)] ${
                     isHot ? "border-l-[3px] border-l-accent pl-0" : ""
                   }`}
                 >

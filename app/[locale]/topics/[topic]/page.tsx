@@ -66,7 +66,7 @@ export default async function TopicPage({ params }: TopicPageProps) {
               >
                 {t("heading", { topic: label })}
               </h1>
-              <p className="text-muted max-w-2xl text-base leading-relaxed md:text-lg">
+              <p className="font-body text-muted max-w-2xl text-base leading-relaxed md:text-lg">
                 {t("intro", { topic: label })}
               </p>
             </div>

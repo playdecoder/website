@@ -3,11 +3,61 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 .page-shell {
+  position: relative;
+  isolation: isolate;
   background-color: var(--bg);
   color: var(--primary);
   min-height: 100vh;
   font-family: var(--font-display);
   overflow-x: hidden;
+}
+
+/* Ambient depth: soft washes + film grain (fixed, non-interactive) */
+.page-shell::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      ellipse 120% 78% at 50% -18%,
+      color-mix(in srgb, var(--secondary) 12%, transparent),
+      transparent 56%
+    ),
+    radial-gradient(
+      ellipse 82% 52% at 108% 102%,
+      color-mix(in srgb, var(--primary) 7%, transparent),
+      transparent 46%
+    );
+}
+
+.page-shell::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.038;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='a'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23a)'/%3E%3C/svg%3E");
+  background-size: 220px 220px;
+}
+
+.dark .page-shell::after {
+  opacity: 0.052;
+  mix-blend-mode: screen;
+}
+
+.page-shell > * {
+  position: relative;
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-shell::after {
+    opacity: 0.02;
+  }
 }
 
 :root {
@@ -76,6 +126,7 @@
 
   --font-display: var(--font-syne), "Syne", sans-serif;
   --font-mono: var(--font-jetbrains-mono), "JetBrains Mono", monospace;
+  --font-body: var(--font-literata), "Literata", "Georgia", serif;
 }
 
 @keyframes wave {
@@ -419,6 +470,23 @@ body {
   transition:
     background-color 0.25s ease,
     color 0.25s ease;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--secondary) 88%, #000000);
+  color: #f8fafc;
+}
+
+.dark ::selection {
+  background: color-mix(in srgb, var(--accent) 55%, var(--secondary));
+  color: #0b0f14;
+}
+
+/* Literata long-form: keep synthetic bold off for cleaner pairing with Syne */
+@layer utilities {
+  .font-body {
+    font-synthesis: none;
+  }
 }
 
 .cta-on-lime {

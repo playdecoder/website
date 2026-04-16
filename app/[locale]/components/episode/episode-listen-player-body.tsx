@@ -166,7 +166,7 @@ export function EpisodeListenPlayerAndBody({
           aria-hidden={activeTab !== "about"}
         >
           <div className="space-y-6 p-5 sm:space-y-8 sm:p-6 md:p-8">
-            <p className="text-muted max-w-3xl text-[15px] leading-[1.85] sm:text-base md:text-lg">
+            <p className="font-body text-muted max-w-3xl text-[15px] leading-[1.85] sm:text-base md:text-lg">
               <EpisodeDescriptionRich text={episode.description} />
             </p>
 

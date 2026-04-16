@@ -14,8 +14,17 @@ export async function Footer({ locale }: { locale: string }) {
   const hrefLocale = linkLocale(locale);
 
   return (
-    <footer className="border-edge bg-bg relative z-20 border-t py-8">
-      <div className="mx-auto flex max-w-6xl flex-col items-center gap-6 px-5">
+    <footer className="border-edge bg-bg relative z-20 overflow-hidden border-t py-8">
+      <div
+        className="dot-grid pointer-events-none absolute inset-0 opacity-[0.12] dark:opacity-[0.08]"
+        aria-hidden
+      />
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-secondary/32 to-transparent"
+        aria-hidden
+      />
+
+      <div className="relative mx-auto flex max-w-6xl flex-col items-center gap-6 px-5">
         <nav
           aria-label={t("footerNavAria")}
           className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 font-mono text-[11px] tracking-[0.18em] uppercase sm:text-xs"

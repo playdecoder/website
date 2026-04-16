@@ -83,7 +83,8 @@
   },
   "episodesPage": {
     "label": "Archiv",
-    "heading": "Všechny epizody",
+    "headingLead": "Všechny",
+    "headingAccent": "epizody",
     "intro": "Projděte celý katalog, filtrujte podle témat nebo hledejte v údajích epizod na webu — souvislosti, které se na úvodní stránku nevejdou.",
     "searchLabel": "Hledat",
     "searchScopesLabel": "Hledat v",

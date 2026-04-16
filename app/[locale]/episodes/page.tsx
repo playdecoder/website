@@ -60,9 +60,12 @@ export default async function EpisodesArchivePage({ params }: PageProps) {
                 className="font-display text-primary mb-4 leading-[1.05] font-bold"
                 style={{ fontSize: "clamp(2rem, 5vw, 3.25rem)" }}
               >
-                {t("heading")}
+                <span className="text-primary">{t("headingLead")}</span>{" "}
+                <span className="bg-gradient-to-r from-secondary via-secondary to-[color-mix(in_srgb,var(--accent)_82%,var(--secondary))] bg-clip-text text-transparent">
+                  {t("headingAccent")}
+                </span>
               </h1>
-              <p className="text-muted max-w-2xl text-base leading-relaxed md:text-lg">
+              <p className="font-body text-muted max-w-2xl text-base leading-relaxed md:text-lg">
                 {t("intro")}
               </p>
               <Link

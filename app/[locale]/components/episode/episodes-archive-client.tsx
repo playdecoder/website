@@ -184,7 +184,7 @@ export function EpisodesArchiveClient({
         {filtered.length === 0 && (
           <li className="border-edge bg-surface/30 col-span-full rounded-sm border px-8 py-16 text-center">
             <p className="font-display text-primary mb-3 text-xl">{t("emptyHeading")}</p>
-            <p className="text-muted mx-auto mb-6 max-w-md leading-relaxed">
+            <p className="font-body text-muted mx-auto mb-6 max-w-md leading-relaxed">
               {t(topicFilterLocked ? "emptyHintTopicLocked" : "emptyHint")}
             </p>
             <button
@@ -198,7 +198,7 @@ export function EpisodesArchiveClient({
         )}
         {filtered.map((ep, i) => (
           <li key={ep.id} className="scroll-reveal" style={{ animationDelay: `${0.04 * i}s` }}>
-            <article className="border-edge bg-bg group hover:border-accent/35 relative flex h-full flex-col overflow-hidden rounded-sm border transition-colors duration-300">
+            <article className="border-edge bg-bg group hover:border-accent/35 relative flex h-full flex-col overflow-hidden rounded-sm border transition-colors duration-300 active:border-secondary/45">
               <div
                 className={`absolute top-0 bottom-0 left-0 w-1 ${ep.id === latestId ? "bg-accent" : "bg-secondary"}`}
               />
@@ -234,7 +234,7 @@ export function EpisodesArchiveClient({
                   </Link>
                 </h2>
 
-                <p className="text-muted mb-8 line-clamp-4 flex-1 text-base leading-[1.75] md:text-[1.05rem]">
+                <p className="font-body text-muted mb-8 line-clamp-4 flex-1 text-base leading-[1.75] md:text-[1.05rem]">
                   <EpisodeDescriptionRich text={ep.description} />
                 </p>
 

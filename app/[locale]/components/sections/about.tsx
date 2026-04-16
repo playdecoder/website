@@ -62,9 +62,9 @@ export async function About({ locale }: { locale: string }) {
           </div>
 
           <div className="scroll-reveal space-y-5">
-            <p className="text-muted text-base leading-[1.8] md:text-lg">{t("p1", b)}</p>
-            <p className="text-muted text-base leading-[1.8] md:text-lg">{t("p2")}</p>
-            <p className="text-muted text-base leading-[1.8] md:text-lg">{t("p3")}</p>
+            <p className="font-body text-muted text-base leading-[1.8] md:text-lg">{t("p1", b)}</p>
+            <p className="font-body text-muted text-base leading-[1.8] md:text-lg">{t("p2")}</p>
+            <p className="font-body text-muted text-base leading-[1.8] md:text-lg">{t("p3")}</p>
 
             <div className="flex items-center gap-3 pt-2">
               <span

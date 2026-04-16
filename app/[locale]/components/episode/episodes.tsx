@@ -34,7 +34,7 @@ export async function Episodes({ locale }: { locale: string }) {
         <SectionHeading variant="rail" label={t("label")} className="mb-16" />
 
         <div className="scroll-reveal mb-6">
-          <div className="episode-feature-card border-edge group hover:border-accent/40 relative overflow-hidden rounded-sm border transition-colors duration-300">
+          <div className="episode-feature-card border-edge group hover:border-accent/40 relative overflow-hidden rounded-sm border transition-colors duration-300 active:border-secondary/45">
             <div className="episode-feature-card__rail bg-accent absolute top-0 bottom-0 left-0 w-1" />
 
             <div className="py-8 pr-6 pl-8 md:py-10">
@@ -72,7 +72,7 @@ export async function Episodes({ locale }: { locale: string }) {
                 </Link>
               </h2>
 
-              <p className="text-muted mb-8 max-w-2xl text-base leading-[1.8] md:text-lg">
+              <p className="font-body text-muted mb-8 max-w-2xl text-base leading-[1.8] md:text-lg">
                 <EpisodeDescriptionRich text={latestEpisode.description} />
               </p>
 
@@ -106,7 +106,7 @@ export async function Episodes({ locale }: { locale: string }) {
               key={ep.id}
               href={listenEpisodePath(episodeListenPathSegment(ep))}
               locale={hrefLocale}
-              className="episode-row group border-edge hover:bg-surface/60 -mx-3 flex cursor-pointer flex-col gap-2 border-b px-3 py-5 transition-colors duration-200 sm:flex-row sm:items-center sm:gap-6"
+              className="episode-row group border-edge hover:bg-surface/60 active:bg-surface/75 -mx-3 flex cursor-pointer flex-col gap-2 border-b px-3 py-5 transition-colors duration-200 sm:flex-row sm:items-center sm:gap-6"
               style={{ animationDelay: `${0.05 * i}s` }}
             >
               <div className="flex w-full min-w-0 items-center justify-between gap-3 sm:hidden">

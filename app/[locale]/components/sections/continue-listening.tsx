@@ -184,7 +184,7 @@ export function ContinueListening({ locale }: { locale: string }) {
               <span className="sr-only">{t("label")}: </span>
               {episode.title}
             </h2>
-            <p className="text-muted mb-4 max-w-2xl text-[15px] leading-relaxed sm:text-base">
+            <p className="font-body text-muted mb-4 max-w-2xl text-[15px] leading-relaxed sm:text-base">
               {descriptionSnippet || t("body")}
             </p>
 

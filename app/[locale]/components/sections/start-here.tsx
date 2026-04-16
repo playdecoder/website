@@ -58,7 +58,7 @@ export async function StartHere({ locale }: { locale: string }) {
           >
             {t("heading")}
           </h2>
-          <p className="text-muted text-base leading-relaxed md:text-lg">{t("intro")}</p>
+          <p className="font-body text-muted text-base leading-relaxed md:text-lg">{t("intro")}</p>
         </div>
 
         <div className="grid gap-6 lg:grid-cols-3">
@@ -69,7 +69,7 @@ export async function StartHere({ locale }: { locale: string }) {
               return (
                 <article
                   key={key}
-                  className={`border-edge bg-surface/35 scroll-reveal group relative flex h-full flex-col overflow-hidden rounded-sm border p-6 transition-colors duration-300 ${tone.borderClass}`}
+                  className={`border-edge bg-surface/35 scroll-reveal group relative flex h-full flex-col overflow-hidden rounded-sm border p-6 transition-colors duration-300 active:border-secondary/40 ${tone.borderClass}`}
                   style={{ animationDelay: `${0.05 * index}s` }}
                 >
                   <div
@@ -104,7 +104,7 @@ export async function StartHere({ locale }: { locale: string }) {
                     {episode.title}
                   </Link>
 
-                  <p className="text-muted relative mb-6 flex-1 leading-relaxed">
+                  <p className="font-body text-muted relative mb-6 flex-1 leading-relaxed">
                     {t(`cards.${key}.body`)}
                   </p>
 

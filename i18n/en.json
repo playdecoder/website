@@ -82,7 +82,8 @@
   },
   "episodesPage": {
     "label": "Archive",
-    "heading": "Every episode",
+    "headingLead": "Every",
+    "headingAccent": "episode",
     "intro": "Search the catalog, follow topics, or dig through on-site episode metadata — same show, bigger canvas than the home page list.",
     "searchLabel": "Search",
     "searchScopesLabel": "Search in",

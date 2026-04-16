@@ -3,7 +3,7 @@ import "./globals.css";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata, Viewport } from "next";
-import { Syne, JetBrains_Mono } from "next/font/google";
+import { JetBrains_Mono, Literata, Syne } from "next/font/google";
 import type { ReactNode } from "react";
 
 import { BRAND_NAME } from "@/lib/brand";
@@ -23,6 +23,13 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   weight: ["400", "500"],
   variable: "--font-jetbrains-mono",
+  display: "swap",
+});
+
+const literata = Literata({
+  subsets: ["latin", "latin-ext"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-literata",
   display: "swap",
 });
 
@@ -58,7 +65,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html
       lang="cs"
       data-scroll-behavior="smooth"
-      className={`${syne.variable} ${jetbrainsMono.variable}`}
+      className={`${syne.variable} ${jetbrainsMono.variable} ${literata.variable}`}
       suppressHydrationWarning
     >
       <body>
