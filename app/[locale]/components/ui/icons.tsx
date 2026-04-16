@@ -106,12 +106,19 @@ export function IconShare({ size = 14, className, ...props }: IconProps) {
   );
 }
 
-export const icons = {
-  episodeAirDate: IconEpisodeAirDate,
-  episodeDuration: IconEpisodeDuration,
-  latestDrop: IconLatestDrop,
-  externalLink: IconExternalLink,
-  share: IconShare,
-} as const;
-
-export type IconId = keyof typeof icons;
+export function IconCopyLink({ size = 14, className, ...props }: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      className={cn("shrink-0", className)}
+      aria-hidden
+      {...strokeProps}
+      {...props}
+    >
+      <path d="M10 13a5 5 0 0 1 0-7l1-1a5 5 0 0 1 7 7l-1 1" />
+      <path d="M14 11a5 5 0 0 1 0 7l-1 1a5 5 0 0 1-7-7l1-1" />
+    </svg>
+  );
+}

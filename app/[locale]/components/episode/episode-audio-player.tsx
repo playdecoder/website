@@ -1,5 +1,6 @@
 "use client";
 
+import { useQueryState } from "nuqs";
 import { useTranslations } from "next-intl";
 import {
   forwardRef,
@@ -18,6 +19,10 @@ import { resolveEpisodeSeekFromHash } from "@/lib/episode-hash";
 import { getSavedPosition } from "@/lib/episode-progress-storage";
 import { formatEpisodeTimeHash } from "@/lib/episode-time-fragment";
 import { formatPlaybackTime } from "@/lib/format-playback-time";
+import {
+  LISTEN_AUTOPLAY_QUERY_KEY,
+  parseAsListenAutoplay,
+} from "@/lib/listen-autoplay-query";
 
 import { usePlayerContext } from "../player/player-context";
 import { useWaveformSettle } from "../player/use-waveform-settle";
@@ -70,6 +75,10 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
 
     const waveformRef = useRef<HTMLDivElement>(null);
     const hashHandledRef = useRef(false);
+    const [playOnOpen, setPlayOnOpen] = useQueryState(
+      LISTEN_AUTOPLAY_QUERY_KEY,
+      parseAsListenAutoplay,
+    );
     const durationForHashRef = useRef(ctx.duration);
     useEffect(() => {
       durationForHashRef.current = ctx.duration;
@@ -131,7 +140,6 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
         });
     }, [chapters, timelineDuration]);
 
-    /** Start time of the chapter we're in (same rule as chapter list: last with t ≤ playhead). */
     const activeChapterStartT = useMemo(() => {
       if (!chapters?.length || timelineDuration <= 0) return null;
       const sorted = [...chapters].sort((a, b) => a.t - b.t);
@@ -186,16 +194,23 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
 
       seek(resolved.seconds, notice);
 
-      const pageUrl = new URL(window.location.href);
-      const playParam = pageUrl.searchParams.get("play");
-      if (playParam === "1" || playParam === "true") {
-        pageUrl.searchParams.delete("play");
-        window.history.replaceState(null, "", `${pageUrl.pathname}${pageUrl.search}${pageUrl.hash}`);
+      if (playOnOpen) {
+        void setPlayOnOpen(null);
         if (audioRef.current?.paused) {
           togglePlay();
         }
       }
-    }, [isPageEpisodeActive, ctx.duration, chapters, t, seek, togglePlay, audioRef]);
+    }, [
+      isPageEpisodeActive,
+      ctx.duration,
+      chapters,
+      t,
+      seek,
+      togglePlay,
+      audioRef,
+      playOnOpen,
+      setPlayOnOpen,
+    ]);
 
     useEffect(() => {
       const onHashChange = () => {
@@ -781,6 +796,7 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
               <ul className="text-muted/75 mt-2.5 list-none space-y-1.5 pl-0.5 font-mono text-[10px] tracking-wide sm:text-[11px]">
                 <li>{t("playerShortcutPlayPause")}</li>
                 <li>{t("playerShortcutSeek")}</li>
+                <li>{t("playerShortcutRate")}</li>
               </ul>
             </details>
           </div>

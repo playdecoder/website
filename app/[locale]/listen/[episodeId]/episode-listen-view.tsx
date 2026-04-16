@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import type React from "react";
+import type { CSSProperties } from "react";
 
 import { getPathname, Link } from "@/i18n/navigation";
 import {
@@ -211,11 +211,19 @@ function EpisodeListenMetadata({
   locale,
   shareLabel,
   shareAria,
+  copyLabel,
+  copyAria,
+  copiedLabel,
+  copyFailedLabel,
 }: {
   episode: Episode;
   locale: string;
   shareLabel: string;
   shareAria: string;
+  copyLabel: string;
+  copyAria: string;
+  copiedLabel: string;
+  copyFailedLabel: string;
 }) {
   return (
     <div
@@ -240,6 +248,10 @@ function EpisodeListenMetadata({
         shareText={episode.description}
         label={shareLabel}
         labelAria={shareAria}
+        copyLabel={copyLabel}
+        copyAria={copyAria}
+        copiedLabel={copiedLabel}
+        copyFailedLabel={copyFailedLabel}
         className="min-[380px]:ml-auto"
       />
     </div>
@@ -299,6 +311,14 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
   const bloom2X = 85 - (seed % 40);
   const bloom2Y = 75 - ((seed >>> 16) % 35);
   const stagger = (i: number) => `${0.04 * i + (seed % 7) * 0.01}s`;
+  const episodeListenMetaLabels = {
+    shareLabel: t("shareEpisode"),
+    shareAria: t("shareEpisodeAria"),
+    copyLabel: t("playerCopyLink"),
+    copyAria: t("playerCopyLinkAria"),
+    copiedLabel: t("playerCopied"),
+    copyFailedLabel: t("playerCopyFailed"),
+  };
 
   return (
     <div className="page-shell">
@@ -339,7 +359,7 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
                     "--delay": bar.delay,
                     "--listen-wave-dur": listenWaveDuration(bar.dur),
                     "--listen-ease": bar.ease,
-                  } as React.CSSProperties
+                  } as CSSProperties
                 }
               />
             ))}
@@ -474,12 +494,7 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
               ) : null}
 
               <div className="hidden lg:block">
-                <EpisodeListenMetadata
-                  episode={episode}
-                  locale={locale}
-                  shareLabel={t("shareEpisode")}
-                  shareAria={t("shareEpisodeAria")}
-                />
+                <EpisodeListenMetadata episode={episode} locale={locale} {...episodeListenMetaLabels} />
               </div>
 
               <EpisodeListenPlayerAndBody
@@ -499,12 +514,7 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
                       className="mb-0"
                     />
                     <EpisodeListenTags tags={episode.tags} locale={locale} stagger={stagger} />
-                    <EpisodeListenMetadata
-                      episode={episode}
-                      locale={locale}
-                      shareLabel={t("shareEpisode")}
-                      shareAria={t("shareEpisodeAria")}
-                    />
+                    <EpisodeListenMetadata episode={episode} locale={locale} {...episodeListenMetaLabels} />
                   </div>
                 }
               />

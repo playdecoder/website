@@ -26,10 +26,19 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "metadata" });
   const b = brandInterpolation(locale);
+  const description = locale === "en" ? showTaglineEn() : t("siteDescription");
+  const ogLocale = locale === "cs" ? "cs_CZ" : "en_US";
+
   return {
     title: t("homeTitle", b),
-    description: locale === "en" ? showTaglineEn() : t("siteDescription"),
+    description,
     alternates: localizedAlternates(ROUTES.home, locale),
+    openGraph: {
+      title: t("homeTitle", b),
+      description,
+      type: "website",
+      locale: ogLocale,
+    },
   };
 }
 

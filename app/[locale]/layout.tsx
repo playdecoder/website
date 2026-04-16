@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 
 import { routing } from "@/i18n/routing";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 import { GlobalPlayerProvider } from "./components/player/global-player-provider";
 import { Footer } from "./components/layout/footer";
@@ -39,11 +40,13 @@ export default async function LocaleLayout({
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
-      <HtmlLangSync />
-      <GlobalPlayerProvider>
-        {children}
-        <Footer locale={locale} />
-      </GlobalPlayerProvider>
+      <NuqsAdapter>
+        <HtmlLangSync />
+        <GlobalPlayerProvider>
+          {children}
+          <Footer locale={locale} />
+        </GlobalPlayerProvider>
+      </NuqsAdapter>
     </NextIntlClientProvider>
   );
 }

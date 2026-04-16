@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
+import { Link } from "@/i18n/navigation";
 import { brandInterpolation } from "@/lib/brand";
 import { episodes } from "@/lib/episode-catalog";
+import { linkLocale } from "@/lib/link-locale";
 import { localizedAlternates } from "@/lib/metadata-alternates";
 import { ROUTES } from "@/lib/routes";
 
@@ -33,11 +35,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
+const topicsSiblingLinkClass =
+  "text-secondary border-secondary/35 hover:border-secondary/55 hover:bg-secondary/8 focus-visible:outline-secondary mt-6 inline-flex items-center gap-2 rounded-sm border px-3 py-2 font-mono text-xs tracking-widest uppercase transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2";
+
 export default async function EpisodesArchivePage({ params }: PageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
 
   const t = await getTranslations({ locale, namespace: "episodesPage" });
+  const hrefLocale = linkLocale(locale);
 
   return (
     <div className="page-shell">
@@ -59,6 +65,17 @@ export default async function EpisodesArchivePage({ params }: PageProps) {
               <p className="text-muted max-w-2xl text-base leading-relaxed md:text-lg">
                 {t("intro")}
               </p>
+              <Link
+                href={ROUTES.topics}
+                locale={hrefLocale}
+                prefetch
+                className={topicsSiblingLinkClass}
+              >
+                {t("browseTopics")}
+                <span className="text-base leading-none" aria-hidden>
+                  ↗
+                </span>
+              </Link>
             </div>
           </div>
         </header>

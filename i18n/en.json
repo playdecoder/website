@@ -6,7 +6,7 @@
     "notFoundTitle": "404 — Page not found | {brand}",
     "notFoundDescription": "This page could not be found. Return to {brand} — Games, Tech, Context.",
     "episodesArchiveTitle": "Episodes — {brand}",
-    "episodesArchiveDescription": "Browse every {brand} episode — filter by language and topic, search the archive, and play in full."
+    "episodesArchiveDescription": "Browse every {brand} episode — filter by topic, search the archive, and play in full."
   },
   "common": {
     "switchToLanguage": "Switch to {language}",
@@ -19,6 +19,7 @@
     "home": "Home",
     "about": "About",
     "hosts": "Hosts",
+    "topics": "Topics",
     "episodes": "Episodes",
     "contact": "Contact",
     "listenNow": "Listen Now",
@@ -82,21 +83,21 @@
   "episodesPage": {
     "label": "Archive",
     "heading": "Every episode",
-    "intro": "Search the catalog, narrow by spoken language, or follow topics — same show, bigger canvas than the home page list.",
+    "intro": "Search the catalog, follow topics, or dig through on-site episode metadata — same show, bigger canvas than the home page list.",
     "searchLabel": "Search",
+    "searchScopesLabel": "Search in",
+    "searchScopeTitle": "Title & tags",
+    "searchScopeDescription": "Description",
+    "searchScopeChapters": "Chapters",
     "searchPlaceholder": "Title, topic, description…",
-    "languageLabel": "Language",
-    "languageAll": "All",
-    "langCs": "Czech",
-    "langEn": "English",
     "topicsLabel": "Topics",
     "clearFilters": "Clear filters",
     "resultsNone": "No episodes match those filters.",
     "resultsMatches": "Showing {count} of {total} episodes",
-    "transcriptSearchLoading": "Transcript text is being added to search.",
-    "transcriptSearchReady": "Search now includes episode transcripts.",
     "emptyHeading": "Nothing on this frequency",
-    "emptyHint": "Try clearing a topic chip, switching language to “All”, or shortening your search."
+    "emptyHint": "Try clearing a topic chip or shortening your search.",
+    "emptyHintTopicLocked": "Try shortening your search. Browse other topics from the topics index.",
+    "browseTopics": "Browse by topic"
   },
   "continueListening": {
     "label": "Continue listening",
@@ -132,9 +133,19 @@
   "topics": {
     "label": "Topic",
     "heading": "Episodes on: {topic}",
-    "intro": "Every episode touching the topic “{topic}”. Filters and search stay live, so you can keep narrowing from here.",
+    "intro": "Every episode touching “{topic}”. Search titles, descriptions, and chapters from the catalog.",
     "metaTitle": "{topic} — Dekodér topic page",
-    "metaDescription": "Browse Dekodér episodes tagged with “{topic}”."
+    "metaDescription": "Browse Dekodér episodes tagged with “{topic}”.",
+    "indexRailLabel": "Topics",
+    "indexTitleLead": "Topics",
+    "indexTitleAccent": "on the wire",
+    "indexIntro": "Every tag is its own carrier wave. Tap a signal — the archive opens filtered, search still live.",
+    "indexMetaTitle": "Topics — {brand}",
+    "indexMetaDescription": "Browse topics from the {brand} podcast and jump into a pre-filtered episode archive.",
+    "indexEpisodeCount": "{count, plural, one {# episode} other {# episodes}}",
+    "indexOpenTopic": "Tune in",
+    "indexListAria": "Podcast topic list",
+    "indexLinkToEpisodes": "Full episode archive"
   },
   "contact": {
     "tuneIn": "TUNE IN",
@@ -150,7 +161,8 @@
     "socialInstagram": "Instagram",
     "socialLinkedin": "LinkedIn",
     "footerBrand": "{brandUpper} PODCAST",
-    "footerTagline": "GAMES • TECH • CONTEXT"
+    "footerTagline": "GAMES • TECH • CONTEXT",
+    "footerNavAria": "Footer quick links"
   },
   "listen": {
     "breadcrumbEpisodes": "Episodes",
@@ -194,6 +206,7 @@
     "playerShortcutsHint": "Keyboard",
     "playerShortcutPlayPause": "Space / K — play or pause",
     "playerShortcutSeek": "Arrow left / right — skip 15 seconds",
+    "playerShortcutRate": "Comma / period — cycle playback speed",
     "chaptersHeading": "Chapters",
     "chapterJumpAria": "Jump to {time} — {label}",
     "chaptersWaitForLoad": "Load the audio to jump to chapters.",

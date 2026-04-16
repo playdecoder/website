@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo } from "react";
+import { useQueryStates } from "nuqs";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 
@@ -13,275 +14,179 @@ import {
   getLatestEpisode,
 } from "@/lib/episode-catalog";
 import { EpisodeDescriptionRich, plainEpisodeDescription } from "@/lib/episode-description";
-import { fetchEpisodeTranscript } from "@/lib/fetch-episode-transcript";
+import { episodesArchiveSearchParams } from "@/lib/episodes-archive-search-params";
 import { linkLocale } from "@/lib/link-locale";
 import { listenEpisodePath } from "@/lib/routes";
 
 import { IconEpisodeAirDate, IconEpisodeDuration } from "../ui/icons";
 
+import {
+  EpisodesArchiveFiltersPanel,
+  type EpisodesSearchScopes,
+} from "./episodes-archive-filters-panel";
 import { EpisodeLangCompactBadge } from "./episode-lang-compact-badge";
 import { TopicLinkChip } from "./topic-link-chip";
 
-const EMPTY_INITIAL_TAGS: string[] = [];
+function episodeMatchesSearchQuery(ep: Episode, words: string[], scopes: EpisodesSearchScopes): boolean {
+  if (words.length === 0) {
+    return true;
+  }
+  const parts: string[] = [];
+  if (scopes.title) {
+    parts.push(ep.title, ...ep.tags);
+  }
+  if (scopes.description) {
+    parts.push(plainEpisodeDescription(ep.description));
+  }
+  if (scopes.chapters && ep.chapters?.length) {
+    for (const ch of ep.chapters) {
+      parts.push(ch.label);
+    }
+  }
+  const hay = parts.join(" ").toLowerCase();
+  return words.every((w) => hay.includes(w));
+}
 
 interface EpisodesArchiveClientProps {
   episodes: Episode[];
   initialSelectedTags?: string[];
+  topicFilterLocked?: boolean;
 }
-
-type TranscriptIndexState = "idle" | "loading" | "ready" | "error";
 
 export function EpisodesArchiveClient({
   episodes: allEpisodes,
-  initialSelectedTags = EMPTY_INITIAL_TAGS,
+  initialSelectedTags = [],
+  topicFilterLocked = false,
 }: EpisodesArchiveClientProps) {
   const locale = useLocale();
   const hrefLocale = linkLocale(locale);
   const t = useTranslations("episodesPage");
   const tSection = useTranslations("episodesSection");
-  const { tags: facetTags, langs: facetLangs } = useMemo(
-    () => getEpisodeArchiveFacets(allEpisodes),
-    [allEpisodes],
-  );
+  const { tags: facetTags } = useMemo(() => getEpisodeArchiveFacets(allEpisodes), [allEpisodes]);
   const latestId = useMemo(() => getLatestEpisode(allEpisodes)?.id, [allEpisodes]);
-  const transcriptCatalogKey = useMemo(
-    () =>
-      allEpisodes
-        .map((e) => e.id)
-        .sort()
-        .join("\0"),
-    [allEpisodes],
+
+  const [filters, setFilters] = useQueryStates(episodesArchiveSearchParams, { history: "replace" });
+
+  const searchScopes = useMemo<EpisodesSearchScopes>(
+    () => ({
+      title: filters.st,
+      description: filters.sd,
+      chapters: filters.sc,
+    }),
+    [filters.st, filters.sd, filters.sc],
   );
 
-  const initialTagsSig = useMemo(() => initialSelectedTags.join("\0"), [initialSelectedTags]);
-
-  const [query, setQuery] = useState("");
-  const [lang, setLang] = useState<string | "all">("all");
-  const [selectedTags, setSelectedTags] = useState<Set<string>>(() => new Set(initialSelectedTags));
-  const [syncedInitialTagsSig, setSyncedInitialTagsSig] = useState(initialTagsSig);
-  const [transcriptIndex, setTranscriptIndex] = useState<Record<string, string>>({});
-  const [transcriptState, setTranscriptState] = useState<TranscriptIndexState>("idle");
-  const transcriptFetchGen = useRef(0);
-  const transcriptIndexReadyRef = useRef(false);
-
-  if (initialTagsSig !== syncedInitialTagsSig) {
-    setSyncedInitialTagsSig(initialTagsSig);
-    setSelectedTags(new Set(initialSelectedTags));
-  }
-
-  useEffect(() => {
-    transcriptIndexReadyRef.current = false;
-  }, [transcriptCatalogKey]);
-
-  useEffect(() => {
-    if (query.trim() === "" || transcriptIndexReadyRef.current) {
-      return;
+  const facetTagSet = useMemo(() => new Set(facetTags), [facetTags]);
+  const selectedTags = useMemo(() => {
+    if (topicFilterLocked) {
+      return new Set(initialSelectedTags);
     }
-
-    const transcriptEpisodes = allEpisodes.filter((episode) => Boolean(episode.links.transcript));
-    if (transcriptEpisodes.length === 0) {
-      return;
-    }
-
-    const gen = ++transcriptFetchGen.current;
-    let cancelled = false;
-    queueMicrotask(() => {
-      if (!cancelled) {
-        setTranscriptState("loading");
+    const next = new Set<string>();
+    for (const tag of filters.tags) {
+      if (facetTagSet.has(tag)) {
+        next.add(tag);
       }
-    });
+    }
+    return next;
+  }, [topicFilterLocked, initialSelectedTags, filters.tags, facetTagSet]);
 
-    void Promise.all(
-      transcriptEpisodes.map(async (episode) => {
-        const result = await fetchEpisodeTranscript(episode.links.transcript!);
-        return [
-          episode.id,
-          result.ok ? result.segments.map((segment) => segment.text).join(" ").toLowerCase() : "",
-        ] as const;
-      }),
-    )
-      .then((rows) => {
-        if (cancelled || gen !== transcriptFetchGen.current) {
-          return;
-        }
-        transcriptIndexReadyRef.current = true;
-        setTranscriptIndex(Object.fromEntries(rows));
-        setTranscriptState("ready");
-      })
-      .catch(() => {
-        if (cancelled || gen !== transcriptFetchGen.current) {
-          return;
-        }
-        setTranscriptState("error");
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [allEpisodes, query]);
+  const archiveTotalForResults = useMemo(() => {
+    if (!topicFilterLocked || initialSelectedTags.length === 0) {
+      return allEpisodes.length;
+    }
+    return allEpisodes.filter((ep) => initialSelectedTags.some((tag) => ep.tags.includes(tag))).length;
+  }, [topicFilterLocked, initialSelectedTags, allEpisodes]);
 
   const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
+    const q = filters.q.trim().toLowerCase();
     const words = q ? q.split(/\s+/).filter(Boolean) : [];
 
     return allEpisodes.filter((ep) => {
-      if (lang !== "all" && ep.lang !== lang) {
-        return false;
-      }
-
       if (selectedTags.size > 0) {
-        const hasAny = [...selectedTags].some((tag) => ep.tags.includes(tag));
+        let hasAny = false;
+        for (const tag of selectedTags) {
+          if (ep.tags.includes(tag)) {
+            hasAny = true;
+            break;
+          }
+        }
         if (!hasAny) {
           return false;
         }
       }
 
-      if (words.length === 0) {
-        return true;
-      }
-
-      const hay =
-        `${ep.title} ${plainEpisodeDescription(ep.description)} ${ep.tags.join(" ")}`.toLowerCase();
-      const transcriptHay = transcriptIndex[ep.id] ?? "";
-      return words.every((w) => hay.includes(w) || transcriptHay.includes(w));
+      return episodeMatchesSearchQuery(ep, words, searchScopes);
     });
-  }, [allEpisodes, query, lang, selectedTags, transcriptIndex]);
+  }, [allEpisodes, filters.q, selectedTags, searchScopes]);
 
-  const hasActiveFilters = query.trim() !== "" || lang !== "all" || selectedTags.size > 0;
+  const searchScopesDefault = filters.st && filters.sd && filters.sc;
+
+  const hasActiveFilters =
+    filters.q.trim() !== "" ||
+    (!topicFilterLocked && selectedTags.size > 0) ||
+    !searchScopesDefault;
 
   function toggleTag(tag: string) {
-    setSelectedTags((prev) => {
-      const next = new Set(prev);
-      if (next.has(tag)) {
-        next.delete(tag);
+    if (topicFilterLocked) {
+      return;
+    }
+    void setFilters((prev) => {
+      const set = new Set(prev.tags);
+      if (set.has(tag)) {
+        set.delete(tag);
       } else {
-        next.add(tag);
+        set.add(tag);
       }
-      return next;
+      return {
+        tags: [...set].sort((a, b) => a.localeCompare(b)),
+      };
     });
   }
 
+  function toggleSearchScope(key: keyof EpisodesSearchScopes) {
+    const st = key === "title" ? !filters.st : filters.st;
+    const sd = key === "description" ? !filters.sd : filters.sd;
+    const sc = key === "chapters" ? !filters.sc : filters.sc;
+    if (!st && !sd && !sc) {
+      return;
+    }
+    void setFilters({ st, sd, sc });
+  }
+
   function clearFilters() {
-    setQuery("");
-    setLang("all");
-    setSelectedTags(new Set());
+    void setFilters({
+      q: "",
+      st: true,
+      sd: true,
+      sc: true,
+      tags: [],
+    });
   }
 
   return (
     <div className="mx-auto max-w-6xl px-5 pt-12 pb-24 md:pt-16 md:pb-32 lg:pt-20">
-      <div className="scroll-reveal border-edge bg-surface/40 mb-12 space-y-8 rounded-sm border p-5 sm:p-7 md:mb-16 md:p-8">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:gap-6">
-          <div className="min-w-0 flex-1">
-            <label
-              htmlFor="episodes-search"
-              className="text-muted mb-2 block font-mono text-[10px] tracking-[0.25em] uppercase"
-            >
-              {t("searchLabel")}
-            </label>
-            <input
-              id="episodes-search"
-              type="search"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder={t("searchPlaceholder")}
-              autoComplete="off"
-              className="bg-bg border-edge text-primary placeholder:text-muted/50 focus:border-secondary/60 focus:ring-secondary/25 w-full rounded-sm border px-4 py-3 font-mono text-sm transition-colors focus:ring-1 focus:outline-none"
-            />
-          </div>
-          {hasActiveFilters && (
-            <button
-              type="button"
-              onClick={clearFilters}
-              className="text-secondary border-secondary/35 hover:bg-secondary/10 shrink-0 rounded-sm border px-4 py-3 font-mono text-xs tracking-widest uppercase transition-colors"
-            >
-              {t("clearFilters")}
-            </button>
-          )}
-        </div>
-
-        <div>
-          <span className="text-muted mb-3 block font-mono text-[10px] tracking-[0.25em] uppercase">
-            {t("languageLabel")}
-          </span>
-          <div className="flex flex-wrap gap-2" role="group" aria-label={t("languageLabel")}>
-            <button
-              type="button"
-              onClick={() => setLang("all")}
-              className={`rounded-sm border px-3 py-2 font-mono text-xs tracking-widest uppercase transition-colors ${
-                lang === "all"
-                  ? "border-accent bg-accent/15 text-accent-text"
-                  : "border-edge text-muted hover:border-primary/30 hover:text-primary"
-              }`}
-            >
-              {t("languageAll")}
-            </button>
-            {facetLangs.map((code) => (
-              <button
-                key={code}
-                type="button"
-                onClick={() => setLang(code)}
-                className={`rounded-sm border px-3 py-2 font-mono text-xs tracking-widest uppercase transition-colors ${
-                  lang === code
-                    ? "border-secondary bg-secondary/12 text-secondary"
-                    : "border-edge text-muted hover:border-primary/30 hover:text-primary"
-                }`}
-              >
-                {code === "cs" ? t("langCs") : code === "en" ? t("langEn") : code}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {facetTags.length > 0 && (
-          <div>
-            <span className="text-muted mb-3 block font-mono text-[10px] tracking-[0.25em] uppercase">
-              {t("topicsLabel")}
-            </span>
-            <div className="flex flex-wrap gap-2">
-              {facetTags.map((tag) => {
-                const on = selectedTags.has(tag);
-                return (
-                  <button
-                    key={tag}
-                    type="button"
-                    onClick={() => toggleTag(tag)}
-                    aria-pressed={on}
-                    className={`rounded-sm border px-3 py-1.5 font-mono text-[11px] tracking-wide transition-colors ${
-                      on
-                        ? "border-secondary text-secondary bg-secondary/[0.08]"
-                        : "border-edge/80 text-muted hover:border-secondary/40 hover:text-primary"
-                    }`}
-                  >
-                    {tag}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        <p className="text-muted font-mono text-xs tracking-wide" aria-live="polite">
-          {filtered.length === 0
-            ? t("resultsNone")
-            : t("resultsMatches", { count: filtered.length, total: allEpisodes.length })}
-        </p>
-        {query.trim() !== "" && transcriptState === "loading" && (
-          <p className="text-muted/70 font-mono text-[11px] tracking-wide">
-            {t("transcriptSearchLoading")}
-          </p>
-        )}
-        {query.trim() !== "" && transcriptState === "ready" && (
-          <p className="text-muted/70 font-mono text-[11px] tracking-wide">
-            {t("transcriptSearchReady")}
-          </p>
-        )}
-      </div>
+      <EpisodesArchiveFiltersPanel
+        query={filters.q}
+        onQueryChange={(value) => void setFilters({ q: value })}
+        searchScopes={searchScopes}
+        onToggleSearchScope={toggleSearchScope}
+        hasActiveFilters={hasActiveFilters}
+        onClearFilters={clearFilters}
+        topicFilterLocked={topicFilterLocked}
+        facetTags={facetTags}
+        selectedTags={selectedTags}
+        onToggleTag={toggleTag}
+        filteredCount={filtered.length}
+        archiveTotalForResults={archiveTotalForResults}
+      />
 
       <ul className="m-0 grid list-none gap-6 p-0 md:gap-8 lg:grid-cols-2">
         {filtered.length === 0 && (
           <li className="border-edge bg-surface/30 col-span-full rounded-sm border px-8 py-16 text-center">
             <p className="font-display text-primary mb-3 text-xl">{t("emptyHeading")}</p>
-            <p className="text-muted mx-auto mb-6 max-w-md leading-relaxed">{t("emptyHint")}</p>
+            <p className="text-muted mx-auto mb-6 max-w-md leading-relaxed">
+              {t(topicFilterLocked ? "emptyHintTopicLocked" : "emptyHint")}
+            </p>
             <button
               type="button"
               onClick={clearFilters}

@@ -7,7 +7,7 @@
     "notFoundTitle": "404 — Stránka nenalezena | {brand}",
     "notFoundDescription": "Tuto stránku jsme nenašli. Vraťte se na {brand} — hry, technologie, kontext.",
     "episodesArchiveTitle": "Epizody — {brand}",
-    "episodesArchiveDescription": "Projděte si všechny epizody {brandGenitive} — filtrujte podle jazyka a tématu, hledejte v archivu a přehrávejte v plné délce."
+    "episodesArchiveDescription": "Projděte si všechny epizody {brandGenitive} — filtrujte podle tématu, hledejte v archivu a přehrávejte v plné délce."
   },
   "common": {
     "switchToLanguage": "Přepnout na {language}",
@@ -20,6 +20,7 @@
     "home": "Domů",
     "about": "O pořadu",
     "hosts": "Moderátoři",
+    "topics": "Témata",
     "episodes": "Epizody",
     "contact": "Kontakt",
     "listenNow": "Poslouchat",
@@ -83,21 +84,21 @@
   "episodesPage": {
     "label": "Archiv",
     "heading": "Všechny epizody",
-    "intro": "Projděte celý katalog, filtrujte podle jazyka nebo témat a objevujte souvislosti, které se na úvodní stránku nevejdou.",
+    "intro": "Projděte celý katalog, filtrujte podle témat nebo hledejte v údajích epizod na webu — souvislosti, které se na úvodní stránku nevejdou.",
     "searchLabel": "Hledat",
+    "searchScopesLabel": "Hledat v",
+    "searchScopeTitle": "Název a štítky",
+    "searchScopeDescription": "Popis",
+    "searchScopeChapters": "Kapitoly",
     "searchPlaceholder": "Název, téma, popis…",
-    "languageLabel": "Jazyk",
-    "languageAll": "Vše",
-    "langCs": "Čeština",
-    "langEn": "Angličtina",
     "topicsLabel": "Témata",
     "clearFilters": "Zrušit filtry",
     "resultsNone": "Tomuhle nastavení teď neodpovídá žádná epizoda.",
     "resultsMatches": "Zobrazeno {count} z {total} epizod",
-    "transcriptSearchLoading": "Do hledání postupně přidáváme i přepisy.",
-    "transcriptSearchReady": "Hledání teď prochází i přepisy epizod.",
     "emptyHeading": "Na téhle frekvenci nic nemáme",
-    "emptyHint": "Zkuste vypnout některý filtr, přepnout jazyk na „Vše“ nebo zadat kratší hledaný výraz."
+    "emptyHint": "Zkuste vypnout téma nebo zadat kratší hledaný výraz.",
+    "emptyHintTopicLocked": "Zkuste zkrátit hledání. Další témata najdete v přehledu témat.",
+    "browseTopics": "Procházet témata"
   },
   "continueListening": {
     "label": "Pokračovat",
@@ -133,9 +134,19 @@
   "topics": {
     "label": "Téma",
     "heading": "Epizody k tématu: {topic}",
-    "intro": "Všechny díly, které se dotýkají tématu „{topic}“. Filtry i hledání zůstávají zapnuté, takže můžete pokračovat odtud.",
+    "intro": "Všechny díly k tématu „{topic}“. Hledejte v názvu, popisu a kapitolách z katalogu.",
     "metaTitle": "Téma {topic} — Dekodér",
-    "metaDescription": "Projděte epizody Dekodéru označené tématem „{topic}“."
+    "metaDescription": "Projděte epizody Dekodéru označené tématem „{topic}“.",
+    "indexRailLabel": "Témata",
+    "indexTitleLead": "Témata",
+    "indexTitleAccent": "na drátě",
+    "indexIntro": "Každý štítek je jiná frekvence. Klepněte na signál — archiv se otevře už s filtrem a hledáním.",
+    "indexMetaTitle": "Témata — {brand}",
+    "indexMetaDescription": "Procházejte témata podcastu {brand} a skočte rovnou do přefiltrovaného archivu epizod.",
+    "indexEpisodeCount": "{count, plural, one {# epizoda} few {# epizody} other {# epizod}}",
+    "indexOpenTopic": "Naladit",
+    "indexListAria": "Seznam témat podcastu",
+    "indexLinkToEpisodes": "Celý archiv epizod"
   },
   "contact": {
     "tuneIn": "NALAĎTE SE",
@@ -151,7 +162,8 @@
     "socialInstagram": "Instagram",
     "socialLinkedin": "LinkedIn",
     "footerBrand": "PODCAST {brandUpper}",
-    "footerTagline": "HRY • TECHNOLOGIE • KONTEXT"
+    "footerTagline": "HRY • TECHNOLOGIE • KONTEXT",
+    "footerNavAria": "Rychlé odkazy v patičce"
   },
   "listen": {
     "breadcrumbEpisodes": "Epizody",
@@ -195,6 +207,7 @@
     "playerShortcutsHint": "Klávesové ovládání",
     "playerShortcutPlayPause": "Mezerník / K — přehrát nebo pozastavit",
     "playerShortcutSeek": "Šipka vlevo / vpravo — přeskočit o 15 s",
+    "playerShortcutRate": "Čárka / tečka — cyklus rychlosti přehrávání",
     "chaptersHeading": "Kapitoly",
     "chapterJumpAria": "Přejít na {time} — {label}",
     "chaptersWaitForLoad": "Nejdřív načtěte audio, pak můžete skákat po kapitolách.",

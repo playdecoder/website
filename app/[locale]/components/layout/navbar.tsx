@@ -88,6 +88,13 @@ export async function Navbar({ locale = routing.defaultLocale }: { locale?: stri
             {t("episodes")}
           </Link>
           <Link
+            href={ROUTES.topics}
+            locale={hrefLocale}
+            className="hover-underline hover:text-primary transition-colors"
+          >
+            {t("topics")}
+          </Link>
+          <Link
             href={homeSectionPath("contact")}
             locale={hrefLocale}
             className="hover-underline hover:text-primary transition-colors"
@@ -104,6 +111,7 @@ export async function Navbar({ locale = routing.defaultLocale }: { locale?: stri
               { href: homeSectionPath("about"), label: t("about") },
               { href: homeSectionPath("hosts"), label: t("hosts") },
               { href: ROUTES.episodes, label: t("episodes") },
+              { href: ROUTES.topics, label: t("topics") },
               { href: homeSectionPath("contact"), label: t("contact") },
             ]}
             listenHref={latestEpisodePath}

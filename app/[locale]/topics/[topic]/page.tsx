@@ -73,7 +73,11 @@ export default async function TopicPage({ params }: TopicPageProps) {
           </div>
         </header>
 
-        <EpisodesArchiveClient episodes={episodes} initialSelectedTags={[label]} />
+        <EpisodesArchiveClient
+          episodes={episodes}
+          initialSelectedTags={[label]}
+          topicFilterLocked
+        />
         <Contact locale={locale} />
       </main>
     </div>

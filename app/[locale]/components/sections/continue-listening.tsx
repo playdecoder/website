@@ -3,7 +3,7 @@
 import { useMemo, useSyncExternalStore } from "react";
 import { useTranslations } from "next-intl";
 
-import { Link } from "@/i18n/navigation";
+import { Link, usePathname } from "@/i18n/navigation";
 import { episodeDescriptionSnippet } from "@/lib/episode-description";
 import { episodes, episodeListenPathSegment } from "@/lib/episode-catalog";
 import { formatPlaybackTime } from "@/lib/format-playback-time";
@@ -15,13 +15,17 @@ import {
 } from "@/lib/episode-progress-storage";
 import { linkLocale } from "@/lib/link-locale";
 import { formatEpisodeTimeHash } from "@/lib/episode-time-fragment";
+import {
+  LISTEN_AUTOPLAY_QUERY_KEY,
+  LISTEN_AUTOPLAY_SERIALIZED,
+} from "@/lib/listen-autoplay-query";
 import { listenEpisodePath } from "@/lib/routes";
 
 import { PlayGlyphIcon } from "../player/play-glyph-icon";
+import { usePlayerContext } from "../player/player-context";
 
 import { SignalLabelRail } from "./signal-label-rail";
 
-/** Relative bar heights for a static micro-waveform (decorative). */
 const CONTINUE_MICRO_WAVE = [22, 48, 72, 38, 88, 55, 100, 42, 78, 30, 65, 52, 92, 35, 58, 44, 82, 28, 68, 50] as const;
 
 const DESCRIPTION_SNIPPET_MAX = 240;
@@ -40,6 +44,8 @@ function continueListeningSnapshot(): string | null {
 
 export function ContinueListening({ locale }: { locale: string }) {
   const t = useTranslations("continueListening");
+  const pathname = usePathname();
+  const { episode: playerEpisode } = usePlayerContext();
   const hrefLocale = linkLocale(locale);
   const entryKey = useSyncExternalStore(
     subscribeEpisodeProgressStore,
@@ -66,6 +72,15 @@ export function ContinueListening({ locale }: { locale: string }) {
 
   const progressEpisodeId = entry.id;
 
+  const onListenPage =
+    playerEpisode !== null &&
+    pathname.startsWith("/listen/") &&
+    pathname.includes(episodeListenPathSegment(playerEpisode));
+  const miniPlayerVisible = playerEpisode !== null && !onListenPage;
+  if (miniPlayerVisible && playerEpisode.id === progressEpisodeId) {
+    return null;
+  }
+
   const timelineDuration =
     entry.duration > 0 ? entry.duration : Math.max(0, episode.duration);
   const progressPct =
@@ -74,7 +89,7 @@ export function ContinueListening({ locale }: { locale: string }) {
       : 0;
   const remainingSec = Math.max(0, Math.floor(timelineDuration - entry.currentTime));
   const listenPath = listenEpisodePath(episodeListenPathSegment(episode));
-  const href = `${listenPath}?play=1#${formatEpisodeTimeHash(entry.currentTime)}`;
+  const href = `${listenPath}?${LISTEN_AUTOPLAY_QUERY_KEY}=${LISTEN_AUTOPLAY_SERIALIZED}#${formatEpisodeTimeHash(entry.currentTime)}`;
 
   function handleClearProgress() {
     clearEpisodeProgress(progressEpisodeId);

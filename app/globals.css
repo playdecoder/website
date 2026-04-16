@@ -21,7 +21,6 @@
   --primary: #0b0f14;
   --secondary: var(--brand-primary);
   --accent: var(--brand-accent);
-  /* Near-white accent: readable text on light bg needs a darker token than --accent */
   --accent-text: #3d4400;
   --muted: rgb(11 15 20 / 0.55);
   --dot-color: rgb(11 15 20 / 0.08);
@@ -30,7 +29,6 @@
   --waveform-accent: color-mix(in srgb, var(--brand-accent) 70%, #000000);
   --waveform-secondary-glow: rgb(30 58 255 / 0.18);
   --waveform-accent-glow: rgb(138 153 0 / 0.28);
-  /* Hero waveform only: ambient behind bars (avoid a flat blue “pool” on light gray) */
   --hero-waveform-fog: color-mix(in srgb, var(--primary) 9%, transparent);
   --hero-waveform-heat: color-mix(in srgb, var(--brand-accent) 22%, transparent);
   --hero-waveform-floor: color-mix(in srgb, var(--surface-2) 92%, var(--primary) 8%);
@@ -255,17 +253,6 @@
   }
 }
 
-@keyframes heroWaveIntro {
-  from {
-    opacity: 0;
-    transform: scaleY(0.05);
-  }
-  to {
-    opacity: 1;
-    transform: scaleY(1);
-  }
-}
-
 @keyframes heroBarWave {
   0%   { transform: scaleY(0.08); }
   6%   { transform: scaleY(0.38); }
@@ -301,17 +288,14 @@
 }
 
 @keyframes heroBarIn {
-  from {
-    opacity: 0;
-    transform: scaleY(0.04);
-  }
-  60% {
-    opacity: 1;
-  }
-  to {
-    opacity: 1;
-    transform: scaleY(1);
-  }
+  from { opacity: 0; transform: scaleY(0.04); }
+  60%  { opacity: 1; }
+  to   { opacity: 1; transform: scaleY(1); }
+}
+
+@keyframes oscDotPulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.25; }
 }
 
 @keyframes scan {
@@ -696,84 +680,32 @@ body {
   position: absolute;
   pointer-events: none;
   z-index: -1;
-  /* Larger paint box + gradient mask: soft baseline without a hard slice at the bar row. */
   top: -10%;
   left: 0;
   right: 0;
   bottom: -42%;
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    black 0%,
-    black 72%,
-    rgb(0 0 0 / 0.45) 88%,
-    transparent 100%
-  );
-  mask-image: linear-gradient(
-    to bottom,
-    black 0%,
-    black 72%,
-    rgb(0 0 0 / 0.45) 88%,
-    transparent 100%
-  );
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 72%, rgb(0 0 0 / 0.45) 88%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 0%, black 72%, rgb(0 0 0 / 0.45) 88%, transparent 100%);
   -webkit-mask-size: 100% 100%;
   mask-size: 100% 100%;
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
   background:
-    radial-gradient(
-      ellipse 72% 88% at 50% 78%,
-      var(--hero-waveform-fog) 0%,
-      transparent 58%
-    ),
-    radial-gradient(
-      ellipse 54% 62% at 50% 82%,
-      color-mix(in srgb, var(--hero-waveform-floor) 28%, transparent) 0%,
-      transparent 62%
-    ),
-    radial-gradient(
-      ellipse 38% 46% at 50% 86%,
-      var(--hero-waveform-heat) 0%,
-      transparent 72%
-    );
-  opacity: 1;
+    radial-gradient(ellipse 72% 88% at 50% 78%, var(--hero-waveform-fog) 0%, transparent 58%),
+    radial-gradient(ellipse 54% 62% at 50% 82%, color-mix(in srgb, var(--hero-waveform-floor) 28%, transparent) 0%, transparent 62%),
+    radial-gradient(ellipse 38% 46% at 50% 86%, var(--hero-waveform-heat) 0%, transparent 72%);
 }
 
 @media (min-width: 768px) {
   .hero-waveform::before {
     top: -12%;
     bottom: -48%;
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
-    -webkit-mask-image: linear-gradient(
-      to bottom,
-      black 0%,
-      black 68%,
-      rgb(0 0 0 / 0.5) 85%,
-      transparent 100%
-    );
-    mask-image: linear-gradient(
-      to bottom,
-      black 0%,
-      black 68%,
-      rgb(0 0 0 / 0.5) 85%,
-      transparent 100%
-    );
+    -webkit-mask-image: linear-gradient(to bottom, black 0%, black 68%, rgb(0 0 0 / 0.5) 85%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 0%, black 68%, rgb(0 0 0 / 0.5) 85%, transparent 100%);
     background:
-      radial-gradient(
-        ellipse 78% 92% at 50% 74%,
-        var(--hero-waveform-fog) 0%,
-        transparent 55%
-      ),
-      radial-gradient(
-        ellipse 58% 66% at 50% 78%,
-        color-mix(in srgb, var(--hero-waveform-floor) 34%, transparent) 0%,
-        transparent 58%
-      ),
-      radial-gradient(
-        ellipse 42% 50% at 50% 82%,
-        var(--hero-waveform-heat) 0%,
-        transparent 68%
-      );
+      radial-gradient(ellipse 78% 92% at 50% 74%, var(--hero-waveform-fog) 0%, transparent 55%),
+      radial-gradient(ellipse 58% 66% at 50% 78%, color-mix(in srgb, var(--hero-waveform-floor) 34%, transparent) 0%, transparent 58%),
+      radial-gradient(ellipse 42% 50% at 50% 82%, var(--hero-waveform-heat) 0%, transparent 68%);
   }
 }
 
@@ -781,7 +713,6 @@ body {
   animation-play-state: paused;
 }
 
-/* Hero-only bars: do not use `.waveform-bar` — that class is shared with listen-page BG bars */
 .hero-waveform__bar {
   transform-origin: bottom;
   opacity: 0;
@@ -811,6 +742,155 @@ body {
 
 .hero-waveform__bar[data-color="accent"] {
   box-shadow: 0 -10px 26px 5px var(--waveform-accent-glow);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-waveform__bar { animation: none; opacity: 1; transform: scaleY(0.5); }
+}
+
+.hero-osc {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  background: transparent;
+  animation: fadeUp 0.7s ease both 0.4s;
+}
+
+.dark .hero-osc {
+  box-shadow:
+    0 0  80px rgba(30, 58, 255, 0.09),
+    0 0 160px rgba(30, 58, 255, 0.04);
+}
+
+.hero-osc__screen {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  -webkit-mask-image:
+    linear-gradient(to right,  transparent 0%,  black 5%,  black 95%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%,  black 18%, black 82%, transparent 100%);
+  -webkit-mask-composite: destination-in;
+  mask-image:
+    linear-gradient(to right,  transparent 0%,  black 5%,  black 95%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%,  black 18%, black 82%, transparent 100%);
+  mask-composite: intersect;
+}
+
+.hero-osc__scanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 2px,
+    rgba(0, 0, 0, 0.028) 2px,
+    rgba(0, 0, 0, 0.028) 3px
+  );
+}
+
+.dark .hero-osc__scanlines {
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 2px,
+    rgba(0, 0, 0, 0.065) 2px,
+    rgba(0, 0, 0, 0.065) 3px
+  );
+}
+
+.hero-osc__canvas {
+  display: block;
+  width: 100%;
+  height: 200px;
+}
+
+.hero-osc__ui {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 6;
+  padding: 9px 13px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.hero-osc__labels {
+  display: flex;
+  gap: 11px;
+  align-items: center;
+}
+
+.hero-osc__label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  font-weight: 500;
+  opacity: 0.65;
+}
+
+.hero-osc__label--a { color: rgb( 90, 110, 148); }
+.hero-osc__label--b { color: rgb( 20,  44, 205); }
+.hero-osc__label--c { color: rgb( 85,  96,   0); }
+
+.dark .hero-osc__label--a { color: rgb(165, 185, 205); }
+.dark .hero-osc__label--b { color: rgb( 90, 128, 255); }
+.dark .hero-osc__label--c { color: rgb(225, 255,   0); }
+
+.hero-osc__status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  font-weight: 500;
+  color: rgba(85, 96, 0, 0.70);
+}
+
+.dark .hero-osc__status {
+  color: rgba(225, 255, 0, 0.65);
+}
+
+.hero-osc__dot {
+  display: block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgb(100, 112, 0);
+  box-shadow: 0 0 5px rgba(100, 112, 0, 0.55);
+  animation: oscDotPulse 1.6s ease-in-out infinite;
+}
+
+.dark .hero-osc__dot {
+  background: rgb(225, 255, 0);
+  box-shadow: 0 0 6px rgb(225, 255, 0);
+}
+
+.hero-osc__corner {
+  position: absolute;
+  pointer-events: none;
+  z-index: 6;
+  width: 14px;
+  height: 14px;
+  border-color: rgba(30, 58, 255, 0.22);
+  border-style: solid;
+}
+
+.dark .hero-osc__corner {
+  border-color: rgba(30, 58, 255, 0.32);
+}
+
+.hero-osc__corner--tl { top: 5px;    left: 5px;    border-width: 1px 0 0 1px; }
+.hero-osc__corner--tr { top: 5px;    right: 5px;   border-width: 1px 1px 0 0; }
+.hero-osc__corner--bl { bottom: 5px; left: 5px;    border-width: 0 0 1px 1px; }
+.hero-osc__corner--br { bottom: 5px; right: 5px;   border-width: 0 1px 1px 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-osc      { animation: none; }
+  .hero-osc__dot { animation: none; opacity: 0.75; }
 }
 
 .waveform-bar--listen-bg {
@@ -1038,7 +1118,6 @@ html[data-episode-playing="true"] .waveform-bar--listen-bg {
   outline-offset: 3px;
 }
 
-/* Custom visual track — sits at z-0; chapter ticks at z-1; thumb (via input) at z-2 */
 .decoder-audio-custom-track {
   top: calc((var(--decoder-thumb) - var(--decoder-track-h)) / 2);
   height: var(--decoder-track-h);
@@ -1060,7 +1139,6 @@ html[data-episode-playing="true"] .waveform-bar--listen-bg {
   transition: box-shadow 0.3s ease;
 }
 
-/* Range input: transparent track — only the thumb paints (z-2) */
 .decoder-audio-seek-wrap .decoder-audio-progress {
   position: relative;
   z-index: 2;
@@ -1111,7 +1189,6 @@ html[data-episode-playing="true"] .waveform-bar--listen-bg {
   box-shadow: 0 0 6px color-mix(in srgb, var(--accent) 22%, transparent);
 }
 
-/* Chapter marks: z-1 = above custom track (z-0), below thumb input (z-2) */
 .decoder-audio-chapter-ticks {
   pointer-events: none;
   z-index: 1;
@@ -1698,6 +1775,23 @@ html[data-episode-playing="true"] .waveform-bar--listen-bg {
   transform: scale(1.18);
 }
 
+.topics-topic-card__bar {
+  width: 3px;
+  max-width: 3px;
+  border-radius: 2px 2px 0 0;
+  transform-origin: bottom center;
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.35s ease,
+    filter 0.35s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .topics-topic-card__bar {
+    transition: none !important;
+  }
+}
+
 @supports (animation-timeline: scroll()) {
   .scroll-reveal {
     animation: fadeUp linear both;
@@ -1728,7 +1822,6 @@ html[data-episode-playing="true"] .waveform-bar--listen-bg {
   .premium-cta::after,
   .hero-title__mark,
   .hero-title__word,
-  .hero-waveform__bar,
   .host-card,
   .host-card__photo,
   .host-card__content,

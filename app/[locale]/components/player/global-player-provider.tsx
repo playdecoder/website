@@ -29,8 +29,8 @@ const PLAYBACK_RATES = [1, 1.25, 1.5, 1.75, 2] as const;
 const KEYBOARD_SKIP_SEC = 15;
 
 function playbackRateToIndex(rate: number): number {
-  const idx = PLAYBACK_RATES.indexOf(rate as (typeof PLAYBACK_RATES)[number]);
-  if (idx >= 0) return idx;
+  const exact = PLAYBACK_RATES.findIndex((r) => r === rate);
+  if (exact >= 0) return exact;
   let best = 0;
   let bestDist = Infinity;
   for (let i = 0; i < PLAYBACK_RATES.length; i++) {
@@ -214,7 +214,8 @@ export function GlobalPlayerProvider({ children }: { children: ReactNode }) {
     el.addEventListener("seeked", onSeeked);
     el.addEventListener("loadedmetadata", onMeta);
     el.addEventListener("progress", readBuffered);
-    el.addEventListener("error", () => setLoadError(true));
+    const onError = () => setLoadError(true);
+    el.addEventListener("error", onError);
 
     if (el.readyState >= HTMLMediaElement.HAVE_METADATA) {
       onMeta();
@@ -229,6 +230,7 @@ export function GlobalPlayerProvider({ children }: { children: ReactNode }) {
       el.removeEventListener("seeked", onSeeked);
       el.removeEventListener("loadedmetadata", onMeta);
       el.removeEventListener("progress", readBuffered);
+      el.removeEventListener("error", onError);
     };
   }, [t]);
 
@@ -363,11 +365,22 @@ export function GlobalPlayerProvider({ children }: { children: ReactNode }) {
       if (e.code === "ArrowLeft" || e.code === "ArrowRight") {
         e.preventDefault();
         skip(e.code === "ArrowLeft" ? -KEYBOARD_SKIP_SEC : KEYBOARD_SKIP_SEC);
+        return;
+      }
+      if (
+        (e.key === "," || e.key === ".") &&
+        !e.ctrlKey &&
+        !e.metaKey &&
+        !e.altKey &&
+        !e.repeat
+      ) {
+        e.preventDefault();
+        cycleRate();
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [togglePlay, skip]);
+  }, [togglePlay, skip, cycleRate]);
 
   const contextValue = useMemo(
     () => ({

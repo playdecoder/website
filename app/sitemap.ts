@@ -26,6 +26,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.85,
     });
 
+    out.push({
+      url: absoluteFromPath(getPathname({ locale, href: ROUTES.topics })),
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.78,
+    });
+
     for (const topic of getTopicEntries(episodes)) {
       out.push({
         url: absoluteFromPath(getPathname({ locale, href: topicPath(topic.slug) })),
