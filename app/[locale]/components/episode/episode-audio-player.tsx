@@ -109,6 +109,8 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
 
     const [scrubPosition, setScrubPosition] = useState<number | null>(null);
     const scrubValueRef = useRef(0);
+    const progressInputRef = useRef<HTMLInputElement>(null);
+    const pointerScrubbingRef = useRef(false);
 
     const displayPosition = isPageEpisodeActive ? (scrubPosition ?? ctx.currentTime) : 0;
     const timelineDuration = isPageEpisodeActive ? ctx.duration : 0;
@@ -227,19 +229,38 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
       return () => window.removeEventListener("hashchange", onHashChange);
     }, [seek, chapters, ctxEpisode?.id, episodeId]);
 
-    const onProgressChange = (v: number) => {
+    const setScrubFromPercent = useCallback((v: number) => {
       scrubValueRef.current = v;
       if (timelineDuration > 0) {
         setScrubPosition((v / 100) * timelineDuration);
       }
-    };
+    }, [timelineDuration]);
 
-    const onProgressCommit = () => {
+    const onProgressChange = useCallback(
+      (v: number) => {
+        setScrubFromPercent(v);
+        if (!pointerScrubbingRef.current && timelineDuration > 0) {
+          seek((v / 100) * timelineDuration);
+          setScrubPosition(null);
+        }
+      },
+      [seek, setScrubFromPercent, timelineDuration],
+    );
+
+    const onProgressCommit = useCallback((v?: number) => {
+      const nextValue = v ?? Number(progressInputRef.current?.value ?? scrubValueRef.current);
       if (timelineDuration > 0) {
-        seek((scrubValueRef.current / 100) * timelineDuration);
+        seek((nextValue / 100) * timelineDuration);
       }
       setScrubPosition(null);
-    };
+    }, [seek, timelineDuration]);
+
+    const commitProgressAfterPointer = useCallback(() => {
+      pointerScrubbingRef.current = false;
+      requestAnimationFrame(() => {
+        onProgressCommit();
+      });
+    }, [onProgressCommit]);
 
     const copyEpisodeLink = async () => {
       if (!isPageEpisodeActive) return;
@@ -450,6 +471,7 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
                     </div>
                   ) : null}
                   <input
+                    ref={progressInputRef}
                     type="range"
                     min={0}
                     max={100}
@@ -457,11 +479,18 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
                     value={progressPct}
                     disabled={ctx.loadError || timelineDuration <= 0}
                     onPointerDown={() => {
+                      pointerScrubbingRef.current = true;
                       scrubValueRef.current = progressPct;
                     }}
                     onChange={(e) => onProgressChange(Number(e.target.value))}
-                    onPointerUp={onProgressCommit}
-                    onPointerCancel={onProgressCommit}
+                    onPointerUp={commitProgressAfterPointer}
+                    onPointerCancel={commitProgressAfterPointer}
+                    onBlur={() => {
+                      if (pointerScrubbingRef.current || scrubPosition !== null) {
+                        pointerScrubbingRef.current = false;
+                        onProgressCommit();
+                      }
+                    }}
                     className="decoder-audio-progress w-full cursor-pointer disabled:cursor-not-allowed disabled:opacity-35"
                     aria-label={t("playerSeek")}
                   />
