@@ -29,6 +29,7 @@ import { EpisodeListenPlayerAndBody } from "../../components/episode/episode-lis
 import { EpisodeNeighborNav } from "../../components/episode/episode-neighbor-nav";
 import { EpisodeShareButton } from "../../components/episode/episode-share-button";
 import { EpisodeSpokenLangNote } from "../../components/episode/episode-spoken-lang-note";
+import { TopicLinkChip } from "../../components/episode/topic-link-chip";
 import { Navbar } from "../../components/layout/navbar";
 import { DecoderPageFrame } from "../../components/layout/page-frame";
 import { BarMotif } from "../../components/ui/bar-motif";
@@ -185,12 +186,20 @@ function EpisodeListenHosts({
   );
 }
 
-function EpisodeListenTags({ tags, stagger }: { tags: string[]; stagger: (i: number) => string }) {
+function EpisodeListenTags({
+  tags,
+  locale,
+  stagger,
+}: {
+  tags: string[];
+  locale: string;
+  stagger: (i: number) => string;
+}) {
   return (
     <div className="flex flex-wrap items-center gap-2 md:gap-3">
       {tags.map((tag, i) => (
-        <span key={tag} className="tag-pill" style={{ animationDelay: stagger(i) }}>
-          {tag}
+        <span key={tag} className="inline-flex" style={{ animationDelay: stagger(i) }}>
+          <TopicLinkChip tag={tag} locale={locale} />
         </span>
       ))}
     </div>
@@ -441,7 +450,7 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
               <div className="hidden lg:block lg:space-y-6">
                 <EpisodeSpokenLangNote lang={episode.lang} locale={locale} variant="banner" />
                 <div style={{ animation: "fadeUp 0.6s ease both 0.08s" }}>
-                  <EpisodeListenTags tags={episode.tags} stagger={stagger} />
+                  <EpisodeListenTags tags={episode.tags} locale={locale} stagger={stagger} />
                 </div>
               </div>
 
@@ -489,7 +498,7 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
                       embedded
                       className="mb-0"
                     />
-                    <EpisodeListenTags tags={episode.tags} stagger={stagger} />
+                    <EpisodeListenTags tags={episode.tags} locale={locale} stagger={stagger} />
                     <EpisodeListenMetadata
                       episode={episode}
                       locale={locale}

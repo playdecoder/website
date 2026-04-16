@@ -1,11 +1,13 @@
 export const ROUTE_SEGMENTS = {
   listen: "listen",
   episodes: "episodes",
+  topics: "topics",
 } as const;
 
 export const ROUTES = {
   home: "/",
   episodes: `/${ROUTE_SEGMENTS.episodes}`,
+  topics: `/${ROUTE_SEGMENTS.topics}`,
   rssFeed: "/rss.xml",
 } as const;
 
@@ -25,6 +27,10 @@ export function homeSectionPath(section: HomeHashSectionKey): string {
 
 export function listenEpisodePath(pathSegment: string): string {
   return `/${ROUTE_SEGMENTS.listen}/${pathSegment}`;
+}
+
+export function topicPath(topicSlug: string): string {
+  return `${ROUTES.topics}/${topicSlug}`;
 }
 
 export function absoluteListenEpisodeUrl(siteOrigin: string, pathSegment: string): string {

@@ -3,7 +3,8 @@ import type { MetadataRoute } from "next";
 import { getPathname } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { episodes, episodeListenPathSegment } from "@/lib/episode-catalog";
-import { listenEpisodePath, ROUTES } from "@/lib/routes";
+import { getTopicEntries } from "@/lib/episode-topics";
+import { listenEpisodePath, ROUTES, topicPath } from "@/lib/routes";
 import { absoluteFromPath, getPublicSiteUrl } from "@/lib/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -24,6 +25,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 0.85,
     });
+
+    for (const topic of getTopicEntries(episodes)) {
+      out.push({
+        url: absoluteFromPath(getPathname({ locale, href: topicPath(topic.slug) })),
+        lastModified: new Date(),
+        changeFrequency: "weekly",
+        priority: 0.72,
+      });
+    }
 
     for (const ep of episodes) {
       const listenHref = listenEpisodePath(episodeListenPathSegment(ep));

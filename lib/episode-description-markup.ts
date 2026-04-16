@@ -81,3 +81,23 @@ function segmentPlain(seg: EpisodeDescriptionSegment): string {
 export function plainEpisodeDescription(source: string): string {
   return parseEpisodeDescriptionMarkup(source).map(segmentPlain).join("");
 }
+
+/** Plain text, collapsed whitespace, truncated at a word or clause boundary. */
+export function episodeDescriptionSnippet(source: string, maxChars: number): string {
+  const plain = plainEpisodeDescription(source).replace(/\s+/g, " ").trim();
+  if (!plain) {
+    return "";
+  }
+  if (plain.length <= maxChars) {
+    return plain;
+  }
+  const slice = plain.slice(0, maxChars);
+  const lastBreak = Math.max(
+    slice.lastIndexOf(" "),
+    slice.lastIndexOf(","),
+    slice.lastIndexOf("."),
+    slice.lastIndexOf("—"),
+  );
+  const cut = lastBreak >= Math.floor(maxChars * 0.55) ? lastBreak : maxChars;
+  return `${plain.slice(0, cut).trimEnd()}…`;
+}

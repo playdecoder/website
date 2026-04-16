@@ -93,8 +93,48 @@
     "clearFilters": "Clear filters",
     "resultsNone": "No episodes match those filters.",
     "resultsMatches": "Showing {count} of {total} episodes",
+    "transcriptSearchLoading": "Transcript text is being added to search.",
+    "transcriptSearchReady": "Search now includes episode transcripts.",
     "emptyHeading": "Nothing on this frequency",
     "emptyHint": "Try clearing a topic chip, switching language to “All”, or shortening your search."
+  },
+  "continueListening": {
+    "label": "Continue listening",
+    "body": "No episode description in the catalog data.",
+    "resumeFrom": "Resume from {time}",
+    "timeLeft": "{time} left",
+    "cta": "Resume episode",
+    "deleteProgress": "Delete progress"
+  },
+  "startHere": {
+    "label": "Start here",
+    "heading": "Not sure which episode to play first?",
+    "intro": "These are three strong entry points depending on whether you care most about studios, game design, or the technical layer underneath.",
+    "cta": "Play episode",
+    "cards": {
+      "founders": {
+        "audience": "For founders",
+        "title": "If you care about studios, money, and survival",
+        "body": "A grounded episode on what indie game funding looks like now and what that means for small teams."
+      },
+      "designers": {
+        "audience": "For designers",
+        "title": "If you want to understand why systems fail",
+        "body": "Procedural generation without the myths: where the tools outrun design thinking and why players feel it."
+      },
+      "builders": {
+        "audience": "For technologists",
+        "title": "If you want AI without the fog",
+        "body": "A practical conversation about AI as a working partner, not a savior and not a villain."
+      }
+    }
+  },
+  "topics": {
+    "label": "Topic",
+    "heading": "Episodes on: {topic}",
+    "intro": "Every episode touching the topic “{topic}”. Filters and search stay live, so you can keep narrowing from here.",
+    "metaTitle": "{topic} — Dekodér topic page",
+    "metaDescription": "Browse Dekodér episodes tagged with “{topic}”."
   },
   "contact": {
     "tuneIn": "TUNE IN",

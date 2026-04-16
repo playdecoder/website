@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Fragment, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 
 import type { Episode, EpisodeChapter } from "@/lib/episode-catalog";
 import { EpisodeDescriptionRich } from "@/lib/episode-description";
@@ -35,9 +35,6 @@ export function EpisodeListenPlayerAndBody({
   const { loadEpisode, seek, isPlaying, currentTime, duration, episode: playingEpisode } =
     usePlayerContext();
 
-  const playingRef = useRef(playingEpisode);
-  playingRef.current = playingEpisode;
-
   const isPageEpisodeActive = playingEpisode?.id === episode.id;
   const chaptersCanSeek = isPageEpisodeActive && duration > 0;
 
@@ -63,7 +60,7 @@ export function EpisodeListenPlayerAndBody({
   }
 
   useEffect(() => {
-    const loaded = playingRef.current;
+    const loaded = playingEpisode;
     if (loaded == null) {
       loadEpisode(episode);
       return;
@@ -71,7 +68,7 @@ export function EpisodeListenPlayerAndBody({
     if (loaded.id === episode.id) {
       loadEpisode(episode);
     }
-  }, [episode, loadEpisode]);
+  }, [episode, loadEpisode, playingEpisode]);
 
   useWaveformSettle(
     isPlaying && isPageEpisodeActive,

@@ -63,7 +63,7 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
   function EpisodeAudioPlayer({ episode, chapters }, ref) {
     const t = useTranslations("listen");
     const ctx = usePlayerContext();
-    const { seek, loadEpisode, togglePlay, episode: ctxEpisode } = ctx;
+    const { seek, loadEpisode, togglePlay, episode: ctxEpisode, audioRef } = ctx;
     const episodeId = episode.id;
     const title = episode.title;
     const isPageEpisodeActive = ctxEpisode?.id === episodeId;
@@ -185,7 +185,17 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
         : t("playerResumeFromShare", { time: formatPlaybackTime(resolved.seconds) });
 
       seek(resolved.seconds, notice);
-    }, [isPageEpisodeActive, ctx.duration, chapters, t, seek]);
+
+      const pageUrl = new URL(window.location.href);
+      const playParam = pageUrl.searchParams.get("play");
+      if (playParam === "1" || playParam === "true") {
+        pageUrl.searchParams.delete("play");
+        window.history.replaceState(null, "", `${pageUrl.pathname}${pageUrl.search}${pageUrl.hash}`);
+        if (audioRef.current?.paused) {
+          togglePlay();
+        }
+      }
+    }, [isPageEpisodeActive, ctx.duration, chapters, t, seek, togglePlay, audioRef]);
 
     useEffect(() => {
       const onHashChange = () => {

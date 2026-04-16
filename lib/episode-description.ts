@@ -1,4 +1,5 @@
 export {
+  episodeDescriptionSnippet,
   parseEpisodeDescriptionMarkup,
   plainEpisodeDescription,
   type EpisodeDescriptionSegment,

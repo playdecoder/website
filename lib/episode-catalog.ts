@@ -30,12 +30,15 @@ export interface Episode {
   description: string;
   tags: string[];
   coverImage?: string;
+  curatedAs?: CuratedPickKey[];
   links: EpisodeLinks;
   chapters?: EpisodeChapter[];
   hosts?: EpisodeHost[];
 }
 
-export const episodes: Episode[] = episodesJson;
+export type CuratedPickKey = "founders" | "designers" | "builders";
+
+export const episodes = episodesJson as Episode[];
 
 const ISO_DATE = /^(\d{4})-(\d{2})-(\d{2})$/;
 

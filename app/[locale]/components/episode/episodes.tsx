@@ -17,6 +17,7 @@ import { IconEpisodeAirDate, IconEpisodeDuration } from "../ui/icons";
 import { SectionHeading } from "../ui/section-heading";
 
 import { EpisodeSpokenLangNote } from "./episode-spoken-lang-note";
+import { TopicLinkChip } from "./topic-link-chip";
 
 export async function Episodes({ locale }: { locale: string }) {
   const t = await getTranslations({ locale, namespace: "episodesSection" });
@@ -53,9 +54,7 @@ export async function Episodes({ locale }: { locale: string }) {
                 </span>
                 <div className="flex basis-full flex-wrap gap-1.5 md:ml-auto md:basis-auto md:justify-end">
                   {latestEpisode.tags.map((tag) => (
-                    <span key={tag} className="tag-pill">
-                      {tag}
-                    </span>
+                    <TopicLinkChip key={tag} tag={tag} locale={locale} />
                   ))}
                 </div>
               </div>

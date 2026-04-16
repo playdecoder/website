@@ -44,9 +44,12 @@ export function MiniPlayerBar() {
   const [isScrubbing, setIsScrubbing] = useState(false);
   const progressTrackRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  const episodeId = episode?.id;
+  const [scrubEpisodeId, setScrubEpisodeId] = useState(episodeId);
+  if (episodeId !== scrubEpisodeId) {
+    setScrubEpisodeId(episodeId);
     setScrubPosition(null);
-  }, [episode?.id]);
+  }
 
   const seekFromClientX = useCallback(
     (clientX: number) => {

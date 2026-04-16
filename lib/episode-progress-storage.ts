@@ -1,5 +1,32 @@
 const STORAGE_KEY = "decoder:episode-playback:v1";
+const PROGRESS_STORE_CHANGED = "decoder:episode-progress-changed";
 const MAX_EPISODES = 10;
+
+function notifyProgressStoreChanged() {
+  if (typeof window === "undefined") {
+    return;
+  }
+  window.dispatchEvent(new Event(PROGRESS_STORE_CHANGED));
+}
+
+/** Subscribe to local progress updates (same tab + other tabs via `storage`). */
+export function subscribeEpisodeProgressStore(onChange: () => void): () => void {
+  if (typeof window === "undefined") {
+    return () => {};
+  }
+  const onStorage = (event: StorageEvent) => {
+    if (event.key === STORAGE_KEY || event.key === null) {
+      onChange();
+    }
+  };
+  const onLocal = () => onChange();
+  window.addEventListener("storage", onStorage);
+  window.addEventListener(PROGRESS_STORE_CHANGED, onLocal);
+  return () => {
+    window.removeEventListener("storage", onStorage);
+    window.removeEventListener(PROGRESS_STORE_CHANGED, onLocal);
+  };
+}
 
 export interface EpisodeProgressEntry {
   id: string;
@@ -55,6 +82,7 @@ function persist(items: EpisodeProgressEntry[]): void {
   }
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ v: 1, items }));
+    notifyProgressStoreChanged();
   } catch {}
 }
 

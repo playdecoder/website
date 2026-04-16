@@ -32,7 +32,7 @@
     "taglineLine2": "Upřímné rozhovory. Jednou měsíčně.",
     "latestEpisode": "Nejnovější epizoda \u2197",
     "allEpisodes": "Všechny epizody",
-    "scroll": "SCROLL"
+    "scroll": "POSUN"
   },
   "about": {
     "label": "O pořadu",
@@ -94,8 +94,48 @@
     "clearFilters": "Zrušit filtry",
     "resultsNone": "Tomuhle nastavení teď neodpovídá žádná epizoda.",
     "resultsMatches": "Zobrazeno {count} z {total} epizod",
+    "transcriptSearchLoading": "Do hledání postupně přidáváme i přepisy.",
+    "transcriptSearchReady": "Hledání teď prochází i přepisy epizod.",
     "emptyHeading": "Na téhle frekvenci nic nemáme",
     "emptyHint": "Zkuste vypnout některý filtr, přepnout jazyk na „Vše“ nebo zadat kratší hledaný výraz."
+  },
+  "continueListening": {
+    "label": "Pokračovat",
+    "body": "U této epizody v datech nemáme delší popis.",
+    "resumeFrom": "Navázat od {time}",
+    "timeLeft": "Do konce zbývá {time}",
+    "cta": "Pokračovat v poslechu",
+    "deleteProgress": "Smazat pokrok"
+  },
+  "startHere": {
+    "label": "Začít tady",
+    "heading": "Nevíte, kterou epizodu pustit jako první?",
+    "intro": "Vybrali jsme tři silné vstupní body podle toho, jestli vás zajímá vedení studia, herní design, nebo technická stránka věci.",
+    "cta": "Pustit epizodu",
+    "cards": {
+      "founders": {
+        "audience": "Pro zakladatele",
+        "title": "Když řešíte studio, peníze a přežití",
+        "body": "Epizoda o tom, jak dnes vypadá financování indie her a co to prakticky znamená pro malé týmy."
+      },
+      "designers": {
+        "audience": "Pro designéry",
+        "title": "Když vás zajímá, proč systémy selhávají",
+        "body": "Procedurální generace bez mýtů: kde technologie předbíhá design a proč to ve hrách tolik bolí."
+      },
+      "builders": {
+        "audience": "Pro techniky",
+        "title": "Když chcete vidět AI bez marketingové mlhy",
+        "body": "Praktický díl o AI jako pracovním partnerovi, ne jako strašáku nebo mesiáši."
+      }
+    }
+  },
+  "topics": {
+    "label": "Téma",
+    "heading": "Epizody k tématu: {topic}",
+    "intro": "Všechny díly, které se dotýkají tématu „{topic}“. Filtry i hledání zůstávají zapnuté, takže můžete pokračovat odtud.",
+    "metaTitle": "Téma {topic} — Dekodér",
+    "metaDescription": "Projděte epizody Dekodéru označené tématem „{topic}“."
   },
   "contact": {
     "tuneIn": "NALAĎTE SE",

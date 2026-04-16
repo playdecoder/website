@@ -1,8 +1,8 @@
 "use client";
 
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { useMemo, useState } from "react";
 
 import {
   type Episode,
@@ -13,18 +13,28 @@ import {
   getLatestEpisode,
 } from "@/lib/episode-catalog";
 import { EpisodeDescriptionRich, plainEpisodeDescription } from "@/lib/episode-description";
+import { fetchEpisodeTranscript } from "@/lib/fetch-episode-transcript";
 import { linkLocale } from "@/lib/link-locale";
 import { listenEpisodePath } from "@/lib/routes";
 
 import { IconEpisodeAirDate, IconEpisodeDuration } from "../ui/icons";
 
 import { EpisodeLangCompactBadge } from "./episode-lang-compact-badge";
+import { TopicLinkChip } from "./topic-link-chip";
+
+const EMPTY_INITIAL_TAGS: string[] = [];
 
 interface EpisodesArchiveClientProps {
   episodes: Episode[];
+  initialSelectedTags?: string[];
 }
 
-export function EpisodesArchiveClient({ episodes: allEpisodes }: EpisodesArchiveClientProps) {
+type TranscriptIndexState = "idle" | "loading" | "ready" | "error";
+
+export function EpisodesArchiveClient({
+  episodes: allEpisodes,
+  initialSelectedTags = EMPTY_INITIAL_TAGS,
+}: EpisodesArchiveClientProps) {
   const locale = useLocale();
   const hrefLocale = linkLocale(locale);
   const t = useTranslations("episodesPage");
@@ -34,10 +44,81 @@ export function EpisodesArchiveClient({ episodes: allEpisodes }: EpisodesArchive
     [allEpisodes],
   );
   const latestId = useMemo(() => getLatestEpisode(allEpisodes)?.id, [allEpisodes]);
+  const transcriptCatalogKey = useMemo(
+    () =>
+      allEpisodes
+        .map((e) => e.id)
+        .sort()
+        .join("\0"),
+    [allEpisodes],
+  );
+
+  const initialTagsSig = useMemo(() => initialSelectedTags.join("\0"), [initialSelectedTags]);
 
   const [query, setQuery] = useState("");
   const [lang, setLang] = useState<string | "all">("all");
-  const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set());
+  const [selectedTags, setSelectedTags] = useState<Set<string>>(() => new Set(initialSelectedTags));
+  const [syncedInitialTagsSig, setSyncedInitialTagsSig] = useState(initialTagsSig);
+  const [transcriptIndex, setTranscriptIndex] = useState<Record<string, string>>({});
+  const [transcriptState, setTranscriptState] = useState<TranscriptIndexState>("idle");
+  const transcriptFetchGen = useRef(0);
+  const transcriptIndexReadyRef = useRef(false);
+
+  if (initialTagsSig !== syncedInitialTagsSig) {
+    setSyncedInitialTagsSig(initialTagsSig);
+    setSelectedTags(new Set(initialSelectedTags));
+  }
+
+  useEffect(() => {
+    transcriptIndexReadyRef.current = false;
+  }, [transcriptCatalogKey]);
+
+  useEffect(() => {
+    if (query.trim() === "" || transcriptIndexReadyRef.current) {
+      return;
+    }
+
+    const transcriptEpisodes = allEpisodes.filter((episode) => Boolean(episode.links.transcript));
+    if (transcriptEpisodes.length === 0) {
+      return;
+    }
+
+    const gen = ++transcriptFetchGen.current;
+    let cancelled = false;
+    queueMicrotask(() => {
+      if (!cancelled) {
+        setTranscriptState("loading");
+      }
+    });
+
+    void Promise.all(
+      transcriptEpisodes.map(async (episode) => {
+        const result = await fetchEpisodeTranscript(episode.links.transcript!);
+        return [
+          episode.id,
+          result.ok ? result.segments.map((segment) => segment.text).join(" ").toLowerCase() : "",
+        ] as const;
+      }),
+    )
+      .then((rows) => {
+        if (cancelled || gen !== transcriptFetchGen.current) {
+          return;
+        }
+        transcriptIndexReadyRef.current = true;
+        setTranscriptIndex(Object.fromEntries(rows));
+        setTranscriptState("ready");
+      })
+      .catch(() => {
+        if (cancelled || gen !== transcriptFetchGen.current) {
+          return;
+        }
+        setTranscriptState("error");
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [allEpisodes, query]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -61,9 +142,10 @@ export function EpisodesArchiveClient({ episodes: allEpisodes }: EpisodesArchive
 
       const hay =
         `${ep.title} ${plainEpisodeDescription(ep.description)} ${ep.tags.join(" ")}`.toLowerCase();
-      return words.every((w) => hay.includes(w));
+      const transcriptHay = transcriptIndex[ep.id] ?? "";
+      return words.every((w) => hay.includes(w) || transcriptHay.includes(w));
     });
-  }, [allEpisodes, query, lang, selectedTags]);
+  }, [allEpisodes, query, lang, selectedTags, transcriptIndex]);
 
   const hasActiveFilters = query.trim() !== "" || lang !== "all" || selectedTags.size > 0;
 
@@ -183,6 +265,16 @@ export function EpisodesArchiveClient({ episodes: allEpisodes }: EpisodesArchive
             ? t("resultsNone")
             : t("resultsMatches", { count: filtered.length, total: allEpisodes.length })}
         </p>
+        {query.trim() !== "" && transcriptState === "loading" && (
+          <p className="text-muted/70 font-mono text-[11px] tracking-wide">
+            {t("transcriptSearchLoading")}
+          </p>
+        )}
+        {query.trim() !== "" && transcriptState === "ready" && (
+          <p className="text-muted/70 font-mono text-[11px] tracking-wide">
+            {t("transcriptSearchReady")}
+          </p>
+        )}
       </div>
 
       <ul className="m-0 grid list-none gap-6 p-0 md:gap-8 lg:grid-cols-2">
@@ -219,9 +311,7 @@ export function EpisodesArchiveClient({ episodes: allEpisodes }: EpisodesArchive
                   <EpisodeLangCompactBadge lang={ep.lang} />
                   <div className="ml-auto flex flex-wrap justify-end gap-1.5">
                     {ep.tags.map((tag) => (
-                      <span key={tag} className="tag-pill">
-                        {tag}
-                      </span>
+                      <TopicLinkChip key={tag} tag={tag} locale={locale} />
                     ))}
                   </div>
                 </div>
