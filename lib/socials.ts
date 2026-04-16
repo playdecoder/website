@@ -1,6 +1,6 @@
 const SITE_ORIGIN = "https://dekoder.fm";
 
-export const SITE_CONTACT_EMAIL = "hello@dekoder.fm";
+export const SITE_CONTACT_EMAIL = "studio@dekoder.fm";
 
 export const SITE_CONTACT_MAILTO = `mailto:${SITE_CONTACT_EMAIL}`;
 

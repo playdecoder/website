@@ -99,7 +99,7 @@ export function MiniPlayerBar() {
   }, [visible]);
 
   useEffect(() => {
-    document.body.style.paddingBottom = visible ? "80px" : "";
+    document.body.style.paddingBottom = visible ? "88px" : "";
     return () => {
       document.body.style.paddingBottom = "";
     };
@@ -218,17 +218,17 @@ export function MiniPlayerBar() {
         </div>
       </div>
 
-      <div className="border-edge/35 relative border-t bg-[color-mix(in_srgb,var(--surface)_48%,transparent)] shadow-[inset_0_1px_0_0_color-mix(in_srgb,var(--primary)_10%,transparent)] backdrop-blur-2xl backdrop-saturate-150 dark:bg-[color-mix(in_srgb,var(--surface)_38%,transparent)] dark:shadow-[inset_0_1px_0_0_rgb(255_255_255/0.06)]">
+      <div className="border-edge/50 relative border-t bg-[color-mix(in_srgb,var(--surface)_42%,transparent)] shadow-[0_-10px_40px_-8px_rgb(0_0_0/0.28),0_-1px_0_0_color-mix(in_srgb,var(--edge)_30%,transparent),inset_0_1px_0_0_color-mix(in_srgb,var(--primary)_18%,transparent)] backdrop-blur-3xl backdrop-saturate-200 backdrop-brightness-[1.05] backdrop-contrast-[1.03] dark:border-edge/45 dark:bg-[color-mix(in_srgb,var(--surface)_34%,transparent)] dark:backdrop-brightness-[1.07] dark:backdrop-contrast-[1.02] dark:shadow-[0_-14px_48px_-10px_rgb(0_0_0/0.5),0_-1px_0_0_color-mix(in_srgb,var(--edge)_22%,transparent),inset_0_1px_0_0_rgb(255_255_255/0.1)]">
         <div
-          className="pointer-events-none absolute inset-0 opacity-[0.055] dark:opacity-[0.09]"
+          className="pointer-events-none absolute inset-0 opacity-[0.06] dark:opacity-[0.1]"
           style={{
             background:
-              "radial-gradient(ellipse 60% 120% at 50% 200%, var(--accent), transparent)",
+              "radial-gradient(ellipse 55% 100% at 50% 190%, color-mix(in srgb, var(--accent) 55%, transparent), transparent 72%)",
           }}
           aria-hidden
         />
 
-        <div className="relative mx-auto flex max-w-6xl items-center gap-2 px-3 py-2 sm:gap-3 sm:px-5">
+        <div className="relative mx-auto flex max-w-6xl items-center gap-2 px-3 py-2.5 sm:gap-3 sm:px-5">
           <Link
             href={listenHref}
             locale={hrefLocale}
@@ -266,15 +266,18 @@ export function MiniPlayerBar() {
                 </span>
               </p>
               {duration > 0 ? (
-                <p className="text-muted/60 grid max-w-[11rem] grid-cols-[1fr_auto_1fr] items-center gap-x-1.5 font-mono text-[10px] tracking-widest tabular-nums sm:max-w-none sm:gap-x-2">
+                <p className="text-muted/60 dark:text-primary/82 grid max-w-[11rem] grid-cols-[1fr_auto_1fr] items-center gap-x-1.5 font-mono text-[10px] tracking-widest tabular-nums sm:max-w-none sm:gap-x-2">
                   <span className="min-w-0 text-left">{formatPlaybackTime(currentTime)}</span>
-                  <span className="text-edge shrink-0 justify-self-center" aria-hidden>
+                  <span
+                    className="text-edge shrink-0 justify-self-center dark:text-primary/48"
+                    aria-hidden
+                  >
                     /
                   </span>
                   <span className="min-w-0 text-right">{formatPlaybackTime(duration)}</span>
                 </p>
               ) : (
-                <p className="text-muted/60 font-mono text-[10px] tracking-widest tabular-nums">
+                <p className="text-muted/60 dark:text-primary/82 font-mono text-[10px] tracking-widest tabular-nums">
                   {formatPlaybackTime(currentTime)}
                 </p>
               )}

@@ -43,14 +43,17 @@ export async function About({ locale }: { locale: string }) {
               <span className="text-accent-text">{t("quoteHighlight")}</span>&rdquo;
             </blockquote>
 
-            <div className="mt-10 grid grid-cols-3 gap-4">
+            <div className="mt-10 grid grid-cols-[repeat(3,minmax(0,1fr))] gap-x-3 gap-y-4 sm:gap-x-4 sm:gap-y-4">
               {stats.map((stat) => (
-                <div key={stat.label} className="stat-card pt-4">
-                  <div className="stat-card__rule bg-accent mb-4 h-0.5" />
-                  <div className="stat-card__value font-display text-primary mb-1 text-3xl font-extrabold">
+                <div
+                  key={stat.label}
+                  className="stat-card flex min-w-0 flex-col items-stretch pt-4 text-center sm:text-left"
+                >
+                  <div className="stat-card__rule bg-accent mb-3 h-0.5 w-full max-sm:origin-center sm:mb-4" />
+                  <div className="stat-card__value font-display text-primary mb-1 text-2xl leading-none font-extrabold tabular-nums sm:text-3xl">
                     {stat.value}
                   </div>
-                  <div className="text-muted font-mono text-xs tracking-widest uppercase">
+                  <div className="text-muted font-mono text-[10px] leading-snug tracking-widest uppercase sm:text-xs">
                     {stat.label}
                   </div>
                 </div>
