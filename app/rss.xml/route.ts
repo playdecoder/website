@@ -46,7 +46,7 @@ function episodeNumber(id: string): number {
 function buildItem(ep: Episode): string {
   const epNum = episodeNumber(ep.id);
   const episodePage = absoluteListenEpisodeUrl(SITE_URL, episodeListenPathSegment(ep));
-  const guid = `play-decoder.com/episodes/${ep.id}`;
+  const guid = `dekoder.fm/episodes/${ep.id}`;
   const summary = plainEpisodeDescription(ep.description);
 
   return `

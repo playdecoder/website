@@ -1,7 +1,7 @@
 export const PODCAST_COVER_PATH = "/podcast-cover.jpg";
 
 export function getPublicSiteUrl(): string {
-  return (process.env.NEXT_PUBLIC_SITE_URL ?? "https://play-decoder.com").replace(/\/$/, "");
+  return (process.env.NEXT_PUBLIC_SITE_URL ?? "https://dekoder.fm").replace(/\/$/, "");
 }
 
 export function absoluteFromPath(pathname: string): string {

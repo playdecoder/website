@@ -19,6 +19,6 @@ bun lint
 
 ## Configuration
 
-- **`NEXT_PUBLIC_SITE_URL`** — public site origin (defaults to `https://play-decoder.com` in code). Use your dev or preview URL locally if you care about absolute links in metadata or feeds.
+- **`NEXT_PUBLIC_SITE_URL`** — public site origin (defaults to `https://dekoder.fm` in code). Use your dev or preview URL locally if you care about absolute links in metadata or feeds.
 
 Deployment uses Next **`output: "standalone"`** for container-friendly builds.
