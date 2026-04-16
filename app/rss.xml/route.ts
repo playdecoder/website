@@ -1,9 +1,9 @@
+import { BRAND_NAME, BRAND_PODCAST } from "@/lib/brand";
 import { episodeListenPathSegment, episodes, type Episode } from "@/lib/episode-catalog";
 import { resolveEpisodeCoverImageUrl } from "@/lib/episode-cover";
 import { plainEpisodeDescription } from "@/lib/episode-description";
 import { absoluteListenEpisodeUrl } from "@/lib/routes";
 import { showHostsAmpersand, showTaglineCs } from "@/lib/show";
-import { BRAND_NAME, BRAND_PODCAST } from "@/lib/brand";
 import { absoluteFromPath, getPodcastCoverAbsoluteUrl, getPublicSiteUrl } from "@/lib/site";
 import { SITE_CONTACT_EMAIL } from "@/lib/socials";
 

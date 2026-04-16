@@ -64,7 +64,9 @@ export default async function EpisodesArchivePage({ params }: PageProps) {
                 <span className="text-primary">{t("headingLead")}</span>{" "}
                 <span className="text-secondary">{t("headingAccent")}</span>
               </h1>
-              <LedeIntroParagraph className="max-w-2xl leading-relaxed">{t("intro")}</LedeIntroParagraph>
+              <LedeIntroParagraph className="max-w-2xl leading-relaxed">
+                {t("intro")}
+              </LedeIntroParagraph>
               <Link
                 href={ROUTES.topics}
                 locale={hrefLocale}

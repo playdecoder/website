@@ -1,6 +1,6 @@
 import { Link } from "@/i18n/navigation";
-import { linkLocale } from "@/lib/link-locale";
 import { topicSlug } from "@/lib/episode-topics";
+import { linkLocale } from "@/lib/link-locale";
 import { topicPath } from "@/lib/routes";
 
 interface TopicLinkChipProps {
@@ -14,7 +14,9 @@ export function TopicLinkChip({ tag, locale, className }: TopicLinkChipProps) {
     <Link
       href={topicPath(topicSlug(tag))}
       locale={linkLocale(locale)}
-      className={className ?? "tag-pill transition-colors hover:border-secondary/45 hover:text-primary"}
+      className={
+        className ?? "tag-pill hover:border-secondary/45 hover:text-primary transition-colors"
+      }
     >
       {tag}
     </Link>

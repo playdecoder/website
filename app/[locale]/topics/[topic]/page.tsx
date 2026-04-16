@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { notFound } from "next/navigation";
 
 import { episodes } from "@/lib/episode-catalog";
 import { findTopicLabelBySlug, getTopicEntries } from "@/lib/episode-topics";
@@ -67,7 +67,9 @@ export default async function TopicPage({ params }: TopicPageProps) {
               >
                 {t("heading", { topic: label })}
               </h1>
-              <LedeIntroParagraph className="max-w-2xl leading-relaxed">{t("intro", { topic: label })}</LedeIntroParagraph>
+              <LedeIntroParagraph className="max-w-2xl leading-relaxed">
+                {t("intro", { topic: label })}
+              </LedeIntroParagraph>
             </div>
           </div>
         </header>

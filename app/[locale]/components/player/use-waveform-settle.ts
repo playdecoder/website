@@ -10,8 +10,7 @@ interface WaveformSettleOptions {
   cleanupMs?: number;
 }
 
-const DEFAULT_TRANSITION =
-  "transform 1.1s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.9s ease 0.06s";
+const DEFAULT_TRANSITION = "transform 1.1s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.9s ease 0.06s";
 
 export function useWaveformSettle(
   isPlaying: boolean,
@@ -98,7 +97,16 @@ export function useWaveformSettle(
     });
 
     return cancel;
-  }, [isPlaying, frozenOpacity, settleTransition, settleScale, settleOpacity, cleanupMs, cancel, clearStyles]);
+  }, [
+    isPlaying,
+    frozenOpacity,
+    settleTransition,
+    settleScale,
+    settleOpacity,
+    cleanupMs,
+    cancel,
+    clearStyles,
+  ]);
 
   return isPlaying || cssWaveHold;
 }

@@ -77,13 +77,21 @@ function subscribeToNothing() {
 export function ThemeToggle() {
   const t = useTranslations("theme");
   const { theme, setTheme } = useTheme();
-  const mounted = useSyncExternalStore(subscribeToNothing, () => true, () => false);
+  const mounted = useSyncExternalStore(
+    subscribeToNothing,
+    () => true,
+    () => false,
+  );
 
   const preference: ThemePreference =
     theme === "light" || theme === "dark" || theme === "system" ? theme : "system";
 
   const modeLabel =
-    preference === "light" ? t("modeLight") : preference === "dark" ? t("modeDark") : t("modeDevice");
+    preference === "light"
+      ? t("modeLight")
+      : preference === "dark"
+        ? t("modeDark")
+        : t("modeDevice");
 
   function cycleTheme() {
     if (preference === "light") {

@@ -1,3 +1,5 @@
+import type { Dispatch, MutableRefObject } from "react";
+
 import {
   clearEpisodeProgress,
   episodeHasStoredProgress,
@@ -5,7 +7,6 @@ import {
   writeProgressSnapshot,
 } from "@/lib/episode-progress-storage";
 import { formatPlaybackTime } from "@/lib/format-playback-time";
-import type { Dispatch, MutableRefObject } from "react";
 
 export const GLOBAL_PLAYER_PERSIST_THROTTLE_MS = 2000;
 
@@ -48,12 +49,59 @@ export function inferSeekNeedsBuffer(el: HTMLAudioElement, targetSec: number): b
   return t > getBufferedMaxEndSec(el) + BUFFER_AHEAD_MARGIN_SEC;
 }
 
+// Memoize ?playerDebug=1 until location.search changes (avoids reparsing on high-frequency media events).
+let playerDebugSearchKey = "";
+let playerDebugEnabled = false;
+
+export function isPlayerDebugEnabled(): boolean {
+  if (typeof window === "undefined") return false;
+  const key = window.location.search;
+  if (key === playerDebugSearchKey) return playerDebugEnabled;
+  playerDebugSearchKey = key;
+  playerDebugEnabled = new URLSearchParams(key).get("playerDebug") === "1";
+  return playerDebugEnabled;
+}
+
+export function debugPlayerDiag(label: string, extra: Record<string, unknown> = {}): void {
+  if (!isPlayerDebugEnabled()) return;
+  console.log("[decoder-player]", label, extra);
+}
+
+function bufferedRangesSummary(el: HTMLMediaElement): string {
+  const parts: string[] = [];
+  for (let i = 0; i < el.buffered.length; i++) {
+    parts.push(`${el.buffered.start(i).toFixed(2)}-${el.buffered.end(i).toFixed(2)}`);
+  }
+  return parts.join(", ") || "(none)";
+}
+
+function debugPlayerEvent(
+  label: string,
+  el: HTMLAudioElement,
+  extra: Record<string, unknown> = {},
+): void {
+  if (!isPlayerDebugEnabled()) return;
+  console.log("[decoder-player]", label, {
+    episodeId: el.dataset.episodeId ?? "",
+    currentTime: Number(el.currentTime.toFixed(3)),
+    duration: Number.isFinite(el.duration) ? Number(el.duration.toFixed(3)) : el.duration,
+    readyState: el.readyState,
+    networkState: el.networkState,
+    paused: el.paused,
+    seeking: el.seeking,
+    buffered: bufferedRangesSummary(el),
+    src: el.currentSrc || el.src,
+    ...extra,
+  });
+}
+
 export interface MediaState {
   isPlaying: boolean;
   currentTime: number;
   duration: number;
   loadError: boolean;
   bufferedPct: number;
+  isInitialLoading: boolean;
   isSeekBuffering: boolean;
   resumeNotice: string | null;
   resumeHintVisible: boolean;
@@ -67,6 +115,7 @@ export function initialMediaState(): MediaState {
     duration: 0,
     loadError: false,
     bufferedPct: 0,
+    isInitialLoading: false,
     isSeekBuffering: false,
     resumeNotice: null,
     resumeHintVisible: false,
@@ -103,6 +152,7 @@ export function subscribeGlobalPlayerAudio(
   };
 
   const onPlay = () => {
+    debugPlayerEvent("play", el);
     dispatchMedia({
       type: "patch",
       patch: { isPlaying: true, resumeNotice: null, resumeHintVisible: false },
@@ -110,6 +160,7 @@ export function subscribeGlobalPlayerAudio(
   };
 
   const onPause = () => {
+    debugPlayerEvent("pause", el);
     dispatchMedia({ type: "patch", patch: { isPlaying: false } });
     persistNow();
   };
@@ -132,12 +183,14 @@ export function subscribeGlobalPlayerAudio(
 
   const onSeeked = () => {
     const d = Number.isFinite(el.duration) ? el.duration : 0;
+    const needsBuffer = d > 0 ? inferSeekNeedsBuffer(el, el.currentTime) : false;
+    debugPlayerEvent("seeked", el, { needsBuffer });
     dispatchMedia({
       type: "patch",
       patch: {
         currentTime: el.currentTime,
         duration: d,
-        ...(d > 0 ? { isSeekBuffering: inferSeekNeedsBuffer(el, el.currentTime) } : {}),
+        ...(d > 0 ? { isSeekBuffering: needsBuffer } : {}),
       },
     });
     lastPersistAtRef.current = Date.now();
@@ -147,12 +200,20 @@ export function subscribeGlobalPlayerAudio(
   const onMeta = () => {
     const d = Number.isFinite(el.duration) ? el.duration : 0;
     if (d <= 0) {
-      dispatchMedia({ type: "patch", patch: { duration: d, isSeekBuffering: false } });
+      debugPlayerEvent("loadedmetadata", el, { durationReady: false });
+      dispatchMedia({
+        type: "patch",
+        patch: { duration: d, isInitialLoading: false, isSeekBuffering: false },
+      });
       return;
     }
     const id = getEpisodeId();
     if (!id) {
-      dispatchMedia({ type: "patch", patch: { duration: d, isSeekBuffering: false } });
+      debugPlayerEvent("loadedmetadata", el, { durationReady: true, hasEpisodeId: false });
+      dispatchMedia({
+        type: "patch",
+        patch: { duration: d, isInitialLoading: false, isSeekBuffering: false },
+      });
       return;
     }
     const saved = getSavedPosition(id, d);
@@ -164,6 +225,11 @@ export function subscribeGlobalPlayerAudio(
       resumeNotice = t("playerResumingFrom", { time: formatPlaybackTime(saved) });
     }
     const has = episodeHasStoredProgress(id);
+    debugPlayerEvent("loadedmetadata", el, {
+      durationReady: true,
+      saved,
+      hasStoredProgress: has,
+    });
     dispatchMedia({
       type: "patch",
       patch: {
@@ -172,48 +238,66 @@ export function subscribeGlobalPlayerAudio(
         resumeNotice,
         hasClearableProgress: has,
         resumeHintVisible: has,
-        // Initial page load should stop the loader once basic media info is available.
-        // Follow-up buffering states are driven by explicit seek / waiting / progress events.
+        // End "initial load" once metadata (and resume position) are applied; seek buffering after that comes from waiting/progress.
+        isInitialLoading: false,
         isSeekBuffering: false,
       },
     });
   };
 
-  const patchBufferTelemetry = () => {
+  const patchBufferTelemetry = (source: string) => {
     if (!Number.isFinite(el.duration) || el.duration <= 0) return;
     const maxEnd = getBufferedMaxEndSec(el);
     const pct = Math.min(100, (maxEnd / el.duration) * 100);
+    const inferredSeekBuffering = inferSeekNeedsBuffer(el, el.currentTime);
+    const shouldSurfaceSeekBuffering = el.seeking || !el.paused ? inferredSeekBuffering : false;
+    debugPlayerEvent("buffer-telemetry", el, {
+      source,
+      bufferedPct: Number(pct.toFixed(2)),
+      inferredSeekBuffering,
+      surfacedSeekBuffering: shouldSurfaceSeekBuffering,
+    });
     dispatchMedia({
       type: "patch",
       patch: {
         bufferedPct: pct,
-        isSeekBuffering: inferSeekNeedsBuffer(el, el.currentTime),
+        isSeekBuffering: shouldSurfaceSeekBuffering,
       },
     });
   };
 
   const onWaiting = () => {
+    if (!el.seeking && el.paused) return;
+    debugPlayerEvent("waiting", el);
     dispatchMedia({ type: "patch", patch: { isSeekBuffering: true } });
   };
 
+  const onProgress = () => patchBufferTelemetry("progress");
+  const onCanPlay = () => patchBufferTelemetry("canplay");
+  const onLoadedData = () => patchBufferTelemetry("loadeddata");
   el.addEventListener("play", onPlay);
   el.addEventListener("pause", onPause);
   el.addEventListener("ended", onEnded);
   el.addEventListener("timeupdate", onTime);
   el.addEventListener("seeked", onSeeked);
   el.addEventListener("loadedmetadata", onMeta);
-  el.addEventListener("progress", patchBufferTelemetry);
-  el.addEventListener("canplay", patchBufferTelemetry);
-  el.addEventListener("loadeddata", patchBufferTelemetry);
+  el.addEventListener("progress", onProgress);
+  el.addEventListener("canplay", onCanPlay);
+  el.addEventListener("loadeddata", onLoadedData);
   el.addEventListener("waiting", onWaiting);
   el.addEventListener("stalled", onWaiting);
-  const onError = () =>
-    dispatchMedia({ type: "patch", patch: { loadError: true, isSeekBuffering: false } });
+  const onError = () => {
+    debugPlayerEvent("error", el);
+    dispatchMedia({
+      type: "patch",
+      patch: { loadError: true, isInitialLoading: false, isSeekBuffering: false },
+    });
+  };
   el.addEventListener("error", onError);
 
   if (el.readyState >= HTMLMediaElement.HAVE_METADATA) {
     onMeta();
-    patchBufferTelemetry();
+    patchBufferTelemetry("subscribe-init");
   }
 
   return () => {
@@ -223,9 +307,9 @@ export function subscribeGlobalPlayerAudio(
     el.removeEventListener("timeupdate", onTime);
     el.removeEventListener("seeked", onSeeked);
     el.removeEventListener("loadedmetadata", onMeta);
-    el.removeEventListener("progress", patchBufferTelemetry);
-    el.removeEventListener("canplay", patchBufferTelemetry);
-    el.removeEventListener("loadeddata", patchBufferTelemetry);
+    el.removeEventListener("progress", onProgress);
+    el.removeEventListener("canplay", onCanPlay);
+    el.removeEventListener("loadeddata", onLoadedData);
     el.removeEventListener("waiting", onWaiting);
     el.removeEventListener("stalled", onWaiting);
     el.removeEventListener("error", onError);

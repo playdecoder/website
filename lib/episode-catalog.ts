@@ -238,19 +238,19 @@ export const heroWaveformBars: {
   color: BarColor;
   alt?: boolean;
 }[] = [
-  { h: 8,   dur: "5.4s", delay: "0.02s", color: "primary" },
-  { h: 12,  dur: "5.1s", delay: "0.18s", color: "primary",   alt: true },
-  { h: 17,  dur: "4.9s", delay: "0.08s", color: "primary" },
-  { h: 22,  dur: "4.7s", delay: "0.32s", color: "primary",   alt: true },
-  { h: 28,  dur: "4.5s", delay: "0.12s", color: "primary" },
-  { h: 34,  dur: "4.3s", delay: "0.26s", color: "primary",   alt: true },
-  { h: 41,  dur: "4.1s", delay: "0.06s", color: "primary" },
-  { h: 48,  dur: "3.9s", delay: "0.40s", color: "primary",   alt: true },
-  { h: 56,  dur: "3.7s", delay: "0.14s", color: "primary" },
-  { h: 64,  dur: "3.5s", delay: "0.28s", color: "primary",   alt: true },
-  { h: 73,  dur: "3.4s", delay: "0.04s", color: "primary" },
-  { h: 82,  dur: "3.3s", delay: "0.22s", color: "primary",   alt: true },
-  { h: 92,  dur: "3.2s", delay: "0.36s", color: "secondary" },
+  { h: 8, dur: "5.4s", delay: "0.02s", color: "primary" },
+  { h: 12, dur: "5.1s", delay: "0.18s", color: "primary", alt: true },
+  { h: 17, dur: "4.9s", delay: "0.08s", color: "primary" },
+  { h: 22, dur: "4.7s", delay: "0.32s", color: "primary", alt: true },
+  { h: 28, dur: "4.5s", delay: "0.12s", color: "primary" },
+  { h: 34, dur: "4.3s", delay: "0.26s", color: "primary", alt: true },
+  { h: 41, dur: "4.1s", delay: "0.06s", color: "primary" },
+  { h: 48, dur: "3.9s", delay: "0.40s", color: "primary", alt: true },
+  { h: 56, dur: "3.7s", delay: "0.14s", color: "primary" },
+  { h: 64, dur: "3.5s", delay: "0.28s", color: "primary", alt: true },
+  { h: 73, dur: "3.4s", delay: "0.04s", color: "primary" },
+  { h: 82, dur: "3.3s", delay: "0.22s", color: "primary", alt: true },
+  { h: 92, dur: "3.2s", delay: "0.36s", color: "secondary" },
   { h: 102, dur: "3.1s", delay: "0.10s", color: "secondary", alt: true },
   { h: 113, dur: "3.0s", delay: "0.24s", color: "secondary" },
   { h: 124, dur: "2.9s", delay: "0.44s", color: "secondary", alt: true },
@@ -261,13 +261,13 @@ export const heroWaveformBars: {
   { h: 176, dur: "2.4s", delay: "0.18s", color: "secondary" },
   { h: 184, dur: "2.3s", delay: "0.30s", color: "secondary", alt: true },
   { h: 190, dur: "2.2s", delay: "0.04s", color: "accent" },
-  { h: 195, dur: "2.1s", delay: "0.14s", color: "accent",    alt: true },
+  { h: 195, dur: "2.1s", delay: "0.14s", color: "accent", alt: true },
   { h: 198, dur: "2.0s", delay: "0.22s", color: "accent" },
-  { h: 200, dur: "1.9s", delay: "0.00s", color: "accent",    alt: true },
+  { h: 200, dur: "1.9s", delay: "0.00s", color: "accent", alt: true },
   { h: 200, dur: "1.9s", delay: "0.10s", color: "accent" },
-  { h: 198, dur: "2.0s", delay: "0.16s", color: "accent",    alt: true },
+  { h: 198, dur: "2.0s", delay: "0.16s", color: "accent", alt: true },
   { h: 195, dur: "2.1s", delay: "0.06s", color: "accent" },
-  { h: 190, dur: "2.2s", delay: "0.24s", color: "accent",    alt: true },
+  { h: 190, dur: "2.2s", delay: "0.24s", color: "accent", alt: true },
   { h: 184, dur: "2.3s", delay: "0.12s", color: "secondary" },
   { h: 176, dur: "2.4s", delay: "0.32s", color: "secondary", alt: true },
   { h: 167, dur: "2.5s", delay: "0.04s", color: "secondary" },
@@ -277,19 +277,19 @@ export const heroWaveformBars: {
   { h: 124, dur: "2.9s", delay: "0.22s", color: "secondary" },
   { h: 113, dur: "3.0s", delay: "0.42s", color: "secondary", alt: true },
   { h: 102, dur: "3.1s", delay: "0.14s", color: "secondary" },
-  { h: 92,  dur: "3.2s", delay: "0.28s", color: "primary",   alt: true },
-  { h: 82,  dur: "3.3s", delay: "0.02s", color: "primary" },
-  { h: 73,  dur: "3.4s", delay: "0.18s", color: "primary",   alt: true },
-  { h: 64,  dur: "3.5s", delay: "0.38s", color: "primary" },
-  { h: 56,  dur: "3.7s", delay: "0.10s", color: "primary",   alt: true },
-  { h: 48,  dur: "3.9s", delay: "0.26s", color: "primary" },
-  { h: 41,  dur: "4.1s", delay: "0.44s", color: "primary",   alt: true },
-  { h: 34,  dur: "4.3s", delay: "0.08s", color: "primary" },
-  { h: 28,  dur: "4.5s", delay: "0.20s", color: "primary",   alt: true },
-  { h: 22,  dur: "4.7s", delay: "0.34s", color: "primary" },
-  { h: 17,  dur: "4.9s", delay: "0.12s", color: "primary",   alt: true },
-  { h: 12,  dur: "5.1s", delay: "0.30s", color: "primary" },
-  { h: 8,   dur: "5.4s", delay: "0.16s", color: "primary",   alt: true },
+  { h: 92, dur: "3.2s", delay: "0.28s", color: "primary", alt: true },
+  { h: 82, dur: "3.3s", delay: "0.02s", color: "primary" },
+  { h: 73, dur: "3.4s", delay: "0.18s", color: "primary", alt: true },
+  { h: 64, dur: "3.5s", delay: "0.38s", color: "primary" },
+  { h: 56, dur: "3.7s", delay: "0.10s", color: "primary", alt: true },
+  { h: 48, dur: "3.9s", delay: "0.26s", color: "primary" },
+  { h: 41, dur: "4.1s", delay: "0.44s", color: "primary", alt: true },
+  { h: 34, dur: "4.3s", delay: "0.08s", color: "primary" },
+  { h: 28, dur: "4.5s", delay: "0.20s", color: "primary", alt: true },
+  { h: 22, dur: "4.7s", delay: "0.34s", color: "primary" },
+  { h: 17, dur: "4.9s", delay: "0.12s", color: "primary", alt: true },
+  { h: 12, dur: "5.1s", delay: "0.30s", color: "primary" },
+  { h: 8, dur: "5.4s", delay: "0.16s", color: "primary", alt: true },
 ];
 
 function mulberry32(initial: number) {
@@ -353,8 +353,9 @@ export function listenBackgroundBarsForEpisode(episodeId: string): ListenBackgro
   return heights.map((h) => {
     const durS = 2.05 + rand() * 4.25;
     const delayS = rand() * 2.45;
-    const motion = Math.floor(rand() * 3) % 3 as ListenBackgroundMotion;
-    const ease = LISTEN_BG_EASINGS[Math.floor(rand() * LISTEN_BG_EASINGS.length) % LISTEN_BG_EASINGS.length];
+    const motion = (Math.floor(rand() * 3) % 3) as ListenBackgroundMotion;
+    const ease =
+      LISTEN_BG_EASINGS[Math.floor(rand() * LISTEN_BG_EASINGS.length) % LISTEN_BG_EASINGS.length];
     const flexGrow = 0.36 + rand() * 0.94;
     const hi = h / 200;
     const r = rand();

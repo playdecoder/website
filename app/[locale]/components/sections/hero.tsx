@@ -1,8 +1,8 @@
 import { getTranslations } from "next-intl/server";
 
 import { Link } from "@/i18n/navigation";
-import { episodes, episodeListenPathSegment, getLatestEpisode } from "@/lib/episode-catalog";
 import { BRAND_NAME } from "@/lib/brand";
+import { episodes, episodeListenPathSegment, getLatestEpisode } from "@/lib/episode-catalog";
 import { linkLocale } from "@/lib/link-locale";
 import { PAGE_SECTION_ID, ROUTES, listenEpisodePath } from "@/lib/routes";
 
@@ -89,7 +89,7 @@ export async function Hero({ locale }: { locale: string }) {
         </div>
       </div>
 
-      <div className="hidden md:block pointer-events-none absolute top-0 right-0 left-0 z-20 h-[100dvh]">
+      <div className="pointer-events-none absolute top-0 right-0 left-0 z-20 hidden h-[100dvh] md:block">
         <div
           className="absolute left-1/2 flex -translate-x-1/2 flex-col items-center gap-2 opacity-40"
           style={{ bottom: "calc(2rem + env(safe-area-inset-bottom, 0px))" }}

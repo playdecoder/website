@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import episodesData from "@/data/episodes.json";
 import { getPathname, redirect } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
+import { BRAND_NAME, BRAND_PODCAST, brandInterpolation } from "@/lib/brand";
 import {
   episodeListenPathSegment,
   episodeListenSlugPrefix,
@@ -15,7 +16,6 @@ import { resolveEpisodeCoverForMeta } from "@/lib/episode-cover";
 import { plainEpisodeDescription } from "@/lib/episode-description";
 import { listenEpisodePath } from "@/lib/routes";
 import { showHostsForMetadata, showHostsForOpenGraphArticle } from "@/lib/show";
-import { BRAND_NAME, BRAND_PODCAST, brandInterpolation } from "@/lib/brand";
 import { absoluteFromPath } from "@/lib/site";
 
 import { EpisodeListenView } from "./episode-listen-view";

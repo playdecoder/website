@@ -1,12 +1,12 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
 import { useEffect } from "react";
 
+import { Link } from "@/i18n/navigation";
 import { BRAND_NAME, brandInterpolation } from "@/lib/brand";
-import { ROUTES } from "@/lib/routes";
 import { linkLocale } from "@/lib/link-locale";
+import { ROUTES } from "@/lib/routes";
 
 import { DecoderPageFrame } from "./components/layout/page-frame";
 import { SignalLabelRail } from "./components/sections/signal-label-rail";

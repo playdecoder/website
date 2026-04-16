@@ -1,18 +1,18 @@
 import { getTranslations } from "next-intl/server";
 
 import { Link } from "@/i18n/navigation";
+import { getCuratedPicks, hasCuratedPicks } from "@/lib/curated-picks";
 import {
   episodeListenPathSegment,
   formatEpisodeDate,
   formatEpisodeDuration,
 } from "@/lib/episode-catalog";
-import { getCuratedPicks, hasCuratedPicks } from "@/lib/curated-picks";
 import { linkLocale } from "@/lib/link-locale";
 import { listenEpisodePath } from "@/lib/routes";
 
+import { TopicLinkChip } from "../episode/topic-link-chip";
 import { LedeIntroParagraph } from "../ui/lede-intro-paragraph";
 import { SectionHeading } from "../ui/section-heading";
-import { TopicLinkChip } from "../episode/topic-link-chip";
 
 const curatedCardTone = {
   founders: {
@@ -63,14 +63,14 @@ export async function StartHere({ locale }: { locale: string }) {
         </div>
 
         <div className="grid gap-6 lg:grid-cols-3">
-          {picks.map(({ key, episode }, index) => (
+          {picks.map(({ key, episode }, index) =>
             (() => {
               const tone = curatedCardTone[key];
 
               return (
                 <article
                   key={key}
-                  className={`border-edge bg-surface/35 scroll-reveal group relative flex h-full flex-col overflow-hidden rounded-sm border p-6 transition-colors duration-300 active:border-secondary/40 ${tone.borderClass}`}
+                  className={`border-edge bg-surface/35 scroll-reveal group active:border-secondary/40 relative flex h-full flex-col overflow-hidden rounded-sm border p-6 transition-colors duration-300 ${tone.borderClass}`}
                   style={{ animationDelay: `${0.05 * index}s` }}
                 >
                   <div
@@ -80,7 +80,9 @@ export async function StartHere({ locale }: { locale: string }) {
                   />
 
                   <div className="relative mb-5 flex items-center justify-between gap-3">
-                    <span className={`inline-flex items-center gap-2 font-mono text-[10px] tracking-[0.24em] uppercase ${tone.audienceClass}`}>
+                    <span
+                      className={`inline-flex items-center gap-2 font-mono text-[10px] tracking-[0.24em] uppercase ${tone.audienceClass}`}
+                    >
                       <span
                         className="inline-block h-1.5 w-1.5 rounded-full opacity-70"
                         aria-hidden
@@ -93,7 +95,7 @@ export async function StartHere({ locale }: { locale: string }) {
                     </span>
                   </div>
 
-                  <p className="text-primary relative mb-3 font-display text-xl leading-tight font-semibold">
+                  <p className="text-primary font-display relative mb-3 text-xl leading-tight font-semibold">
                     {t(`cards.${key}.title`)}
                   </p>
 
@@ -133,8 +135,8 @@ export async function StartHere({ locale }: { locale: string }) {
                   </Link>
                 </article>
               );
-            })()
-          ))}
+            })(),
+          )}
         </div>
       </div>
     </section>

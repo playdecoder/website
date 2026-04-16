@@ -33,18 +33,11 @@ export function LogoD({ variant = "hero", className }: LogoDProps) {
       className={cn(
         variant === "footer" &&
           "inline-block h-7 w-[calc(1.75rem*203.7/194.4)] shrink-0 self-center overflow-visible",
-        className
+        className,
       )}
       style={variant === "hero" ? logoDLayoutHero : undefined}
     >
-      <rect
-        x="31.0918"
-        y="98.0791"
-        width="163"
-        height="153"
-        rx="23"
-        fill="#D4FF3F"
-      />
+      <rect x="31.0918" y="98.0791" width="163" height="153" rx="23" fill="#D4FF3F" />
       <rect x="67.0918" y="108.079" width="26" height="143" fill="#5B4DFF" />
       <rect x="109.092" y="108.079" width="17" height="143" fill="#5B4DFF" />
       <rect x="142.092" y="108.079" width="29" height="143" fill="#5B4DFF" />

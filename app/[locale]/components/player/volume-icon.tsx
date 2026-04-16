@@ -5,7 +5,13 @@ interface VolumeIconProps {
 }
 
 export function VolumeIcon({ muted, volume, size = 18 }: VolumeIconProps) {
-  const props = { width: size, height: size, viewBox: "0 0 24 24", fill: "currentColor", "aria-hidden": true } as const;
+  const props = {
+    width: size,
+    height: size,
+    viewBox: "0 0 24 24",
+    fill: "currentColor",
+    "aria-hidden": true,
+  } as const;
 
   if (muted || volume === 0) {
     return (

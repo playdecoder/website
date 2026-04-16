@@ -17,6 +17,7 @@ import { isIosLikeWebKitNoProgrammaticVolume } from "@/lib/ios-webkit";
 import { readPlayerPreferences, writePlayerPreferences } from "@/lib/player-preferences-storage";
 
 import {
+  debugPlayerDiag,
   inferSeekNeedsBuffer,
   initialMediaState,
   mediaReducer,
@@ -55,7 +56,9 @@ function isTypingTarget(el: EventTarget | null): boolean {
 function shortcutConsumingTarget(el: EventTarget | null): boolean {
   if (!(el instanceof HTMLElement)) return false;
   return Boolean(
-    el.closest("button, a[href], [role='slider'], input, textarea, select, [contenteditable='true']"),
+    el.closest(
+      "button, a[href], [role='slider'], input, textarea, select, [contenteditable='true']",
+    ),
   );
 }
 
@@ -176,18 +179,22 @@ export function GlobalPlayerProvider({ children }: { children: ReactNode }) {
     dispatchMedia({ type: "reset" });
   }, []);
 
-  const loadEpisode = useCallback((ep: Episode) => {
-    const el = audioRef.current;
-    if (!el) return;
-    if (el.dataset.episodeId === ep.id && el.src) return;
-    if (!el.paused) el.pause();
-    setEpisode(ep);
-    resetPlaybackState();
-    dispatchMedia({ type: "patch", patch: { isSeekBuffering: true } });
-    el.dataset.episodeId = ep.id;
-    el.src = ep.links.mp3;
-    el.load();
-  }, [resetPlaybackState]);
+  const loadEpisode = useCallback(
+    (ep: Episode) => {
+      const el = audioRef.current;
+      if (!el) return;
+      if (el.dataset.episodeId === ep.id && el.src) return;
+      if (!el.paused) el.pause();
+      debugPlayerDiag("loadEpisode", { episodeId: ep.id, src: ep.links.mp3 });
+      setEpisode(ep);
+      resetPlaybackState();
+      dispatchMedia({ type: "patch", patch: { isInitialLoading: true, isSeekBuffering: false } });
+      el.dataset.episodeId = ep.id;
+      el.src = ep.links.mp3;
+      el.load();
+    },
+    [resetPlaybackState],
+  );
 
   const togglePlay = useCallback(() => {
     const el = audioRef.current;
@@ -266,13 +273,7 @@ export function GlobalPlayerProvider({ children }: { children: ReactNode }) {
         skip(e.code === "ArrowLeft" ? -KEYBOARD_SKIP_SEC : KEYBOARD_SKIP_SEC);
         return;
       }
-      if (
-        (e.key === "," || e.key === ".") &&
-        !e.ctrlKey &&
-        !e.metaKey &&
-        !e.altKey &&
-        !e.repeat
-      ) {
+      if ((e.key === "," || e.key === ".") && !e.ctrlKey && !e.metaKey && !e.altKey && !e.repeat) {
         e.preventDefault();
         cycleRate();
       }
@@ -289,6 +290,7 @@ export function GlobalPlayerProvider({ children }: { children: ReactNode }) {
       duration: media.duration,
       loadError: media.loadError,
       bufferedPct: media.bufferedPct,
+      isInitialLoading: media.isInitialLoading,
       isSeekBuffering: media.isSeekBuffering,
       resumeNotice: media.resumeNotice,
       resumeHintVisible: media.resumeHintVisible,
@@ -315,6 +317,7 @@ export function GlobalPlayerProvider({ children }: { children: ReactNode }) {
       media.duration,
       media.loadError,
       media.bufferedPct,
+      media.isInitialLoading,
       media.isSeekBuffering,
       media.resumeNotice,
       media.resumeHintVisible,

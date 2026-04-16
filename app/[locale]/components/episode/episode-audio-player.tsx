@@ -1,7 +1,7 @@
 "use client";
 
-import { useQueryState } from "nuqs";
 import { useTranslations } from "next-intl";
+import { useQueryState } from "nuqs";
 import {
   forwardRef,
   useCallback,
@@ -19,10 +19,7 @@ import { resolveEpisodeSeekFromHash } from "@/lib/episode-hash";
 import { getSavedPosition } from "@/lib/episode-progress-storage";
 import { formatEpisodeTimeHash } from "@/lib/episode-time-fragment";
 import { formatPlaybackTime } from "@/lib/format-playback-time";
-import {
-  LISTEN_AUTOPLAY_QUERY_KEY,
-  parseAsListenAutoplay,
-} from "@/lib/listen-autoplay-query";
+import { LISTEN_AUTOPLAY_QUERY_KEY, parseAsListenAutoplay } from "@/lib/listen-autoplay-query";
 
 import { usePlayerContext } from "../player/player-context";
 import { useWaveformSettle } from "../player/use-waveform-settle";
@@ -53,7 +50,6 @@ const WAVEFORM_BARS = [
   { id: "wf-19", h: 20, dur: 0.79, delay: 0.06 },
 ] as const;
 
-
 export interface EpisodeAudioPlayerHandle {
   seekToSeconds: (seconds: number) => void;
 }
@@ -62,7 +58,6 @@ interface EpisodeAudioPlayerProps {
   episode: Episode;
   chapters?: EpisodeHashChapter[];
 }
-
 
 export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAudioPlayerProps>(
   function EpisodeAudioPlayer({ episode, chapters }, ref) {
@@ -153,7 +148,10 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
     const rateLabel = ctx.playbackRate === 1 ? "1×" : `${ctx.playbackRate}×`;
     const volumeIconLevel = programmaticVolume ? ctx.volume : ctx.muted ? 0 : 1;
     const mainTransportShowsPause = isPageEpisodeActive && ctx.isPlaying;
-    const showSeekBuffering = isPageEpisodeActive && ctx.isSeekBuffering && !ctx.loadError;
+    const showSeekBuffering =
+      !ctx.loadError &&
+      (!isPageEpisodeActive ||
+        (isPageEpisodeActive && (ctx.isInitialLoading || ctx.isSeekBuffering)));
 
     useImperativeHandle(
       ref,
@@ -172,7 +170,10 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
 
     const decoderWavePlaying = useWaveformSettle(
       isPageEpisodeActive && ctx.isPlaying && !ctx.isSeekBuffering,
-      () => Array.from(waveformRef.current?.querySelectorAll<HTMLElement>(".decoder-waveform-bar") ?? []),
+      () =>
+        Array.from(
+          waveformRef.current?.querySelectorAll<HTMLElement>(".decoder-waveform-bar") ?? [],
+        ),
     );
 
     useEffect(() => {
@@ -290,10 +291,14 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
                   {title}
                 </p>
                 <div
-                  className={`text-muted/75 mt-1 flex h-5 max-w-full items-center gap-1 font-mono text-[10px] tracking-wide sm:gap-1.5 sm:text-[11px]${ctx.hasClearableProgress && isPageEpisodeActive && ctx.resumeHintVisible ? "" : " invisible pointer-events-none select-none"}`}
-                  aria-hidden={!(ctx.hasClearableProgress && isPageEpisodeActive && ctx.resumeHintVisible) || undefined}
+                  className={`text-muted/75 mt-1 flex h-5 max-w-full items-center gap-1 font-mono text-[10px] tracking-wide sm:gap-1.5 sm:text-[11px]${ctx.hasClearableProgress && isPageEpisodeActive && ctx.resumeHintVisible ? "" : " pointer-events-none invisible select-none"}`}
+                  inert={
+                    ctx.hasClearableProgress && isPageEpisodeActive && ctx.resumeHintVisible
+                      ? undefined
+                      : true
+                  }
                 >
-                  <p className="min-w-0 shrink leading-snug line-clamp-1" role="status">
+                  <p className="line-clamp-1 min-w-0 shrink leading-snug" role="status">
                     {progressResumeCaption ?? "\u00a0"}
                   </p>
                   <button
@@ -424,8 +429,7 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
                       {chapterTimelineMarkers.map((m) => {
                         const isPast = m.pct < progressPct - 0.02;
                         const isCurrent =
-                          activeChapterStartT != null &&
-                          Math.abs(m.t - activeChapterStartT) < 0.03;
+                          activeChapterStartT != null && Math.abs(m.t - activeChapterStartT) < 0.03;
                         return (
                           <button
                             key={m.key}
@@ -619,7 +623,9 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
                       onClick={ctx.toggleMute}
                       disabled={ctx.loadError}
                       className="text-muted hover:bg-surface-2/60 active:bg-surface-2 flex w-[2.75rem] shrink-0 items-center justify-center transition-colors disabled:opacity-35"
-                      aria-label={ctx.muted || ctx.volume === 0 ? t("playerUnmute") : t("playerMute")}
+                      aria-label={
+                        ctx.muted || ctx.volume === 0 ? t("playerUnmute") : t("playerMute")
+                      }
                     >
                       <VolumeIcon muted={ctx.muted} volume={volumeIconLevel} />
                     </button>

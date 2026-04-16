@@ -104,13 +104,15 @@ export function EpisodeShareButton({
     <div
       className={cn(
         "w-full gap-2",
-        canShare ? "grid grid-cols-2 md:flex md:w-auto md:flex-row md:flex-wrap md:items-stretch" : "flex",
+        canShare
+          ? "grid grid-cols-2 md:flex md:w-auto md:flex-row md:flex-wrap md:items-stretch"
+          : "flex",
         className,
       )}
     >
       {canShare ? (
         <button type="button" onClick={onShare} aria-label={labelAria} className={chipBtn}>
-          <IconShare size={15} className="shrink-0 text-secondary/65" />
+          <IconShare size={15} className="text-secondary/65 shrink-0" />
           <span className="min-w-0 truncate">{label}</span>
         </button>
       ) : null}
@@ -124,11 +126,11 @@ export function EpisodeShareButton({
           copyStatus === "error" && "border-secondary/40 text-secondary",
         )}
       >
-        <IconCopyLink size={15} className="shrink-0 text-secondary/65" />
+        <IconCopyLink size={15} className="text-secondary/65 shrink-0" />
         {copyStatus === "idle" && copyLabelCompact ? (
           <>
             <span className="min-w-0 truncate md:hidden">{copyLabelCompact}</span>
-            <span className="hidden min-w-0 max-w-[15rem] truncate md:inline">{copyVisible}</span>
+            <span className="hidden max-w-[15rem] min-w-0 truncate md:inline">{copyVisible}</span>
           </>
         ) : (
           <span className="min-w-0 truncate">{copyVisible}</span>

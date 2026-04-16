@@ -59,7 +59,6 @@ export async function Navbar({ locale = routing.defaultLocale }: { locale?: stri
               alt={BRAND_NAME}
               width={logo.width}
               height={logo.height}
-              priority
               className={logo.className}
             />
           ))}

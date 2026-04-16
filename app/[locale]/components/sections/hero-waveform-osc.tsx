@@ -11,15 +11,7 @@ type ChannelVisual = {
   alpha: number;
 };
 
-type NoisePhase = readonly [
-  number,
-  number,
-  number,
-  number,
-  number,
-  number,
-  number,
-];
+type NoisePhase = readonly [number, number, number, number, number, number, number];
 
 type Channel = ChannelVisual & {
   noiseAmp: number;
@@ -131,22 +123,64 @@ function noisePhaseForSeed(seed: number): NoisePhase {
 }
 
 const DARK_VISUALS: ChannelVisual[] = [
-  { rgb: [165, 188, 218], glowRgb: [155, 180, 210], lineWidth: 1.15, glowWidth: 7, glowAlpha: 0.48, alpha: 0.62 },
-  { rgb: [40, 72, 255], glowRgb: [80, 140, 255], lineWidth: 1.65, glowWidth: 15, glowAlpha: 0.62, alpha: 0.98 },
-  { rgb: [235, 255, 40], glowRgb: [240, 255, 60], lineWidth: 1.65, glowWidth: 19, glowAlpha: 0.66, alpha: 0.99 },
+  {
+    rgb: [165, 188, 218],
+    glowRgb: [155, 180, 210],
+    lineWidth: 1.15,
+    glowWidth: 7,
+    glowAlpha: 0.48,
+    alpha: 0.62,
+  },
+  {
+    rgb: [40, 72, 255],
+    glowRgb: [80, 140, 255],
+    lineWidth: 1.65,
+    glowWidth: 15,
+    glowAlpha: 0.62,
+    alpha: 0.98,
+  },
+  {
+    rgb: [235, 255, 40],
+    glowRgb: [240, 255, 60],
+    lineWidth: 1.65,
+    glowWidth: 19,
+    glowAlpha: 0.66,
+    alpha: 0.99,
+  },
 ];
 
 const LIGHT_VISUALS: ChannelVisual[] = [
-  { rgb: [72, 92, 132], glowRgb: [90, 108, 140], lineWidth: 1.15, glowWidth: 7, glowAlpha: 0.14, alpha: 0.72 },
-  { rgb: [12, 36, 188], glowRgb: [30, 58, 255], lineWidth: 1.65, glowWidth: 13, glowAlpha: 0.15, alpha: 0.96 },
-  { rgb: [72, 82, 0], glowRgb: [112, 126, 0], lineWidth: 1.65, glowWidth: 16, glowAlpha: 0.12, alpha: 0.92 },
+  {
+    rgb: [72, 92, 132],
+    glowRgb: [90, 108, 140],
+    lineWidth: 1.15,
+    glowWidth: 7,
+    glowAlpha: 0.14,
+    alpha: 0.72,
+  },
+  {
+    rgb: [12, 36, 188],
+    glowRgb: [30, 58, 255],
+    lineWidth: 1.65,
+    glowWidth: 13,
+    glowAlpha: 0.15,
+    alpha: 0.96,
+  },
+  {
+    rgb: [72, 82, 0],
+    glowRgb: [112, 126, 0],
+    lineWidth: 1.65,
+    glowWidth: 16,
+    glowAlpha: 0.12,
+    alpha: 0.92,
+  },
 ];
 
 const NOISE_AMP = [2.2, 1.4, 1.0] as const;
 
 function buildChannels(dark: boolean): Channel[] {
   const visuals = dark ? DARK_VISUALS : LIGHT_VISUALS;
-  return [0, 1, 2].map(i => ({
+  return [0, 1, 2].map((i) => ({
     ...visuals[i]!,
     noiseAmp: NOISE_AMP[i]!,
     noisePhase: noisePhaseForSeed(NOISE_SEED[i]!),
@@ -247,11 +281,7 @@ function buildGraticule(w: number, h: number, dark: boolean): OffscreenCanvas {
   return oc;
 }
 
-function addMainGlowStops(
-  main: CanvasGradient,
-  glow: CanvasGradient,
-  ch: Channel,
-): void {
+function addMainGlowStops(main: CanvasGradient, glow: CanvasGradient, ch: Channel): void {
   const [r, g, b] = ch.rgb;
   const [gr, gg, gb] = ch.glowRgb;
   main.addColorStop(0.0, `rgba(${r},${g},${b},0)`);
@@ -265,11 +295,7 @@ function addMainGlowStops(
   glow.addColorStop(1.0, `rgba(${gr},${gg},${gb},${ch.glowAlpha * 0.4})`);
 }
 
-function addPartialStops(
-  main: CanvasGradient,
-  glow: CanvasGradient,
-  ch: Channel,
-): void {
+function addPartialStops(main: CanvasGradient, glow: CanvasGradient, ch: Channel): void {
   const [r, g, b] = ch.rgb;
   const [gr, gg, gb] = ch.glowRgb;
   main.addColorStop(0, `rgba(${r},${g},${b},0)`);
@@ -305,11 +331,7 @@ function buildPartialGradientTable(
 function smoothTraceYCore(dst: Float32Array, src: Float32Array, from: number, to: number): void {
   for (let px = from; px <= to; px++) {
     dst[px] =
-      W0 * src[px - 2]! +
-      W1 * src[px - 1]! +
-      W2 * src[px]! +
-      W3 * src[px + 1]! +
-      W4 * src[px + 2]!;
+      W0 * src[px - 2]! + W1 * src[px - 1]! + W2 * src[px]! + W3 * src[px + 1]! + W4 * src[px + 2]!;
   }
 }
 
@@ -355,7 +377,7 @@ function buildRenderState(
   const yBuf = new Float32Array(w + 2);
   const ySmooth = new Float32Array(w + 2);
 
-  const gradCache: GradCache[] = channels.map(ch => {
+  const gradCache: GradCache[] = channels.map((ch) => {
     const main = ctx.createLinearGradient(0, 0, w, 0);
     const glow = ctx.createLinearGradient(0, 0, w, 0);
     addMainGlowStops(main, glow, ch);
@@ -388,10 +410,26 @@ function buildRenderState(
   };
 }
 
-function drawChannel(ctx: CanvasRenderingContext2D, state: RenderState, elapsed: number, chIdx: number): void {
+function drawChannel(
+  ctx: CanvasRenderingContext2D,
+  state: RenderState,
+  elapsed: number,
+  chIdx: number,
+): void {
   const ch = state.channels[chIdx]!;
-  const { nlCache, yBuf, ySmooth, gradCache, glowBlend, w, cy, amp, partialByCh, partialBucketPx, partialBucketCount } =
-    state;
+  const {
+    nlCache,
+    yBuf,
+    ySmooth,
+    gradCache,
+    glowBlend,
+    w,
+    cy,
+    amp,
+    partialByCh,
+    partialBucketPx,
+    partialBucketCount,
+  } = state;
 
   const visibleWidth = elapsed * SCROLL_PX_PER_SEC;
   if (visibleWidth < 2) return;
@@ -492,10 +530,11 @@ export function HeroWaveformOsc() {
     document.addEventListener("visibilitychange", onVis);
     const el = rootRef.current;
     if (el && typeof IntersectionObserver !== "undefined") {
-      const io = new IntersectionObserver(
-        ([e]) => setInView(e.isIntersecting),
-        { root: null, rootMargin: "96px 0px 96px 0px", threshold: 0 },
-      );
+      const io = new IntersectionObserver(([e]) => setInView(e.isIntersecting), {
+        root: null,
+        rootMargin: "96px 0px 96px 0px",
+        threshold: 0,
+      });
       io.observe(el);
       return () => {
         document.removeEventListener("visibilitychange", onVis);
@@ -522,7 +561,8 @@ export function HeroWaveformOsc() {
     if (!canvas || !container) return;
 
     const reducedMotion =
-      typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     const H = CANVAS_HEIGHT;
     const ctx = canvas.getContext("2d", { alpha: false, desynchronized: true });

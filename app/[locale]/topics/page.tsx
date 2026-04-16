@@ -73,7 +73,9 @@ export default async function TopicsIndexPage({ params }: TopicsIndexPageProps) 
                 <span className="text-primary">{t("indexTitleLead")}</span>{" "}
                 <span className="text-secondary">{t("indexTitleAccent")}</span>
               </h1>
-              <LedeIntroParagraph className="max-w-2xl leading-relaxed">{t("indexIntro")}</LedeIntroParagraph>
+              <LedeIntroParagraph className="max-w-2xl leading-relaxed">
+                {t("indexIntro")}
+              </LedeIntroParagraph>
               <Link
                 href={ROUTES.episodes}
                 locale={hrefLocale}
@@ -91,7 +93,7 @@ export default async function TopicsIndexPage({ params }: TopicsIndexPageProps) 
 
         <ul
           aria-label={t("indexListAria")}
-          className="mx-auto max-w-6xl list-none px-5 py-12 md:py-16 sm:columns-2 xl:columns-3 [column-gap:1.125rem]"
+          className="mx-auto max-w-6xl list-none [column-gap:1.125rem] px-5 py-12 sm:columns-2 md:py-16 xl:columns-3"
         >
           {entries.map(({ slug, label, episodeCount }, i) => {
             const bars = topicMicroWaveBars(slug, 11);
@@ -107,8 +109,8 @@ export default async function TopicsIndexPage({ params }: TopicsIndexPageProps) 
                   locale={hrefLocale}
                   prefetch
                   aria-label={`${label}. ${t("indexEpisodeCount", { count: episodeCount })}. ${t("indexOpenTopic")}.`}
-                  className={`topics-topic-card group border-edge/75 text-primary focus-visible:outline-secondary relative flex min-h-[4.75rem] w-full items-stretch overflow-hidden rounded-sm border bg-gradient-to-br from-[color-mix(in_srgb,var(--surface)_52%,transparent)] to-transparent shadow-[inset_0_1px_0_color-mix(in_srgb,var(--primary)_5%,transparent)] transition-[border-color,box-shadow,transform] duration-300 hover:border-secondary/45 hover:shadow-[0_20px_56px_-28px_color-mix(in_srgb,var(--secondary)_42%,transparent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 active:scale-[0.985] active:border-secondary/50 dark:from-[color-mix(in_srgb,var(--surface-2)_28%,transparent)] ${
-                    isHot ? "border-l-[3px] border-l-accent pl-0" : ""
+                  className={`topics-topic-card group border-edge/75 text-primary focus-visible:outline-secondary hover:border-secondary/45 active:border-secondary/50 relative flex min-h-[4.75rem] w-full items-stretch overflow-hidden rounded-sm border bg-gradient-to-br from-[color-mix(in_srgb,var(--surface)_52%,transparent)] to-transparent shadow-[inset_0_1px_0_color-mix(in_srgb,var(--primary)_5%,transparent)] transition-[border-color,box-shadow,transform] duration-300 hover:shadow-[0_20px_56px_-28px_color-mix(in_srgb,var(--secondary)_42%,transparent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 active:scale-[0.985] dark:from-[color-mix(in_srgb,var(--surface-2)_28%,transparent)] ${
+                    isHot ? "border-l-accent border-l-[3px] pl-0" : ""
                   }`}
                 >
                   <span
@@ -127,7 +129,7 @@ export default async function TopicsIndexPage({ params }: TopicsIndexPageProps) 
                     {bars.map((pct, bi) => (
                       <span
                         key={bi}
-                        className="topics-topic-card__bar origin-bottom max-sm:max-h-[2.85rem] motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:motion-safe:scale-y-[1.14]"
+                        className="topics-topic-card__bar origin-bottom motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:motion-safe:scale-y-[1.14] max-sm:max-h-[2.85rem]"
                         style={{
                           height: `${pct}%`,
                           maxHeight: "3.25rem",

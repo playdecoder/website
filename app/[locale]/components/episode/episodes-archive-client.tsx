@@ -1,10 +1,10 @@
 "use client";
 
-import { useMemo } from "react";
-import { useQueryStates } from "nuqs";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { useQueryStates } from "nuqs";
+import { useMemo } from "react";
 
+import { Link } from "@/i18n/navigation";
 import {
   type Episode,
   episodeListenPathSegment,
@@ -20,14 +20,18 @@ import { listenEpisodePath } from "@/lib/routes";
 
 import { IconEpisodeAirDate, IconEpisodeDuration } from "../ui/icons";
 
+import { EpisodeLangCompactBadge } from "./episode-lang-compact-badge";
 import {
   EpisodesArchiveFiltersPanel,
   type EpisodesSearchScopes,
 } from "./episodes-archive-filters-panel";
-import { EpisodeLangCompactBadge } from "./episode-lang-compact-badge";
 import { TopicLinkChip } from "./topic-link-chip";
 
-function episodeMatchesSearchQuery(ep: Episode, words: string[], scopes: EpisodesSearchScopes): boolean {
+function episodeMatchesSearchQuery(
+  ep: Episode,
+  words: string[],
+  scopes: EpisodesSearchScopes,
+): boolean {
   if (words.length === 0) {
     return true;
   }
@@ -96,7 +100,8 @@ export function EpisodesArchiveClient({
     if (!topicFilterLocked || initialSelectedTags.length === 0) {
       return allEpisodes.length;
     }
-    return allEpisodes.filter((ep) => initialSelectedTags.some((tag) => ep.tags.includes(tag))).length;
+    return allEpisodes.filter((ep) => initialSelectedTags.some((tag) => ep.tags.includes(tag)))
+      .length;
   }, [topicFilterLocked, initialSelectedTags, allEpisodes]);
 
   const filtered = useMemo(() => {
@@ -200,7 +205,7 @@ export function EpisodesArchiveClient({
         )}
         {filtered.map((ep, i) => (
           <li key={ep.id} className="scroll-reveal" style={{ animationDelay: `${0.04 * i}s` }}>
-            <article className="border-edge bg-bg group hover:border-accent/35 relative flex h-full flex-col overflow-hidden rounded-sm border transition-colors duration-300 active:border-secondary/45">
+            <article className="border-edge bg-bg group hover:border-accent/35 active:border-secondary/45 relative flex h-full flex-col overflow-hidden rounded-sm border transition-colors duration-300">
               <div
                 className={`absolute top-0 bottom-0 left-0 w-1 ${ep.id === latestId ? "bg-accent" : "bg-secondary"}`}
               />

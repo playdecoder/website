@@ -22,10 +22,11 @@ export function HeroWaveformBars() {
     if (!el || typeof IntersectionObserver === "undefined") {
       return () => document.removeEventListener("visibilitychange", onVis);
     }
-    const io = new IntersectionObserver(
-      ([e]) => setInView(e.isIntersecting),
-      { root: null, rootMargin: "96px 0px 96px 0px", threshold: 0 },
-    );
+    const io = new IntersectionObserver(([e]) => setInView(e.isIntersecting), {
+      root: null,
+      rootMargin: "96px 0px 96px 0px",
+      threshold: 0,
+    });
     io.observe(el);
     return () => {
       document.removeEventListener("visibilitychange", onVis);
@@ -40,7 +41,7 @@ export function HeroWaveformBars() {
         className="hero-waveform flex w-full max-w-full items-end justify-center gap-px md:gap-[3px]"
         style={{ height: 200 }}
         aria-hidden
-        data-motion-state={(!inView || !tabVisible) ? "paused" : "running"}
+        data-motion-state={!inView || !tabVisible ? "paused" : "running"}
       >
         {heroWaveformBars.map((bar, i) => (
           <div

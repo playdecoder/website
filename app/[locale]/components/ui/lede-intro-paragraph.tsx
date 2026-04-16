@@ -10,6 +10,8 @@ export function LedeIntroParagraph({
   className?: string;
 }) {
   return (
-    <p className={cn("font-body lede-rail text-muted text-base md:text-lg", className)}>{children}</p>
+    <p className={cn("font-body lede-rail text-muted text-base md:text-lg", className)}>
+      {children}
+    </p>
   );
 }

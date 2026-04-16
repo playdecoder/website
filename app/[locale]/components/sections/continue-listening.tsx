@@ -1,24 +1,21 @@
 "use client";
 
-import { useMemo, useSyncExternalStore } from "react";
 import { useTranslations } from "next-intl";
+import { useMemo, useSyncExternalStore } from "react";
 
 import { Link, usePathname } from "@/i18n/navigation";
-import { episodeDescriptionSnippet } from "@/lib/episode-description";
 import { episodes, episodeListenPathSegment } from "@/lib/episode-catalog";
-import { formatPlaybackTime } from "@/lib/format-playback-time";
+import { episodeDescriptionSnippet } from "@/lib/episode-description";
 import {
   clearEpisodeProgress,
   readProgressStore,
   subscribeEpisodeProgressStore,
   type EpisodeProgressEntry,
 } from "@/lib/episode-progress-storage";
-import { linkLocale } from "@/lib/link-locale";
 import { formatEpisodeTimeHash } from "@/lib/episode-time-fragment";
-import {
-  LISTEN_AUTOPLAY_QUERY_KEY,
-  LISTEN_AUTOPLAY_SERIALIZED,
-} from "@/lib/listen-autoplay-query";
+import { formatPlaybackTime } from "@/lib/format-playback-time";
+import { linkLocale } from "@/lib/link-locale";
+import { LISTEN_AUTOPLAY_QUERY_KEY, LISTEN_AUTOPLAY_SERIALIZED } from "@/lib/listen-autoplay-query";
 import { listenEpisodePath } from "@/lib/routes";
 
 import { PlayGlyphIcon } from "../player/play-glyph-icon";
@@ -26,7 +23,9 @@ import { usePlayerContext } from "../player/player-context";
 
 import { SignalLabelRail } from "./signal-label-rail";
 
-const CONTINUE_MICRO_WAVE = [22, 48, 72, 38, 88, 55, 100, 42, 78, 30, 65, 52, 92, 35, 58, 44, 82, 28, 68, 50] as const;
+const CONTINUE_MICRO_WAVE = [
+  22, 48, 72, 38, 88, 55, 100, 42, 78, 30, 65, 52, 92, 35, 58, 44, 82, 28, 68, 50,
+] as const;
 
 const DESCRIPTION_SNIPPET_MAX = 240;
 
@@ -55,7 +54,7 @@ export function ContinueListening({ locale }: { locale: string }) {
   const entry = entryKey ? (JSON.parse(entryKey) as EpisodeProgressEntry) : null;
 
   const episode = useMemo(
-    () => (entry ? episodes.find((candidate) => candidate.id === entry.id) ?? null : null),
+    () => (entry ? (episodes.find((candidate) => candidate.id === entry.id) ?? null) : null),
     [entry],
   );
 
@@ -81,8 +80,7 @@ export function ContinueListening({ locale }: { locale: string }) {
     return null;
   }
 
-  const timelineDuration =
-    entry.duration > 0 ? entry.duration : Math.max(0, episode.duration);
+  const timelineDuration = entry.duration > 0 ? entry.duration : Math.max(0, episode.duration);
   const progressPct =
     timelineDuration > 0
       ? Math.max(0, Math.min(100, (entry.currentTime / timelineDuration) * 100))
@@ -107,7 +105,7 @@ export function ContinueListening({ locale }: { locale: string }) {
 
       <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
         <div
-          className="dot-grid absolute inset-0 opacity-[0.18] dark:opacity-[0.14] lg:opacity-[0.35] lg:dark:opacity-[0.22]"
+          className="dot-grid absolute inset-0 opacity-[0.18] lg:opacity-[0.35] dark:opacity-[0.14] lg:dark:opacity-[0.22]"
           style={{
             maskImage: "linear-gradient(to bottom, black 0%, black 55%, transparent 100%)",
             WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 55%, transparent 100%)",
@@ -130,12 +128,15 @@ export function ContinueListening({ locale }: { locale: string }) {
           <div className="w-full shrink-0 lg:w-[min(100%,12.5rem)]">
             <div className="border-edge/55 flex items-center justify-between gap-3 border-b pb-2.5 lg:hidden">
               <div className="flex min-w-0 items-center gap-2">
-                <span className="ui-pulse-dot bg-accent h-1.5 w-1.5 shrink-0 rounded-full" aria-hidden />
+                <span
+                  className="ui-pulse-dot bg-accent h-1.5 w-1.5 shrink-0 rounded-full"
+                  aria-hidden
+                />
                 <span className="text-muted truncate font-mono text-[10px] tracking-[0.22em] uppercase">
                   {t("label")}
                 </span>
               </div>
-              <span className="text-accent-text shrink-0 rounded-sm border border-edge/60 bg-surface/40 px-2 py-0.5 font-mono text-[10px] font-semibold tracking-widest tabular-nums">
+              <span className="text-accent-text border-edge/60 bg-surface/40 shrink-0 rounded-sm border px-2 py-0.5 font-mono text-[10px] font-semibold tracking-widest tabular-nums">
                 {episode.id}
               </span>
             </div>
@@ -205,7 +206,7 @@ export function ContinueListening({ locale }: { locale: string }) {
               <button
                 type="button"
                 onClick={handleClearProgress}
-                className="text-muted/45 hover:text-muted/85 focus-visible:text-primary rounded-sm px-1.5 py-1.5 font-mono text-[9px] tracking-[0.14em] uppercase underline-offset-[5px] transition-colors hover:underline focus-visible:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary"
+                className="text-muted/45 hover:text-muted/85 focus-visible:text-primary focus-visible:outline-secondary rounded-sm px-1.5 py-1.5 font-mono text-[9px] tracking-[0.14em] uppercase underline-offset-[5px] transition-colors hover:underline focus-visible:underline focus-visible:outline-2 focus-visible:outline-offset-2"
               >
                 {t("deleteProgress")}
               </button>
@@ -213,10 +214,7 @@ export function ContinueListening({ locale }: { locale: string }) {
           </div>
         </div>
 
-        <div
-          className="scroll-reveal mt-8 md:mt-9"
-          style={{ animationDelay: "0.08s" }}
-        >
+        <div className="scroll-reveal mt-8 md:mt-9" style={{ animationDelay: "0.08s" }}>
           <div
             className="h-1 w-full overflow-hidden rounded-full sm:h-1.5"
             style={{

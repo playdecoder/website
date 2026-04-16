@@ -2,15 +2,15 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { brandInterpolation } from "@/lib/brand";
-import { ROUTES } from "@/lib/routes";
 import { localizedAlternates } from "@/lib/metadata-alternates";
+import { ROUTES } from "@/lib/routes";
 import { showTaglineEn } from "@/lib/show";
 
 import { Episodes } from "./components/episode/episodes";
 import { Navbar } from "./components/layout/navbar";
 import { About } from "./components/sections/about";
-import { ContinueListening } from "./components/sections/continue-listening";
 import { Contact } from "./components/sections/contact";
+import { ContinueListening } from "./components/sections/continue-listening";
 import { Hero } from "./components/sections/hero";
 import { Hosts } from "./components/sections/hosts";
 import { StartHere } from "./components/sections/start-here";

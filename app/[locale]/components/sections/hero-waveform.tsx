@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 import { HeroWaveformBars } from "./hero-waveform-bars";
-import { HeroWaveformOsc }  from "./hero-waveform-osc";
+import { HeroWaveformOsc } from "./hero-waveform-osc";
 
 function useHeroEffect(): "osc" | "bars" {
   const [effect, setEffect] = useState<"osc" | "bars">("osc");

@@ -20,7 +20,7 @@ export async function Footer({ locale }: { locale: string }) {
         aria-hidden
       />
       <div
-        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-secondary/32 to-transparent"
+        className="via-secondary/32 pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent to-transparent"
         aria-hidden
       />
 
@@ -62,7 +62,9 @@ export async function Footer({ locale }: { locale: string }) {
         <div className="flex w-full flex-col items-center justify-between gap-4 sm:flex-row">
           <div className="flex items-center gap-3">
             <LogoD variant="footer" />
-            <span className="text-muted font-mono text-xs tracking-widest">{t("footerBrand", b)}</span>
+            <span className="text-muted font-mono text-xs tracking-widest">
+              {t("footerBrand", b)}
+            </span>
           </div>
 
           <div className="flex items-center gap-2">

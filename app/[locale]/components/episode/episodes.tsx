@@ -1,7 +1,6 @@
 import { getTranslations } from "next-intl/server";
 
 import { Link } from "@/i18n/navigation";
-
 import {
   episodes,
   episodeListenPathSegment,
@@ -35,7 +34,7 @@ export async function Episodes({ locale }: { locale: string }) {
         <SectionHeading variant="rail" label={t("label")} className="mb-16" />
 
         <div className="scroll-reveal mb-6">
-          <div className="episode-feature-card border-edge group hover:border-accent/40 relative overflow-hidden rounded-sm border transition-colors duration-300 active:border-secondary/45">
+          <div className="episode-feature-card border-edge group hover:border-accent/40 active:border-secondary/45 relative overflow-hidden rounded-sm border transition-colors duration-300">
             <div className="episode-feature-card__rail bg-accent absolute top-0 bottom-0 left-0 w-1" />
 
             <div className="py-8 pr-6 pl-8 md:py-10">

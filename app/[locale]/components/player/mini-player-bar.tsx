@@ -1,14 +1,14 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
 import { type CSSProperties, useCallback, useEffect, useReducer, useRef, useState } from "react";
 
+import { Link } from "@/i18n/navigation";
+import { usePathname } from "@/i18n/navigation";
 import { episodeListenPathSegment } from "@/lib/episode-catalog";
 import { formatPlaybackTime } from "@/lib/format-playback-time";
 import { linkLocale } from "@/lib/link-locale";
 import { listenEpisodePath } from "@/lib/routes";
-import { usePathname } from "@/i18n/navigation";
 
 import { usePlayerContext } from "./player-context";
 import { useWaveformSettle } from "./use-waveform-settle";
@@ -79,8 +79,7 @@ function MiniPlayerSeekStrip({
   );
 
   const displayTime = scrubPosition ?? currentTime;
-  const progressPct =
-    duration > 0 ? Math.min(100, Math.max(0, (displayTime / duration) * 100)) : 0;
+  const progressPct = duration > 0 ? Math.min(100, Math.max(0, (displayTime / duration) * 100)) : 0;
   const scrubDisabled = loadError || duration <= 0;
 
   return (
@@ -94,7 +93,7 @@ function MiniPlayerSeekStrip({
       aria-valuetext={`${formatPlaybackTime(displayTime)} / ${formatPlaybackTime(duration)}`}
       aria-label={t("seekScrub")}
       aria-disabled={scrubDisabled}
-      className={`group relative h-2.5 w-full touch-none select-none overflow-visible motion-safe:transition-[height] motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)] ${isScrubbing ? "h-6" : ""} md:hover:h-6 ${
+      className={`group relative h-2.5 w-full touch-none overflow-visible select-none motion-safe:transition-[height] motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)] ${isScrubbing ? "h-6" : ""} md:hover:h-6 ${
         scrubDisabled ? "cursor-not-allowed opacity-40" : "cursor-grab active:cursor-grabbing"
       }`}
       onPointerDown={(e) => {
@@ -140,11 +139,11 @@ function MiniPlayerSeekStrip({
       }}
     >
       <div
-        className={`pointer-events-none absolute inset-x-0 bottom-0 w-full overflow-visible motion-safe:transition-[height] motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)] h-px ${isScrubbing ? "h-2.5" : ""} md:group-hover:h-2.5`}
+        className={`pointer-events-none absolute inset-x-0 bottom-0 h-px w-full overflow-visible motion-safe:transition-[height] motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)] ${isScrubbing ? "h-2.5" : ""} md:group-hover:h-2.5`}
       >
         <div className="relative h-full w-full overflow-visible">
           <div
-            className={`absolute inset-0 rounded-full bg-edge/25 motion-safe:transition-[background-color,box-shadow] motion-safe:duration-300 motion-safe:ease-out md:group-hover:bg-edge/42 md:group-hover:shadow-[inset_0_1px_0_rgb(255_255_255/0.07)] ${isScrubbing ? "bg-edge/42 shadow-[inset_0_1px_0_rgb(255_255_255/0.07)]" : ""}`}
+            className={`bg-edge/25 md:group-hover:bg-edge/42 absolute inset-0 rounded-full motion-safe:transition-[background-color,box-shadow] motion-safe:duration-300 motion-safe:ease-out md:group-hover:shadow-[inset_0_1px_0_rgb(255_255_255/0.07)] ${isScrubbing ? "bg-edge/42 shadow-[inset_0_1px_0_rgb(255_255_255/0.07)]" : ""}`}
             aria-hidden
           />
           <div
@@ -158,7 +157,7 @@ function MiniPlayerSeekStrip({
             aria-hidden
           />
           <div
-            className={`pointer-events-none absolute top-1/2 z-10 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 scale-[0.38] rounded-full border-2 border-[color-mix(in_srgb,var(--surface)_58%,transparent)] bg-accent opacity-0 shadow-[0_2px_18px_-3px_color-mix(in_srgb,var(--accent)_58%,transparent),inset_0_1px_0_rgb(255_255_255/0.42)] motion-safe:transition-[transform,opacity,box-shadow] motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)] motion-safe:will-change-transform md:group-hover:scale-100 md:group-hover:opacity-100 md:group-hover:shadow-[0_3px_22px_-4px_color-mix(in_srgb,var(--accent)_62%,transparent),inset_0_1px_0_rgb(255_255_255/0.48)] ${isScrubbing ? "scale-100 opacity-100 shadow-[0_3px_22px_-4px_color-mix(in_srgb,var(--accent)_62%,transparent),inset_0_1px_0_rgb(255_255_255/0.48)] max-md:scale-110" : ""}`}
+            className={`bg-accent pointer-events-none absolute top-1/2 z-10 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 scale-[0.38] rounded-full border-2 border-[color-mix(in_srgb,var(--surface)_58%,transparent)] opacity-0 shadow-[0_2px_18px_-3px_color-mix(in_srgb,var(--accent)_58%,transparent),inset_0_1px_0_rgb(255_255_255/0.42)] motion-safe:transition-[transform,opacity,box-shadow] motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)] motion-safe:will-change-transform md:group-hover:scale-100 md:group-hover:opacity-100 md:group-hover:shadow-[0_3px_22px_-4px_color-mix(in_srgb,var(--accent)_62%,transparent),inset_0_1px_0_rgb(255_255_255/0.48)] ${isScrubbing ? "scale-100 opacity-100 shadow-[0_3px_22px_-4px_color-mix(in_srgb,var(--accent)_62%,transparent),inset_0_1px_0_rgb(255_255_255/0.48)] max-md:scale-110" : ""}`}
             style={{ left: `${progressPct}%` }}
             aria-hidden
           />
@@ -270,7 +269,7 @@ export function MiniPlayerBar() {
         t={t}
       />
 
-      <div className="border-edge/50 relative border-t bg-[color-mix(in_srgb,var(--surface)_42%,transparent)] shadow-[0_-10px_40px_-8px_rgb(0_0_0/0.28),0_-1px_0_0_color-mix(in_srgb,var(--edge)_30%,transparent),inset_0_1px_0_0_color-mix(in_srgb,var(--primary)_18%,transparent)] backdrop-blur-3xl backdrop-saturate-200 backdrop-brightness-[1.05] backdrop-contrast-[1.03] dark:border-edge/45 dark:bg-[color-mix(in_srgb,var(--surface)_34%,transparent)] dark:backdrop-brightness-[1.07] dark:backdrop-contrast-[1.02] dark:shadow-[0_-14px_48px_-10px_rgb(0_0_0/0.5),0_-1px_0_0_color-mix(in_srgb,var(--edge)_22%,transparent),inset_0_1px_0_0_rgb(255_255_255/0.1)]">
+      <div className="border-edge/50 dark:border-edge/45 relative border-t bg-[color-mix(in_srgb,var(--surface)_42%,transparent)] shadow-[0_-10px_40px_-8px_rgb(0_0_0/0.28),0_-1px_0_0_color-mix(in_srgb,var(--edge)_30%,transparent),inset_0_1px_0_0_color-mix(in_srgb,var(--primary)_18%,transparent)] backdrop-blur-3xl backdrop-brightness-[1.05] backdrop-contrast-[1.03] backdrop-saturate-200 dark:bg-[color-mix(in_srgb,var(--surface)_34%,transparent)] dark:shadow-[0_-14px_48px_-10px_rgb(0_0_0/0.5),0_-1px_0_0_color-mix(in_srgb,var(--edge)_22%,transparent),inset_0_1px_0_0_rgb(255_255_255/0.1)] dark:backdrop-brightness-[1.07] dark:backdrop-contrast-[1.02]">
         <div
           className="pointer-events-none absolute inset-0 opacity-[0.06] dark:opacity-[0.1]"
           style={{
@@ -321,7 +320,7 @@ export function MiniPlayerBar() {
                 <p className="text-muted/60 dark:text-primary/82 grid max-w-[11rem] grid-cols-[1fr_auto_1fr] items-center gap-x-1.5 font-mono text-[10px] tracking-widest tabular-nums sm:max-w-none sm:gap-x-2">
                   <span className="min-w-0 text-left">{formatPlaybackTime(currentTime)}</span>
                   <span
-                    className="text-edge shrink-0 justify-self-center dark:text-primary/48"
+                    className="text-edge dark:text-primary/48 shrink-0 justify-self-center"
                     aria-hidden
                   >
                     /
@@ -407,7 +406,9 @@ export function MiniPlayerBar() {
                   disabled={loadError}
                   onChange={(e) => ctx.setVolume(Number(e.target.value))}
                   className="decoder-audio-volume w-20 disabled:opacity-30 lg:w-24"
-                  style={{ "--decoder-vol": `${(ctx.muted ? 0 : ctx.volume) * 100}%` } as CSSProperties}
+                  style={
+                    { "--decoder-vol": `${(ctx.muted ? 0 : ctx.volume) * 100}%` } as CSSProperties
+                  }
                   aria-label={t("volume")}
                 />
               </div>

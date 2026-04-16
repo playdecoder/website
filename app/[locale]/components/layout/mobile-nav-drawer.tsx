@@ -1,10 +1,10 @@
 "use client";
 
-import { Link } from "@/i18n/navigation";
 import type { CSSProperties } from "react";
 import { useEffect, useId, useReducer, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
+import { Link } from "@/i18n/navigation";
 import { linkLocale } from "@/lib/link-locale";
 
 const PANEL_EASE = "cubic-bezier(0.32, 0.72, 0, 1)";
@@ -151,7 +151,7 @@ export function MobileNavDrawer({
       <button
         ref={openBtnRef}
         type="button"
-        className="border-edge text-muted hover:border-primary/35 hover:text-primary focus-visible:ring-secondary/50 focus-visible:ring-offset-bg inline-flex size-10 shrink-0 items-center justify-center rounded-sm border bg-transparent transition-[transform,color,background-color,border-color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.96] data-[open]:border-primary/25 data-[open]:text-primary motion-reduce:transition-none motion-reduce:active:scale-100"
+        className="border-edge text-muted hover:border-primary/35 hover:text-primary focus-visible:ring-secondary/50 focus-visible:ring-offset-bg data-[open]:border-primary/25 data-[open]:text-primary inline-flex size-10 shrink-0 items-center justify-center rounded-sm border bg-transparent transition-[transform,color,background-color,border-color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.96] motion-reduce:transition-none motion-reduce:active:scale-100"
         data-open={mounted || undefined}
         aria-expanded={mounted}
         aria-controls={mounted ? panelId : undefined}
@@ -222,7 +222,7 @@ export function MobileNavDrawer({
                     boxShadow: entered
                       ? undefined
                       : "0 12px 28px -18px color-mix(in srgb, var(--primary) 22%, transparent)",
-                                   } as CSSProperties
+                  } as CSSProperties
                 }
               >
                 <div
@@ -240,7 +240,7 @@ export function MobileNavDrawer({
                         href={item.href}
                         locale={hrefLocale}
                         onClick={() => setOpen(false)}
-                        className="border-edge/60 text-primary hover:bg-surface-2/90 rounded-sm border-b px-4 py-3.5 font-mono text-xs tracking-[0.2em] uppercase transition-[opacity,transform,background-color,color] motion-reduce:!translate-x-0 motion-reduce:!opacity-100 motion-reduce:!delay-0 motion-reduce:transition-none last:border-b-0"
+                        className="border-edge/60 text-primary hover:bg-surface-2/90 rounded-sm border-b px-4 py-3.5 font-mono text-xs tracking-[0.2em] uppercase transition-[opacity,transform,background-color,color] last:border-b-0 motion-reduce:!translate-x-0 motion-reduce:!opacity-100 motion-reduce:transition-none motion-reduce:!delay-0"
                         style={{
                           transitionDuration: `${ITEM_TRANSITION_MS}ms`,
                           transitionTimingFunction: PANEL_EASE,
@@ -254,7 +254,7 @@ export function MobileNavDrawer({
                     );
                   })}
                   <div
-                    className="mt-2 px-2 pt-2 pb-5 transition-[opacity,transform] motion-reduce:!translate-y-0 motion-reduce:!opacity-100 motion-reduce:!delay-0 motion-reduce:transition-none"
+                    className="mt-2 px-2 pt-2 pb-5 transition-[opacity,transform] motion-reduce:!translate-y-0 motion-reduce:!opacity-100 motion-reduce:transition-none motion-reduce:!delay-0"
                     style={{
                       transitionDuration: `${ITEM_TRANSITION_MS}ms`,
                       transitionTimingFunction: PANEL_EASE,

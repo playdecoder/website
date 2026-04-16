@@ -52,7 +52,7 @@ function ScopeToggle({
         type="checkbox"
         checked={checked}
         onChange={() => onToggleSearchScope(scopeKey)}
-        className="border-edge text-primary focus-visible:ring-secondary/40 size-[1.125rem] shrink-0 cursor-pointer rounded-sm border bg-bg accent-[var(--secondary)] focus-visible:ring-2 focus-visible:outline-none"
+        className="border-edge text-primary focus-visible:ring-secondary/40 bg-bg size-[1.125rem] shrink-0 cursor-pointer rounded-sm border accent-[var(--secondary)] focus-visible:ring-2 focus-visible:outline-none"
       />
       <span className="text-primary text-left font-mono text-[11px] leading-snug tracking-[0.12em] uppercase sm:text-[10px] sm:leading-tight sm:tracking-[0.14em]">
         {label}
@@ -102,7 +102,7 @@ export function EpisodesArchiveFiltersPanel({
           <button
             type="button"
             onClick={onClearFilters}
-            className="text-secondary border-secondary/35 hover:bg-secondary/10 min-h-12 w-full rounded-sm border px-4 py-3 font-mono text-xs tracking-widest uppercase transition-colors sm:w-auto sm:min-h-0"
+            className="text-secondary border-secondary/35 hover:bg-secondary/10 min-h-12 w-full rounded-sm border px-4 py-3 font-mono text-xs tracking-widest uppercase transition-colors sm:min-h-0 sm:w-auto"
           >
             {t("clearFilters")}
           </button>

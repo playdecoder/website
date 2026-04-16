@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 import type { CSSProperties } from "react";
 
 import { getPathname, Link } from "@/i18n/navigation";
+import { BRAND_NAME } from "@/lib/brand";
 import {
   type Episode,
   type EpisodeHost,
@@ -19,7 +20,6 @@ import {
 } from "@/lib/episode-catalog";
 import { resolveEpisodeCoverImageUrl } from "@/lib/episode-cover";
 import { plainEpisodeDescription } from "@/lib/episode-description";
-import { BRAND_NAME } from "@/lib/brand";
 import { linkLocale } from "@/lib/link-locale";
 import { listenEpisodePath, ROUTES, homeSectionPath } from "@/lib/routes";
 import { showHostsSchemaPersons } from "@/lib/show";
@@ -151,7 +151,7 @@ function EpisodeListenHosts({
             >
               <div className="border-edge/30 bg-surface/60 hover:border-accent-text/35 group flex min-h-10 items-center gap-2 rounded-sm border px-2 py-1.5 transition-[border-color,background-color] duration-200 sm:min-h-9 sm:py-1.5">
                 <span
-                  className="font-display text-accent-text bg-surface-2/80 border-edge/40 flex h-8 w-8 shrink-0 items-center justify-center rounded-sm border text-[10px] font-bold leading-none tracking-tight"
+                  className="font-display text-accent-text bg-surface-2/80 border-edge/40 flex h-8 w-8 shrink-0 items-center justify-center rounded-sm border text-[10px] leading-none font-bold tracking-tight"
                   aria-hidden
                 >
                   {hostInitials(host.fullName)}
@@ -234,14 +234,14 @@ function EpisodeListenMetadata({
     >
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
         <span className="inline-flex min-w-0 items-center gap-2">
-          <IconEpisodeAirDate size={13} className="shrink-0 text-secondary/65" />
+          <IconEpisodeAirDate size={13} className="text-secondary/65 shrink-0" />
           <span className="break-words">{formatEpisodeDate(episode.date, locale)}</span>
         </span>
         <span className="text-edge/80 shrink-0 select-none" aria-hidden>
           ·
         </span>
         <span className="inline-flex items-center gap-2">
-          <IconEpisodeDuration size={13} className="shrink-0 text-secondary/65" />
+          <IconEpisodeDuration size={13} className="text-secondary/65 shrink-0" />
           {formatEpisodeDuration(episode.duration)}
         </span>
       </div>
@@ -498,7 +498,11 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
               ) : null}
 
               <div className="hidden lg:block">
-                <EpisodeListenMetadata episode={episode} locale={locale} {...episodeListenMetaLabels} />
+                <EpisodeListenMetadata
+                  episode={episode}
+                  locale={locale}
+                  {...episodeListenMetaLabels}
+                />
               </div>
 
               <EpisodeListenPlayerAndBody
@@ -518,7 +522,11 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
                       className="mb-0"
                     />
                     <EpisodeListenTags tags={episode.tags} locale={locale} stagger={stagger} />
-                    <EpisodeListenMetadata episode={episode} locale={locale} {...episodeListenMetaLabels} />
+                    <EpisodeListenMetadata
+                      episode={episode}
+                      locale={locale}
+                      {...episodeListenMetaLabels}
+                    />
                   </div>
                 }
               />
