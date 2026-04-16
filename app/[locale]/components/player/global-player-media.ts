@@ -164,7 +164,6 @@ export function subscribeGlobalPlayerAudio(
       resumeNotice = t("playerResumingFrom", { time: formatPlaybackTime(saved) });
     }
     const has = episodeHasStoredProgress(id);
-    const resumeNeedsBuffer = inferSeekNeedsBuffer(el, currentTime);
     dispatchMedia({
       type: "patch",
       patch: {
@@ -173,7 +172,9 @@ export function subscribeGlobalPlayerAudio(
         resumeNotice,
         hasClearableProgress: has,
         resumeHintVisible: has,
-        isSeekBuffering: resumeNeedsBuffer,
+        // Initial page load should stop the loader once basic media info is available.
+        // Follow-up buffering states are driven by explicit seek / waiting / progress events.
+        isSeekBuffering: false,
       },
     });
   };
