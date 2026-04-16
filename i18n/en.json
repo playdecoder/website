@@ -28,7 +28,7 @@
   "hero": {
     "badge": "Games • Tech • Context",
     "taglineLine1": "We unpack games, technology, and the craft in between.",
-    "taglineLine2": "Deep conversations, once a month.",
+    "taglineLine2": "Honest conversations, once a month.",
     "latestEpisode": "Latest Episode \u2197",
     "allEpisodes": "All Episodes",
     "scroll": "SCROLL"
@@ -64,8 +64,8 @@
       "roleSecondary": "Tech",
       "firstName": "Martin",
       "lastName": "Pernica",
-      "bio": "Founder and technical architect who builds the infrastructure games run on. Martin has gone from writing assembly code to leading product teams — and finds the intersection of engineering and creativity the most interesting place to be.",
-      "specialtyTopics": "Platform architecture, tooling, tech strategy",
+      "bio": "Founder and technical architect who builds the infrastructure games run on. He builds teams for the problem at hand and pushes past limits that look impossible at first. From assembly to leading cutting-edge teams, he keeps returning to where engineering meets creativity.",
+      "specialtyTopics": "Platform architecture, team building, tech strategy",
       "imageAlt": "Portrait of {name}, {brand} co-host"
     },
     "specialty": "SPECIALTY",

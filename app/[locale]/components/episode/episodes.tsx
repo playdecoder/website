@@ -61,10 +61,16 @@ export async function Episodes({ locale }: { locale: string }) {
               </div>
 
               <h2
-                className="font-display text-primary mb-4 leading-tight font-bold"
+                className="font-display text-primary group-hover:text-accent-text mb-4 leading-tight font-bold transition-colors"
                 style={{ fontSize: "clamp(1.5rem, 3.5vw, 2.25rem)" }}
               >
-                {latestEpisode.title}
+                <Link
+                  href={listenEpisodePath(episodeListenPathSegment(latestEpisode))}
+                  locale={hrefLocale}
+                  className="focus-visible:outline-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                >
+                  {latestEpisode.title}
+                </Link>
               </h2>
 
               <p className="text-muted mb-8 max-w-2xl text-base leading-[1.8] md:text-lg">

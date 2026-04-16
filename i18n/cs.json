@@ -1,7 +1,7 @@
 {
   "metadata": {
     "siteTitle": "{brand} — Hry | Technologie | Kontext",
-    "siteDescription": "Podcast, kde se herní design potkává s technologiemi. Otevřené, hluboké rozhovory s Janem Tomášikem a Martinem Pernicou. Jednou měsíčně.",
+    "siteDescription": "Podcast, kde se herní design potkává s technologiemi. Upřímné rozhovory s Janem Tomášikem a Martinem Pernicou. Jednou měsíčně.",
     "homeTitle": "{brand} — Hry | Technologie | Kontext",
     "episodeFallbackTitle": "Epizoda — {brand}",
     "notFoundTitle": "404 — Stránka nenalezena | {brand}",
@@ -29,7 +29,7 @@
   "hero": {
     "badge": "Hry • Technologie • Kontext",
     "taglineLine1": "Rozplétáme hry, technologie a řemeslo na jejich pomezí.",
-    "taglineLine2": "Hluboké rozhovory. Jednou měsíčně.",
+    "taglineLine2": "Upřímné rozhovory. Jednou měsíčně.",
     "latestEpisode": "Nejnovější epizoda \u2197",
     "allEpisodes": "Všechny epizody",
     "scroll": "SCROLL"
@@ -44,9 +44,9 @@
     "statContent": "Obsah",
     "statListeners": "měsíčně",
     "statValueListeners": "1x",
-    "p1": "{brand} je podcast pro lidi, kteří něco staví, tvoří nebo chtějí chápat, jak věci pod povrchem opravdu fungují. Jdeme za kulisy her a technologií, které máme rádi, a místo omáčky řešíme řemeslo.",
-    "p2": "Každá epizoda je poctivý rozhovor mezi herním designérem a technologem. Dva odlišné pohledy, jeden rychle se měnící svět. Někdy se přeme, někdy se shodneme, ale pokaždé z toho něco vypadne.",
-    "p3": "Bez vaty. Bez výplně. Jen myšlenky, které mají váhu.",
+    "p1": "{brand} je podcast pro lidi z her a technologií — pro ty, co je baví tvořit, i pro ty, kdo chtějí chápat, jak věci pod povrchem opravdu fungují. Jdeme za kulisy her a technologií, které máme rádi, a místo omáčky řešíme řemeslo.",
+    "p2": "Každá epizoda je rozhovor mezi herním designérem a technologem. Dva odlišné pohledy, jeden rychle se měnící svět. Někdy se přeme, někdy se shodneme, ale pokaždé z toho něco vypadne.",
+    "p3": "Bez vaty. Bez výplně. Jen nápady, za které se vyplatí poslouchat.",
     "cadence": "Nové epizody jednou měsíčně"
   },
   "hosts": {
@@ -65,8 +65,8 @@
       "roleSecondary": "tech",
       "firstName": "Martin",
       "lastName": "Pernica",
-      "bio": "Zakladatel a technický architekt, který staví infrastrukturu, na které hry běží. Martin prošel cestu od psaní v assembly až k vedení produktových týmů a nejvíc ho pořád baví místo, kde se potkává inženýrství s kreativitou.",
-      "specialtyTopics": "Architektura platforem, nástroje, technická strategie",
+      "bio": "Zakladatel a technický architekt, který staví infrastrukturu, na které hry běží. Skládá týmy na míru výzvě a posouvá zdánlivě neprůchodné limity. Od psaní v assembly došel k vedení špičkových týmů a pořád ho baví místo, kde se potkává inženýrství s kreativitou.",
+      "specialtyTopics": "Architektura platforem, skládání týmů, technická strategie",
       "imageAlt": "Portrét — {name}, spoluhostitel podcastu {brand}"
     },
     "specialty": "OBOR",
