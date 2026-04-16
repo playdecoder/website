@@ -87,6 +87,23 @@ export function IconExternalLink({ size = 14, className, ...props }: IconProps) 
   );
 }
 
+export function IconArrowRight({ size = 14, className, ...props }: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      className={cn("shrink-0", className)}
+      aria-hidden
+      {...strokeProps}
+      {...props}
+    >
+      <path d="M5 12h13.5" />
+      <path d="M13.25 6.75 18.5 12l-5.25 5.25" />
+    </svg>
+  );
+}
+
 export function IconShare({ size = 14, className, ...props }: IconProps) {
   return (
     <svg

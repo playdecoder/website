@@ -11,6 +11,7 @@ import { ROUTES, topicPath } from "@/lib/routes";
 
 import { Navbar } from "../components/layout/navbar";
 import { Contact } from "../components/sections/contact";
+import { IconArrowRight } from "../components/ui/icons";
 import { LedeIntroParagraph } from "../components/ui/lede-intro-paragraph";
 import { SectionHeading } from "../components/ui/section-heading";
 
@@ -83,9 +84,7 @@ export default async function TopicsIndexPage({ params }: TopicsIndexPageProps) 
                 className={archiveSiblingLinkClass}
               >
                 {t("indexLinkToEpisodes")}
-                <span className="text-base leading-none" aria-hidden>
-                  ↗
-                </span>
+                <IconArrowRight size={14} className="shrink-0" />
               </Link>
             </div>
           </div>
@@ -159,7 +158,10 @@ export default async function TopicsIndexPage({ params }: TopicsIndexPageProps) 
                       className="border-edge/70 text-muted group-hover:border-accent/40 group-hover:text-accent-text flex size-9 shrink-0 items-center justify-center rounded-sm border bg-[color-mix(in_srgb,var(--surface-2)_65%,transparent)] text-base font-medium transition-all duration-300 group-hover:-translate-y-px group-hover:shadow-[0_6px_20px_-8px_color-mix(in_srgb,var(--accent)_35%,transparent)] sm:size-10"
                       aria-hidden
                     >
-                      ↗
+                      <IconArrowRight
+                        size={15}
+                        className="transition-transform duration-300 group-hover:translate-x-[1px]"
+                      />
                     </span>
                   </div>
                 </Link>
