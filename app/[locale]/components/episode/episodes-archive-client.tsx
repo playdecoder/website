@@ -47,6 +47,8 @@ function episodeMatchesSearchQuery(ep: Episode, words: string[], scopes: Episode
   return words.every((w) => hay.includes(w));
 }
 
+const EMPTY_SELECTED_TAGS: string[] = [];
+
 interface EpisodesArchiveClientProps {
   episodes: Episode[];
   initialSelectedTags?: string[];
@@ -55,7 +57,7 @@ interface EpisodesArchiveClientProps {
 
 export function EpisodesArchiveClient({
   episodes: allEpisodes,
-  initialSelectedTags = [],
+  initialSelectedTags = EMPTY_SELECTED_TAGS,
   topicFilterLocked = false,
 }: EpisodesArchiveClientProps) {
   const locale = useLocale();

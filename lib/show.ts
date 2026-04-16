@@ -12,7 +12,6 @@ export function showTaglineEn(): string {
   return `A podcast where game design meets technology. Honest conversations with ${showHostsEnglishAnd()} — once a month.`;
 }
 
-/** Default site description (Czech-first root layout). */
 export function showTaglineCs(): string {
   return "Podcast, kde se herní design potkává s technologiemi. Upřímné rozhovory s Janem Tomášikem a Martinem Pernicou. Jednou měsíčně.";
 }

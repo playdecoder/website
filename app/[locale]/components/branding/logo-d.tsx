@@ -1,6 +1,5 @@
 import { cn } from "@/lib/cn";
 
-/** Tight crop around ink; full asset is `0 0 228 299` in `public/logo/d-v4.svg`. */
 const VIEWBOX = "23.4 83.6 203.7 194.4" as const;
 const VIEWBOX_W = 203.7;
 const VIEWBOX_H = 194.4;
@@ -23,7 +22,6 @@ export interface LogoDProps {
   className?: string;
 }
 
-/** Inline SVG from `public/logo/d-v4.svg` + `d-dark-v4.svg` (path fill only differs; `1cap` unreliable on `<img>`). */
 export function LogoD({ variant = "hero", className }: LogoDProps) {
   return (
     <svg

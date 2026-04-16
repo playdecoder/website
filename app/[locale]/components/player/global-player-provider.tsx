@@ -5,26 +5,20 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useReducer,
   useRef,
   useState,
   type ReactNode,
 } from "react";
 
 import type { Episode } from "@/lib/episode-catalog";
-import {
-  clearEpisodeProgress,
-  episodeHasStoredProgress,
-  getSavedPosition,
-  writeProgressSnapshot,
-} from "@/lib/episode-progress-storage";
-import { formatPlaybackTime } from "@/lib/format-playback-time";
+import { clearEpisodeProgress, writeProgressSnapshot } from "@/lib/episode-progress-storage";
 import { isIosLikeWebKitNoProgrammaticVolume } from "@/lib/ios-webkit";
 import { readPlayerPreferences, writePlayerPreferences } from "@/lib/player-preferences-storage";
 
+import { initialMediaState, mediaReducer, subscribeGlobalPlayerAudio } from "./global-player-media";
 import { MiniPlayerBar } from "./mini-player-bar";
 import { PlayerContext } from "./player-context";
-
-const PERSIST_THROTTLE_MS = 2000;
 const PLAYBACK_RATES = [1, 1.25, 1.5, 1.75, 2] as const;
 const KEYBOARD_SKIP_SEC = 15;
 
@@ -73,14 +67,7 @@ export function GlobalPlayerProvider({ children }: { children: ReactNode }) {
   const lastPersistAtRef = useRef(0);
 
   const [episode, setEpisode] = useState<Episode | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const [loadError, setLoadError] = useState(false);
-  const [bufferedPct, setBufferedPct] = useState(0);
-  const [resumeNotice, setResumeNotice] = useState<string | null>(null);
-  const [resumeHintVisible, setResumeHintVisible] = useState(false);
-  const [hasClearableProgress, setHasClearableProgress] = useState(false);
+  const [media, dispatchMedia] = useReducer(mediaReducer, null, () => initialMediaState());
   const [programmaticVolume, setProgrammaticVolume] = useState(true);
   const [prefs, setPrefs] = useState<AudioPrefs>({
     volume: 1,
@@ -131,107 +118,7 @@ export function GlobalPlayerProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const el = audioRef.current;
     if (!el) return;
-
-    const getEpisodeId = () => el.dataset.episodeId ?? "";
-
-    const persistNow = () => {
-      if (!Number.isFinite(el.duration) || el.duration <= 0) return;
-      const id = getEpisodeId();
-      if (!id) return;
-      writeProgressSnapshot(id, el.currentTime, el.duration);
-      setHasClearableProgress(episodeHasStoredProgress(id));
-    };
-
-    const onPlay = () => {
-      setIsPlaying(true);
-      setResumeNotice(null);
-      setResumeHintVisible(false);
-    };
-
-    const onPause = () => {
-      setIsPlaying(false);
-      persistNow();
-    };
-
-    const onEnded = () => {
-      setIsPlaying(false);
-      setHasClearableProgress(false);
-      const id = getEpisodeId();
-      if (id) clearEpisodeProgress(id);
-    };
-
-    const onTime = () => {
-      const d = Number.isFinite(el.duration) ? el.duration : 0;
-      setCurrentTime(el.currentTime);
-      setDuration(d);
-      if (el.paused) return;
-      const now = Date.now();
-      if (now - lastPersistAtRef.current < PERSIST_THROTTLE_MS) return;
-      lastPersistAtRef.current = now;
-      persistNow();
-    };
-
-    const onSeeked = () => {
-      const d = Number.isFinite(el.duration) ? el.duration : 0;
-      setCurrentTime(el.currentTime);
-      setDuration(d);
-      lastPersistAtRef.current = Date.now();
-      persistNow();
-    };
-
-    const onMeta = () => {
-      const d = Number.isFinite(el.duration) ? el.duration : 0;
-      setDuration(d);
-      if (d <= 0) return;
-      const id = getEpisodeId();
-      if (!id) return;
-      const saved = getSavedPosition(id, d);
-      if (saved !== null) {
-        el.currentTime = saved;
-        setCurrentTime(saved);
-        setResumeNotice(t("playerResumingFrom", { time: formatPlaybackTime(saved) }));
-      } else {
-        setResumeNotice(null);
-      }
-      const has = episodeHasStoredProgress(id);
-      setHasClearableProgress(has);
-      setResumeHintVisible(has);
-    };
-
-    const readBuffered = () => {
-      if (!Number.isFinite(el.duration) || el.duration <= 0) return;
-      let maxEnd = 0;
-      for (let i = 0; i < el.buffered.length; i++) {
-        maxEnd = Math.max(maxEnd, el.buffered.end(i));
-      }
-      setBufferedPct(Math.min(100, (maxEnd / el.duration) * 100));
-    };
-
-    el.addEventListener("play", onPlay);
-    el.addEventListener("pause", onPause);
-    el.addEventListener("ended", onEnded);
-    el.addEventListener("timeupdate", onTime);
-    el.addEventListener("seeked", onSeeked);
-    el.addEventListener("loadedmetadata", onMeta);
-    el.addEventListener("progress", readBuffered);
-    const onError = () => setLoadError(true);
-    el.addEventListener("error", onError);
-
-    if (el.readyState >= HTMLMediaElement.HAVE_METADATA) {
-      onMeta();
-      readBuffered();
-    }
-
-    return () => {
-      el.removeEventListener("play", onPlay);
-      el.removeEventListener("pause", onPause);
-      el.removeEventListener("ended", onEnded);
-      el.removeEventListener("timeupdate", onTime);
-      el.removeEventListener("seeked", onSeeked);
-      el.removeEventListener("loadedmetadata", onMeta);
-      el.removeEventListener("progress", readBuffered);
-      el.removeEventListener("error", onError);
-    };
+    return subscribeGlobalPlayerAudio(el, dispatchMedia, lastPersistAtRef, t);
   }, [t]);
 
   useEffect(() => {
@@ -253,10 +140,14 @@ export function GlobalPlayerProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const loadErrorRef = useRef(loadError);
+  const loadErrorRef = useRef(media.loadError);
   const episodeRef = useRef(episode);
-  useEffect(() => { loadErrorRef.current = loadError; }, [loadError]);
-  useEffect(() => { episodeRef.current = episode; }, [episode]);
+  useEffect(() => {
+    loadErrorRef.current = media.loadError;
+  }, [media.loadError]);
+  useEffect(() => {
+    episodeRef.current = episode;
+  }, [episode]);
 
   const seek = useCallback((seconds: number, notice?: string) => {
     const el = audioRef.current;
@@ -264,20 +155,18 @@ export function GlobalPlayerProvider({ children }: { children: ReactNode }) {
     const d = Number.isFinite(el.duration) && el.duration > 0 ? el.duration : 0;
     const clamped = d > 0 ? Math.max(0, Math.min(d, seconds)) : Math.max(0, seconds);
     el.currentTime = clamped;
-    setCurrentTime(clamped);
-    setResumeNotice(notice ?? null);
-    setResumeHintVisible(false);
+    dispatchMedia({
+      type: "patch",
+      patch: {
+        currentTime: clamped,
+        resumeNotice: notice ?? null,
+        resumeHintVisible: false,
+      },
+    });
   }, []);
 
-   const resetPlaybackState = useCallback(() => {
-    setIsPlaying(false);
-    setCurrentTime(0);
-    setDuration(0);
-    setLoadError(false);
-    setBufferedPct(0);
-    setResumeNotice(null);
-    setResumeHintVisible(false);
-    setHasClearableProgress(false);
+  const resetPlaybackState = useCallback(() => {
+    dispatchMedia({ type: "reset" });
   }, []);
 
   const loadEpisode = useCallback((ep: Episode) => {
@@ -296,7 +185,7 @@ export function GlobalPlayerProvider({ children }: { children: ReactNode }) {
     const el = audioRef.current;
     if (!el || loadErrorRef.current) return;
     if (el.paused) {
-      el.play().catch(() => setLoadError(true));
+      el.play().catch(() => dispatchMedia({ type: "patch", patch: { loadError: true } }));
     } else {
       el.pause();
     }
@@ -347,7 +236,7 @@ export function GlobalPlayerProvider({ children }: { children: ReactNode }) {
     if (!id) return;
     clearEpisodeProgress(id);
     seek(0);
-    setHasClearableProgress(false);
+    dispatchMedia({ type: "patch", patch: { hasClearableProgress: false } });
   }, [seek]);
 
   useEffect(() => {
@@ -385,17 +274,17 @@ export function GlobalPlayerProvider({ children }: { children: ReactNode }) {
   const contextValue = useMemo(
     () => ({
       episode,
-      isPlaying,
-      currentTime,
-      duration,
-      loadError,
-      bufferedPct,
-      resumeNotice,
-      resumeHintVisible,
+      isPlaying: media.isPlaying,
+      currentTime: media.currentTime,
+      duration: media.duration,
+      loadError: media.loadError,
+      bufferedPct: media.bufferedPct,
+      resumeNotice: media.resumeNotice,
+      resumeHintVisible: media.resumeHintVisible,
       volume: prefs.volume,
       muted: prefs.muted,
       playbackRate,
-      hasClearableProgress,
+      hasClearableProgress: media.hasClearableProgress,
       programmaticVolume,
       loadEpisode,
       togglePlay,
@@ -410,17 +299,17 @@ export function GlobalPlayerProvider({ children }: { children: ReactNode }) {
     }),
     [
       episode,
-      isPlaying,
-      currentTime,
-      duration,
-      loadError,
-      bufferedPct,
-      resumeNotice,
-      resumeHintVisible,
+      media.isPlaying,
+      media.currentTime,
+      media.duration,
+      media.loadError,
+      media.bufferedPct,
+      media.resumeNotice,
+      media.resumeHintVisible,
       prefs.volume,
       prefs.muted,
       playbackRate,
-      hasClearableProgress,
+      media.hasClearableProgress,
       programmaticVolume,
       loadEpisode,
       togglePlay,

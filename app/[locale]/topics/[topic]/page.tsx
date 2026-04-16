@@ -10,6 +10,7 @@ import { topicPath } from "@/lib/routes";
 import { EpisodesArchiveClient } from "../../components/episode/episodes-archive-client";
 import { Navbar } from "../../components/layout/navbar";
 import { Contact } from "../../components/sections/contact";
+import { LedeIntroParagraph } from "../../components/ui/lede-intro-paragraph";
 import { SectionHeading } from "../../components/ui/section-heading";
 
 interface TopicPageProps {
@@ -66,9 +67,7 @@ export default async function TopicPage({ params }: TopicPageProps) {
               >
                 {t("heading", { topic: label })}
               </h1>
-              <p className="font-body text-muted max-w-2xl text-base leading-relaxed md:text-lg">
-                {t("intro", { topic: label })}
-              </p>
+              <LedeIntroParagraph className="max-w-2xl leading-relaxed">{t("intro", { topic: label })}</LedeIntroParagraph>
             </div>
           </div>
         </header>

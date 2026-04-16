@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 
 import { BRAND_NAME } from "@/lib/brand";
 
+import "./globals.css";
+
 const MESSAGES = {
   en: {
     badge: "Transmission error",
@@ -50,182 +52,35 @@ export default function GlobalError({
 
   return (
     <html lang={locale}>
-      <body
-        style={{
-          margin: 0,
-          minHeight: "100dvh",
-          display: "flex",
-          flexDirection: "column",
-          background: "#0b0f14",
-          color: "#e8eaf0",
-          fontFamily: "'ui-monospace', 'SFMono-Regular', 'Menlo', monospace",
-        }}
-      >
-        <header
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            height: 64,
-            borderBottom: "1px solid rgba(255,255,255,0.08)",
-            backdropFilter: "blur(9px)",
-            display: "flex",
-            alignItems: "center",
-            padding: "0 20px",
-            zIndex: 50,
-            background: "rgba(11,15,20,0.9)",
-          }}
-        >
-          <Link
-            href="/"
-            style={{
-              color: "#e8eaf0",
-              textDecoration: "none",
-              fontFamily: "ui-sans-serif, system-ui, sans-serif",
-              fontSize: 18,
-              fontWeight: 800,
-              letterSpacing: "-0.03em",
-            }}
-          >
+      <body className="global-error-body">
+        <header className="global-error-header">
+          <Link href="/" className="global-error-brand-link">
             {BRAND_NAME}
           </Link>
         </header>
 
-        <main
-          style={{
-            flex: 1,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "80px 20px 40px",
-            textAlign: "center",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 12,
-              marginBottom: 40,
-            }}
-          >
-            <span
-              style={{
-                width: 6,
-                height: 6,
-                borderRadius: "50%",
-                background: "#c8a84b",
-                flexShrink: 0,
-              }}
-            />
-            <span
-              style={{
-                fontSize: 11,
-                letterSpacing: "0.25em",
-                textTransform: "uppercase",
-                color: "rgba(232,234,240,0.5)",
-              }}
-            >
-              {t.badge}
-            </span>
-            <span
-              style={{
-                width: 6,
-                height: 6,
-                borderRadius: "50%",
-                background: "#c8a84b",
-                flexShrink: 0,
-              }}
-            />
+        <main className="global-error-main">
+          <div className="global-error-badge-row">
+            <span className="global-error-badge-dot" />
+            <span className="global-error-badge-label">{t.badge}</span>
+            <span className="global-error-badge-dot" />
           </div>
 
-          <h1
-            style={{
-              fontFamily: "ui-sans-serif, system-ui, sans-serif",
-              fontSize: "clamp(2rem, 6vw, 3.25rem)",
-              fontWeight: 700,
-              letterSpacing: "-0.03em",
-              lineHeight: 1.05,
-              margin: "0 0 16px",
-              maxWidth: 480,
-            }}
-          >
-            {t.heading}
-          </h1>
+          <h1 className="global-error-title">{t.heading}</h1>
 
-          <p
-            style={{
-              fontSize: 14,
-              lineHeight: 1.7,
-              color: "rgba(232,234,240,0.55)",
-              maxWidth: 400,
-              margin: "0 0 40px",
-            }}
-          >
-            {t.body}
-          </p>
+          <p className="global-error-copy">{t.body}</p>
 
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: 12,
-              width: "100%",
-              maxWidth: 340,
-            }}
-          >
-            <button
-              type="button"
-              onClick={reset}
-              style={{
-                background: "#b8f229",
-                color: "#0b0f14",
-                border: "none",
-                borderRadius: 2,
-                padding: "14px 32px",
-                fontSize: 11,
-                fontFamily: "inherit",
-                fontWeight: 500,
-                letterSpacing: "0.15em",
-                textTransform: "uppercase",
-                cursor: "pointer",
-              }}
-            >
+          <div className="global-error-actions">
+            <button type="button" onClick={reset} className="global-error-button">
               {t.tryAgain}
             </button>
-            <Link
-              href="/"
-              style={{
-                color: "rgba(232,234,240,0.55)",
-                border: "1px solid rgba(255,255,255,0.1)",
-                borderRadius: 2,
-                padding: "14px 32px",
-                fontSize: 11,
-                letterSpacing: "0.15em",
-                textTransform: "uppercase",
-                textDecoration: "none",
-                textAlign: "center",
-              }}
-            >
+            <Link href="/" className="global-error-link">
               {t.backHome}
             </Link>
           </div>
 
           {process.env.NODE_ENV === "development" && error.digest ? (
-            <p
-              style={{
-                marginTop: 40,
-                fontSize: 10,
-                color: "rgba(232,234,240,0.35)",
-                fontFamily: "inherit",
-                wordBreak: "break-all",
-                maxWidth: 480,
-              }}
-            >
-              {error.digest}
-            </p>
+            <p className="global-error-digest">{error.digest}</p>
           ) : null}
         </main>
       </body>

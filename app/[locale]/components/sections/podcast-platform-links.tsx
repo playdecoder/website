@@ -17,7 +17,6 @@ const PODCAST_PLATFORM_HREF: Record<PodcastPlatformKey, string> = {
 
 type Variant = "contact" | "episode";
 
-/** Recognizable brand tints for platform dots (no official logo assets in UI). */
 const PODCAST_PLATFORM_BRAND_DOT: Record<PodcastPlatformKey, string> = {
   platformSpotify: "bg-[#1DB954]",
   platformApple: "bg-[#9333EA]",

@@ -9,7 +9,6 @@ function notifyProgressStoreChanged() {
   window.dispatchEvent(new Event(PROGRESS_STORE_CHANGED));
 }
 
-/** Subscribe to local progress updates (same tab + other tabs via `storage`). */
 export function subscribeEpisodeProgressStore(onChange: () => void): () => void {
   if (typeof window === "undefined") {
     return () => {};

@@ -111,11 +111,7 @@ export function EpisodesArchiveFiltersPanel({
 
       <fieldset className="border-0 p-0">
         <div className="mb-3 flex min-w-0 items-center gap-3 sm:mb-3.5">
-          <span
-            className="bg-accent h-1.5 w-1.5 shrink-0 rounded-full"
-            style={{ animation: "pulseDot 2s ease-in-out infinite" }}
-            aria-hidden
-          />
+          <span className="ui-pulse-dot bg-accent h-1.5 w-1.5 shrink-0 rounded-full" aria-hidden />
           <legend
             id={scopeFieldId}
             className="text-muted shrink-0 font-mono text-[10px] tracking-[0.22em] uppercase sm:tracking-[0.25em]"

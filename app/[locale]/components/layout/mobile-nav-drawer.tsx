@@ -2,7 +2,7 @@
 
 import { Link } from "@/i18n/navigation";
 import type { CSSProperties } from "react";
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useReducer, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { linkLocale } from "@/lib/link-locale";
@@ -14,6 +14,29 @@ const ITEM_STAGGER_MS = 40;
 const ITEM_BASE_DELAY_MS = 64;
 const ITEM_TRANSITION_MS = 320;
 const UNMOUNT_AFTER_MS = 480;
+
+type PanelVisual = { mounted: boolean; entered: boolean };
+
+type PanelVisualAction =
+  | { type: "openPrepare" }
+  | { type: "openEntered" }
+  | { type: "closeLeave" }
+  | { type: "closeUnmount" };
+
+function panelVisualReducer(state: PanelVisual, action: PanelVisualAction): PanelVisual {
+  switch (action.type) {
+    case "openPrepare":
+      return { mounted: true, entered: false };
+    case "openEntered":
+      return state.mounted ? { ...state, entered: true } : state;
+    case "closeLeave":
+      return { ...state, entered: false };
+    case "closeUnmount":
+      return { mounted: false, entered: false };
+    default:
+      return state;
+  }
+}
 
 export interface MobileNavLink {
   href: string;
@@ -40,8 +63,8 @@ export function MobileNavDrawer({
   const hrefLocale = linkLocale(locale);
   const panelId = useId();
   const [open, setOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
-  const [entered, setEntered] = useState(false);
+  const [panel, dispatchPanel] = useReducer(panelVisualReducer, { mounted: false, entered: false });
+  const { mounted, entered } = panel;
   const openBtnRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -50,13 +73,12 @@ export function MobileNavDrawer({
     if (open) {
       queueMicrotask(() => {
         if (cancelled) return;
-        setMounted(true);
-        setEntered(false);
+        dispatchPanel({ type: "openPrepare" });
       });
       let innerRaf = 0;
       const outerRaf = requestAnimationFrame(() => {
         innerRaf = requestAnimationFrame(() => {
-          if (!cancelled) setEntered(true);
+          if (!cancelled) dispatchPanel({ type: "openEntered" });
         });
       });
       return () => {
@@ -67,10 +89,10 @@ export function MobileNavDrawer({
     }
 
     queueMicrotask(() => {
-      if (!cancelled) setEntered(false);
+      if (!cancelled) dispatchPanel({ type: "closeLeave" });
     });
     const t = window.setTimeout(() => {
-      if (!cancelled) setMounted(false);
+      if (!cancelled) dispatchPanel({ type: "closeUnmount" });
     }, UNMOUNT_AFTER_MS);
     return () => {
       cancelled = true;

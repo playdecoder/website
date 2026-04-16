@@ -345,9 +345,9 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
           aria-hidden
         >
           <div className="flex h-full min-h-0 w-full items-end gap-px px-0.5 opacity-[0.085] sm:gap-0.5 sm:px-2 dark:opacity-[0.055]">
-            {bars.map((bar, i) => (
+            {bars.map((bar) => (
               <div
-                key={`bg-${episode.id}-${i}`}
+                key={`${episode.id}-${bar.h}-${bar.dur}-${bar.delay}-${bar.color}-${bar.motion}-${bar.flexGrow}-${bar.ease}`}
                 className="waveform-bar waveform-bar--listen-bg max-w-[3.5vw] min-w-0"
                 data-motion={String(bar.motion)}
                 style={

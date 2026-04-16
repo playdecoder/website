@@ -130,11 +130,7 @@ export function ContinueListening({ locale }: { locale: string }) {
           <div className="w-full shrink-0 lg:w-[min(100%,12.5rem)]">
             <div className="border-edge/55 flex items-center justify-between gap-3 border-b pb-2.5 lg:hidden">
               <div className="flex min-w-0 items-center gap-2">
-                <span
-                  className="bg-accent h-1.5 w-1.5 shrink-0 rounded-full"
-                  style={{ animation: "pulseDot 2.4s ease-in-out infinite" }}
-                  aria-hidden
-                />
+                <span className="ui-pulse-dot bg-accent h-1.5 w-1.5 shrink-0 rounded-full" aria-hidden />
                 <span className="text-muted truncate font-mono text-[10px] tracking-[0.22em] uppercase">
                   {t("label")}
                 </span>
@@ -153,7 +149,7 @@ export function ContinueListening({ locale }: { locale: string }) {
               >
                 {CONTINUE_MICRO_WAVE.map((pct, i) => (
                   <span
-                    key={i}
+                    key={pct}
                     className="w-[3px] max-w-[3px] shrink-0 rounded-t-[2px]"
                     style={{
                       height: `${pct}%`,

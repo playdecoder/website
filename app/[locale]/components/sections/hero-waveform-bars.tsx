@@ -44,7 +44,7 @@ export function HeroWaveformBars() {
       >
         {heroWaveformBars.map((bar, i) => (
           <div
-            key={i}
+            key={`${bar.h}-${bar.dur}-${bar.delay}-${bar.color}-${bar.alt ? "1" : "0"}`}
             className="hero-waveform__bar w-[3px] shrink-0 sm:w-1 md:w-[6px]"
             data-color={bar.color}
             data-alt={bar.alt ? "true" : undefined}

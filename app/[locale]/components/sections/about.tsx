@@ -4,6 +4,7 @@ import { brandInterpolation } from "@/lib/brand";
 import { episodes, formatCatalogHours, totalEpisodeCatalogSeconds } from "@/lib/episode-catalog";
 import { PAGE_SECTION_ID } from "@/lib/routes";
 
+import { LedeIntroParagraph } from "../ui/lede-intro-paragraph";
 import { SectionHeading } from "../ui/section-heading";
 
 export async function About({ locale }: { locale: string }) {
@@ -62,15 +63,12 @@ export async function About({ locale }: { locale: string }) {
           </div>
 
           <div className="scroll-reveal space-y-5">
-            <p className="font-body text-muted text-base leading-[1.8] md:text-lg">{t("p1", b)}</p>
+            <LedeIntroParagraph className="leading-[1.8]">{t("p1", b)}</LedeIntroParagraph>
             <p className="font-body text-muted text-base leading-[1.8] md:text-lg">{t("p2")}</p>
             <p className="font-body text-muted text-base leading-[1.8] md:text-lg">{t("p3")}</p>
 
             <div className="flex items-center gap-3 pt-2">
-              <span
-                className="bg-accent h-2 w-2 rounded-full"
-                style={{ animation: "pulseDot 1.8s ease-in-out infinite" }}
-              />
+              <span className="ui-pulse-dot bg-accent h-2 w-2 rounded-full" />
               <span className="text-muted font-mono text-xs tracking-widest uppercase">
                 {t("cadence")}
               </span>

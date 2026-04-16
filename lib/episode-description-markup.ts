@@ -82,7 +82,6 @@ export function plainEpisodeDescription(source: string): string {
   return parseEpisodeDescriptionMarkup(source).map(segmentPlain).join("");
 }
 
-/** Plain text, collapsed whitespace, truncated at a word or clause boundary. */
 export function episodeDescriptionSnippet(source: string, maxChars: number): string {
   const plain = plainEpisodeDescription(source).replace(/\s+/g, " ").trim();
   if (!plain) {

@@ -14,6 +14,7 @@ import { linkLocale } from "@/lib/link-locale";
 import { PAGE_SECTION_ID, ROUTES, listenEpisodePath } from "@/lib/routes";
 
 import { IconEpisodeAirDate, IconEpisodeDuration } from "../ui/icons";
+import { LedeIntroParagraph } from "../ui/lede-intro-paragraph";
 import { SectionHeading } from "../ui/section-heading";
 
 import { EpisodeSpokenLangNote } from "./episode-spoken-lang-note";
@@ -72,9 +73,9 @@ export async function Episodes({ locale }: { locale: string }) {
                 </Link>
               </h2>
 
-              <p className="font-body text-muted mb-8 max-w-2xl text-base leading-[1.8] md:text-lg">
+              <LedeIntroParagraph className="mb-8 max-w-2xl leading-[1.8]">
                 <EpisodeDescriptionRich text={latestEpisode.description} />
-              </p>
+              </LedeIntroParagraph>
 
               <div className="flex flex-wrap items-center gap-6">
                 <span className="text-muted inline-flex shrink-0 items-center gap-2 font-mono text-xs tracking-widest whitespace-nowrap">

@@ -10,7 +10,6 @@ interface EpisodeChapterListProps {
   currentTime: number;
   audioReady: boolean;
   onSeek: (seconds: number, chapter: EpisodeChapter) => void;
-  /** When false, the “wait for load” hint is hidden (e.g. another episode is playing). */
   showLoadHint?: boolean;
 }
 

@@ -10,6 +10,7 @@ import { getCuratedPicks, hasCuratedPicks } from "@/lib/curated-picks";
 import { linkLocale } from "@/lib/link-locale";
 import { listenEpisodePath } from "@/lib/routes";
 
+import { LedeIntroParagraph } from "../ui/lede-intro-paragraph";
 import { SectionHeading } from "../ui/section-heading";
 import { TopicLinkChip } from "../episode/topic-link-chip";
 
@@ -58,7 +59,7 @@ export async function StartHere({ locale }: { locale: string }) {
           >
             {t("heading")}
           </h2>
-          <p className="font-body text-muted text-base leading-relaxed md:text-lg">{t("intro")}</p>
+          <LedeIntroParagraph className="leading-relaxed">{t("intro")}</LedeIntroParagraph>
         </div>
 
         <div className="grid gap-6 lg:grid-cols-3">

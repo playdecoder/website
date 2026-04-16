@@ -11,6 +11,7 @@ import { ROUTES } from "@/lib/routes";
 import { EpisodesArchiveClient } from "../components/episode/episodes-archive-client";
 import { Navbar } from "../components/layout/navbar";
 import { Contact } from "../components/sections/contact";
+import { LedeIntroParagraph } from "../components/ui/lede-intro-paragraph";
 import { SectionHeading } from "../components/ui/section-heading";
 
 export const dynamic = "force-static";
@@ -61,13 +62,9 @@ export default async function EpisodesArchivePage({ params }: PageProps) {
                 style={{ fontSize: "clamp(2rem, 5vw, 3.25rem)" }}
               >
                 <span className="text-primary">{t("headingLead")}</span>{" "}
-                <span className="bg-gradient-to-r from-secondary via-secondary to-[color-mix(in_srgb,var(--accent)_82%,var(--secondary))] bg-clip-text text-transparent">
-                  {t("headingAccent")}
-                </span>
+                <span className="text-secondary">{t("headingAccent")}</span>
               </h1>
-              <p className="font-body text-muted max-w-2xl text-base leading-relaxed md:text-lg">
-                {t("intro")}
-              </p>
+              <LedeIntroParagraph className="max-w-2xl leading-relaxed">{t("intro")}</LedeIntroParagraph>
               <Link
                 href={ROUTES.topics}
                 locale={hrefLocale}

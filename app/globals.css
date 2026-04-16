@@ -2,6 +2,134 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* app/global-error.tsx — standalone <html>; keep layout out of inline styles */
+.global-error-body {
+  margin: 0;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: #0b0f14;
+  color: #e8eaf0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.global-error-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  border-bottom: 1px solid rgb(255 255 255 / 0.08);
+  backdrop-filter: blur(9px);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  z-index: 50;
+  background: rgb(11 15 20 / 0.9);
+}
+
+.global-error-brand-link {
+  color: #e8eaf0;
+  text-decoration: none;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.global-error-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px 40px;
+  text-align: center;
+}
+
+.global-error-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 40px;
+}
+
+.global-error-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #c8a84b;
+  flex-shrink: 0;
+}
+
+.global-error-badge-label {
+  font-size: 12px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: rgb(232 234 240 / 0.5);
+}
+
+.global-error-title {
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(2rem, 6vw, 3.25rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin: 0 0 16px;
+  max-width: 480px;
+}
+
+.global-error-copy {
+  font-size: 14px;
+  line-height: 1.7;
+  color: rgb(232 234 240 / 0.55);
+  max-width: 400px;
+  margin: 0 0 40px;
+}
+
+.global-error-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 340px;
+}
+
+.global-error-button {
+  background: #b8f229;
+  color: #0b0f14;
+  border: none;
+  border-radius: 2px;
+  padding: 14px 32px;
+  font-size: 12px;
+  font-family: inherit;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.global-error-link {
+  color: rgb(232 234 240 / 0.55);
+  border: 1px solid rgb(255 255 255 / 0.1);
+  border-radius: 2px;
+  padding: 14px 32px;
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  text-decoration: none;
+  text-align: center;
+}
+
+.global-error-digest {
+  margin-top: 40px;
+  font-size: 12px;
+  color: rgb(232 234 240 / 0.35);
+  font-family: inherit;
+  word-break: break-all;
+  max-width: 480px;
+}
+
 .page-shell {
   position: relative;
   isolation: isolate;
@@ -12,7 +140,6 @@
   overflow-x: hidden;
 }
 
-/* Ambient depth: soft washes + film grain (fixed, non-interactive) */
 .page-shell::before {
   content: "";
   position: fixed;
@@ -49,7 +176,8 @@
   mix-blend-mode: screen;
 }
 
-.page-shell > * {
+/* Skip header: it uses position:fixed; forcing relative here broke the sticky top nav. */
+.page-shell > *:not(header) {
   position: relative;
   z-index: 1;
 }
@@ -370,6 +498,21 @@
   }
 }
 
+.hero-top-scanline {
+  background: linear-gradient(to right, transparent, var(--secondary), transparent);
+  opacity: 0.35;
+  animation: scan 7s linear infinite;
+  animation-delay: 1.5s;
+}
+
+.ui-pulse-dot {
+  animation: pulseDot 1.15s ease-in-out infinite;
+}
+
+.ui-pulse-dot--delay {
+  animation-delay: 0.5s;
+}
+
 @keyframes latestDropPing {
   0%,
   100% {
@@ -482,11 +625,42 @@ body {
   color: #0b0f14;
 }
 
-/* Literata long-form: keep synthetic bold off for cleaner pairing with Syne */
 @layer utilities {
   .font-body {
     font-synthesis: none;
   }
+}
+
+.lede-rail {
+  position: relative;
+  padding-left: 0.95rem;
+}
+
+@media (min-width: 640px) {
+  .lede-rail {
+    padding-left: 1.1rem;
+  }
+}
+
+.lede-rail::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.2em;
+  bottom: 0.2em;
+  width: 2px;
+  border-radius: 1px;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--secondary) 70%, transparent) 0%,
+    color-mix(in srgb, var(--accent) 45%, var(--secondary)) 100%
+  );
+  opacity: 0.5;
+}
+
+.dark .lede-rail::before {
+  opacity: 0.62;
 }
 
 .cta-on-lime {
@@ -991,7 +1165,7 @@ html[data-episode-playing="true"] .waveform-bar--listen-bg[data-motion="2"] {
 }
 
 .listen-page-wave-layer {
-  transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 0.99s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 html:not([data-episode-playing="true"]) .listen-page-wave-layer {

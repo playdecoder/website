@@ -479,7 +479,6 @@ export function HeroWaveformOsc() {
   const rootRef = useRef<HTMLDivElement>(null);
   const animRef = useRef<number | null>(null);
   const stateRef = useRef<RenderState | null>(null);
-  /** Last drawn elapsed time — repainted synchronously on resize so the cleared canvas never flashes black. */
   const elapsedRef = useRef(0);
 
   const [inView, setInView] = useState(true);
@@ -552,7 +551,7 @@ export function HeroWaveformOsc() {
       canvas.style.height = `${H}px`;
       ctx.setTransform(r, 0, 0, r, 0, 0);
       stateRef.current = buildRenderState(ctx, W, H, isDark);
-      // Setting width/height clears to black; paint in the same turn before the browser composites.
+      // Canvas buffer clears when dimensions change; repaint immediately to avoid a black frame.
       render(elapsedRef.current);
     };
 

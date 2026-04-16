@@ -1,7 +1,3 @@
-/**
- * Rasterizes the wide Dekodér logo SVG to a PNG for OG / episode cover fallback.
- * Run: node scripts/generate-fallback-episode-cover.mjs
- */
 import { readFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";

@@ -11,6 +11,7 @@ import { ROUTES, topicPath } from "@/lib/routes";
 
 import { Navbar } from "../components/layout/navbar";
 import { Contact } from "../components/sections/contact";
+import { LedeIntroParagraph } from "../components/ui/lede-intro-paragraph";
 import { SectionHeading } from "../components/ui/section-heading";
 
 export const dynamic = "force-static";
@@ -70,13 +71,9 @@ export default async function TopicsIndexPage({ params }: TopicsIndexPageProps) 
                 style={{ fontSize: "clamp(2rem, 5vw, 3.25rem)" }}
               >
                 <span className="text-primary">{t("indexTitleLead")}</span>{" "}
-                <span className="bg-gradient-to-r from-secondary via-secondary to-[color-mix(in_srgb,var(--accent)_82%,var(--secondary))] bg-clip-text text-transparent">
-                  {t("indexTitleAccent")}
-                </span>
+                <span className="text-secondary">{t("indexTitleAccent")}</span>
               </h1>
-              <p className="font-body text-muted max-w-2xl text-base leading-relaxed md:text-lg">
-                {t("indexIntro")}
-              </p>
+              <LedeIntroParagraph className="max-w-2xl leading-relaxed">{t("indexIntro")}</LedeIntroParagraph>
               <Link
                 href={ROUTES.episodes}
                 locale={hrefLocale}

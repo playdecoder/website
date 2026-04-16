@@ -24,15 +24,7 @@ export async function Hero({ locale }: { locale: string }) {
       id={PAGE_SECTION_ID.top}
       className="dot-grid relative flex min-h-screen flex-col items-center justify-center overflow-hidden pt-16"
     >
-      <div
-        className="pointer-events-none absolute inset-x-0 top-0 h-px"
-        style={{
-          background: "linear-gradient(to right, transparent, var(--secondary), transparent)",
-          opacity: 0.35,
-          animation: "scan 7s linear infinite",
-          animationDelay: "1.5s",
-        }}
-      />
+      <div className="hero-top-scanline pointer-events-none absolute inset-x-0 top-0 h-px" />
 
       <span className="border-edge absolute top-20 left-6 h-5 w-5 border-t border-l" />
       <span className="border-edge absolute top-20 right-6 h-5 w-5 border-t border-r" />

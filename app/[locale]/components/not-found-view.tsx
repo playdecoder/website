@@ -53,7 +53,7 @@ export async function DecoderNotFoundView({ locale = routing.defaultLocale }: { 
               <span className="relative z-10">0</span>
               <span
                 className="border-accent/55 pointer-events-none absolute top-1/2 left-1/2 h-[0.72em] w-[0.72em] -translate-x-1/2 -translate-y-1/2 rounded-full border-2 opacity-80"
-                style={{ animation: "fadeIn 1.2s ease both 0.4s" }}
+                style={{ animation: "fadeIn 1s ease both 0.4s" }}
               />
             </span>
             <span className="inline-block" aria-hidden>

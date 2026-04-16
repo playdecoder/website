@@ -17,7 +17,6 @@ export interface GlobalPlayerState {
   muted: boolean;
   playbackRate: number;
   hasClearableProgress: boolean;
-  /** False on iOS/iPadOS WebKit where HTMLMediaElement.volume is a no-op. */
   programmaticVolume: boolean;
 }
 
