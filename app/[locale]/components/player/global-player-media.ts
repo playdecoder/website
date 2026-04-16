@@ -132,13 +132,12 @@ export function subscribeGlobalPlayerAudio(
 
   const onSeeked = () => {
     const d = Number.isFinite(el.duration) ? el.duration : 0;
-    const canKnowBuffer = d > 0 && el.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA;
     dispatchMedia({
       type: "patch",
       patch: {
         currentTime: el.currentTime,
         duration: d,
-        ...(canKnowBuffer ? { isSeekBuffering: inferSeekNeedsBuffer(el, el.currentTime) } : {}),
+        ...(d > 0 ? { isSeekBuffering: inferSeekNeedsBuffer(el, el.currentTime) } : {}),
       },
     });
     lastPersistAtRef.current = Date.now();
@@ -183,12 +182,11 @@ export function subscribeGlobalPlayerAudio(
     if (!Number.isFinite(el.duration) || el.duration <= 0) return;
     const maxEnd = getBufferedMaxEndSec(el);
     const pct = Math.min(100, (maxEnd / el.duration) * 100);
-    const canKnowBuffer = el.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA;
     dispatchMedia({
       type: "patch",
       patch: {
         bufferedPct: pct,
-        ...(canKnowBuffer ? { isSeekBuffering: inferSeekNeedsBuffer(el, el.currentTime) } : {}),
+        isSeekBuffering: inferSeekNeedsBuffer(el, el.currentTime),
       },
     });
   };
@@ -204,6 +202,8 @@ export function subscribeGlobalPlayerAudio(
   el.addEventListener("seeked", onSeeked);
   el.addEventListener("loadedmetadata", onMeta);
   el.addEventListener("progress", patchBufferTelemetry);
+  el.addEventListener("canplay", patchBufferTelemetry);
+  el.addEventListener("loadeddata", patchBufferTelemetry);
   el.addEventListener("waiting", onWaiting);
   el.addEventListener("stalled", onWaiting);
   const onError = () =>
@@ -223,6 +223,8 @@ export function subscribeGlobalPlayerAudio(
     el.removeEventListener("seeked", onSeeked);
     el.removeEventListener("loadedmetadata", onMeta);
     el.removeEventListener("progress", patchBufferTelemetry);
+    el.removeEventListener("canplay", patchBufferTelemetry);
+    el.removeEventListener("loadeddata", patchBufferTelemetry);
     el.removeEventListener("waiting", onWaiting);
     el.removeEventListener("stalled", onWaiting);
     el.removeEventListener("error", onError);
