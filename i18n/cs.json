@@ -56,8 +56,8 @@
       "roleSecondary": "Lead designér",
       "firstName": "Jan",
       "lastName": "Tomášik",
-      "bio": "Herní designér s dvacetiletou zkušeností s navrhováním interaktivních systémů. Jan má za sebou hry pro mobil, PC i konzole a pořád ho zajímá stejná věc: proč hráči dělají to, co dělají. Fascinují ho neviditelná pravidla, díky kterým hry opravdu žijí.",
-      "specialtyTopics": "Design systémů, psychologie hráče, herní pocit",
+      "bio": "Herní návrhář s bezmála dvacetiletou zkušeností. Jan má za sebou hry pro PC, konzole, prohlížeče i mobily, ale bez ohledu na platformu zůstává fascinován minimalistickým designem, vtahujícími kryptickými světy a rozmanitými způsoby jakými do nich hráči vkračují.",
+      "specialtyTopics": "návrh a vývoj her, kreativní režie, produkce",
       "imageAlt": "Portrét — {name}, spoluhostitel podcastu {brand}"
     },
     "martin": {
@@ -69,7 +69,7 @@
       "specialtyTopics": "Architektura platforem, skládání týmů, technická strategie",
       "imageAlt": "Portrét — {name}, spoluhostitel podcastu {brand}"
     },
-    "specialty": "OBOR",
+    "specialization": "Specializace",
     "socials": "S\u00edt\u011b",
     "xLinkLabel": "X",
     "xProfileAria": "{name} na X (otevře se na nové kartě)"

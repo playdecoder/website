@@ -55,8 +55,8 @@
       "roleSecondary": "Lead Designer",
       "firstName": "Jan",
       "lastName": "Tomášik",
-      "bio": "Game designer with twenty years of experience crafting interactive systems. Jan has shipped titles across mobile, PC, and console — and never stopped asking why players do what they do. His obsession: the invisible rules that make games feel alive.",
-      "specialtyTopics": "Systems design, player psychology, game feel",
+      "bio": "A game designer with nearly twenty years of experience. Jan has worked on games for PCs, consoles, browsers, and mobile devices, but regardless of the platform, he remains fascinated by minimalist design, immersive, enigmatic worlds, and the diverse ways in which players enter them.",
+      "specialtyTopics": "Game design and development, creative direction, production",
       "imageAlt": "Portrait of {name}, {brand} co-host"
     },
     "martin": {
@@ -68,7 +68,7 @@
       "specialtyTopics": "Platform architecture, team building, tech strategy",
       "imageAlt": "Portrait of {name}, {brand} co-host"
     },
-    "specialty": "SPECIALTY",
+    "specialization": "Specialization",
     "socials": "SOCIALS",
     "xLinkLabel": "X",
     "xProfileAria": "{name} on X (opens in new tab)"

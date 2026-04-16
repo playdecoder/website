@@ -118,7 +118,7 @@ export async function Hosts({ locale }: { locale: string }) {
                 <div className="border-edge mt-auto flex flex-col gap-3 border-t pt-5">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="text-muted font-mono text-xs tracking-widest">
-                      {t("specialty")}
+                      {t("specialization")}
                     </span>
                     <span className="text-edge mx-1">·</span>
                     <span className="text-secondary font-mono text-xs">
@@ -172,7 +172,7 @@ export async function Hosts({ locale }: { locale: string }) {
                 <div className="border-edge mt-auto flex flex-col gap-3 border-t pt-5">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="text-muted font-mono text-xs tracking-widest">
-                      {t("specialty")}
+                      {t("specialization")}
                     </span>
                     <span className="text-edge mx-1">·</span>
                     <span className="text-accent-text font-mono text-xs">
