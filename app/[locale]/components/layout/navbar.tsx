@@ -13,7 +13,15 @@ import { ThemeToggle } from "../../theme-toggle";
 
 import { MobileNavTray } from "./mobile-nav-tray";
 
-const NAV_LOGOS = [
+type NavLogo = {
+  src: string;
+  width: number;
+  height: number;
+  className: string;
+  loading?: "eager";
+};
+
+const NAV_LOGOS: NavLogo[] = [
   {
     src: "/icon.svg",
     width: 128,
@@ -31,6 +39,7 @@ const NAV_LOGOS = [
     width: 359,
     height: 113,
     className: "hidden md:block dark:md:hidden h-11 w-auto max-h-11 object-contain object-left",
+    loading: "eager",
   },
   {
     src: "/logo/wide-dark-crop-v4.svg",
@@ -38,7 +47,7 @@ const NAV_LOGOS = [
     height: 113,
     className: "hidden dark:md:block h-11 w-auto max-h-11 object-contain object-left",
   },
-] as const;
+];
 
 export async function Navbar({ locale = routing.defaultLocale }: { locale?: string }) {
   const t = await getTranslations({ locale, namespace: "nav" });
@@ -60,6 +69,7 @@ export async function Navbar({ locale = routing.defaultLocale }: { locale?: stri
               width={logo.width}
               height={logo.height}
               className={logo.className}
+              loading={logo.loading}
             />
           ))}
         </Link>
