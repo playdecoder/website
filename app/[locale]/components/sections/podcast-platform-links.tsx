@@ -7,13 +7,18 @@ import {
   type PodcastPlatformKey,
 } from "@/lib/podcast-ui";
 import { ROUTES } from "@/lib/routes";
+import { PODCAST_SOCIAL_HREF } from "@/lib/socials";
 
 const PODCAST_PLATFORM_HREF: Record<PodcastPlatformKey, string> = {
-  platformSpotify: "#",
+  platformSpotify: "https://open.spotify.com/show/6v8DEWWuJ8jnXkvqGstr5I",
   platformApple: "#",
-  platformYoutube: "#",
+  platformYoutube: PODCAST_SOCIAL_HREF.socialYoutube,
   platformRss: ROUTES.rssFeed,
 };
+
+function podcastPlatformAnchorProps(href: string): { target?: string; rel?: string } {
+  return href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {};
+}
 
 type Variant = "contact" | "episode";
 
@@ -71,7 +76,12 @@ export function PodcastPlatformLinks({ variant, getLabel, className }: PodcastPl
   return (
     <div className={wrapper}>
       {PODCAST_PLATFORM_KEYS.map((key) => (
-        <a key={key} href={PODCAST_PLATFORM_HREF[key]} className={linkClass[variant]}>
+        <a
+          key={key}
+          href={PODCAST_PLATFORM_HREF[key]}
+          {...podcastPlatformAnchorProps(PODCAST_PLATFORM_HREF[key])}
+          className={linkClass[variant]}
+        >
           <span className={podcastPlatformDotClass(key, variant)} />
           {getLabel(key)}
         </a>
