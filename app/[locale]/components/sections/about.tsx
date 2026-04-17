@@ -45,11 +45,20 @@ export async function About({ locale }: { locale: string }) {
             </blockquote>
 
             <div className="mt-10 grid grid-cols-[repeat(3,minmax(0,1fr))] gap-x-3 gap-y-4 sm:gap-x-4 sm:gap-y-4">
-              {stats.map((stat) => (
+              {stats.map((stat, i) => (
                 <div
                   key={stat.label}
                   className="stat-card flex min-w-0 flex-col items-stretch pt-4 text-center sm:text-left"
                 >
+                  <span className="stat-card__ord justify-center sm:justify-start">
+                    <span className="tabular-nums">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span className="opacity-55">/</span>
+                    <span className="tabular-nums opacity-55">
+                      {String(stats.length).padStart(2, "0")}
+                    </span>
+                  </span>
                   <div className="stat-card__rule bg-accent mb-3 h-0.5 w-full max-sm:origin-center sm:mb-4" />
                   <div className="stat-card__value font-display text-primary mb-1 text-2xl leading-none font-extrabold tabular-nums sm:text-3xl">
                     {stat.value}

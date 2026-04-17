@@ -140,7 +140,7 @@
     "indexRailLabel": "Topics",
     "indexTitleLead": "Topics",
     "indexTitleAccent": "on the wire",
-    "indexIntro": "Every tag is its own carrier wave. Tap a signal — the archive opens filtered, search still live.",
+    "indexIntro": "Pick a topic to see every episode that dives into it.",
     "indexMetaTitle": "Topics — {brand}",
     "indexMetaDescription": "Browse topics from the {brand} podcast and jump into a pre-filtered episode archive.",
     "indexEpisodeCount": "{count, plural, one {# episode} other {# episodes}}",

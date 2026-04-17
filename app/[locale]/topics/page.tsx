@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import type { CSSProperties } from "react";
 
 import { Link } from "@/i18n/navigation";
 import { brandInterpolation } from "@/lib/brand";
@@ -14,6 +15,17 @@ import { Contact } from "../components/sections/contact";
 import { IconArrowRight } from "../components/ui/icons";
 import { LedeIntroParagraph } from "../components/ui/lede-intro-paragraph";
 import { SectionHeading } from "../components/ui/section-heading";
+
+function topicFrequency(slug: string): string {
+  let h = 5381;
+  for (let i = 0; i < slug.length; i++) {
+    h = (h * 33) ^ slug.charCodeAt(i);
+  }
+  const tenths = Math.abs(h) % 210;
+  const whole = 88 + Math.floor(tenths / 10);
+  const dec = tenths % 10;
+  return `${whole}.${dec}`;
+}
 
 export const dynamic = "force-static";
 export const revalidate = false;
@@ -90,85 +102,80 @@ export default async function TopicsIndexPage({ params }: TopicsIndexPageProps) 
           </div>
         </header>
 
-        <ul
+        <ol
           aria-label={t("indexListAria")}
-          className="mx-auto max-w-6xl list-none [column-gap:1.125rem] px-5 py-12 sm:columns-2 md:py-16 xl:columns-3"
+          className="topic-log mx-auto max-w-6xl list-none px-5 md:px-7"
         >
           {entries.map(({ slug, label, episodeCount }, i) => {
-            const bars = topicMicroWaveBars(slug, 11);
+            const bars = topicMicroWaveBars(slug, 32);
             const isHot = episodeCount >= hotThreshold;
+            const indexLabel = String(i + 1).padStart(2, "0");
+            const frequency = topicFrequency(slug);
             return (
               <li
                 key={slug}
-                className="scroll-reveal mb-3 break-inside-avoid sm:mb-[1.125rem]"
-                style={{ animationDelay: `${Math.min(0.45, 0.028 * i)}s` }}
+                className="topic-log__item scroll-reveal"
+                style={{ animationDelay: `${Math.min(0.35, 0.04 * i)}s` }}
               >
                 <Link
                   href={topicPath(slug)}
                   locale={hrefLocale}
                   prefetch
                   aria-label={`${label}. ${t("indexEpisodeCount", { count: episodeCount })}. ${t("indexOpenTopic")}.`}
-                  className={`topics-topic-card group border-edge/75 text-primary focus-visible:outline-secondary hover:border-secondary/45 active:border-secondary/50 relative flex min-h-[4.75rem] w-full items-stretch overflow-hidden rounded-sm border bg-gradient-to-br from-[color-mix(in_srgb,var(--surface)_52%,transparent)] to-transparent shadow-[inset_0_1px_0_color-mix(in_srgb,var(--primary)_5%,transparent)] transition-[border-color,box-shadow,transform] duration-300 hover:shadow-[0_20px_56px_-28px_color-mix(in_srgb,var(--secondary)_42%,transparent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 active:scale-[0.985] dark:from-[color-mix(in_srgb,var(--surface-2)_28%,transparent)] ${
-                    isHot ? "border-l-accent border-l-[3px] pl-0" : ""
-                  }`}
+                  className="topic-log__row focus-visible:outline-secondary focus-visible:outline-2 focus-visible:outline-offset-2"
                 >
-                  <span
-                    className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-                    style={{
-                      background:
-                        "radial-gradient(ellipse 90% 80% at 0% 50%, color-mix(in srgb, var(--secondary) 8%, transparent), transparent 62%)",
-                    }}
-                    aria-hidden
-                  />
-
-                  <div
-                    className="relative flex shrink-0 items-end justify-center gap-px self-stretch px-2.5 py-3 sm:px-3 sm:py-4"
-                    aria-hidden
-                  >
-                    {bars.map((pct, bi) => (
-                      <span
-                        key={bi}
-                        className="topics-topic-card__bar origin-bottom motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:motion-safe:scale-y-[1.14] max-sm:max-h-[2.85rem]"
-                        style={{
-                          height: `${pct}%`,
-                          maxHeight: "3.25rem",
-                          background:
-                            bi % 4 === 0
-                              ? "var(--waveform-accent)"
-                              : bi % 3 === 0
-                                ? "var(--waveform-secondary)"
-                                : "var(--waveform-primary)",
-                          opacity: 0.32 + (bi % 6) * 0.09,
-                        }}
-                      />
-                    ))}
-                  </div>
-
-                  <div className="relative flex min-w-0 flex-1 flex-col justify-center py-3 pr-2 pl-1 sm:py-4 sm:pr-3 sm:pl-0">
-                    <p className="font-display text-primary text-lg leading-[1.15] font-semibold tracking-tight sm:text-xl">
-                      {label}
-                    </p>
-                    <p className="text-muted mt-1.5 font-mono text-[10px] tracking-[0.18em] uppercase sm:text-[11px] sm:tracking-[0.2em]">
-                      {t("indexEpisodeCount", { count: episodeCount })}
-                    </p>
-                  </div>
-
-                  <div className="relative flex shrink-0 items-center pr-2.5 sm:pr-3">
+                  <div className="topic-log__index">
                     <span
-                      className="border-edge/70 text-muted group-hover:border-accent/40 group-hover:text-accent-text flex size-9 shrink-0 items-center justify-center rounded-sm border bg-[color-mix(in_srgb,var(--surface-2)_65%,transparent)] text-base font-medium transition-all duration-300 group-hover:-translate-y-px group-hover:shadow-[0_6px_20px_-8px_color-mix(in_srgb,var(--accent)_35%,transparent)] sm:size-10"
+                      className={`topic-log__index-num${isHot ? " topic-log__index-num--hot" : ""}`}
                       aria-hidden
                     >
-                      <IconArrowRight
-                        size={15}
-                        className="transition-transform duration-300 group-hover:translate-x-[1px]"
-                      />
+                      {indexLabel}
+                      {isHot && <span className="topic-log__pulse" aria-hidden />}
+                    </span>
+                    <span className="topic-log__freq" aria-hidden>
+                      {frequency} MHz
+                    </span>
+                  </div>
+
+                  <div className="topic-log__main">
+                    <h2 className="topic-log__label">{label}</h2>
+                    <div className="topic-log__wave" aria-hidden>
+                      {bars.map((pct, bi) => (
+                        <span
+                          key={bi}
+                          className="topic-log__bar"
+                          style={
+                            {
+                              height: `${pct}%`,
+                              background:
+                                bi % 7 === 0
+                                  ? "var(--waveform-accent)"
+                                  : bi % 3 === 0
+                                    ? "var(--waveform-secondary)"
+                                    : "var(--waveform-primary)",
+                              opacity: 0.42 + (bi % 6) * 0.085,
+                              "--bar-index": bi,
+                            } as CSSProperties
+                          }
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="topic-log__meta">
+                    <span className="topic-log__count-unit" aria-hidden>
+                      {t("indexEpisodeCount", { count: episodeCount })}
+                    </span>
+                    <span className="topic-log__cta" aria-hidden>
+                      {t("indexOpenTopic")}
+                      <IconArrowRight size={12} className="topic-log__cta-arrow shrink-0" />
                     </span>
                   </div>
                 </Link>
               </li>
             );
           })}
-        </ul>
+        </ol>
 
         <Contact locale={locale} />
       </main>

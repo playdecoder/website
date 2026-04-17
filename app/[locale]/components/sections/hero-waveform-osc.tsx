@@ -380,7 +380,28 @@ function smoothTraceY(dst: Float32Array, src: Float32Array, startX: number, w: n
   }
 }
 
-const FRAGMENT_CHARS = ["0", "1", "A", "F", "E", "3", "C", "8", "B", "2", "7", "?"] as const;
+const FRAGMENT_CHARS = ["•", "—", "•", "—", "•", "·"] as const;
+
+const DECODE_TARGET = "DEKODÉR";
+const DECODE_SCRAMBLE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#▓▚¤§∆◊•—";
+const DECODE_RESOLVE_PER_CHAR = 0.42;
+const DECODE_HOLD = 2.6;
+const DECODE_CYCLE = DECODE_TARGET.length * DECODE_RESOLVE_PER_CHAR + DECODE_HOLD;
+
+function decodeReadout(elapsed: number): string {
+  const cycle = elapsed % DECODE_CYCLE;
+  let out = "";
+  for (let i = 0; i < DECODE_TARGET.length; i++) {
+    const lockAt = (i + 1) * DECODE_RESOLVE_PER_CHAR;
+    if (cycle >= lockAt) {
+      out += DECODE_TARGET[i];
+      continue;
+    }
+    const tick = Math.floor(elapsed * 22 + i * 11);
+    out += DECODE_SCRAMBLE[tick % DECODE_SCRAMBLE.length];
+  }
+  return out;
+}
 
 function buildFragments(w: number, h: number): FragmentCell[] {
   const zoneW = w * DECODE_START;
@@ -602,6 +623,8 @@ export function HeroWaveformOsc() {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rootRef = useRef<HTMLDivElement>(null);
+  const readoutRef = useRef<HTMLSpanElement>(null);
+  const readoutLastRef = useRef<string>("");
   const animRef = useRef<number | null>(null);
   const stateRef = useRef<RenderState | null>(null);
   const elapsedRef = useRef(0);
@@ -669,6 +692,14 @@ export function HeroWaveformOsc() {
       drawChannel(ctx, s, elapsed, 0);
       drawChannel(ctx, s, elapsed, 1);
       drawChannel(ctx, s, elapsed, 2);
+      const el = readoutRef.current;
+      if (el) {
+        const next = decodeReadout(elapsed);
+        if (next !== readoutLastRef.current) {
+          el.textContent = next;
+          readoutLastRef.current = next;
+        }
+      }
     };
 
     const syncSize = () => {
@@ -747,9 +778,18 @@ export function HeroWaveformOsc() {
             <span className="hero-osc__label hero-osc__label--b">CH2</span>
             <span className="hero-osc__label hero-osc__label--c">CH3</span>
           </div>
-          <div className="hero-osc__status">
+          <div className="hero-osc__status" aria-label="DECODE">
             <span className="hero-osc__dot" />
-            <span>DECODE</span>
+            <span className="hero-osc__readout">
+              <span
+                className="hero-osc__readout-text"
+                ref={readoutRef}
+                aria-hidden
+              >
+                {DECODE_TARGET}
+              </span>
+              <span className="hero-osc__readout-cursor" aria-hidden />
+            </span>
           </div>
         </div>
         <span className="hero-osc__corner hero-osc__corner--tl" />

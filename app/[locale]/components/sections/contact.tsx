@@ -47,6 +47,22 @@ export async function Contact({ locale }: { locale: string }) {
           <span className="text-muted font-normal">{t("headingLine2")}</span>
         </h2>
 
+        <div className="mb-7 flex justify-center">
+          <span className="section-broadcast-strip">
+            <span className="section-broadcast-strip__live">
+              <span className="section-broadcast-strip__live-dot" aria-hidden />
+              ON&nbsp;AIR
+            </span>
+            <span className="section-broadcast-strip__sep" aria-hidden />
+            <span className="section-broadcast-strip__freq">
+              <span>108.2</span>
+              <span className="section-broadcast-strip__unit">MHz</span>
+            </span>
+            <span className="section-broadcast-strip__sep" aria-hidden />
+            <span>Decoder Signal</span>
+          </span>
+        </div>
+
         <a
           href={SITE_CONTACT_MAILTO}
           className="text-accent-text hover-underline mb-14 inline-block font-mono transition-opacity hover:opacity-75"

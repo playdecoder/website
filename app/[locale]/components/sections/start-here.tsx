@@ -66,11 +66,13 @@ export async function StartHere({ locale }: { locale: string }) {
           {picks.map(({ key, episode }, index) =>
             (() => {
               const tone = curatedCardTone[key];
+              const ordinal = String(index + 1).padStart(2, "0");
+              const total = String(picks.length).padStart(2, "0");
 
               return (
                 <article
                   key={key}
-                  className={`border-edge bg-surface/35 scroll-reveal group active:border-secondary/40 relative flex h-full flex-col overflow-hidden rounded-sm border p-6 transition-colors duration-300 ${tone.borderClass}`}
+                  className={`curated-card border-edge bg-surface/35 scroll-reveal group active:border-secondary/40 relative flex h-full flex-col overflow-hidden rounded-sm border p-6 transition-colors duration-300 ${tone.borderClass}`}
                   style={{ animationDelay: `${0.05 * index}s` }}
                 >
                   <div
@@ -78,6 +80,13 @@ export async function StartHere({ locale }: { locale: string }) {
                     aria-hidden
                     style={{ background: tone.glow }}
                   />
+
+                  <div
+                    className="pointer-events-none absolute top-4 right-5 z-0 select-none opacity-90"
+                    aria-hidden
+                  >
+                    <span className="curated-card__numeral">{ordinal}</span>
+                  </div>
 
                   <div className="relative mb-5 flex items-center justify-between gap-3">
                     <span
@@ -90,8 +99,12 @@ export async function StartHere({ locale }: { locale: string }) {
                       />
                       {t(`cards.${key}.audience`)}
                     </span>
-                    <span className={`font-mono text-xs tracking-widest ${tone.episodeClass}`}>
-                      {episode.id}
+                    <span
+                      className={`font-mono text-[10px] tracking-[0.22em] uppercase ${tone.episodeClass}`}
+                      aria-label={`Pick ${ordinal} of ${total}`}
+                    >
+                      <span className="tabular-nums">{ordinal}</span>
+                      <span className="opacity-50"> / {total}</span>
                     </span>
                   </div>
 
@@ -118,8 +131,10 @@ export async function StartHere({ locale }: { locale: string }) {
                   </div>
 
                   <div className="text-muted relative mb-5 flex flex-wrap items-center gap-3 font-mono text-xs tracking-widest">
+                    <span className="text-accent-text/90 font-medium">{episode.id}</span>
+                    <span aria-hidden className="opacity-60">·</span>
                     <span>{formatEpisodeDate(episode.date, locale)}</span>
-                    <span aria-hidden>·</span>
+                    <span aria-hidden className="opacity-60">·</span>
                     <span>{formatEpisodeDuration(episode.duration)}</span>
                   </div>
 

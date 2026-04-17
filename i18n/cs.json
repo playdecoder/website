@@ -141,7 +141,7 @@
     "indexRailLabel": "Témata",
     "indexTitleLead": "Témata",
     "indexTitleAccent": "na drátě",
-    "indexIntro": "Každý štítek je jiná frekvence. Klepněte na signál — archiv se otevře už s filtrem a hledáním.",
+    "indexIntro": "Vyberte téma a podívejte se na všechny epizody, ve kterých jsme se mu věnovali.",
     "indexMetaTitle": "Témata — {brand}",
     "indexMetaDescription": "Procházejte témata podcastu {brand} a skočte rovnou do přefiltrovaného archivu epizod.",
     "indexEpisodeCount": "{count, plural, one {# epizoda} few {# epizody} other {# epizod}}",
