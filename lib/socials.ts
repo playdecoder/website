@@ -2,7 +2,7 @@ export const SITE_CONTACT_EMAIL = "studio@dekoder.fm";
 
 export const SITE_CONTACT_MAILTO = `mailto:${SITE_CONTACT_EMAIL}`;
 
-export const PODCAST_SOCIAL_KEYS = ["socialTwitter", "socialInstagram"] as const;
+export const PODCAST_SOCIAL_KEYS = ["socialTwitter", "socialInstagram", "socialYoutube"] as const;
 export type PodcastSocialKey = (typeof PODCAST_SOCIAL_KEYS)[number];
 
 export const PODCAST_SOCIAL_HREF: Record<PodcastSocialKey, string> = {
