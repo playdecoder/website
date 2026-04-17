@@ -51,9 +51,7 @@ export async function About({ locale }: { locale: string }) {
                   className="stat-card flex min-w-0 flex-col items-stretch pt-4 text-center sm:text-left"
                 >
                   <span className="stat-card__ord justify-center sm:justify-start">
-                    <span className="tabular-nums">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
+                    <span className="tabular-nums">{String(i + 1).padStart(2, "0")}</span>
                     <span className="opacity-55">/</span>
                     <span className="tabular-nums opacity-55">
                       {String(stats.length).padStart(2, "0")}

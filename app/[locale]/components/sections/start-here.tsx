@@ -82,7 +82,7 @@ export async function StartHere({ locale }: { locale: string }) {
                   />
 
                   <div
-                    className="pointer-events-none absolute top-4 right-5 z-0 select-none opacity-90"
+                    className="pointer-events-none absolute top-4 right-5 z-0 opacity-90 select-none"
                     aria-hidden
                   >
                     <span className="curated-card__numeral">{ordinal}</span>
@@ -132,9 +132,13 @@ export async function StartHere({ locale }: { locale: string }) {
 
                   <div className="text-muted relative mb-5 flex flex-wrap items-center gap-3 font-mono text-xs tracking-widest">
                     <span className="text-accent-text/90 font-medium">{episode.id}</span>
-                    <span aria-hidden className="opacity-60">·</span>
+                    <span aria-hidden className="opacity-60">
+                      ·
+                    </span>
                     <span>{formatEpisodeDate(episode.date, locale)}</span>
-                    <span aria-hidden className="opacity-60">·</span>
+                    <span aria-hidden className="opacity-60">
+                      ·
+                    </span>
                     <span>{formatEpisodeDuration(episode.duration)}</span>
                   </div>
 

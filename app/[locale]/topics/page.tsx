@@ -5,7 +5,7 @@ import type { CSSProperties } from "react";
 import { Link } from "@/i18n/navigation";
 import { brandInterpolation } from "@/lib/brand";
 import { episodes } from "@/lib/episode-catalog";
-import { getTopicIndexEntries, topicMicroWaveBars } from "@/lib/episode-topics";
+import { getTopicIndexEntries } from "@/lib/episode-topics";
 import { linkLocale } from "@/lib/link-locale";
 import { localizedAlternates } from "@/lib/metadata-alternates";
 import { ROUTES, topicPath } from "@/lib/routes";
@@ -15,17 +15,6 @@ import { Contact } from "../components/sections/contact";
 import { IconArrowRight } from "../components/ui/icons";
 import { LedeIntroParagraph } from "../components/ui/lede-intro-paragraph";
 import { SectionHeading } from "../components/ui/section-heading";
-
-function topicFrequency(slug: string): string {
-  let h = 5381;
-  for (let i = 0; i < slug.length; i++) {
-    h = (h * 33) ^ slug.charCodeAt(i);
-  }
-  const tenths = Math.abs(h) % 210;
-  const whole = 88 + Math.floor(tenths / 10);
-  const dec = tenths % 10;
-  return `${whole}.${dec}`;
-}
 
 export const dynamic = "force-static";
 export const revalidate = false;
@@ -102,80 +91,46 @@ export default async function TopicsIndexPage({ params }: TopicsIndexPageProps) 
           </div>
         </header>
 
-        <ol
+        <ul
           aria-label={t("indexListAria")}
-          className="topic-log mx-auto max-w-6xl list-none px-5 md:px-7"
+          className="topic-wall scroll-reveal mx-auto max-w-6xl list-none px-5 md:px-8"
         >
-          {entries.map(({ slug, label, episodeCount }, i) => {
-            const bars = topicMicroWaveBars(slug, 32);
+          {entries.map(({ slug, label, episodeCount }) => {
+            const ratio = maxCount > 0 ? Math.pow(episodeCount / maxCount, 0.62) : 0;
+            const weight = ratio > 0.82 ? 700 : ratio > 0.55 ? 600 : ratio > 0.28 ? 500 : 400;
             const isHot = episodeCount >= hotThreshold;
-            const indexLabel = String(i + 1).padStart(2, "0");
-            const frequency = topicFrequency(slug);
+            const isMute = ratio < 0.3;
+            const classes = [
+              "topic-wall__link",
+              isHot ? "topic-wall__link--hot" : "",
+              isMute ? "topic-wall__link--mute" : "",
+            ]
+              .filter(Boolean)
+              .join(" ");
             return (
-              <li
-                key={slug}
-                className="topic-log__item scroll-reveal"
-                style={{ animationDelay: `${Math.min(0.35, 0.04 * i)}s` }}
-              >
+              <li key={slug} className="topic-wall__item">
                 <Link
                   href={topicPath(slug)}
                   locale={hrefLocale}
                   prefetch
                   aria-label={`${label}. ${t("indexEpisodeCount", { count: episodeCount })}. ${t("indexOpenTopic")}.`}
-                  className="topic-log__row focus-visible:outline-secondary focus-visible:outline-2 focus-visible:outline-offset-2"
+                  className={classes}
+                  style={
+                    {
+                      "--topic-scale": ratio.toFixed(3),
+                      fontWeight: weight,
+                    } as CSSProperties
+                  }
                 >
-                  <div className="topic-log__index">
-                    <span
-                      className={`topic-log__index-num${isHot ? " topic-log__index-num--hot" : ""}`}
-                      aria-hidden
-                    >
-                      {indexLabel}
-                      {isHot && <span className="topic-log__pulse" aria-hidden />}
-                    </span>
-                    <span className="topic-log__freq" aria-hidden>
-                      {frequency} MHz
-                    </span>
-                  </div>
-
-                  <div className="topic-log__main">
-                    <h2 className="topic-log__label">{label}</h2>
-                    <div className="topic-log__wave" aria-hidden>
-                      {bars.map((pct, bi) => (
-                        <span
-                          key={bi}
-                          className="topic-log__bar"
-                          style={
-                            {
-                              height: `${pct}%`,
-                              background:
-                                bi % 7 === 0
-                                  ? "var(--waveform-accent)"
-                                  : bi % 3 === 0
-                                    ? "var(--waveform-secondary)"
-                                    : "var(--waveform-primary)",
-                              opacity: 0.42 + (bi % 6) * 0.085,
-                              "--bar-index": bi,
-                            } as CSSProperties
-                          }
-                        />
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="topic-log__meta">
-                    <span className="topic-log__count-unit" aria-hidden>
-                      {t("indexEpisodeCount", { count: episodeCount })}
-                    </span>
-                    <span className="topic-log__cta" aria-hidden>
-                      {t("indexOpenTopic")}
-                      <IconArrowRight size={12} className="topic-log__cta-arrow shrink-0" />
-                    </span>
-                  </div>
+                  <span className="topic-wall__label">{label}</span>
+                  <span className="topic-wall__count" aria-hidden>
+                    {episodeCount}
+                  </span>
                 </Link>
               </li>
             );
           })}
-        </ol>
+        </ul>
 
         <Contact locale={locale} />
       </main>

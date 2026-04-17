@@ -781,11 +781,7 @@ export function HeroWaveformOsc() {
           <div className="hero-osc__status" aria-label="DECODE">
             <span className="hero-osc__dot" />
             <span className="hero-osc__readout">
-              <span
-                className="hero-osc__readout-text"
-                ref={readoutRef}
-                aria-hidden
-              >
+              <span className="hero-osc__readout-text" ref={readoutRef} aria-hidden>
                 {DECODE_TARGET}
               </span>
               <span className="hero-osc__readout-cursor" aria-hidden />
