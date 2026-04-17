@@ -52,7 +52,18 @@ export async function Hero({ locale }: { locale: string }) {
               <LogoD />
             </span>
             <span className="hero-title__word">
-              {BRAND_NAME.slice(1).toLocaleUpperCase("cs-CZ")}
+              {BRAND_NAME.slice(1)
+                .toLocaleUpperCase("cs-CZ")
+                .split("")
+                .map((char, i) => (
+                  <span
+                    key={i}
+                    className="hero-title__letter"
+                    style={{ animationDelay: `${0.4 + i * 0.052}s` }}
+                  >
+                    {char}
+                  </span>
+                ))}
             </span>
           </span>
         </h1>

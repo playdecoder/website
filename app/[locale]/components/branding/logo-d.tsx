@@ -37,11 +37,40 @@ export function LogoD({ variant = "hero", className }: LogoDProps) {
       )}
       style={variant === "hero" ? logoDLayoutHero : undefined}
     >
-      <rect x="31.0918" y="98.0791" width="163" height="153" rx="23" fill="#D4FF3F" />
-      <rect x="67.0918" y="108.079" width="26" height="143" fill="#5B4DFF" />
-      <rect x="109.092" y="108.079" width="17" height="143" fill="#5B4DFF" />
-      <rect x="142.092" y="108.079" width="29" height="143" fill="#5B4DFF" />
-      <path d={dPathV4} className="fill-black dark:fill-white" />
+      <rect
+        className="logo-d__bg"
+        x="31.0918"
+        y="98.0791"
+        width="163"
+        height="153"
+        rx="23"
+        fill="#D4FF3F"
+      />
+      <rect
+        className="logo-d__bar logo-d__bar--1"
+        x="67.0918"
+        y="108.079"
+        width="26"
+        height="143"
+        fill="#5B4DFF"
+      />
+      <rect
+        className="logo-d__bar logo-d__bar--2"
+        x="109.092"
+        y="108.079"
+        width="17"
+        height="143"
+        fill="#5B4DFF"
+      />
+      <rect
+        className="logo-d__bar logo-d__bar--3"
+        x="142.092"
+        y="108.079"
+        width="29"
+        height="143"
+        fill="#5B4DFF"
+      />
+      <path d={dPathV4} className="logo-d__outline fill-black dark:fill-white" />
     </svg>
   );
 }

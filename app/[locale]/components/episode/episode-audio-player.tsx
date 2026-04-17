@@ -229,12 +229,15 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
       return () => window.removeEventListener("hashchange", onHashChange);
     }, [seek, chapters, ctxEpisode?.id, episodeId]);
 
-    const setScrubFromPercent = useCallback((v: number) => {
-      scrubValueRef.current = v;
-      if (timelineDuration > 0) {
-        setScrubPosition((v / 100) * timelineDuration);
-      }
-    }, [timelineDuration]);
+    const setScrubFromPercent = useCallback(
+      (v: number) => {
+        scrubValueRef.current = v;
+        if (timelineDuration > 0) {
+          setScrubPosition((v / 100) * timelineDuration);
+        }
+      },
+      [timelineDuration],
+    );
 
     const onProgressChange = useCallback(
       (v: number) => {
@@ -247,13 +250,16 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
       [seek, setScrubFromPercent, timelineDuration],
     );
 
-    const onProgressCommit = useCallback((v?: number) => {
-      const nextValue = v ?? Number(progressInputRef.current?.value ?? scrubValueRef.current);
-      if (timelineDuration > 0) {
-        seek((nextValue / 100) * timelineDuration);
-      }
-      setScrubPosition(null);
-    }, [seek, timelineDuration]);
+    const onProgressCommit = useCallback(
+      (v?: number) => {
+        const nextValue = v ?? Number(progressInputRef.current?.value ?? scrubValueRef.current);
+        if (timelineDuration > 0) {
+          seek((nextValue / 100) * timelineDuration);
+        }
+        setScrubPosition(null);
+      },
+      [seek, timelineDuration],
+    );
 
     const commitProgressAfterPointer = useCallback(() => {
       pointerScrubbingRef.current = false;

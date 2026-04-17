@@ -432,6 +432,63 @@
   }
 }
 
+@keyframes logoDBgIn {
+  from {
+    clip-path: circle(0% at 50% 52%);
+  }
+  to {
+    clip-path: circle(80% at 50% 52%);
+  }
+}
+
+@keyframes logoDBarIn {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes logoDOutlineIn {
+  from {
+    opacity: 0;
+    transform: scale(1.07);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes logoDFlash {
+  0% {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  30% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.4);
+  }
+}
+
+@keyframes heroLetterIn {
+  from {
+    opacity: 0;
+    transform: translateY(0.22em);
+    filter: blur(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
 @keyframes heroBarWave {
   0% {
     transform: scaleY(0.08);
@@ -825,15 +882,56 @@ body {
 .hero-title__mark {
   display: inline-flex;
   align-items: baseline;
-  animation: heroMarkIn 0.9s cubic-bezier(0.22, 1, 0.36, 1) both 0.08s;
-  transform-origin: center;
+  position: relative;
+}
+
+.hero-title__mark::after {
+  content: "";
+  position: absolute;
+  inset: -18% -10%;
+  background: radial-gradient(ellipse at 44% 58%, rgba(212, 255, 63, 0.42) 0%, transparent 62%);
+  animation: logoDFlash 0.75s ease-out both 0.44s;
+  pointer-events: none;
+  border-radius: 50%;
+}
+
+/* SVG inner element animations — bars rise like signal levels */
+.hero-title__mark .logo-d__bg {
+  transform-box: fill-box;
+  transform-origin: center center;
+  animation: logoDBgIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both 0.05s;
+}
+
+.hero-title__mark .logo-d__bar {
+  transform-box: fill-box;
+  transform-origin: center 100%;
+}
+
+.hero-title__mark .logo-d__bar--1 {
+  animation: logoDBarIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both 0.17s;
+}
+
+.hero-title__mark .logo-d__bar--2 {
+  animation: logoDBarIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both 0.23s;
+}
+
+.hero-title__mark .logo-d__bar--3 {
+  animation: logoDBarIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both 0.29s;
+}
+
+.hero-title__mark .logo-d__outline {
+  transform-box: fill-box;
+  transform-origin: center center;
+  animation: logoDOutlineIn 0.48s cubic-bezier(0.22, 1, 0.36, 1) both 0.26s;
 }
 
 .hero-title__word {
   display: inline-block;
-  animation:
-    heroWordIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) both 0.18s,
-    fadeUp 0.7s ease both 0.18s;
+}
+
+.hero-title__letter {
+  display: inline-block;
+  animation: heroLetterIn 0.48s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .host-photo-shell {
@@ -2296,6 +2394,11 @@ html[data-episode-playing="true"] .waveform-bar--listen-bg {
 @media (prefers-reduced-motion: reduce) {
   .premium-cta::after,
   .hero-title__mark,
+  .hero-title__mark::after,
+  .hero-title__mark .logo-d__bg,
+  .hero-title__mark .logo-d__bar,
+  .hero-title__mark .logo-d__outline,
+  .hero-title__letter,
   .hero-title__word,
   .host-card,
   .host-card__photo,

@@ -22,6 +22,15 @@ type GradCache = { main: CanvasGradient; glow: CanvasGradient };
 
 type PartialBucket = { main: CanvasGradient; glow: CanvasGradient };
 
+type FragmentCell = {
+  x: number;
+  y: number;
+  char: string;
+  speed: number;
+  phase: number;
+  maxAlpha: number;
+};
+
 type RenderState = {
   graticule: OffscreenCanvas;
   nlCache: Float32Array;
@@ -38,6 +47,11 @@ type RenderState = {
   h: number;
   cy: number;
   amp: number;
+  dark: boolean;
+  fragments: FragmentCell[];
+  fragmentFont: string;
+  decodeScanX0: number;
+  decodeScanX1: number;
 };
 
 const DECODE_START = 0.32;
@@ -63,7 +77,8 @@ const W4 = 0.06;
 function fillNlCache(out: Float32Array, w: number): void {
   const invW = 1 / w;
   for (let px = 0; px <= w + 1; px++) {
-    const s = (px * invW - DECODE_START) * INV_DECODE_RANGE;
+    // reversed: left side = full noise, right side = clean
+    const s = 1 - (px * invW - DECODE_START) * INV_DECODE_RANGE;
     if (s <= 0) out[px] = 0;
     else if (s >= 1) out[px] = 1;
     else out[px] = s * s * s * (s * (s * 6 - 15) + 10);
@@ -270,11 +285,12 @@ function buildGraticule(w: number, h: number, dark: boolean): OffscreenCanvas {
   ctx.fillStyle = dg;
   ctx.fillRect(dS, 0, dE - dS, h);
 
+  // dashed line at right boundary of decode zone — where clean signal emerges
   ctx.strokeStyle = `rgba(30,58,255,${lineA})`;
   ctx.setLineDash([2, 5]);
   ctx.beginPath();
-  ctx.moveTo(dS, 0);
-  ctx.lineTo(dS, h);
+  ctx.moveTo(dE, 0);
+  ctx.lineTo(dE, h);
   ctx.stroke();
   ctx.setLineDash([]);
 
@@ -284,25 +300,25 @@ function buildGraticule(w: number, h: number, dark: boolean): OffscreenCanvas {
 function addMainGlowStops(main: CanvasGradient, glow: CanvasGradient, ch: Channel): void {
   const [r, g, b] = ch.rgb;
   const [gr, gg, gb] = ch.glowRgb;
-  main.addColorStop(0.0, `rgba(${r},${g},${b},0)`);
-  main.addColorStop(0.18, `rgba(${r},${g},${b},${ch.alpha * 0.14})`);
-  main.addColorStop(0.45, `rgba(${r},${g},${b},${ch.alpha * 0.42})`);
-  main.addColorStop(0.8, `rgba(${r},${g},${b},${ch.alpha * 0.78})`);
+  // garbage on left (subdued), decoded/clean on right (bright)
+  main.addColorStop(0.0, `rgba(${r},${g},${b},${ch.alpha * 0.32})`);
+  main.addColorStop(0.28, `rgba(${r},${g},${b},${ch.alpha * 0.4})`);
+  main.addColorStop(0.58, `rgba(${r},${g},${b},${ch.alpha * 0.78})`);
   main.addColorStop(1.0, `rgba(${r},${g},${b},${ch.alpha * 0.88})`);
-  glow.addColorStop(0.0, `rgba(${gr},${gg},${gb},0)`);
-  glow.addColorStop(0.35, `rgba(${gr},${gg},${gb},${ch.glowAlpha * 0.12})`);
-  glow.addColorStop(0.72, `rgba(${gr},${gg},${gb},${ch.glowAlpha * 0.28})`);
+  glow.addColorStop(0.0, `rgba(${gr},${gg},${gb},${ch.glowAlpha * 0.1})`);
+  glow.addColorStop(0.45, `rgba(${gr},${gg},${gb},${ch.glowAlpha * 0.22})`);
   glow.addColorStop(1.0, `rgba(${gr},${gg},${gb},${ch.glowAlpha * 0.4})`);
 }
 
 function addPartialStops(main: CanvasGradient, glow: CanvasGradient, ch: Channel): void {
   const [r, g, b] = ch.rgb;
   const [gr, gg, gb] = ch.glowRgb;
-  main.addColorStop(0, `rgba(${r},${g},${b},0)`);
-  main.addColorStop(0.4, `rgba(${r},${g},${b},${ch.alpha * 0.32})`);
+  // gradient from x=0 (dim garbage) to x=endX (bright decoded)
+  main.addColorStop(0, `rgba(${r},${g},${b},${ch.alpha * 0.32})`);
+  main.addColorStop(0.5, `rgba(${r},${g},${b},${ch.alpha * 0.6})`);
   main.addColorStop(1, `rgba(${r},${g},${b},${ch.alpha * 0.88})`);
-  glow.addColorStop(0, `rgba(${gr},${gg},${gb},0)`);
-  glow.addColorStop(0.4, `rgba(${gr},${gg},${gb},${ch.glowAlpha * 0.14})`);
+  glow.addColorStop(0, `rgba(${gr},${gg},${gb},${ch.glowAlpha * 0.08})`);
+  glow.addColorStop(0.5, `rgba(${gr},${gg},${gb},${ch.glowAlpha * 0.22})`);
   glow.addColorStop(1, `rgba(${gr},${gg},${gb},${ch.glowAlpha * 0.4})`);
 }
 
@@ -318,9 +334,10 @@ function buildPartialGradientTable(
     const ch = channels[ci]!;
     const row = out[ci]!;
     for (let b = 0; b < n; b++) {
-      const sx = Math.min(b * bucketPx, w);
-      const main = ctx.createLinearGradient(sx, 0, w, 0);
-      const glow = ctx.createLinearGradient(sx, 0, w, 0);
+      // reversed: head at x=0, tail at endX — gradient runs left to right
+      const ex = Math.min(b * bucketPx, w);
+      const main = ctx.createLinearGradient(0, 0, ex, 0);
+      const glow = ctx.createLinearGradient(0, 0, ex, 0);
       addPartialStops(main, glow, ch);
       row.push({ main, glow });
     }
@@ -361,6 +378,70 @@ function smoothTraceY(dst: Float32Array, src: Float32Array, startX: number, w: n
     const i4 = px + 2 > hi ? hi : px + 2;
     dst[px] = W0 * src[i0]! + W1 * src[i1]! + W2 * src[px]! + W3 * src[i3]! + W4 * src[i4]!;
   }
+}
+
+const FRAGMENT_CHARS = ["0", "1", "A", "F", "E", "3", "C", "8", "B", "2", "7", "?"] as const;
+
+function buildFragments(w: number, h: number): FragmentCell[] {
+  const zoneW = w * DECODE_START;
+  const cols = 8;
+  const rows = 6;
+  const cellW = zoneW / cols;
+  const cellH = h / rows;
+  const out: FragmentCell[] = [];
+  for (let col = 0; col < cols; col++) {
+    for (let row = 0; row < rows; row++) {
+      const seed = col * 31 + row * 17;
+      if (seed % 3 === 0) continue; // natural sparsity
+      const xNorm = (col + 0.5) / cols;
+      const edgeFade = 1 - Math.max(0, (xNorm - 0.6) / 0.4);
+      out.push({
+        x: (col + 0.5) * cellW,
+        y: (row + 0.5) * cellH,
+        char: FRAGMENT_CHARS[seed % FRAGMENT_CHARS.length]!,
+        speed: 0.38 + (seed % 13) * 0.07,
+        phase: seed * 0.618,
+        maxAlpha: 0.28 * edgeFade,
+      });
+    }
+  }
+  return out;
+}
+
+function drawFragments(
+  ctx: CanvasRenderingContext2D,
+  fragments: FragmentCell[],
+  elapsed: number,
+  dark: boolean,
+  font: string,
+): void {
+  ctx.font = font;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  const color = dark ? "40,72,255" : "20,45,190";
+  for (const f of fragments) {
+    const a = f.maxAlpha * (0.2 + 0.8 * (0.5 + 0.5 * Math.sin(elapsed * f.speed + f.phase)));
+    if (a < 0.012) continue;
+    ctx.fillStyle = `rgba(${color},${a.toFixed(3)})`;
+    ctx.fillText(f.char, f.x, f.y);
+  }
+}
+
+function drawDecodeScan(
+  ctx: CanvasRenderingContext2D,
+  x0: number,
+  x1: number,
+  h: number,
+  elapsed: number,
+  dark: boolean,
+): void {
+  // beam oscillates within the decode zone
+  const t = elapsed * 0.72;
+  const x = x0 + (x1 - x0) * (0.5 + 0.5 * Math.sin(t));
+  const pulse = 0.5 + 0.5 * Math.sin(elapsed * 3.8 + 1.1);
+  const a = ((dark ? 0.55 : 0.4) * (0.45 + 0.55 * pulse)).toFixed(3);
+  ctx.fillStyle = dark ? `rgba(235,255,40,${a})` : `rgba(60,75,0,${a})`;
+  ctx.fillRect(x - 0.75, 0, 1.5, h);
 }
 
 function buildRenderState(
@@ -407,6 +488,11 @@ function buildRenderState(
     h,
     cy,
     amp,
+    dark,
+    fragments: buildFragments(w, h),
+    fragmentFont: `${Math.round(Math.max(7, h / 14))}px "Courier New", monospace`,
+    decodeScanX0: w * DECODE_START,
+    decodeScanX1: w * DECODE_END,
   };
 }
 
@@ -435,24 +521,24 @@ function drawChannel(
   if (visibleWidth < 2) return;
 
   const filled = visibleWidth >= w;
-  const startX = filled ? 0 : (w - visibleWidth) | 0;
+  // reversed: head at x=0, signal fills rightward
+  const endX = filled ? w : visibleWidth | 0;
 
-  const t0 = elapsed - w * INV_SCROLL;
   const na = ch.noiseAmp;
   const phase = ch.noisePhase;
 
-  let px = startX;
-  for (; px <= w; px++) {
+  // reversed time: px=0 = current (head), px increases = older data
+  for (let px = 0; px <= endX; px++) {
     const nl = nlCache[px]!;
-    const t = t0 + px * INV_SCROLL;
+    const t = elapsed - px * INV_SCROLL;
     let y = signalSample(chIdx, t);
     if (nl > 0.008) y += pNoise(t, phase) * na * nl;
     yBuf[px] = cy - y * amp;
   }
 
-  smoothTraceY(ySmooth, yBuf, startX, w);
+  smoothTraceY(ySmooth, yBuf, 0, endX);
 
-  const yNow = yBuf[w]!;
+  const yNow = yBuf[0]!;
   const instAmp = Math.abs(yNow - cy) / amp;
   const clampedAmp = instAmp > 1 ? 1 : instAmp;
 
@@ -462,7 +548,7 @@ function drawChannel(
     mainGrad = gradCache[chIdx]!.main;
     glowGrad = gradCache[chIdx]!.glow;
   } else {
-    const bi = (startX / partialBucketPx) | 0;
+    const bi = (endX / partialBucketPx) | 0;
     const row = partialByCh[chIdx]!;
     const idx = bi < partialBucketCount ? bi : partialBucketCount - 1;
     const bucket = row[idx]!;
@@ -471,8 +557,8 @@ function drawChannel(
   }
 
   ctx.beginPath();
-  ctx.moveTo(startX, ySmooth[startX]!);
-  for (px = startX + 1; px <= w; px++) ctx.lineTo(px, ySmooth[px]!);
+  ctx.moveTo(0, ySmooth[0]!);
+  for (let px = 1; px <= endX; px++) ctx.lineTo(px, ySmooth[px]!);
 
   ctx.save();
   ctx.globalCompositeOperation = glowBlend;
@@ -493,7 +579,8 @@ function drawChannel(
   if (visibleWidth > 8) {
     const [r, g, b] = ch.rgb;
     const [gr, gg, gb] = ch.glowRgb;
-    const dotX = w - 1;
+    // dot at head: x=0 (left edge)
+    const dotX = 0;
     const haloR = ch.glowWidth * 0.4 * (0.58 + 0.2 * clampedAmp);
 
     ctx.save();
@@ -577,6 +664,8 @@ export function HeroWaveformOsc() {
       ctx.fillStyle = s.bg;
       ctx.fillRect(0, 0, s.w, s.h);
       ctx.drawImage(s.graticule, 0, 0);
+      drawFragments(ctx, s.fragments, elapsed, s.dark, s.fragmentFont);
+      drawDecodeScan(ctx, s.decodeScanX0, s.decodeScanX1, s.h, elapsed, s.dark);
       drawChannel(ctx, s, elapsed, 0);
       drawChannel(ctx, s, elapsed, 1);
       drawChannel(ctx, s, elapsed, 2);

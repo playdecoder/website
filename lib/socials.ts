@@ -1,16 +1,14 @@
-const SITE_ORIGIN = "https://dekoder.fm";
-
 export const SITE_CONTACT_EMAIL = "studio@dekoder.fm";
 
 export const SITE_CONTACT_MAILTO = `mailto:${SITE_CONTACT_EMAIL}`;
 
-export const PODCAST_SOCIAL_KEYS = ["socialTwitter", "socialInstagram", "socialLinkedin"] as const;
+export const PODCAST_SOCIAL_KEYS = ["socialTwitter", "socialInstagram", "socialYoutube"] as const;
 export type PodcastSocialKey = (typeof PODCAST_SOCIAL_KEYS)[number];
 
 export const PODCAST_SOCIAL_HREF: Record<PodcastSocialKey, string> = {
-  socialTwitter: `${SITE_ORIGIN}/`,
-  socialInstagram: `${SITE_ORIGIN}/`,
-  socialLinkedin: `${SITE_ORIGIN}/`,
+  socialTwitter: "https://x.com/dekoderfm",
+  socialInstagram: "https://www.instagram.com/dekoder.fm/",
+  socialYoutube: "https://youtube.com/@dekoderfm",
 };
 
 export const HOST_SOCIAL_X_HREF = {
