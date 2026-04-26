@@ -1811,9 +1811,10 @@ html[data-episode-playing="true"] .waveform-bar--listen-bg {
 .decoder-chapter-tick {
   --cue-color: color-mix(in srgb, var(--primary) 60%, var(--edge) 40%);
   --cue-fade: color-mix(in srgb, var(--primary) 22%, transparent);
+  --chapter-tick-lift: 6px;
   position: absolute;
   top: 50%;
-  transform: translate(-50%, calc(-100% - var(--decoder-track-h) / 2));
+  transform: translate(-50%, calc(-100% - var(--decoder-track-h) / 2 - var(--chapter-tick-lift)));
   z-index: 1;
   display: flex;
   flex-direction: column;
@@ -1843,10 +1844,11 @@ html[data-episode-playing="true"] .waveform-bar--listen-bg {
   top: 3px;
   left: 50%;
   width: 1.5px;
-  height: 7px;
+  height: calc(7px + var(--chapter-tick-lift));
   margin-left: -0.75px;
   border-radius: 0 0 1px 1px;
   background: linear-gradient(180deg, var(--cue-color) 0%, var(--cue-fade) 100%);
+  pointer-events: none;
 }
 
 .decoder-chapter-tick__cue::before {
@@ -1876,7 +1878,7 @@ html[data-episode-playing="true"] .waveform-bar--listen-bg {
 
   .decoder-chapter-tick__cue::after {
     top: 2.5px;
-    height: 5.5px;
+    height: calc(5.5px + var(--chapter-tick-lift));
     width: 1.5px;
     margin-left: -0.75px;
   }
@@ -1914,7 +1916,10 @@ html[data-episode-playing="true"] .waveform-bar--listen-bg {
 }
 
 .decoder-audio-player[data-playing="true"] .decoder-chapter-tick--current {
-  transform: translate(-50%, calc(-100% - var(--decoder-track-h) / 2 - 1px));
+  transform: translate(
+    -50%,
+    calc(-100% - var(--decoder-track-h) / 2 - var(--chapter-tick-lift) - 1px)
+  );
 }
 
 .decoder-audio-seek-wrap:hover .decoder-chapter-tick:not(.decoder-chapter-tick--current) {
@@ -1931,7 +1936,10 @@ html[data-episode-playing="true"] .waveform-bar--listen-bg {
   }
 
   .decoder-audio-player[data-playing="true"] .decoder-chapter-tick--current {
-    transform: translate(-50%, calc(-100% - var(--decoder-track-h) / 2));
+    transform: translate(
+      -50%,
+      calc(-100% - var(--decoder-track-h) / 2 - var(--chapter-tick-lift))
+    );
   }
 }
 
@@ -1991,18 +1999,20 @@ html[data-episode-playing="true"] .waveform-bar--listen-bg {
 
 @media (pointer: fine) {
   .decoder-audio-chapter-ticks {
-    z-index: 3;
+    z-index: 1;
   }
 
   .decoder-chapter-tick {
-    pointer-events: auto;
-    cursor: pointer;
+    pointer-events: none;
   }
 
   .decoder-chapter-tick::before {
-    content: "";
-    position: absolute;
-    inset: -16px -18px;
+    content: none;
+  }
+
+  .decoder-chapter-tick__cue {
+    pointer-events: auto;
+    cursor: pointer;
   }
 
   .decoder-chapter-tick:hover {
