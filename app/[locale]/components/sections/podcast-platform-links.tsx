@@ -46,6 +46,13 @@ const linkClass: Record<Variant, string> = {
 const episodeLinkQuiet =
   "platform-link group/p flex min-h-9 items-center justify-center gap-1.5 border border-edge/20 px-3 py-1.5 text-muted/60 hover:border-edge/35 hover:bg-surface/20 hover:text-muted/85 active:bg-surface/30 dark:border-edge/25 dark:text-muted/55 dark:hover:border-edge/40 dark:hover:text-muted/80 font-mono text-[9px] tracking-[0.18em] uppercase rounded-none transition-colors duration-200 sm:min-h-10 sm:justify-start sm:px-3.5 sm:py-2 sm:text-[10px] sm:tracking-widest md:text-[11px]";
 
+const episodeListenPillDisabled = [
+  "pointer-events-none cursor-not-allowed select-none",
+  "border-edge/20 text-muted/45 opacity-[0.58] dark:border-edge/15",
+  "hover:!border-edge/20 hover:!text-muted/45 active:!bg-transparent",
+  "[&_.platform-link__dot]:opacity-50 [&_.platform-link__dot]:brightness-100",
+].join(" ");
+
 function podcastPlatformDotClass(key: PodcastPlatformKey, variant: Variant): string {
   return cn(
     "platform-link__dot w-1.5 h-1.5 shrink-0 rounded-full transition-[filter]",
@@ -114,12 +121,27 @@ export function EpisodeListenPlatformLinks({
   const linkCn = tone === "quiet" ? episodeLinkQuiet : linkClass.episode;
   return (
     <div className={cn("contents", className)}>
-      {EPISODE_LISTEN_PLATFORM_KEYS.map((key) => (
-        <a key={key} href={hrefs[key]} target="_blank" rel="noopener noreferrer" className={linkCn}>
-          <span className={episodeListenDotClass(key)} />
-          {getLabel(key)}
-        </a>
-      ))}
+      {EPISODE_LISTEN_PLATFORM_KEYS.map((key) => {
+        const href = hrefs[key].trim();
+        if (!href) {
+          return (
+            <span
+              key={key}
+              className={cn(linkCn, episodeListenPillDisabled)}
+              aria-disabled="true"
+            >
+              <span className={episodeListenDotClass(key)} />
+              {getLabel(key)}
+            </span>
+          );
+        }
+        return (
+          <a key={key} href={href} target="_blank" rel="noopener noreferrer" className={linkCn}>
+            <span className={episodeListenDotClass(key)} />
+            {getLabel(key)}
+          </a>
+        );
+      })}
     </div>
   );
 }

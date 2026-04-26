@@ -1,133 +1,68 @@
 [
   {
-    "id": "EP05",
-    "slug": "the-procedural-generation-problem",
+    "id": "EP01",
+    "slug": "marathon-odvazny-experiment-bungie-nebo",
     "lang": "cs",
-    "title": "Problém procedurální generace",
-    "date": "2026-04-07",
-    "duration": 828,
-    "description": "Jan rozebere, proč procedurální generace častěji selhává než uspěje — a Martin tvrdí, že technologie výrazně předběhla *designové myšlení*. **Nabitý** díl.",
-    "tags": ["Herní design", "Algoritmy"],
+    "title": "Marathon : Odvážný experiment Bungie, nebo…",
+    "date": "2026-04-26",
+    "duration": 4811,
+    "description": "Marathon od Bungie míří do světa *extraction shooterů* - ale dělá věci jinak. Martin sdílí první dojmy a naráží na **tvrdý onboarding** i pocit, že „dělá něco špatně“, zatímco Jan to vyvažuje pohledem po desítkách hodin - vysvětluje, proč je hra postavená na znalosti map, rozhodování a nekompromisním přístupu. Společně rozebíráme design, *core loop* i to, proč je Marathon tak nehostinný - a jestli je to *problém*, nebo *záměr*.",
+    "tags": [
+      "Bungie",
+      "Marathon",
+      "Extraction",
+      "Herní design",
+      "Live service"
+    ],
     "coverImage": "",
-    "hosts": [
+    "chapters": [
       {
-        "fullName": "Tim Cain",
-        "link": "https://en.wikipedia.org/wiki/Tim_Cain"
+        "t": 30,
+        "label": "Co je Dekodér"
       },
       {
-        "fullName": "Kate Edwards",
-        "link": "https://en.wikipedia.org/wiki/Kate_Edwards"
+        "t": 128,
+        "label": "Co nás zaujalo"
+      },
+      {
+        "t": 593,
+        "label": "Hlavní téma: Marathon"
+      },
+      {
+        "t": 896,
+        "label": "Tvrdý onboarding a první dojmy"
+      },
+      {
+        "t": 1504,
+        "label": "Mapy, rozhodování a core loop"
+      },
+      {
+        "t": 1867,
+        "label": "Týmová hra, role a gear"
+      },
+      {
+        "t": 2830,
+        "label": "Questy, frakce a příběh"
+      },
+      {
+        "t": 3313,
+        "label": "Technologie a stabilita"
+      },
+      {
+        "t": 4038,
+        "label": "Budoucnost Marathonu"
+      },
+      {
+        "t": 4700,
+        "label": "Rozloučení"
       }
     ],
-    "chapters": [
-      { "t": 0, "label": "Úvod — proč u toho došlo k roztržce" },
-      { "t": 47, "label": "Když procedurální světy působí prázdně" },
-      { "t": 183, "label": "Způsoby selhání, na které nikdo nepočítá" },
-      { "t": 401, "label": "Nástroje jsou v pořádku — zadání ne" },
-      { "t": 612, "label": "Co bychom příště udělali jinak" }
-    ],
     "links": {
-      "spotify": "https://open.spotify.com/episode/7Gk8WxDecoderE005XX",
-      "applePodcasts": "https://podcasts.apple.com/podcast/decoder/id0000000000?i=1000050000005",
-      "youtube": "https://www.youtube.com/watch?v=Dec0d3rE005",
-      "mp3": "https://cdn.play-decoder.com/podcast/episodes/ep00-test-dev.mp3",
-      "transcript": "https://cdn.play-decoder.com/podcast/transcripts/ep00-test-dev.transcript.json"
-    }
-  },
-  {
-    "id": "EP04",
-    "slug": "funding-indie-games-in-2026",
-    "lang": "cs",
-    "title": "Financování nezávislých her v roce 2026",
-    "date": "2026-03-24",
-    "duration": 3480,
-    "description": "Krajina financování se posunula. Kdo ještě __investuje__, kdo zmizel a co to znamená pro studia, která se snaží stavět něco _opravdového_.",
-    "tags": ["Byznys", "Indie"],
-    "coverImage": "",
-    "chapters": [
-      { "t": 0, "label": "Nová normalita" },
-      { "t": 480, "label": "Kdo ještě investuje" },
-      { "t": 1180, "label": "Co investoři teď skutečně chtějí" },
-      { "t": 2080, "label": "Jak přežít v malém týmu" },
-      { "t": 2880, "label": "Předpovědi a na závěr" }
-    ],
-    "links": {
-      "spotify": "https://open.spotify.com/episode/8Hl9YzDecoderE004XX",
-      "applePodcasts": "https://podcasts.apple.com/podcast/decoder/id0000000000?i=1000050000004",
-      "youtube": "https://www.youtube.com/watch?v=Dec0d3rE004",
-      "mp3": "https://media.dekoder.fm/episodes/E004.mp3"
-    }
-  },
-  {
-    "id": "EP03",
-    "slug": "ai-as-a-co-designer",
-    "lang": "cs",
-    "title": "AI jako spolunávrhář",
-    "date": "2026-03-10",
-    "duration": 3720,
-    "description": "Ne hrozba, ne zachránce. AI jako designový partner — *praktické* využití, divné experimenty a kde jsou **etické hranice**.",
-    "tags": ["AI", "Design"],
-    "coverImage": "",
-    "chapters": [
-      { "t": 0, "label": "Co znamená spolunávrhář" },
-      { "t": 540, "label": "Co v produkci skutečně funguje" },
-      { "t": 1420, "label": "Experimenty, které nás překvapily" },
-      { "t": 2320, "label": "Etika bez divadla" },
-      { "t": 3180, "label": "Kam to směřuje" }
-    ],
-    "links": {
-      "spotify": "https://open.spotify.com/episode/9Im0ZaDecoderE003XX",
-      "applePodcasts": "https://podcasts.apple.com/podcast/decoder/id0000000000?i=1000050000003",
-      "youtube": "https://www.youtube.com/watch?v=Dec0d3rE003",
-      "mp3": "https://media.dekoder.fm/episodes/E003.mp3"
-    }
-  },
-  {
-    "id": "EP02",
-    "slug": "building-a-game-studio-from-zero",
-    "lang": "cs",
-    "title": "Postavit herní studio od nuly",
-    "date": "2026-02-24",
-    "duration": 2820,
-    "description": "Martin sdílí cestu zakladatele — rozhodnutí, která studio málem **zničila**, a ta, která ho _zachránila_.",
-    "tags": ["Startup", "Zakladatel"],
-    "coverImage": "",
-    "chapters": [
-      { "t": 0, "label": "Proč vůbec začínat" },
-      { "t": 420, "label": "První sázky a první jizvy" },
-      { "t": 1120, "label": "Rozhodnutí, která bolela" },
-      { "t": 1880, "label": "Co to obrátilo" },
-      { "t": 2480, "label": "Rada zpětně" }
-    ],
-    "links": {
-      "spotify": "https://open.spotify.com/episode/0Jn1AbDecoderE002XX",
-      "applePodcasts": "https://podcasts.apple.com/podcast/decoder/id0000000000?i=1000050000002",
-      "youtube": "https://www.youtube.com/watch?v=Dec0d3rE002",
-      "mp3": "https://media.dekoder.fm/episodes/E002.mp3"
-    }
-  },
-  {
-    "id": "EP01",
-    "slug": "why-games-matter-more-than-ever",
-    "lang": "cs",
-    "title": "Proč na hrách záleží víc než kdy dřív",
-    "date": "2026-02-10",
-    "duration": 3120,
-    "description": "Úvodní díl. Jan s Martinem představí terén — co **Dekodér** je, proč ho dělají a co nám hry řeknou o _úplně všem ostatním_.",
-    "tags": ["Úvod", "Kultura"],
-    "coverImage": "",
-    "chapters": [
-      { "t": 0, "label": "Co je Dekodér" },
-      { "t": 520, "label": "Proč hry, proč teď" },
-      { "t": 1320, "label": "Jak spolu pracujeme" },
-      { "t": 2220, "label": "Co čekat od kanálu" },
-      { "t": 2780, "label": "Na závěr" }
-    ],
-    "links": {
-      "spotify": "https://open.spotify.com/episode/1Ko2BcDecoderE001XX",
-      "applePodcasts": "https://podcasts.apple.com/podcast/decoder/id0000000000?i=1000050000001",
-      "youtube": "https://www.youtube.com/watch?v=Dec0d3rE001",
-      "mp3": "https://media.dekoder.fm/episodes/E001.mp3"
+      "spotify": "",
+      "applePodcasts": "",
+      "youtube": "",
+      "mp3": "https://cdn.play-decoder.com/podcast/episodes/ep01.mp3",
+      "transcript": "https://cdn.play-decoder.com/podcast/transcripts/ep01.transcript.json"
     }
   }
 ]
