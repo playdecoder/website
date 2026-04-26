@@ -1,4 +1,4 @@
-export const PODCAST_COVER_PATH = "/podcast-cover.jpg";
+export const PODCAST_COVER_PATH = "/logo/square-podcast-cover.png";
 
 export function getPublicSiteUrl(): string {
   return (process.env.NEXT_PUBLIC_SITE_URL ?? "https://dekoder.fm").replace(/\/$/, "");

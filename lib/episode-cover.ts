@@ -2,7 +2,7 @@ import type { Episode } from "@/lib/episode-catalog";
 
 import { absoluteFromPath } from "./site";
 
-export const FALLBACK_EPISODE_COVER_PATH = "/logo/wide-fallback-og.png";
+export const FALLBACK_EPISODE_COVER_PATH = "/logo/square-podcast-cover.png";
 
 function imageMimeFromPathOrUrl(pathOrUrl: string): string {
   const base = pathOrUrl.split("?")[0]?.toLowerCase() ?? "";
