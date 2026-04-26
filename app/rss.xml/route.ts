@@ -1,5 +1,5 @@
 import { BRAND_NAME, BRAND_PODCAST } from "@/lib/brand";
-import { episodeListenPathSegment, episodes, type Episode } from "@/lib/episode-catalog";
+import { episodeListenSlugPrefix, episodes, type Episode } from "@/lib/episode-catalog";
 import { resolveEpisodeCoverImageUrl } from "@/lib/episode-cover";
 import { plainEpisodeDescription } from "@/lib/episode-description";
 import { absoluteListenEpisodeUrl } from "@/lib/routes";
@@ -45,7 +45,7 @@ function episodeNumber(id: string): number {
 
 function buildItem(ep: Episode): string {
   const epNum = episodeNumber(ep.id);
-  const episodePage = absoluteListenEpisodeUrl(SITE_URL, episodeListenPathSegment(ep));
+  const episodePage = absoluteListenEpisodeUrl(SITE_URL, episodeListenSlugPrefix(ep));
   const guid = `dekoder.fm/episodes/${ep.id}`;
   const summary = plainEpisodeDescription(ep.description);
 
