@@ -16,7 +16,7 @@
     "clean": "bun pm cache rm && rm -rf node_modules bun.lock && bun install"
   },
   "dependencies": {
-    "@tailwindcss/postcss": "^4.2.2",
+    "@tailwindcss/postcss": "^4.2.4",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
     "babel-plugin-react-compiler": "^1.0.0",
@@ -26,20 +26,20 @@
     "next-intl": "^4.9.1",
     "next-themes": "^0.4.6",
     "nuqs": "^2.8.9",
-    "postcss": "^8.5.10",
+    "postcss": "^8.5.12",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "sharp": "^0.34.5",
     "tailwind-merge": "^3.5.0",
-    "tailwindcss": "^4.2.2"
+    "tailwindcss": "^4.2.4"
   },
   "devDependencies": {
     "@types/node": "^25.6.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "eslint-plugin-react-hooks": "^7.1.1",
-    "oxfmt": "^0.45.0",
-    "oxlint": "^1.60.0",
+    "oxfmt": "^0.47.0",
+    "oxlint": "^1.62.0",
     "typescript": "^6.0.3"
   },
   "next-intl": {
