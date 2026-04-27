@@ -102,7 +102,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       images: [
         {
           url: cover.url,
-          secureUrl: cover.absolute,
+          secureUrl: cover.url,
           alt: imageAlt,
           type: cover.type,
         },
@@ -114,7 +114,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: ogTitle,
       description,
       images: {
-        url: cover.absolute,
+        url: cover.url,
         alt: imageAlt,
       },
     },

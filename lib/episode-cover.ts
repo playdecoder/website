@@ -1,8 +1,9 @@
 import type { Episode } from "@/lib/episode-catalog";
 
-import { absoluteFromPath } from "./site";
+import { absoluteFromPath, getPodcastCoverAbsoluteUrl, PODCAST_COVER_PATH } from "./site";
 
-export const FALLBACK_EPISODE_COVER_PATH = "/logo/square-podcast-cover.png";
+/** Same path as the RSS feed channel/episode art (`getPodcastCoverAbsoluteUrl`) */
+export const FALLBACK_EPISODE_COVER_PATH = PODCAST_COVER_PATH;
 
 function imageMimeFromPathOrUrl(pathOrUrl: string): string {
   const base = pathOrUrl.split("?")[0]?.toLowerCase() ?? "";
@@ -30,26 +31,15 @@ export function resolveEpisodeCoverImageUrl(episode: Episode): string {
     const path = raw.startsWith("/") ? raw : `/${raw}`;
     return absoluteFromPath(path);
   }
-  return absoluteFromPath(FALLBACK_EPISODE_COVER_PATH);
+  return getPodcastCoverAbsoluteUrl();
 }
 
-export function resolveEpisodeCoverForMeta(episode: Episode): {
-  url: string;
-  absolute: string;
-  type: string;
-} {
+/** Always-absolute image URL and MIME type for Open Graph and Twitter. */
+export function resolveEpisodeCoverForMeta(episode: Episode): { url: string; type: string } {
   const raw = episode.coverImage?.trim() ?? "";
   if (raw && /^https?:\/\//i.test(raw)) {
-    return {
-      url: raw,
-      absolute: raw,
-      type: imageMimeFromPathOrUrl(raw),
-    };
+    return { url: raw, type: imageMimeFromPathOrUrl(raw) };
   }
-  const path = raw ? (raw.startsWith("/") ? raw : `/${raw}`) : FALLBACK_EPISODE_COVER_PATH;
-  return {
-    url: path,
-    absolute: absoluteFromPath(path),
-    type: imageMimeFromPathOrUrl(path),
-  };
+  const path = raw ? (raw.startsWith("/") ? raw : `/${raw}`) : PODCAST_COVER_PATH;
+  return { url: absoluteFromPath(path), type: imageMimeFromPathOrUrl(path) };
 }
