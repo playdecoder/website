@@ -300,7 +300,7 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
           aria-hidden
         />
         <div
-          className={`pointer-events-none absolute top-0 right-0 left-0 h-px bg-gradient-to-r from-transparent to-transparent transition-all duration-500 ease-out ${ctx.isPlaying ? "via-accent/55" : "via-secondary/30"}`}
+          className={`pointer-events-none absolute top-0 right-0 left-0 bg-gradient-to-r from-transparent to-transparent transition-all duration-500 ease-out ${ctx.isPlaying ? "h-[2px] via-accent/80" : "h-px via-secondary/25"}`}
           aria-hidden
         />
 
@@ -312,7 +312,7 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
                   {t("playerKicker")}
                 </p>
                 <p className="font-display text-primary line-clamp-2 pr-2 text-sm leading-snug font-semibold sm:text-base">
-                  <span className="text-accent-text mr-2 font-mono text-xs tracking-widest sm:text-sm">
+                  <span className="bg-accent/12 border border-accent/28 text-accent-text mr-2 inline-block rounded-sm px-1.5 py-0.5 font-mono text-[10px] tracking-widest align-middle sm:text-[11px]">
                     {episodeId}
                   </span>
                   {title}
@@ -357,14 +357,14 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
 
               <div
                 ref={waveformRef}
-                className="flex h-8 shrink-0 items-center gap-[2px] sm:h-10 sm:gap-[3px]"
+                className="flex h-10 shrink-0 items-center gap-[2.5px] sm:h-12 sm:gap-[3px]"
                 data-waveform-playing={decoderWavePlaying || undefined}
                 aria-hidden
               >
                 {WAVEFORM_BARS.map((bar) => (
                   <span
                     key={bar.id}
-                    className="decoder-waveform-bar bg-secondary w-[2px] rounded-[1px]"
+                    className="decoder-waveform-bar decoder-waveform-bar-gradient w-[2.5px] rounded-[1px]"
                     style={
                       {
                         height: `${bar.h}%`,
@@ -522,7 +522,7 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
                     type="button"
                     onClick={onMainPlayPause}
                     disabled={ctx.loadError}
-                    className="group border-primary/15 bg-accent focus-visible:outline-accent relative flex size-[3.75rem] shrink-0 items-center justify-center rounded-sm border-2 text-[#0b0f14] shadow-[inset_0_1px_0_rgb(255_255_255/0.35)] transition-transform duration-200 hover:scale-[1.04] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 active:scale-[0.97] disabled:pointer-events-none disabled:opacity-40"
+                    className={`group border-primary/15 bg-accent focus-visible:outline-accent relative flex size-[4rem] shrink-0 items-center justify-center rounded-sm border-2 text-[#0b0f14] transition-transform duration-200 hover:scale-[1.04] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 active:scale-[0.97] disabled:pointer-events-none disabled:opacity-40${mainTransportShowsPause ? " decoder-play-btn-playing" : " shadow-[inset_0_1px_0_rgb(255_255_255/0.35)]"}`}
                     aria-label={
                       mainTransportShowsPause
                         ? t("playerPause")
@@ -577,7 +577,7 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
                   type="button"
                   onClick={onMainPlayPause}
                   disabled={ctx.loadError}
-                  className="group border-primary/15 bg-accent focus-visible:outline-accent relative hidden size-14 shrink-0 items-center justify-center rounded-sm border-2 text-[#0b0f14] shadow-[inset_0_1px_0_rgb(255_255_255/0.35)] transition-transform duration-200 hover:scale-[1.04] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 active:scale-[0.97] disabled:pointer-events-none disabled:opacity-40 sm:flex"
+                  className={`group border-primary/15 bg-accent focus-visible:outline-accent relative hidden size-[3.75rem] shrink-0 items-center justify-center rounded-sm border-2 text-[#0b0f14] transition-transform duration-200 hover:scale-[1.04] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 active:scale-[0.97] disabled:pointer-events-none disabled:opacity-40 sm:flex${mainTransportShowsPause ? " decoder-play-btn-playing" : " shadow-[inset_0_1px_0_rgb(255_255_255/0.35)]"}`}
                   aria-label={
                     mainTransportShowsPause
                       ? t("playerPause")

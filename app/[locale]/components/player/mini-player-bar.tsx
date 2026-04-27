@@ -15,11 +15,13 @@ import { useWaveformSettle } from "./use-waveform-settle";
 import { VolumeIcon } from "./volume-icon";
 
 const MINI_WAVEFORM_BARS = [
-  { id: "m0", h: 40, dur: 0.72, delay: 0.0 },
-  { id: "m1", h: 70, dur: 0.65, delay: 0.11 },
+  { id: "m0", h: 38, dur: 0.72, delay: 0.0 },
+  { id: "m1", h: 68, dur: 0.65, delay: 0.11 },
   { id: "m2", h: 100, dur: 0.81, delay: 0.06 },
-  { id: "m3", h: 85, dur: 0.6, delay: 0.18 },
-  { id: "m4", h: 55, dur: 0.89, delay: 0.04 },
+  { id: "m3", h: 84, dur: 0.6, delay: 0.18 },
+  { id: "m4", h: 52, dur: 0.89, delay: 0.04 },
+  { id: "m5", h: 76, dur: 0.74, delay: 0.13 },
+  { id: "m6", h: 44, dur: 0.68, delay: 0.08 },
 ] as const;
 
 const SKIP_SEC = 15;
@@ -93,7 +95,7 @@ function MiniPlayerSeekStrip({
       aria-valuetext={`${formatPlaybackTime(displayTime)} / ${formatPlaybackTime(duration)}`}
       aria-label={t("seekScrub")}
       aria-disabled={scrubDisabled}
-      className={`group relative h-2.5 w-full touch-none overflow-visible select-none motion-safe:transition-[height] motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)] ${isScrubbing ? "h-6" : ""} md:hover:h-6 ${
+      className={`group relative h-3 w-full touch-none overflow-visible select-none motion-safe:transition-[height] motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)] ${isScrubbing ? "h-6" : ""} md:hover:h-6 ${
         scrubDisabled ? "cursor-not-allowed opacity-40" : "cursor-grab active:cursor-grabbing"
       }`}
       onPointerDown={(e) => {
@@ -139,11 +141,11 @@ function MiniPlayerSeekStrip({
       }}
     >
       <div
-        className={`pointer-events-none absolute inset-x-0 bottom-0 h-px w-full overflow-visible motion-safe:transition-[height] motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)] ${isScrubbing ? "h-2.5" : ""} md:group-hover:h-2.5`}
+        className={`pointer-events-none absolute inset-x-0 bottom-0 h-0.5 w-full overflow-visible motion-safe:transition-[height] motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)] ${isScrubbing ? "h-2.5" : ""} md:group-hover:h-2.5`}
       >
         <div className="relative h-full w-full overflow-visible">
           <div
-            className={`bg-edge/25 md:group-hover:bg-edge/42 absolute inset-0 rounded-full motion-safe:transition-[background-color,box-shadow] motion-safe:duration-300 motion-safe:ease-out md:group-hover:shadow-[inset_0_1px_0_rgb(255_255_255/0.07)] ${isScrubbing ? "bg-edge/42 shadow-[inset_0_1px_0_rgb(255_255_255/0.07)]" : ""}`}
+            className={`bg-edge/40 md:group-hover:bg-edge/52 absolute inset-0 rounded-full motion-safe:transition-[background-color,box-shadow] motion-safe:duration-300 motion-safe:ease-out md:group-hover:shadow-[inset_0_1px_0_rgb(255_255_255/0.07)] ${isScrubbing ? "bg-edge/52 shadow-[inset_0_1px_0_rgb(255_255_255/0.07)]" : ""}`}
             aria-hidden
           />
           <div
@@ -288,14 +290,14 @@ export function MiniPlayerBar() {
           >
             <div
               ref={waveformRef}
-              className="mini-player-waveform flex h-6 shrink-0 items-center gap-[2px]"
+              className="mini-player-waveform flex h-7 shrink-0 items-center gap-[3px]"
               data-playing={miniWavePlaying || undefined}
               aria-hidden
             >
               {MINI_WAVEFORM_BARS.map((bar) => (
                 <span
                   key={bar.id}
-                  className="mini-wf-bar bg-accent/80 w-[2px] rounded-[1px]"
+                  className="mini-wf-bar decoder-mini-wf-gradient w-[2.5px] rounded-[1px]"
                   style={
                     {
                       height: `${bar.h}%`,
@@ -308,8 +310,8 @@ export function MiniPlayerBar() {
             </div>
 
             <div className="min-w-0">
-              <p className="text-primary flex items-baseline gap-1.5 leading-tight">
-                <span className="text-accent-text font-mono text-[10px] font-medium tracking-[0.22em] uppercase">
+              <p className="text-primary flex items-center gap-2 leading-tight">
+                <span className="bg-accent/12 border border-accent/28 text-accent-text shrink-0 rounded-sm px-1.5 py-0.5 font-mono text-[9px] font-medium tracking-[0.22em] uppercase leading-none">
                   {episode.id}
                 </span>
                 <span className="font-display truncate text-sm font-semibold tracking-tight group-hover:underline">
