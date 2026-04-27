@@ -21,8 +21,18 @@ const height = 1400;
 const bg = { r: 247, g: 249, b: 252, alpha: 1 };
 
 const svg = await readFile(input);
-const logo = await sharp(svg)
-  .resize({ width: width - 180, height: height - 180, fit: "inside" })
+
+// 1) High-res raster so trim + scale stay sharp.
+// 2) `trim` removes Figma/artboard whitespace that would appear as a huge border in Podcasts/Spotify.
+// 3) `cover` fills 1400×1400 (no 90px margin we used to get from `width - 180` + `inside`).
+const raster = await sharp(svg)
+  .resize(2400, 2400, { fit: "inside" })
+  .toBuffer();
+const trimmed = await sharp(raster)
+  .trim({ threshold: 10 })
+  .toBuffer();
+const filled = await sharp(trimmed)
+  .resize({ width, height, fit: "cover" })
   .toBuffer();
 
 const base = sharp({
@@ -32,7 +42,8 @@ const base = sharp({
     channels: 4,
     background: bg,
   },
-}).composite([{ input: logo, gravity: "center" }])
+})
+  .composite([{ input: filled, left: 0, top: 0 }])
   // Flatten to opaque (no alpha) so social scrapers and iTunes are happy
   .flatten({ background: bg });
 
