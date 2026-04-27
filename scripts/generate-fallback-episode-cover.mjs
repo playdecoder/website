@@ -38,13 +38,20 @@ const base = sharp({
 
 const bufJpg = await base
   .clone()
-  .jpeg({ mozjpeg: true, quality: 90, chromaSubsampling: "4:4:4" })
+  // Baseline, standard subsampling. Progressive / mozjpeg / 4:4:4 can trip Facebook’s scraper.
+  .jpeg({
+    quality: 88,
+    progressive: false,
+    mozjpeg: false,
+    chromaSubsampling: "4:2:0",
+  })
   .toBuffer();
 await writeFile(outJpg, bufJpg);
 
 const bufPng = await base
   .clone()
-  .png({ compressionLevel: 9, effort: 10 })
+  // Truecolor PNG; palette PNGs are smaller but some scrapers handle them badly.
+  .png({ compressionLevel: 6, effort: 9, palette: false })
   .toBuffer();
 await writeFile(outPng, bufPng);
 

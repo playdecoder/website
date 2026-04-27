@@ -105,6 +105,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           secureUrl: cover.url,
           alt: imageAlt,
           type: cover.type,
+          ...(cover.width !== undefined && cover.height !== undefined
+            ? { width: cover.width, height: cover.height }
+            : {}),
         },
       ],
       audio: [{ url: episode.links.mp3, type: "audio/mpeg" }],

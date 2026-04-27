@@ -1,6 +1,6 @@
 import type { Episode } from "@/lib/episode-catalog";
 
-import { absoluteFromPath, getPodcastCoverAbsoluteUrl, PODCAST_COVER_PATH } from "./site";
+import { absoluteFromPath, getPodcastCoverAbsoluteUrl, PODCAST_COVER_PATH, PODCAST_COVER_SIZE } from "./site";
 
 /** Same path as the RSS feed channel/episode art (`getPodcastCoverAbsoluteUrl`) */
 export const FALLBACK_EPISODE_COVER_PATH = PODCAST_COVER_PATH;
@@ -35,11 +35,24 @@ export function resolveEpisodeCoverImageUrl(episode: Episode): string {
 }
 
 /** Always-absolute image URL and MIME type for Open Graph and Twitter. */
-export function resolveEpisodeCoverForMeta(episode: Episode): { url: string; type: string } {
+export function resolveEpisodeCoverForMeta(episode: Episode): {
+  url: string;
+  type: string;
+  width?: number;
+  height?: number;
+} {
   const raw = episode.coverImage?.trim() ?? "";
   if (raw && /^https?:\/\//i.test(raw)) {
     return { url: raw, type: imageMimeFromPathOrUrl(raw) };
   }
   const path = raw ? (raw.startsWith("/") ? raw : `/${raw}`) : PODCAST_COVER_PATH;
+  if (path === PODCAST_COVER_PATH) {
+    return {
+      url: absoluteFromPath(path),
+      type: imageMimeFromPathOrUrl(path),
+      width: PODCAST_COVER_SIZE.width,
+      height: PODCAST_COVER_SIZE.height,
+    };
+  }
   return { url: absoluteFromPath(path), type: imageMimeFromPathOrUrl(path) };
 }
