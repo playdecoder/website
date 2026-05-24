@@ -209,7 +209,7 @@ export function MobileNavDrawer({
                 id={panelId}
                 open={mounted}
                 aria-label={openNavigationAria}
-                className="border-edge fixed top-16 right-3 left-3 z-[45] max-h-[min(32rem,calc(100dvh-5rem))] overflow-x-hidden overflow-y-auto rounded-sm border bg-[color-mix(in_srgb,var(--bg)_94%,var(--secondary)_4%)] p-0 shadow-[0_28px_56px_-28px_color-mix(in_srgb,var(--primary)_38%,transparent)] transition-[opacity,transform,box-shadow] duration-[var(--mobile-nav-panel-ms,420ms)] ease-[var(--mobile-nav-ease)] will-change-[transform,opacity] motion-reduce:transition-none motion-reduce:duration-0 dark:bg-[color-mix(in_srgb,var(--bg)_92%,var(--secondary)_6%)] dark:shadow-[0_28px_56px_-32px_rgb(0_0_0/0.5)]"
+                className="border-edge fixed top-16 right-3 left-3 z-[45] w-auto max-h-[min(32rem,calc(100dvh-5rem))] overflow-x-hidden overflow-y-auto rounded-sm border bg-[color-mix(in_srgb,var(--bg)_94%,var(--secondary)_4%)] p-0 shadow-[0_28px_56px_-28px_color-mix(in_srgb,var(--primary)_38%,transparent)] transition-[opacity,transform,box-shadow] duration-[var(--mobile-nav-panel-ms,420ms)] ease-[var(--mobile-nav-ease)] will-change-[transform,opacity] motion-reduce:transition-none motion-reduce:duration-0 dark:bg-[color-mix(in_srgb,var(--bg)_92%,var(--secondary)_6%)] dark:shadow-[0_28px_56px_-32px_rgb(0_0_0/0.5)]"
                 style={
                   {
                     "--mobile-nav-panel-ms": `${PANEL_MS}ms`,
@@ -229,7 +229,7 @@ export function MobileNavDrawer({
                   style={{ opacity: entered ? 1 : 0 }}
                   aria-hidden
                 />
-                <nav className="flex flex-col p-2">
+                <nav className="flex w-full flex-col p-2">
                   {items.map((item, index) => {
                     const delayIn = ITEM_BASE_DELAY_MS + index * ITEM_STAGGER_MS;
                     const delayOut = Math.max(0, (items.length - 1 - index) * 28);
@@ -239,7 +239,7 @@ export function MobileNavDrawer({
                         href={item.href}
                         locale={hrefLocale}
                         onClick={() => setOpen(false)}
-                        className="border-edge/60 text-primary hover:bg-surface-2/90 rounded-sm border-b px-4 py-3.5 font-mono text-xs tracking-[0.2em] uppercase transition-[opacity,transform,background-color,color] last:border-b-0 motion-reduce:!translate-x-0 motion-reduce:!opacity-100 motion-reduce:transition-none motion-reduce:!delay-0"
+                        className="border-edge/60 text-primary hover:bg-surface-2/90 block w-full rounded-sm border-b px-4 py-3.5 font-mono text-xs tracking-[0.2em] uppercase transition-[opacity,transform,background-color,color] last:border-b-0 motion-reduce:!translate-x-0 motion-reduce:!opacity-100 motion-reduce:transition-none motion-reduce:!delay-0"
                         style={{
                           transitionDuration: `${ITEM_TRANSITION_MS}ms`,
                           transitionTimingFunction: PANEL_EASE,

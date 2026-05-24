@@ -18,7 +18,7 @@ import { TopicLinkChip } from "./topic-link-chip";
 interface EpisodeGridCardProps {
   episode: Episode;
   locale: string;
-  hrefLocale: string;
+  hrefLocale: string | undefined;
   isLatest: boolean;
   latestLabel: string;
   playLabel: string;
