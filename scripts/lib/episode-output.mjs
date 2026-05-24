@@ -29,3 +29,12 @@ export function podcastCoverOutputPath(repoRoot, episodeId, format = "jpg", them
     `${episodeId.toLowerCase()}-${theme}.${format}`,
   );
 }
+
+/** output/ep02/youtube/ep02-<theme>.mp4 */
+export function youtubeVideoOutputPath(repoRoot, episodeId, theme = "dark") {
+  return join(
+    episodeOutputRoot(repoRoot, episodeId),
+    "youtube",
+    `${episodeId.toLowerCase()}-${theme}.mp4`,
+  );
+}

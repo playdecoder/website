@@ -9,10 +9,11 @@ Usage:
   create-youtube-video.sh [options] <mp3>
 
 Options:
-  -o, --output PATH      Output MP4 path (default: <mp3-dir>/<basename>.mp4)
+  -o, --output PATH      Output MP4 path (default: output/<ep>/youtube/<ep>-<theme>.mp4)
       --keyart PATH      Static frame image (PNG/JPG)
       --logo PATH        Alias for --keyart (legacy)
-      --episode ID       Use output/<ep>/social/youtube-keyart-dark.png for episode
+      --episode ID       Resolve keyart + default output from episode id
+      --theme THEME      dark | light (default: dark)
       --size WxH         Video size (default: 1920x1080)
       --square           Shortcut for 1080x1080 output
       --background HEX   Letterbox/pillarbox color without # (default: 0B0F14)
@@ -26,8 +27,11 @@ Generate keyart first:
 The keyart is shown as a static frame for the full audio duration.
 When the image matches the target video size, it is used without scaling.
 
+Output:
+  output/<ep>/youtube/<ep>-<theme>.mp4   e.g. output/ep02/youtube/ep02-light.mp4
+
 Examples:
-  ./scripts/create-youtube-video.sh --episode EP02 public/data/episodes/ep02.mp3
+  ./scripts/create-youtube-video.sh --episode EP02 --theme light public/data/episodes/ep02.mp3
   ./scripts/create-youtube-video.sh --keyart output/ep02/social/youtube-keyart-dark.png ep02.mp3
   ./scripts/create-youtube-video.sh -o out/ep02-youtube.mp4 --episode EP02 ep02.mp3
 EOF
@@ -40,18 +44,30 @@ require_cmd() {
   fi
 }
 
-resolve_episode_keyart() {
+resolve_episode_path() {
   local episode_id="$1"
-  node -e "
-    const fs = require('node:fs');
-    const eps = JSON.parse(fs.readFileSync('${REPO_ROOT}/data/episodes.json', 'utf8'));
+  local theme="$2"
+  local kind="$3"
+  node --input-type=module -e "
+    import { keyartOutputPath, youtubeVideoOutputPath } from './scripts/lib/episode-output.mjs';
+    const repoRoot = '${REPO_ROOT}';
     const id = '${episode_id}'.toUpperCase();
-    const ep = eps.find((e) => e.id.toUpperCase() === id);
-    if (!ep) {
-      console.error('Episode not found: ' + id);
-      process.exit(1);
+    const theme = '${theme}';
+    if ('${kind}' === 'keyart') {
+      process.stdout.write(keyartOutputPath(repoRoot, id, theme));
+    } else {
+      process.stdout.write(youtubeVideoOutputPath(repoRoot, id, theme));
     }
-    process.stdout.write('${REPO_ROOT}/output/' + ep.id.toLowerCase() + '/social/youtube-keyart-dark.png');
+  "
+}
+
+infer_episode_from_mp3_stem() {
+  local stem="$1"
+  node -e "
+    const stem = '${stem}'.toLowerCase();
+    if (/^ep[0-9]+\$/.test(stem)) {
+      process.stdout.write(stem.toUpperCase());
+    }
   "
 }
 
@@ -62,6 +78,7 @@ FALLBACK_KEYART="$REPO_ROOT/public/logo/square-podcast-cover.jpg"
 OUTPUT=""
 KEYART=""
 EPISODE=""
+THEME="dark"
 WIDTH=1920
 HEIGHT=1080
 BACKGROUND="0B0F14"
@@ -81,6 +98,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --episode)
       EPISODE="$2"
+      shift 2
+      ;;
+    --theme)
+      THEME="$2"
       shift 2
       ;;
     --size)
@@ -144,26 +165,16 @@ require_cmd ffmpeg
 require_cmd ffprobe
 require_cmd node
 
-if [[ -n "$EPISODE" ]]; then
-  KEYART="$(resolve_episode_keyart "$EPISODE")"
-fi
-
-if [[ -z "$KEYART" ]]; then
-  KEYART="$FALLBACK_KEYART"
-fi
+case "$THEME" in
+  dark | light) ;;
+  *)
+    echo "Invalid --theme (expected dark or light): $THEME" >&2
+    exit 1
+    ;;
+esac
 
 if [[ ! -f "$MP3" ]]; then
   echo "MP3 not found: $MP3" >&2
-  exit 1
-fi
-
-if [[ ! -f "$KEYART" ]]; then
-  echo "Keyart not found: $KEYART" >&2
-  if [[ -n "$EPISODE" ]]; then
-    echo "Generate it with: node scripts/generate-social-post.mjs --episode ${EPISODE} --layout youtube-keyart" >&2
-  else
-    echo "Generate it with: node scripts/generate-social-post.mjs --episode EP02 --layout youtube-keyart" >&2
-  fi
   exit 1
 fi
 
@@ -176,8 +187,34 @@ if [[ "$MP3_BASENAME" == "$MP3_STEM" ]]; then
   exit 1
 fi
 
+if [[ -z "$EPISODE" ]]; then
+  EPISODE="$(infer_episode_from_mp3_stem "$MP3_STEM")"
+fi
+
+if [[ -z "$KEYART" && -n "$EPISODE" ]]; then
+  KEYART="$(resolve_episode_path "$EPISODE" "$THEME" keyart)"
+fi
+
+if [[ -z "$KEYART" ]]; then
+  KEYART="$FALLBACK_KEYART"
+fi
+
+if [[ ! -f "$KEYART" ]]; then
+  echo "Keyart not found: $KEYART" >&2
+  if [[ -n "$EPISODE" ]]; then
+    echo "Generate it with: node scripts/generate-social-post.mjs --episode ${EPISODE} --layout youtube-keyart --theme ${THEME}" >&2
+  else
+    echo "Generate it with: node scripts/generate-social-post.mjs --episode EP02 --layout youtube-keyart" >&2
+  fi
+  exit 1
+fi
+
 if [[ -z "$OUTPUT" ]]; then
-  OUTPUT="$(dirname "$MP3_ABS")/${MP3_STEM}.mp4"
+  if [[ -n "$EPISODE" ]]; then
+    OUTPUT="$(resolve_episode_path "$EPISODE" "$THEME" output)"
+  else
+    OUTPUT="$(dirname "$MP3_ABS")/${MP3_STEM}.mp4"
+  fi
 else
   if [[ -d "$OUTPUT" ]]; then
     OUTPUT="$(cd "$OUTPUT" && pwd)/${MP3_STEM}.mp4"
