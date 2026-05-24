@@ -7,7 +7,7 @@ import {
   formatEpisodePublishedRfc822,
   type Episode,
 } from "@/lib/episode-catalog";
-import { resolveEpisodeCoverImageUrl } from "@/lib/episode-cover";
+import { resolveEpisodeCoverImageUrlForRss } from "@/lib/episode-cover";
 import { plainEpisodeDescription } from "@/lib/episode-description";
 import { absoluteListenEpisodeUrl } from "@/lib/routes";
 import { showHostsAmpersand, showTaglineCs } from "@/lib/show";
@@ -61,7 +61,7 @@ function buildItem(ep: Episode): string {
       <itunes:episode>${epNum}</itunes:episode>
       <itunes:episodeType>full</itunes:episodeType>
       <itunes:explicit>no</itunes:explicit>
-      <itunes:image href="${escapeXml(resolveEpisodeCoverImageUrl(ep))}" />
+      <itunes:image href="${escapeXml(resolveEpisodeCoverImageUrlForRss(ep))}" />
     </item>`;
 }
 

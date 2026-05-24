@@ -3,14 +3,16 @@ set -euo pipefail
 
 usage() {
   cat <<'EOF'
-Create a YouTube-ready MP4 from episode audio and the square Dekodér logo.
+Create a YouTube-ready MP4 from episode audio and a static keyart frame.
 
 Usage:
   create-youtube-video.sh [options] <mp3>
 
 Options:
   -o, --output PATH      Output MP4 path (default: <mp3-dir>/<basename>.mp4)
-      --logo PATH        Logo image (default: public/logo/square-podcast-cover.jpg)
+      --keyart PATH      Static frame image (PNG/JPG)
+      --logo PATH        Alias for --keyart (legacy)
+      --episode ID       Use output/<ep>/social/youtube-keyart-dark.png for episode
       --size WxH         Video size (default: 1920x1080)
       --square           Shortcut for 1080x1080 output
       --background HEX   Letterbox/pillarbox color without # (default: 0B0F14)
@@ -18,12 +20,16 @@ Options:
   -y, --force            Overwrite output file if it exists
   -h, --help             Show this help
 
-The logo is centered on a static frame for the full audio duration.
+Generate keyart first:
+  node scripts/generate-social-post.mjs --episode EP02 --layout youtube-keyart
+
+The keyart is shown as a static frame for the full audio duration.
+When the image matches the target video size, it is used without scaling.
 
 Examples:
-  ./scripts/create-youtube-video.sh public/data/episodes/ep02.mp3
-  ./scripts/create-youtube-video.sh -o out/ep02-youtube.mp4 public/data/episodes/ep02.mp3
-  ./scripts/create-youtube-video.sh --square public/data/episodes/ep02.mp3
+  ./scripts/create-youtube-video.sh --episode EP02 public/data/episodes/ep02.mp3
+  ./scripts/create-youtube-video.sh --keyart output/ep02/social/youtube-keyart-dark.png ep02.mp3
+  ./scripts/create-youtube-video.sh -o out/ep02-youtube.mp4 --episode EP02 ep02.mp3
 EOF
 }
 
@@ -34,12 +40,28 @@ require_cmd() {
   fi
 }
 
+resolve_episode_keyart() {
+  local episode_id="$1"
+  node -e "
+    const fs = require('node:fs');
+    const eps = JSON.parse(fs.readFileSync('${REPO_ROOT}/data/episodes.json', 'utf8'));
+    const id = '${episode_id}'.toUpperCase();
+    const ep = eps.find((e) => e.id.toUpperCase() === id);
+    if (!ep) {
+      console.error('Episode not found: ' + id);
+      process.exit(1);
+    }
+    process.stdout.write('${REPO_ROOT}/output/' + ep.id.toLowerCase() + '/social/youtube-keyart-dark.png');
+  "
+}
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-DEFAULT_LOGO="$REPO_ROOT/public/logo/square-podcast-cover.jpg"
+FALLBACK_KEYART="$REPO_ROOT/public/logo/square-podcast-cover.jpg"
 
 OUTPUT=""
-LOGO="$DEFAULT_LOGO"
+KEYART=""
+EPISODE=""
 WIDTH=1920
 HEIGHT=1080
 BACKGROUND="0B0F14"
@@ -53,8 +75,12 @@ while [[ $# -gt 0 ]]; do
       OUTPUT="$2"
       shift 2
       ;;
-    --logo)
-      LOGO="$2"
+    --keyart | --logo)
+      KEYART="$2"
+      shift 2
+      ;;
+    --episode)
+      EPISODE="$2"
       shift 2
       ;;
     --size)
@@ -116,15 +142,28 @@ fi
 
 require_cmd ffmpeg
 require_cmd ffprobe
+require_cmd node
+
+if [[ -n "$EPISODE" ]]; then
+  KEYART="$(resolve_episode_keyart "$EPISODE")"
+fi
+
+if [[ -z "$KEYART" ]]; then
+  KEYART="$FALLBACK_KEYART"
+fi
 
 if [[ ! -f "$MP3" ]]; then
   echo "MP3 not found: $MP3" >&2
   exit 1
 fi
 
-if [[ ! -f "$LOGO" ]]; then
-  echo "Logo not found: $LOGO" >&2
-  echo "Generate it with: node scripts/generate-fallback-episode-cover.mjs" >&2
+if [[ ! -f "$KEYART" ]]; then
+  echo "Keyart not found: $KEYART" >&2
+  if [[ -n "$EPISODE" ]]; then
+    echo "Generate it with: node scripts/generate-social-post.mjs --episode ${EPISODE} --layout youtube-keyart" >&2
+  else
+    echo "Generate it with: node scripts/generate-social-post.mjs --episode EP02 --layout youtube-keyart" >&2
+  fi
   exit 1
 fi
 
@@ -161,8 +200,14 @@ fi
 DURATION="$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$MP3_ABS")"
 DURATION_INT="${DURATION%.*}"
 
-# Fit the square logo inside the frame, then pad to the target canvas.
-VF="scale=${WIDTH}:${HEIGHT}:force_original_aspect_ratio=decrease,pad=${WIDTH}:${HEIGHT}:(ow-iw)/2:(oh-ih)/2:color=0x${BACKGROUND},format=yuv420p"
+KEYART_W="$(ffprobe -v error -select_streams v:0 -show_entries stream=width -of csv=p=0 "$KEYART")"
+KEYART_H="$(ffprobe -v error -select_streams v:0 -show_entries stream=height -of csv=p=0 "$KEYART")"
+
+if [[ "$KEYART_W" == "$WIDTH" && "$KEYART_H" == "$HEIGHT" ]]; then
+  VF="format=yuv420p"
+else
+  VF="scale=${WIDTH}:${HEIGHT}:force_original_aspect_ratio=decrease,pad=${WIDTH}:${HEIGHT}:(ow-iw)/2:(oh-ih)/2:color=0x${BACKGROUND},format=yuv420p"
+fi
 
 FFMPEG_ARGS=(
   -hide_banner
@@ -171,7 +216,7 @@ FFMPEG_ARGS=(
   -y
   -loop 1
   -framerate 1
-  -i "$LOGO"
+  -i "$KEYART"
   -i "$MP3_ABS"
   -vf "$VF"
   -c:v libx264
@@ -186,7 +231,7 @@ FFMPEG_ARGS=(
 )
 
 echo "Input:      $MP3_ABS"
-echo "Logo:       $LOGO"
+echo "Keyart:     $KEYART (${KEYART_W}x${KEYART_H})"
 echo "Output:     $OUTPUT"
 echo "Video:      ${WIDTH}x${HEIGHT}"
 echo "Background: #${BACKGROUND}"

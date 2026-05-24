@@ -14,7 +14,15 @@
       "Live service",
       "Herní design"
     ],
-    "coverImage": "",
+    "coverImage": {
+      "dark": {
+        "url": "https://cdn.play-decoder.com/podcast/covers/ep02.jpg"
+      },
+      "light": {
+        "url": "https://cdn.play-decoder.com/podcast/covers/ep02-light.jpg",
+        "useForRss": true
+      }
+    },
     "chapters": [
       {
         "t": 30,
@@ -84,7 +92,15 @@
       "Herní design",
       "Live service"
     ],
-    "coverImage": "",
+    "coverImage": {
+      "dark": {
+        "url": "https://cdn.play-decoder.com/podcast/covers/ep01.jpg"
+      },
+      "light": {
+        "url": "https://cdn.play-decoder.com/podcast/covers/ep01-light.jpg",
+        "useForRss": true
+      }
+    },
     "chapters": [
       {
         "t": 30,

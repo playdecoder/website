@@ -1,0 +1,25 @@
+{
+  "defaults": {
+    "artFocalPoint": "centre"
+  },
+  "layouts": {
+    "ig-post": { "artFocalPoint": "top" },
+    "ig-story": { "artFocalPoint": "top" },
+    "facebook-post": { "artFocalPoint": "centre" },
+    "linkedin-post": { "artFocalPoint": "centre" },
+    "youtube-keyart": { "artFocalPoint": { "x": 0.5, "y": 0.38 } },
+    "podcast-cover": { "artFocalPoint": "top" }
+  },
+  "posts": [
+    {
+      "episodeId": "EP01",
+      "shortDescription": "Bungie míří do extraction shooterů — ale dělá věci jinak.",
+      "art": "public/social/art/ep01-marathon.jpg"
+    },
+    {
+      "episodeId": "EP02",
+      "shortDescription": "Od fenoménu přes Overwatch 2 až po návrat na výsluní.",
+      "art": "public/social/art/ep02-overwatch.jpg"
+    }
+  ]
+}

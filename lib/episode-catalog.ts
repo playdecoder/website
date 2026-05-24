@@ -20,6 +20,16 @@ export interface EpisodeHost {
   link: string;
 }
 
+export interface EpisodeCoverVariant {
+  url: string;
+  useForRss?: boolean;
+}
+
+export interface EpisodeCoverImage {
+  light?: EpisodeCoverVariant;
+  dark?: EpisodeCoverVariant;
+}
+
 export interface Episode {
   id: string;
   slug: string;
@@ -29,7 +39,7 @@ export interface Episode {
   duration: number;
   description: string;
   tags: string[];
-  coverImage?: string;
+  coverImage?: EpisodeCoverImage;
   curatedAs?: CuratedPickKey[];
   links: EpisodeLinks;
   chapters?: EpisodeChapter[];

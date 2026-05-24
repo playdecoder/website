@@ -1,9 +1,8 @@
-import type { Episode } from "@/lib/episode-catalog";
+import type { Episode, EpisodeCoverImage, EpisodeCoverVariant } from "@/lib/episode-catalog";
 
-import { absoluteFromPath, getPodcastCoverAbsoluteUrl, PODCAST_COVER_PATH, PODCAST_COVER_SIZE } from "./site";
+import { absoluteFromPath, getPodcastCoverAbsoluteUrl, PODCAST_COVER_SIZE } from "./site";
 
-/** Same path as the RSS feed channel/episode art (`getPodcastCoverAbsoluteUrl`) */
-export const FALLBACK_EPISODE_COVER_PATH = PODCAST_COVER_PATH;
+type CoverVariantKey = keyof EpisodeCoverImage;
 
 function imageMimeFromPathOrUrl(pathOrUrl: string): string {
   const base = pathOrUrl.split("?")[0]?.toLowerCase() ?? "";
@@ -22,37 +21,78 @@ function imageMimeFromPathOrUrl(pathOrUrl: string): string {
   return "image/jpeg";
 }
 
-export function resolveEpisodeCoverImageUrl(episode: Episode): string {
-  const raw = episode.coverImage?.trim() ?? "";
-  if (raw) {
-    if (/^https?:\/\//i.test(raw)) {
-      return raw;
-    }
-    const path = raw.startsWith("/") ? raw : `/${raw}`;
-    return absoluteFromPath(path);
+function resolveCoverUrl(raw: string): string {
+  const trimmed = raw.trim();
+  if (/^https?:\/\//i.test(trimmed)) {
+    return trimmed;
   }
+  const path = trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
+  return absoluteFromPath(path);
+}
+
+function variantUrl(variant?: EpisodeCoverVariant): string | null {
+  const raw = variant?.url?.trim() ?? "";
+  if (!raw) {
+    return null;
+  }
+  return resolveCoverUrl(raw);
+}
+
+function resolveCoverFromEpisode(
+  episode: Episode,
+  order: readonly CoverVariantKey[],
+  options?: { preferUseForRss?: boolean },
+): string {
+  const cover = episode.coverImage;
+  if (!cover) {
+    return getPodcastCoverAbsoluteUrl();
+  }
+
+  if (options?.preferUseForRss) {
+    for (const key of order) {
+      const variant = cover[key];
+      if (variant?.useForRss) {
+        const url = variantUrl(variant);
+        if (url) {
+          return url;
+        }
+      }
+    }
+  }
+
+  for (const key of order) {
+    const url = variantUrl(cover[key]);
+    if (url) {
+      return url;
+    }
+  }
+
   return getPodcastCoverAbsoluteUrl();
 }
 
-/** Always-absolute image URL and MIME type for Open Graph and Twitter. */
+export function resolveEpisodeCoverImageUrl(episode: Episode): string {
+  return resolveCoverFromEpisode(episode, ["dark", "light"]);
+}
+
+export function resolveEpisodeCoverImageUrlForRss(episode: Episode): string {
+  return resolveCoverFromEpisode(episode, ["light", "dark"], { preferUseForRss: true });
+}
+
 export function resolveEpisodeCoverForMeta(episode: Episode): {
   url: string;
   type: string;
   width?: number;
   height?: number;
 } {
-  const raw = episode.coverImage?.trim() ?? "";
-  if (raw && /^https?:\/\//i.test(raw)) {
-    return { url: raw, type: imageMimeFromPathOrUrl(raw) };
-  }
-  const path = raw ? (raw.startsWith("/") ? raw : `/${raw}`) : PODCAST_COVER_PATH;
-  if (path === PODCAST_COVER_PATH) {
-    return {
-      url: absoluteFromPath(path),
-      type: imageMimeFromPathOrUrl(path),
-      width: PODCAST_COVER_SIZE.width,
-      height: PODCAST_COVER_SIZE.height,
-    };
-  }
-  return { url: absoluteFromPath(path), type: imageMimeFromPathOrUrl(path) };
+  const cover = episode.coverImage;
+  const hasEpisodeCover = Boolean(cover && (variantUrl(cover.dark) || variantUrl(cover.light)));
+  const url = resolveEpisodeCoverImageUrl(episode);
+
+  return {
+    url,
+    type: imageMimeFromPathOrUrl(url),
+    ...(hasEpisodeCover
+      ? {}
+      : { width: PODCAST_COVER_SIZE.width, height: PODCAST_COVER_SIZE.height }),
+  };
 }

@@ -11,7 +11,12 @@
     "fix": "oxlint --fix .",
     "format": "oxfmt --check .",
     "format:write": "oxfmt --write .",
+    "generate:episode-assets": "node scripts/generate-episode-assets.mjs",
     "generate:episode-cover-fallback": "node scripts/generate-fallback-episode-cover.mjs",
+    "generate:podcast-cover": "node scripts/generate-podcast-cover.mjs",
+    "generate:podcast-cover:all": "node scripts/generate-podcast-cover.mjs --all",
+    "generate:social-post": "node scripts/generate-social-post.mjs",
+    "generate:social-post:all": "node scripts/generate-social-post.mjs --all-episodes --all-layouts",
     "check": "oxlint --fix . && oxfmt --write .",
     "clean": "bun pm cache rm && rm -rf node_modules bun.lock && bun install"
   },

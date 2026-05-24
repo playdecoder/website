@@ -15,3 +15,5 @@ public/data/episodes/*.mp3
 public/data/episodes/*.mp4
 public/data/episodes/*.json
 scripts/.venv-transcribe
+scripts/assets/fonts/
+output/
