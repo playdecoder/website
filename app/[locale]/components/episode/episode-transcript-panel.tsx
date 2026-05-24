@@ -177,6 +177,7 @@ export function EpisodeTranscriptPanel({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={t("transcriptSearch")}
+            aria-label={t("transcriptSearch")}
             className="border-edge/50 text-primary placeholder:text-muted/60 focus:border-accent/50 focus:bg-bg/30 w-full rounded-sm border bg-transparent py-2 pr-3 pl-8 font-mono text-[12px] tracking-wide transition-colors duration-150 outline-none sm:text-[13px]"
           />
         </div>

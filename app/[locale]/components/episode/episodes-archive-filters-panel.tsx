@@ -52,6 +52,7 @@ function ScopeToggle({
         type="checkbox"
         checked={checked}
         onChange={() => onToggleSearchScope(scopeKey)}
+        aria-label={label}
         className="border-edge text-primary focus-visible:ring-secondary/40 bg-bg size-[1.125rem] shrink-0 cursor-pointer rounded-sm border accent-[var(--secondary)] focus-visible:ring-2 focus-visible:outline-none"
       />
       <span className="text-primary text-left font-mono text-[11px] leading-snug tracking-[0.12em] uppercase sm:text-[10px] sm:leading-tight sm:tracking-[0.14em]">
@@ -95,6 +96,7 @@ export function EpisodesArchiveFiltersPanel({
             onChange={(e) => onQueryChange(e.target.value)}
             placeholder={t("searchPlaceholder")}
             autoComplete="off"
+            aria-label={t("searchLabel")}
             className="bg-bg border-edge text-primary placeholder:text-muted/50 focus:border-secondary/60 focus:ring-secondary/25 min-h-12 w-full rounded-sm border px-4 py-3 font-mono text-sm transition-colors focus:ring-1 focus:outline-none sm:min-h-0"
           />
         </div>
@@ -120,11 +122,7 @@ export function EpisodesArchiveFiltersPanel({
           </legend>
           <span className="bg-edge/60 mt-px hidden h-px min-w-[2rem] flex-1 sm:block" aria-hidden />
         </div>
-        <div
-          className="grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-2.5"
-          role="group"
-          aria-labelledby={scopeFieldId}
-        >
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-2.5">
           <ScopeToggle
             scopeKey="title"
             label={t("searchScopeTitle")}

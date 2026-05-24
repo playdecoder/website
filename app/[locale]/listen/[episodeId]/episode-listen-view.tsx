@@ -140,7 +140,7 @@ function EpisodeListenHosts({
       <h2 className="text-muted mb-2 font-mono text-[9px] tracking-[0.22em] uppercase sm:text-[10px] sm:tracking-[0.26em]">
         {heading}
       </h2>
-      <ul className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-2.5" role="list">
+      <ul className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-2.5" >
         {hosts.map((host, i) => {
           const hrefOk = isHttpUrl(host.link);
           const delay = stagger(i + 2);

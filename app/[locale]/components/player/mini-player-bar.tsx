@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { type CSSProperties, useCallback, useEffect, useReducer, useRef, useState } from "react";
+import { type CSSProperties, useEffect, useReducer, useRef, useState } from "react";
 
 import { Link } from "@/i18n/navigation";
 import { usePathname } from "@/i18n/navigation";
@@ -25,7 +25,6 @@ const MINI_WAVEFORM_BARS = [
 ] as const;
 
 const SKIP_SEC = 15;
-const SCRUB_KEYBOARD_SEC = 5;
 
 type DockPhase = { rendered: boolean; expanded: boolean };
 
@@ -65,88 +64,29 @@ function MiniPlayerSeekStrip({
 }) {
   const [scrubPosition, setScrubPosition] = useState<number | null>(null);
   const [isScrubbing, setIsScrubbing] = useState(false);
-  const progressTrackRef = useRef<HTMLDivElement>(null);
-
-  const seekFromClientX = useCallback(
-    (clientX: number) => {
-      const track = progressTrackRef.current;
-      if (!track || duration <= 0 || loadError) return;
-      const rect = track.getBoundingClientRect();
-      const ratio = rect.width > 0 ? (clientX - rect.left) / rect.width : 0;
-      const seconds = Math.max(0, Math.min(1, ratio)) * duration;
-      setScrubPosition(seconds);
-      seek(seconds);
-    },
-    [duration, loadError, seek],
-  );
 
   const displayTime = scrubPosition ?? currentTime;
   const progressPct = duration > 0 ? Math.min(100, Math.max(0, (displayTime / duration) * 100)) : 0;
   const scrubDisabled = loadError || duration <= 0;
 
+  const endScrub = () => {
+    setIsScrubbing(false);
+    setScrubPosition(null);
+  };
+
   return (
     <div
-      ref={progressTrackRef}
-      role="slider"
-      tabIndex={scrubDisabled ? -1 : 0}
-      aria-valuemin={0}
-      aria-valuemax={duration > 0 ? Math.round(duration) : 0}
-      aria-valuenow={Math.round(displayTime)}
-      aria-valuetext={`${formatPlaybackTime(displayTime)} / ${formatPlaybackTime(duration)}`}
-      aria-label={t("seekScrub")}
-      aria-disabled={scrubDisabled}
       className={`group relative h-3 w-full touch-none overflow-visible select-none motion-safe:transition-[height] motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)] ${isScrubbing ? "h-6" : ""} md:hover:h-6 ${
         scrubDisabled ? "cursor-not-allowed opacity-40" : "cursor-grab active:cursor-grabbing"
       }`}
-      onPointerDown={(e) => {
-        if (scrubDisabled) return;
-        e.preventDefault();
-        e.currentTarget.setPointerCapture(e.pointerId);
-        setIsScrubbing(true);
-        seekFromClientX(e.clientX);
-      }}
-      onPointerMove={(e) => {
-        if (!e.currentTarget.hasPointerCapture(e.pointerId)) return;
-        seekFromClientX(e.clientX);
-      }}
-      onPointerUp={(e) => {
-        if (e.currentTarget.hasPointerCapture(e.pointerId)) {
-          e.currentTarget.releasePointerCapture(e.pointerId);
-        }
-        setIsScrubbing(false);
-        setScrubPosition(null);
-      }}
-      onPointerCancel={(e) => {
-        if (e.currentTarget.hasPointerCapture(e.pointerId)) {
-          e.currentTarget.releasePointerCapture(e.pointerId);
-        }
-        setIsScrubbing(false);
-        setScrubPosition(null);
-      }}
-      onKeyDown={(e) => {
-        if (scrubDisabled) return;
-        if (e.key === "ArrowLeft" || e.key === "ArrowDown") {
-          e.preventDefault();
-          seek(Math.max(0, currentTime - SCRUB_KEYBOARD_SEC));
-        } else if (e.key === "ArrowRight" || e.key === "ArrowUp") {
-          e.preventDefault();
-          seek(Math.min(duration, currentTime + SCRUB_KEYBOARD_SEC));
-        } else if (e.key === "Home") {
-          e.preventDefault();
-          seek(0);
-        } else if (e.key === "End") {
-          e.preventDefault();
-          seek(duration);
-        }
-      }}
     >
       <div
         className={`pointer-events-none absolute inset-x-0 bottom-0 h-0.5 w-full overflow-visible motion-safe:transition-[height] motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)] ${isScrubbing ? "h-2.5" : ""} md:group-hover:h-2.5`}
+        aria-hidden
       >
         <div className="relative h-full w-full overflow-visible">
           <div
             className={`bg-edge/40 md:group-hover:bg-edge/52 absolute inset-0 rounded-full motion-safe:transition-[background-color,box-shadow] motion-safe:duration-300 motion-safe:ease-out md:group-hover:shadow-[inset_0_1px_0_rgb(255_255_255/0.07)] ${isScrubbing ? "bg-edge/52 shadow-[inset_0_1px_0_rgb(255_255_255/0.07)]" : ""}`}
-            aria-hidden
           />
           <div
             className={`bg-accent pointer-events-none absolute inset-y-0 left-0 rounded-l-full motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)] ${isScrubbing ? "motion-safe:transition-[height,filter,box-shadow]" : "motion-safe:transition-[height,width,filter,box-shadow]"} md:group-hover:rounded-l-[6px] md:group-hover:shadow-[inset_0_1px_0_rgb(255_255_255/0.38)] ${isScrubbing ? "rounded-l-[6px] shadow-[inset_0_1px_0_rgb(255_255_255/0.38)]" : ""}`}
@@ -156,15 +96,32 @@ function MiniPlayerSeekStrip({
                 ? { borderTopRightRadius: 9999, borderBottomRightRadius: 9999 }
                 : {}),
             }}
-            aria-hidden
           />
           <div
             className={`bg-accent pointer-events-none absolute top-1/2 z-10 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 scale-[0.38] rounded-full border-2 border-[color-mix(in_srgb,var(--surface)_58%,transparent)] opacity-0 shadow-[0_2px_18px_-3px_color-mix(in_srgb,var(--accent)_58%,transparent),inset_0_1px_0_rgb(255_255_255/0.42)] motion-safe:transition-[transform,opacity,box-shadow] motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)] motion-safe:will-change-transform md:group-hover:scale-100 md:group-hover:opacity-100 md:group-hover:shadow-[0_3px_22px_-4px_color-mix(in_srgb,var(--accent)_62%,transparent),inset_0_1px_0_rgb(255_255_255/0.48)] ${isScrubbing ? "scale-100 opacity-100 shadow-[0_3px_22px_-4px_color-mix(in_srgb,var(--accent)_62%,transparent),inset_0_1px_0_rgb(255_255_255/0.48)] max-md:scale-110" : ""}`}
             style={{ left: `${progressPct}%` }}
-            aria-hidden
           />
         </div>
       </div>
+      <input
+        type="range"
+        min={0}
+        max={100}
+        step={0.1}
+        value={progressPct}
+        disabled={scrubDisabled}
+        onPointerDown={() => setIsScrubbing(true)}
+        onPointerUp={endScrub}
+        onPointerCancel={endScrub}
+        onChange={(e) => {
+          const seconds = (Number(e.target.value) / 100) * duration;
+          setScrubPosition(seconds);
+          seek(seconds);
+        }}
+        className="mini-player-seek absolute inset-x-0 bottom-0 z-10 h-full w-full disabled:cursor-not-allowed"
+        aria-label={t("seekScrub")}
+        aria-valuetext={`${formatPlaybackTime(displayTime)} / ${formatPlaybackTime(duration)}`}
+      />
     </div>
   );
 }
@@ -254,8 +211,7 @@ export function MiniPlayerBar() {
   const listenHref = listenEpisodePath(episodeListenPathSegment(episode));
 
   return (
-    <div
-      role="region"
+    <section
       aria-label={t("regionAria")}
       onTransitionEnd={handleTransitionEnd}
       className={`fixed right-0 bottom-0 left-0 z-50 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform ${
@@ -431,6 +387,6 @@ export function MiniPlayerBar() {
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

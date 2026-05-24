@@ -770,7 +770,7 @@ export function HeroWaveformOsc() {
       <div className="hero-osc" ref={containerRef} aria-hidden>
         <div className="hero-osc__screen">
           <div className="hero-osc__scanlines" />
-          <canvas ref={canvasRef} className="hero-osc__canvas" />
+          <canvas ref={canvasRef} className="hero-osc__canvas" aria-hidden />
         </div>
         <div className="hero-osc__ui">
           <div className="hero-osc__labels">

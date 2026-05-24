@@ -325,9 +325,9 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
                       : true
                   }
                 >
-                  <p className="line-clamp-1 min-w-0 shrink leading-snug" role="status">
+                  <output className="line-clamp-1 min-w-0 shrink leading-snug">
                     {progressResumeCaption ?? "\u00a0"}
-                  </p>
+                  </output>
                   <button
                     type="button"
                     onClick={ctx.clearProgress}
@@ -446,9 +446,9 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
                   }
                 >
                   {showSeekBuffering ? (
-                    <span className="sr-only" role="status" aria-live="polite">
+                    <output className="sr-only" aria-live="polite">
                       {t("playerSeekBuffering")}
-                    </span>
+                    </output>
                   ) : null}
                   <div className="decoder-audio-custom-track absolute inset-x-0" aria-hidden />
                   {chapterTimelineMarkers.length > 0 ? (

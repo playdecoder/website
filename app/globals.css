@@ -1557,6 +1557,49 @@ html[data-episode-playing="true"] .waveform-bar--listen-bg {
   opacity: 1;
 }
 
+.mini-player-seek {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+  background: transparent;
+  touch-action: none;
+}
+
+.mini-player-seek:focus-visible {
+  outline: 2px solid var(--secondary);
+  outline-offset: 2px;
+}
+
+.mini-player-seek::-webkit-slider-runnable-track {
+  height: 100%;
+  background: transparent;
+}
+
+.mini-player-seek::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  cursor: inherit;
+}
+
+.mini-player-seek::-moz-range-track {
+  height: 100%;
+  background: transparent;
+  border: none;
+}
+
+.mini-player-seek::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  cursor: inherit;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .mini-wf-bar {
     transition: none;
