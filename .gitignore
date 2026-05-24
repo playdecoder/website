@@ -13,3 +13,4 @@ tsconfig.tsbuildinfo
 .agents/
 public/data/episodes/*.mp3
 public/data/episodes/*.json
+scripts/.venv-transcribe

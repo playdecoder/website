@@ -1,5 +1,76 @@
 [
   {
+    "id": "EP02",
+    "slug": "overwatch-hra-ktera-prezila-vlastni-sequel",
+    "lang": "cs",
+    "title": "Overwatch: hra, která přežila vlastní sequel",
+    "date": "2026-05-24",
+    "duration": 5565,
+    "description": "Overwatch si prošel cestou od obrovského fenoménu přes kontroverze a nejasnou identitu až po dnešní návrat na výsluní. Rozebíráme jeho začátky, peak, Overwatch 2, změny ve filozofii hry i otázku, proč se z něj nakonec znovu stal „Overwatch“ bez dvojky. Zastavíme se i u toho, co dělalo hru výjimečnou a proč si stále drží své místo mezi hero shootery.",
+    "tags": [
+      "Blizzard",
+      "Overwatch",
+      "Overwatch 2",
+      "Hero shooter",
+      "Live service",
+      "Herní design"
+    ],
+    "coverImage": "",
+    "chapters": [
+      {
+        "t": 30,
+        "label": "Co je Dekodér"
+      },
+      {
+        "t": 78,
+        "label": "Co nás zaujalo"
+      },
+      {
+        "t": 84,
+        "label": "Pit Panic, Steam demo a vývoj"
+      },
+      {
+        "t": 151,
+        "label": "Digital Dragons - dojmy z akce"
+      },
+      {
+        "t": 593,
+        "label": "Hlavní téma: Overwatch"
+      },
+      {
+        "t": 930,
+        "label": "Začátky a zlatá éra Overwatch"
+      },
+      {
+        "t": 1710,
+        "label": "Role, hrdinové a co dělalo hru výjimečnou"
+      },
+      {
+        "t": 3067,
+        "label": "Kontroverze a problémy"
+      },
+      {
+        "t": 3255,
+        "label": "Overwatch 2 a přechod na free-to-play"
+      },
+      {
+        "t": 4040,
+        "label": "Současný stav a návrat na výsluní"
+      },
+      {
+        "t": 4705,
+        "label": "Stadium, budoucnost a závěr"
+      }
+    ],
+    "links": {
+      "spotify": "",
+      "applePodcasts": "https://podcasts.apple.com/us/podcast/dekod%C3%A9r/id1895560433",
+      "youtube": "",
+      "mp3": "https://cdn.play-decoder.com/podcast/episodes/ep02.mp3",
+      "transcript": "https://cdn.play-decoder.com/podcast/transcripts/ep02.transcript.json"
+    }
+  },
+  {
     "id": "EP01",
     "slug": "marathon-odvazny-experiment-bungie-nebo",
     "lang": "cs",
