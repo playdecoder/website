@@ -9,6 +9,7 @@ import { BRAND_NAME, BRAND_PODCAST, brandInterpolation } from "@/lib/brand";
 import {
   episodeListenPathSegment,
   episodeListenSlugPrefix,
+  formatEpisodePublishedIso,
   resolveListenEpisodeParam,
   type Episode,
 } from "@/lib/episode-catalog";
@@ -52,7 +53,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const listenHref = listenEpisodePath(canonicalSegment);
   const pathnameFor = (loc: string) => getPathname({ locale: loc, href: listenHref });
   const canonicalUrl = absoluteFromPath(pathnameFor(locale));
-  const publishedTime = `${episode.date}T12:00:00.000Z`;
+  const publishedTime = formatEpisodePublishedIso(episode.date);
   const cover = resolveEpisodeCoverForMeta(episode);
 
   const languages: Record<string, string> = {

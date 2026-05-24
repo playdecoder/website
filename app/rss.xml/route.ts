@@ -1,5 +1,12 @@
 import { BRAND_NAME, BRAND_PODCAST } from "@/lib/brand";
-import { episodeListenSlugPrefix, episodes, type Episode } from "@/lib/episode-catalog";
+import {
+  episodeListenSlugPrefix,
+  episodeOrdinal,
+  episodePublishedAtMs,
+  episodes,
+  formatEpisodePublishedRfc822,
+  type Episode,
+} from "@/lib/episode-catalog";
 import { resolveEpisodeCoverImageUrl } from "@/lib/episode-cover";
 import { plainEpisodeDescription } from "@/lib/episode-description";
 import { absoluteListenEpisodeUrl } from "@/lib/routes";
@@ -21,12 +28,6 @@ function escapeXml(str: string): string {
     .replace(/'/g, "&apos;");
 }
 
-function toRfc822(isoDate: string): string {
-  const [y, mo, d] = isoDate.split("-").map(Number);
-  const date = new Date(Date.UTC(y, mo - 1, d));
-  return date.toUTCString().replace("GMT", "+0000");
-}
-
 function toItunesDuration(totalSeconds: number): string {
   const s = Math.max(0, Math.floor(totalSeconds));
   const hh = Math.floor(s / 3600);
@@ -39,12 +40,8 @@ function estimateMp3Bytes(durationSeconds: number): number {
   return Math.round(durationSeconds * 16_000);
 }
 
-function episodeNumber(id: string): number {
-  return parseInt(id.replace(/\D/g, ""), 10) || 0;
-}
-
 function buildItem(ep: Episode): string {
-  const epNum = episodeNumber(ep.id);
+  const epNum = episodeOrdinal(ep);
   const episodePage = absoluteListenEpisodeUrl(SITE_URL, episodeListenSlugPrefix(ep));
   const guid = `dekoder.fm/episodes/${ep.id}`;
   const summary = plainEpisodeDescription(ep.description);
@@ -54,7 +51,7 @@ function buildItem(ep: Episode): string {
       <title>${escapeXml(ep.title)}</title>
       <link>${episodePage}</link>
       <guid isPermaLink="false">${guid}</guid>
-      <pubDate>${toRfc822(ep.date)}</pubDate>
+      <pubDate>${formatEpisodePublishedRfc822(ep.date)}</pubDate>
       <description>${escapeXml(summary)}</description>
       <content:encoded><![CDATA[<p>${escapeXml(summary)}</p>]]></content:encoded>
                 <enclosure url="${escapeXml(ep.links.mp3.trim().startsWith("/") ? absoluteFromPath(ep.links.mp3.trim()) : ep.links.mp3)}" length="${estimateMp3Bytes(ep.duration)}" type="audio/mpeg" />
@@ -69,8 +66,13 @@ function buildItem(ep: Episode): string {
 }
 
 export function GET() {
-  const sorted = [...episodes].sort((a, b) => b.date.localeCompare(a.date));
-  const lastBuildDate = sorted[0] ? toRfc822(sorted[0].date) : new Date().toUTCString();
+  const sorted = [...episodes].sort((a, b) => {
+    const byTime = episodePublishedAtMs(b) - episodePublishedAtMs(a);
+    return byTime !== 0 ? byTime : b.id.localeCompare(a.id);
+  });
+  const lastBuildDate = sorted[0]
+    ? formatEpisodePublishedRfc822(sorted[0].date)
+    : new Date().toUTCString().replace("GMT", "+0000");
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0"

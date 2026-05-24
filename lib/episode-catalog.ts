@@ -43,7 +43,8 @@ export const episodes = episodesJson as Episode[];
 const ISO_DATE = /^(\d{4})-(\d{2})-(\d{2})$/;
 
 export function parseEpisodeIsoDate(isoDate: string): Date | null {
-  const m = ISO_DATE.exec(isoDate.trim());
+  const datePart = isoDate.trim().split("T")[0] ?? "";
+  const m = ISO_DATE.exec(datePart);
   if (!m) {
     return null;
   }
@@ -53,8 +54,36 @@ export function parseEpisodeIsoDate(isoDate: string): Date | null {
   return new Date(y, monthIndex, day);
 }
 
-function episodeDateTime(ep: Episode): number {
-  return parseEpisodeIsoDate(ep.date)?.getTime() ?? Number.NEGATIVE_INFINITY;
+export function parseEpisodePublishedAt(isoDate: string): Date | null {
+  const trimmed = isoDate.trim();
+  if (trimmed.includes("T")) {
+    const parsed = new Date(trimmed);
+    return Number.isNaN(parsed.getTime()) ? null : parsed;
+  }
+  const m = ISO_DATE.exec(trimmed);
+  if (!m) {
+    return null;
+  }
+  const y = Number(m[1]);
+  const monthIndex = Number(m[2]) - 1;
+  const day = Number(m[3]);
+  return new Date(Date.UTC(y, monthIndex, day));
+}
+
+export function formatEpisodePublishedIso(isoDate: string): string {
+  return parseEpisodePublishedAt(isoDate)?.toISOString() ?? isoDate.trim();
+}
+
+export function formatEpisodePublishedRfc822(isoDate: string): string {
+  const date = parseEpisodePublishedAt(isoDate);
+  if (!date) {
+    return new Date().toUTCString().replace("GMT", "+0000");
+  }
+  return date.toUTCString().replace("GMT", "+0000");
+}
+
+export function episodePublishedAtMs(ep: Episode): number {
+  return parseEpisodePublishedAt(ep.date)?.getTime() ?? Number.NEGATIVE_INFINITY;
 }
 
 export function getLatestEpisode(eps: Episode[]): Episode | undefined {
@@ -62,8 +91,8 @@ export function getLatestEpisode(eps: Episode[]): Episode | undefined {
     return undefined;
   }
   return eps.reduce((best, ep) => {
-    const tEp = episodeDateTime(ep);
-    const tBest = episodeDateTime(best);
+    const tEp = episodePublishedAtMs(ep);
+    const tBest = episodePublishedAtMs(best);
     if (tEp > tBest) {
       return ep;
     }
