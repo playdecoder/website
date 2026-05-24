@@ -16,6 +16,7 @@ import { IconEpisodeAirDate, IconEpisodeDuration } from "../ui/icons";
 import { LedeIntroParagraph } from "../ui/lede-intro-paragraph";
 import { SectionHeading } from "../ui/section-heading";
 
+import { EpisodeCoverArt, episodeArtBannerFadeClassName } from "./episode-cover-art";
 import { EpisodeSpokenLangNote } from "./episode-spoken-lang-note";
 import { TopicLinkChip } from "./topic-link-chip";
 
@@ -35,7 +36,18 @@ export async function Episodes({ locale }: { locale: string }) {
 
         <div className="scroll-reveal mb-6">
           <div className="episode-feature-card border-edge group hover:border-accent/40 active:border-secondary/45 relative overflow-hidden rounded-sm border transition-colors duration-300">
-            <div className="episode-feature-card__rail bg-accent absolute top-0 bottom-0 left-0 w-1" />
+            <div className="episode-feature-card__rail bg-accent absolute top-0 bottom-0 left-0 z-10 w-1" />
+
+            {latestEpisode.artImage && (
+              <div className="relative h-44 sm:h-52">
+                <EpisodeCoverArt
+                  episode={latestEpisode}
+                  sizes="(min-width: 1280px) 768px, (min-width: 640px) calc(100vw - 40px), calc(100vw - 40px)"
+                  className="absolute inset-0"
+                />
+                <div className={episodeArtBannerFadeClassName} />
+              </div>
+            )}
 
             <div className="py-8 pr-6 pl-8 md:py-10">
               <EpisodeSpokenLangNote

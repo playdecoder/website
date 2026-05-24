@@ -4,28 +4,20 @@ import { useLocale, useTranslations } from "next-intl";
 import { useQueryStates } from "nuqs";
 import { useMemo } from "react";
 
-import { Link } from "@/i18n/navigation";
 import {
   type Episode,
-  episodeListenPathSegment,
-  formatEpisodeDate,
-  formatEpisodeDuration,
   getEpisodeArchiveFacets,
   getLatestEpisode,
 } from "@/lib/episode-catalog";
-import { EpisodeDescriptionRich, plainEpisodeDescription } from "@/lib/episode-description";
+import { plainEpisodeDescription } from "@/lib/episode-description";
 import { episodesArchiveSearchParams } from "@/lib/episodes-archive-search-params";
 import { linkLocale } from "@/lib/link-locale";
-import { listenEpisodePath } from "@/lib/routes";
 
-import { IconEpisodeAirDate, IconEpisodeDuration } from "../ui/icons";
-
-import { EpisodeLangCompactBadge } from "./episode-lang-compact-badge";
+import { EpisodeGridCard } from "./episode-grid-card";
 import {
   EpisodesArchiveFiltersPanel,
   type EpisodesSearchScopes,
 } from "./episodes-archive-filters-panel";
-import { TopicLinkChip } from "./topic-link-chip";
 
 function episodeMatchesSearchQuery(
   ep: Episode,
@@ -205,68 +197,14 @@ export function EpisodesArchiveClient({
         )}
         {filtered.map((ep, i) => (
           <li key={ep.id} className="scroll-reveal" style={{ animationDelay: `${0.04 * i}s` }}>
-            <article className="border-edge bg-bg group hover:border-accent/35 active:border-secondary/45 relative flex h-full flex-col overflow-hidden rounded-sm border transition-colors duration-300">
-              <div
-                className={`absolute top-0 bottom-0 left-0 w-1 ${ep.id === latestId ? "bg-accent" : "bg-secondary"}`}
-              />
-
-              <div className="flex min-h-0 flex-1 flex-col py-7 pr-5 pl-7 sm:py-9 sm:pr-7 sm:pl-8">
-                <div className="mb-5 flex flex-wrap items-center gap-2 sm:gap-3">
-                  <span className="text-accent-text font-mono text-sm font-medium tracking-widest">
-                    {ep.id}
-                  </span>
-                  {ep.id === latestId && (
-                    <span className="cta-on-lime rounded-sm px-2.5 py-0.5 font-mono text-[10px] font-medium tracking-widest uppercase">
-                      {tSection("latest")}
-                    </span>
-                  )}
-                  <EpisodeLangCompactBadge lang={ep.lang} />
-                  <div className="ml-auto flex flex-wrap justify-end gap-1.5">
-                    {ep.tags.map((tag) => (
-                      <TopicLinkChip key={tag} tag={tag} locale={locale} />
-                    ))}
-                  </div>
-                </div>
-
-                <h2
-                  className="font-display text-primary group-hover:text-accent-text mb-4 leading-[1.15] font-bold transition-colors"
-                  style={{ fontSize: "clamp(1.35rem, 2.8vw, 2rem)" }}
-                >
-                  <Link
-                    href={listenEpisodePath(episodeListenPathSegment(ep))}
-                    locale={hrefLocale}
-                    className="focus-visible:outline-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                  >
-                    {ep.title}
-                  </Link>
-                </h2>
-
-                <p className="font-body text-muted mb-8 line-clamp-4 flex-1 text-base leading-[1.75] md:text-[1.05rem]">
-                  <EpisodeDescriptionRich text={ep.description} />
-                </p>
-
-                <div className="border-edge mt-auto flex flex-wrap items-center gap-x-6 gap-y-3 border-t pt-5">
-                  <span className="text-muted inline-flex items-center gap-2 font-mono text-xs tracking-widest">
-                    <IconEpisodeAirDate size={13} className="text-secondary/65" />
-                    {formatEpisodeDate(ep.date, locale)}
-                  </span>
-                  <span className="text-muted inline-flex items-center gap-2 font-mono text-xs tracking-widest">
-                    <IconEpisodeDuration size={13} className="text-secondary/65" />
-                    {formatEpisodeDuration(ep.duration)}
-                  </span>
-                  <Link
-                    href={listenEpisodePath(episodeListenPathSegment(ep))}
-                    locale={hrefLocale}
-                    className="cta-on-lime ml-auto inline-flex items-center gap-2 rounded-sm px-5 py-2.5 font-mono text-xs font-medium tracking-widest uppercase transition-all hover:scale-[1.02] hover:opacity-90 active:scale-[0.98]"
-                  >
-                    <svg width="11" height="13" viewBox="0 0 12 14" fill="currentColor" aria-hidden>
-                      <path d="M0 0L12 7L0 14V0Z" />
-                    </svg>
-                    {tSection("playEpisode")}
-                  </Link>
-                </div>
-              </div>
-            </article>
+            <EpisodeGridCard
+              episode={ep}
+              locale={locale}
+              hrefLocale={hrefLocale}
+              isLatest={ep.id === latestId}
+              latestLabel={tSection("latest")}
+              playLabel={tSection("playEpisode")}
+            />
           </li>
         ))}
       </ul>

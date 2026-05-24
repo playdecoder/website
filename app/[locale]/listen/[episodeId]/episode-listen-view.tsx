@@ -26,6 +26,7 @@ import { listenEpisodePath, ROUTES, homeSectionPath } from "@/lib/routes";
 import { showHostsSchemaPersons } from "@/lib/show";
 import { absoluteFromPath, getPodcastCoverAbsoluteUrl, getPublicSiteUrl } from "@/lib/site";
 
+import { EpisodeCoverArt } from "../../components/episode/episode-cover-art";
 import { EpisodeListenPlayerAndBody } from "../../components/episode/episode-listen-player-body";
 import { EpisodeNeighborNav } from "../../components/episode/episode-neighbor-nav";
 import { EpisodeShareButton } from "../../components/episode/episode-share-button";
@@ -333,6 +334,8 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
       <Navbar locale={locale} />
 
       <DecoderPageFrame className="min-h-0" scanPeriodSec={16} scanOpacity={0.22}>
+        <EpisodeCoverArt episode={episode} variant="wash" />
+
         <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden>
           <div
             className="absolute inset-0 opacity-90 dark:opacity-100"

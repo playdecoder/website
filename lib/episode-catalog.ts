@@ -39,6 +39,8 @@ export interface Episode {
   duration: number;
   description: string;
   tags: string[];
+  /** Local public path to the unbranded 16:9 key art (e.g. "/social/art/ep02-overwatch.jpg"). */
+  artImage?: string;
   coverImage?: EpisodeCoverImage;
   curatedAs?: CuratedPickKey[];
   links: EpisodeLinks;

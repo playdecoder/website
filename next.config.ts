@@ -14,7 +14,7 @@ const nextConfig = {
     turbopackFileSystemCacheForDev: true,
   },
   images: {
-    qualities: [100, 75, 80, 85, 88, 90, 92, 95],
+    qualities: [25, 75, 80, 85, 88, 90, 92, 95, 100],
   },
 } satisfies NextConfig;
 

@@ -14,6 +14,7 @@
       "Live service",
       "Herní design"
     ],
+    "artImage": "/social/art/ep02-overwatch.jpg",
     "coverImage": {
       "dark": {
         "url": "https://cdn.play-decoder.com/podcast/covers/ep02.jpg"
@@ -92,6 +93,7 @@
       "Herní design",
       "Live service"
     ],
+    "artImage": "/social/art/ep01-marathon.jpg",
     "coverImage": {
       "dark": {
         "url": "https://cdn.play-decoder.com/podcast/covers/ep01.jpg"
