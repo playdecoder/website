@@ -14,6 +14,13 @@ import {
 import type { Episode } from "@/lib/episode-catalog";
 import { clearEpisodeProgress, writeProgressSnapshot } from "@/lib/episode-progress-storage";
 import { isIosLikeWebKitNoProgrammaticVolume } from "@/lib/ios-webkit";
+import {
+  bindPlayerMediaSessionHandlers,
+  buildEpisodeMediaMetadata,
+  clearMediaSessionMetadata,
+  syncMediaSessionPlaybackState,
+  syncMediaSessionPositionState,
+} from "@/lib/player-media-session";
 import { readPlayerPreferences, writePlayerPreferences } from "@/lib/player-preferences-storage";
 
 import {
@@ -157,6 +164,49 @@ export function GlobalPlayerProvider({ children }: { children: ReactNode }) {
     episodeRef.current = episode;
   }, [episode]);
 
+  const skipRef = useRef<(deltaSecs: number) => void>(() => {});
+
+  useEffect(() => {
+    if (!("mediaSession" in navigator)) return;
+
+    return bindPlayerMediaSessionHandlers({
+      onPlay: () => {
+        const el = audioRef.current;
+        if (!el || loadErrorRef.current || !el.paused) return;
+        el.play().catch(() =>
+          dispatchMedia({ type: "patch", patch: { loadError: true, isSeekBuffering: false } }),
+        );
+      },
+      onPause: () => {
+        audioRef.current?.pause();
+      },
+      onSeekBackward: () => skipRef.current(-KEYBOARD_SKIP_SEC),
+      onSeekForward: () => skipRef.current(KEYBOARD_SKIP_SEC),
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!("mediaSession" in navigator)) return;
+    if (!episode) {
+      clearMediaSessionMetadata();
+      return;
+    }
+    navigator.mediaSession.metadata = buildEpisodeMediaMetadata(episode);
+  }, [episode]);
+
+  useEffect(() => {
+    syncMediaSessionPlaybackState(media.isPlaying);
+  }, [media.isPlaying]);
+
+  useEffect(() => {
+    if (!episode) return;
+    syncMediaSessionPositionState({
+      duration: media.duration,
+      currentTime: media.currentTime,
+      playbackRate,
+    });
+  }, [episode, media.currentTime, media.duration, playbackRate]);
+
   const seek = useCallback((seconds: number, notice?: string) => {
     const el = audioRef.current;
     if (!el) return;
@@ -217,6 +267,10 @@ export function GlobalPlayerProvider({ children }: { children: ReactNode }) {
     [seek],
   );
 
+  useEffect(() => {
+    skipRef.current = skip;
+  }, [skip]);
+
   const dismiss = useCallback(() => {
     const el = audioRef.current;
     if (el) {
@@ -227,6 +281,7 @@ export function GlobalPlayerProvider({ children }: { children: ReactNode }) {
     }
     setEpisode(null);
     resetPlaybackState();
+    clearMediaSessionMetadata();
   }, [resetPlaybackState]);
 
   const setVolume = useCallback((v: number) => {
