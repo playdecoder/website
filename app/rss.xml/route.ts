@@ -60,7 +60,7 @@ function buildItem(ep: Episode): string {
       <itunes:duration>${toItunesDuration(ep.duration)}</itunes:duration>
       <itunes:episode>${epNum}</itunes:episode>
       <itunes:episodeType>full</itunes:episodeType>
-      <itunes:explicit>no</itunes:explicit>
+      <itunes:explicit>${ep.explicit ? "yes" : "no"}</itunes:explicit>
       <itunes:image href="${escapeXml(resolveEpisodeCoverImageUrlForRss(ep))}" />
     </item>`;
 }

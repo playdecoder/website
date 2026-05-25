@@ -46,6 +46,8 @@ export interface Episode {
   links: EpisodeLinks;
   chapters?: EpisodeChapter[];
   hosts?: EpisodeHost[];
+  /** When true, RSS emits `<itunes:explicit>yes</itunes:explicit>` for this episode. */
+  explicit?: boolean;
 }
 
 export type CuratedPickKey = "founders" | "designers" | "builders";
