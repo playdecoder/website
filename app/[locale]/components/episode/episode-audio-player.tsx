@@ -310,10 +310,12 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
           className="dot-grid pointer-events-none absolute inset-0 opacity-[0.2] dark:opacity-[0.35]"
           aria-hidden
         />
-        <div
-          className={`pointer-events-none absolute top-0 right-0 left-0 bg-gradient-to-r from-transparent to-transparent transition-all duration-500 ease-out ${ctx.isPlaying ? "h-[2px] via-accent/80" : "h-px via-secondary/25"}`}
-          aria-hidden
-        />
+        {!hasArt ? (
+          <div
+            className={`pointer-events-none absolute top-0 right-0 left-0 bg-gradient-to-r from-transparent to-transparent transition-all duration-500 ease-out ${ctx.isPlaying ? "h-[2px] via-accent/80" : "h-px via-secondary/25"}`}
+            aria-hidden
+          />
+        ) : null}
 
         {hasArt ? (
           <div className={PLAYER_ART_SHELL_CLASS.audio.frost} aria-hidden />
