@@ -22,6 +22,7 @@ interface EpisodeListenPlayerAndBodyProps {
   accentIsLeft: boolean;
   afterPlayerSlot?: ReactNode;
   transcriptUrl?: string;
+  artBackground?: ReactNode;
 }
 
 export function EpisodeListenPlayerAndBody({
@@ -29,6 +30,7 @@ export function EpisodeListenPlayerAndBody({
   accentIsLeft,
   afterPlayerSlot,
   transcriptUrl,
+  artBackground,
 }: EpisodeListenPlayerAndBodyProps) {
   const t = useTranslations("listen");
   const tContact = useTranslations("contact");
@@ -124,6 +126,7 @@ export function EpisodeListenPlayerAndBody({
         key={`listen-audio-${episode.id}`}
         episode={episode}
         chapters={hasChapters ? chapters : undefined}
+        artBackground={artBackground}
       />
 
       {afterPlayerSlot != null ? (

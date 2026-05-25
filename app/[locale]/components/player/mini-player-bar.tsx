@@ -10,6 +10,9 @@ import { formatPlaybackTime } from "@/lib/format-playback-time";
 import { linkLocale } from "@/lib/link-locale";
 import { listenEpisodePath } from "@/lib/routes";
 
+import { EpisodePlayerArtBackground } from "../episode/episode-player-art-background.client";
+import { PLAYER_ART_SHELL_CLASS, episodeHasPlayerArt } from "../episode/episode-player-art.constants";
+
 import { usePlayerContext } from "./player-context";
 import { useWaveformSettle } from "./use-waveform-settle";
 import { VolumeIcon } from "./volume-icon";
@@ -209,6 +212,7 @@ export function MiniPlayerBar() {
   if (!rendered || !episode) return null;
 
   const listenHref = listenEpisodePath(episodeListenPathSegment(episode));
+  const hasArt = episodeHasPlayerArt(episode.artImage);
 
   return (
     <section
@@ -227,7 +231,13 @@ export function MiniPlayerBar() {
         t={t}
       />
 
-      <div className="border-edge/50 dark:border-edge/45 relative border-t bg-[color-mix(in_srgb,var(--surface)_42%,transparent)] shadow-[0_-10px_40px_-8px_rgb(0_0_0/0.28),0_-1px_0_0_color-mix(in_srgb,var(--edge)_30%,transparent),inset_0_1px_0_0_color-mix(in_srgb,var(--primary)_18%,transparent)] backdrop-blur-3xl backdrop-brightness-[1.05] backdrop-contrast-[1.03] backdrop-saturate-200 dark:bg-[color-mix(in_srgb,var(--surface)_34%,transparent)] dark:shadow-[0_-14px_48px_-10px_rgb(0_0_0/0.5),0_-1px_0_0_color-mix(in_srgb,var(--edge)_22%,transparent),inset_0_1px_0_0_rgb(255_255_255/0.1)] dark:backdrop-brightness-[1.07] dark:backdrop-contrast-[1.02]">
+      <div
+        className={`border-edge/50 dark:border-edge/45 relative border-t shadow-[0_-10px_40px_-8px_rgb(0_0_0/0.28),0_-1px_0_0_color-mix(in_srgb,var(--edge)_30%,transparent),inset_0_1px_0_0_color-mix(in_srgb,var(--primary)_18%,transparent)] dark:shadow-[0_-14px_48px_-10px_rgb(0_0_0/0.5),0_-1px_0_0_color-mix(in_srgb,var(--edge)_22%,transparent),inset_0_1px_0_0_rgb(255_255_255/0.1)] ${
+          hasArt
+            ? PLAYER_ART_SHELL_CLASS.mini.section
+            : "bg-[color-mix(in_srgb,var(--surface)_42%,transparent)] backdrop-blur-3xl backdrop-brightness-[1.05] backdrop-contrast-[1.03] backdrop-saturate-200 dark:bg-[color-mix(in_srgb,var(--surface)_34%,transparent)] dark:backdrop-brightness-[1.07] dark:backdrop-contrast-[1.02]"
+        }`}
+      >
         <div
           className="pointer-events-none absolute inset-0 opacity-[0.06] dark:opacity-[0.1]"
           style={{
@@ -235,6 +245,16 @@ export function MiniPlayerBar() {
               "radial-gradient(ellipse 55% 100% at 50% 190%, color-mix(in srgb, var(--accent) 55%, transparent), transparent 72%)",
           }}
           aria-hidden
+        />
+
+        {hasArt ? (
+          <div className={PLAYER_ART_SHELL_CLASS.mini.frost} aria-hidden />
+        ) : null}
+
+        <EpisodePlayerArtBackground
+          artImage={episode.artImage}
+          fade="mask"
+          intensity="subtle"
         />
 
         <div className="relative mx-auto flex max-w-6xl items-center gap-2 px-3 py-2.5 sm:gap-3 sm:px-5">

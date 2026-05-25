@@ -11,6 +11,7 @@ import {
   useRef,
   useState,
   type CSSProperties,
+  type ReactNode,
 } from "react";
 
 import type { Episode } from "@/lib/episode-catalog";
@@ -24,6 +25,8 @@ import { LISTEN_AUTOPLAY_QUERY_KEY, parseAsListenAutoplay } from "@/lib/listen-a
 import { usePlayerContext } from "../player/player-context";
 import { useWaveformSettle } from "../player/use-waveform-settle";
 import { VolumeIcon } from "../player/volume-icon";
+import { EpisodePlayerArtBackground } from "./episode-player-art-background.client";
+import { PLAYER_ART_SHELL_CLASS, episodeHasPlayerArt } from "./episode-player-art.constants";
 
 const SKIP_SEC = 15;
 
@@ -57,10 +60,12 @@ export interface EpisodeAudioPlayerHandle {
 interface EpisodeAudioPlayerProps {
   episode: Episode;
   chapters?: EpisodeHashChapter[];
+  /** Server-rendered art layer for first paint on the listen page. */
+  artBackground?: ReactNode;
 }
 
 export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAudioPlayerProps>(
-  function EpisodeAudioPlayer({ episode, chapters }, ref) {
+  function EpisodeAudioPlayer({ episode, chapters, artBackground }, ref) {
     const t = useTranslations("listen");
     const ctx = usePlayerContext();
     const { seek, loadEpisode, togglePlay, episode: ctxEpisode, audioRef } = ctx;
@@ -282,12 +287,18 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
       }
     };
 
+    const hasArt = episodeHasPlayerArt(episode.artImage);
+
     return (
       <section
-        className={`decoder-audio-player relative overflow-hidden rounded-sm border backdrop-blur-md duration-300 motion-safe:transition-[border-color,box-shadow] ${
+        className={`decoder-audio-player relative overflow-hidden rounded-sm border duration-300 motion-safe:transition-[border-color,box-shadow] ${
           ctx.loadError
-            ? "border-secondary/40 bg-surface/90 dark:bg-surface/60 shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--secondary)_8%,transparent)]"
-            : "border-edge bg-surface/85 dark:bg-surface/55 hover:border-secondary/35 hover:shadow-[0_0_0_1px_color-mix(in_srgb,var(--secondary)_12%,transparent)]"
+            ? hasArt
+              ? `border-secondary/40 ${PLAYER_ART_SHELL_CLASS.audio.sectionLoadError} shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--secondary)_8%,transparent)]`
+              : "border-secondary/40 bg-surface/90 dark:bg-surface/60 shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--secondary)_8%,transparent)] backdrop-blur-md"
+            : hasArt
+              ? `border-edge ${PLAYER_ART_SHELL_CLASS.audio.section} hover:border-secondary/35 hover:shadow-[0_0_0_1px_color-mix(in_srgb,var(--secondary)_12%,transparent)]`
+              : "border-edge bg-surface/85 dark:bg-surface/55 backdrop-blur-md hover:border-secondary/35 hover:shadow-[0_0_0_1px_color-mix(in_srgb,var(--secondary)_12%,transparent)]"
         }`}
         style={{ animation: "fadeUp 0.7s ease both 0.18s" }}
         data-playing={isPageEpisodeActive && ctx.isPlaying}
@@ -304,80 +315,84 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
           aria-hidden
         />
 
-        <div className="relative p-4 sm:p-5 md:p-6">
-          <div className="flex flex-col gap-4 sm:gap-5">
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <p className="text-muted mb-1 font-mono text-[10px] tracking-[0.22em] uppercase sm:text-[11px]">
-                  {t("playerKicker")}
-                </p>
-                <p className="font-display text-primary line-clamp-2 pr-2 text-sm leading-snug font-semibold sm:text-base">
-                  <span className="bg-accent/12 border border-accent/28 text-accent-text mr-2 inline-block rounded-sm px-1.5 py-0.5 font-mono text-[10px] tracking-widest align-middle sm:text-[11px]">
-                    {episodeId}
-                  </span>
-                  {title}
-                </p>
-                <div
-                  className={`text-muted/75 mt-1 flex h-5 max-w-full items-center gap-1 font-mono text-[10px] tracking-wide sm:gap-1.5 sm:text-[11px]${ctx.hasClearableProgress && isPageEpisodeActive && ctx.resumeHintVisible ? "" : " pointer-events-none invisible select-none"}`}
-                  inert={
-                    ctx.hasClearableProgress && isPageEpisodeActive && ctx.resumeHintVisible
-                      ? undefined
-                      : true
-                  }
-                >
-                  <output className="line-clamp-1 min-w-0 shrink leading-snug">
-                    {progressResumeCaption ?? "\u00a0"}
-                  </output>
-                  <button
-                    type="button"
-                    onClick={ctx.clearProgress}
-                    disabled={ctx.loadError}
-                    title={t("playerClearProgress")}
-                    aria-label={t("playerClearProgressAria")}
-                    className="text-muted/50 hover:text-muted hover:bg-surface-2/75 focus-visible:ring-secondary/40 -mr-0.5 inline-flex size-6 shrink-0 items-center justify-center rounded-sm transition-colors focus-visible:ring-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-35"
-                  >
-                    <svg
-                      width="11"
-                      height="11"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      className="shrink-0"
-                      aria-hidden
-                    >
-                      <path
-                        d="M6 6l12 12M18 6L6 18"
-                        stroke="currentColor"
-                        strokeWidth="2.25"
-                        strokeLinecap="square"
-                      />
-                    </svg>
-                  </button>
-                </div>
-              </div>
+        {hasArt ? (
+          <div className={PLAYER_ART_SHELL_CLASS.audio.frost} aria-hidden />
+        ) : null}
 
+        {artBackground ?? (
+          <EpisodePlayerArtBackground artImage={episode.artImage} fade="gradient" />
+        )}
+
+        <div className="relative p-4 sm:p-5 md:p-6 flex flex-col gap-4 sm:gap-5">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <p className="font-display text-primary pr-2 text-sm leading-snug font-semibold sm:text-base">
+                <span className="bg-accent/12 border border-accent/28 text-accent-text mr-2 inline-block rounded-sm px-1.5 py-0.5 font-mono text-[10px] tracking-widest align-middle sm:text-[11px]">
+                  {episodeId}
+                </span>
+                {title}
+              </p>
               <div
-                ref={waveformRef}
-                className="flex h-10 shrink-0 items-center gap-[2.5px] sm:h-12 sm:gap-[3px]"
-                data-waveform-playing={decoderWavePlaying || undefined}
-                aria-hidden
+                className={`text-muted/75 mt-1 flex h-5 max-w-full items-center gap-1 font-mono text-[10px] tracking-wide sm:gap-1.5 sm:text-[11px]${ctx.hasClearableProgress && isPageEpisodeActive && ctx.resumeHintVisible ? "" : " pointer-events-none invisible select-none"}`}
+                inert={
+                  ctx.hasClearableProgress && isPageEpisodeActive && ctx.resumeHintVisible
+                    ? undefined
+                    : true
+                }
               >
-                {WAVEFORM_BARS.map((bar) => (
-                  <span
-                    key={bar.id}
-                    className="decoder-waveform-bar decoder-waveform-bar-gradient w-[2.5px] rounded-[1px]"
-                    style={
-                      {
-                        height: `${bar.h}%`,
-                        "--wave-dur": `${bar.dur}s`,
-                        "--wave-delay": `${bar.delay}s`,
-                      } as CSSProperties
-                    }
-                  />
-                ))}
+                <output className="line-clamp-1 min-w-0 shrink leading-snug">
+                  {progressResumeCaption ?? "\u00a0"}
+                </output>
+                <button
+                  type="button"
+                  onClick={ctx.clearProgress}
+                  disabled={ctx.loadError}
+                  title={t("playerClearProgress")}
+                  aria-label={t("playerClearProgressAria")}
+                  className="text-muted/50 hover:text-muted hover:bg-surface-2/75 focus-visible:ring-secondary/40 -mr-0.5 inline-flex size-6 shrink-0 items-center justify-center rounded-sm transition-colors focus-visible:ring-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-35"
+                >
+                  <svg
+                    width="11"
+                    height="11"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    className="shrink-0"
+                    aria-hidden
+                  >
+                    <path
+                      d="M6 6l12 12M18 6L6 18"
+                      stroke="currentColor"
+                      strokeWidth="2.25"
+                      strokeLinecap="square"
+                    />
+                  </svg>
+                </button>
               </div>
             </div>
 
-            {ctx.loadError ? (
+            <div
+              ref={waveformRef}
+              className="flex h-10 shrink-0 items-center gap-[2.5px] sm:h-12 sm:gap-[3px]"
+              data-waveform-playing={decoderWavePlaying || undefined}
+              aria-hidden
+            >
+              {WAVEFORM_BARS.map((bar) => (
+                <span
+                  key={bar.id}
+                  className="decoder-waveform-bar decoder-waveform-bar-gradient w-[2.5px] rounded-[1px]"
+                  style={
+                    {
+                      height: `${bar.h}%`,
+                      "--wave-dur": `${bar.dur}s`,
+                      "--wave-delay": `${bar.delay}s`,
+                    } as CSSProperties
+                  }
+                />
+              ))}
+            </div>
+          </div>
+
+          {ctx.loadError ? (
               <div
                 className="border-secondary/25 relative overflow-hidden rounded-sm border bg-[linear-gradient(105deg,color-mix(in_srgb,var(--secondary)_7%,transparent)_0%,transparent_42%,transparent_100%)] dark:bg-[linear-gradient(105deg,color-mix(in_srgb,var(--secondary)_12%,transparent)_0%,transparent_45%,transparent_100%)]"
                 role="alert"
@@ -610,7 +625,7 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
               </div>
             </div>
 
-            <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
               <div className="hidden sm:contents">
                 <button
                   type="button"
@@ -848,7 +863,6 @@ export const EpisodeAudioPlayer = forwardRef<EpisodeAudioPlayerHandle, EpisodeAu
                 <li>{t("playerShortcutRate")}</li>
               </ul>
             </details>
-          </div>
         </div>
       </section>
     );

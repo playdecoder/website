@@ -26,8 +26,8 @@ import { listenEpisodePath, ROUTES, homeSectionPath } from "@/lib/routes";
 import { showHostsSchemaPersons } from "@/lib/show";
 import { absoluteFromPath, getPodcastCoverAbsoluteUrl, getPublicSiteUrl } from "@/lib/site";
 
-import { EpisodeCoverArt } from "../../components/episode/episode-cover-art";
 import { EpisodeListenPlayerAndBody } from "../../components/episode/episode-listen-player-body";
+import { EpisodePlayerArtBackground } from "../../components/episode/episode-player-art-background";
 import { EpisodeNeighborNav } from "../../components/episode/episode-neighbor-nav";
 import { EpisodeShareButton } from "../../components/episode/episode-share-button";
 import { EpisodeSpokenLangNote } from "../../components/episode/episode-spoken-lang-note";
@@ -334,8 +334,6 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
       <Navbar locale={locale} />
 
       <DecoderPageFrame className="min-h-0" scanPeriodSec={16} scanOpacity={0.22}>
-        <EpisodeCoverArt episode={episode} variant="wash" />
-
         <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden>
           <div
             className="absolute inset-0 opacity-90 dark:opacity-100"
@@ -513,6 +511,13 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
                 episode={episode}
                 accentIsLeft={accentIsLeft}
                 transcriptUrl={episode.links.transcript}
+                artBackground={
+                  <EpisodePlayerArtBackground
+                    artImage={episode.artImage}
+                    fade="gradient"
+                    priority
+                  />
+                }
                 afterPlayerSlot={
                   <div
                     className="border-edge/25 flex flex-col gap-4 border-t border-b py-2 lg:hidden"
