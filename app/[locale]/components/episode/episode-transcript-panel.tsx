@@ -1,7 +1,14 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { startTransition, useEffect, useReducer, useRef, useState } from "react";
+import {
+  startTransition,
+  useEffect,
+  useLayoutEffect,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
 
 import { type TranscriptSegment, fetchEpisodeTranscript } from "@/lib/episode/fetch-transcript";
 import { useLatestRef } from "@/lib/react/use-latest-ref";
@@ -64,6 +71,7 @@ export function EpisodeTranscriptPanel({
   const activeRef = useRef<HTMLLIElement>(null);
   const copyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const loadGuardRef = useRef(false);
+  const initialScrollDoneRef = useRef(false);
 
   async function loadTranscript() {
     if (!transcriptUrl || loadGuardRef.current) return;
@@ -83,11 +91,21 @@ export function EpisodeTranscriptPanel({
   const loadTranscriptRef = useLatestRef(loadTranscript);
 
   useEffect(() => {
+    initialScrollDoneRef.current = false;
+  }, [transcriptUrl]);
+
+  useEffect(() => {
     if (!transcriptUrl) return;
     queueMicrotask(() => {
       void loadTranscriptRef.current();
     });
   }, [transcriptUrl, loadTranscriptRef]);
+
+  useEffect(() => {
+    if (loadState !== "ready") return;
+    const audio = document.querySelector<HTMLAudioElement>("audio");
+    if (audio) setCurrentTime(audio.currentTime);
+  }, [loadState]);
 
   useEffect(() => {
     const audio = document.querySelector<HTMLAudioElement>("audio");
@@ -107,18 +125,36 @@ export function EpisodeTranscriptPanel({
     }
   }
 
-  useEffect(() => {
-    if (activeIndex === -1 || !activeRef.current || !scrollRef.current) return;
+  useLayoutEffect(() => {
+    if (
+      loadState !== "ready" ||
+      activeIndex === -1 ||
+      !activeRef.current ||
+      !scrollRef.current
+    ) {
+      return;
+    }
     const container = scrollRef.current;
     const el = activeRef.current;
-    const elRelTop = el.getBoundingClientRect().top - container.getBoundingClientRect().top;
-    const elRelBottom = el.getBoundingClientRect().bottom - container.getBoundingClientRect().top;
-    if (elRelTop < 60 || elRelBottom > container.clientHeight - 40) {
+    const containerRect = container.getBoundingClientRect();
+    const elRelTop = el.getBoundingClientRect().top - containerRect.top;
+    const elRelBottom = el.getBoundingClientRect().bottom - containerRect.top;
+    const paddingTop = 60;
+    const paddingBottom = 40;
+    if (elRelTop < paddingTop || elRelBottom > container.clientHeight - paddingBottom) {
       const target =
         container.scrollTop + elRelTop - container.clientHeight / 2 + el.offsetHeight / 2;
-      container.scrollTo({ top: Math.max(0, target), behavior: "smooth" });
+      const nextTop = Math.max(0, target);
+      if (!initialScrollDoneRef.current) {
+        container.scrollTop = nextTop;
+        initialScrollDoneRef.current = true;
+      } else {
+        container.scrollTo({ top: nextTop, behavior: "smooth" });
+      }
+    } else if (!initialScrollDoneRef.current) {
+      initialScrollDoneRef.current = true;
     }
-  }, [activeIndex]);
+  }, [activeIndex, loadState]);
 
   if (!transcriptUrl) return null;
 

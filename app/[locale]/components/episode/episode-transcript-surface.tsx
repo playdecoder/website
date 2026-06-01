@@ -2,6 +2,8 @@ import type { RefObject } from "react";
 
 import type { TranscriptSegment } from "@/lib/episode/fetch-transcript";
 
+import { EpisodeTranscriptLoading } from "./episode-transcript-loading";
+
 type LoadState = "idle" | "loading" | "ready" | "error";
 
 function formatClock(totalSeconds: number): string {
@@ -52,32 +54,7 @@ export function EpisodeTranscriptSurface({
       />
 
       {(loadState === "idle" || loadState === "loading") && (
-        <div className="h-full overflow-hidden py-4">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <div
-              key={i}
-              className="grid grid-cols-[4rem_minmax(0,1fr)] items-start gap-4 px-5 py-4 sm:grid-cols-[5.5rem_minmax(0,1fr)] sm:gap-5 sm:px-7 md:px-8"
-            >
-              <div
-                className="bg-edge/10 mt-0.5 h-3.5 w-11 animate-pulse rounded-full"
-                style={{ animationDelay: `${i * 80}ms` }}
-              />
-              <div className="space-y-2.5">
-                <div
-                  className="bg-edge/10 h-3.5 animate-pulse rounded-full"
-                  style={{ width: `${63 + ((i * 9) % 30)}%`, animationDelay: `${i * 80 + 40}ms` }}
-                />
-                <div
-                  className="bg-edge/10 h-3.5 animate-pulse rounded-full"
-                  style={{
-                    width: `${38 + ((i * 13) % 45)}%`,
-                    animationDelay: `${i * 80 + 80}ms`,
-                  }}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
+        <EpisodeTranscriptLoading label={t("transcriptLoading")} />
       )}
 
       {loadState === "error" && (
