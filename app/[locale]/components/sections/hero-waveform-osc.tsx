@@ -1,6 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
+
+import {
+  useDocumentTabVisible,
+  useHtmlDarkClass,
+  useHeroWaveInView,
+} from "@/lib/browser-external-store";
 
 type ChannelVisual = {
   rgb: readonly [number, number, number];
@@ -629,43 +635,11 @@ export function HeroWaveformOsc() {
   const stateRef = useRef<RenderState | null>(null);
   const elapsedRef = useRef(0);
 
-  const [inView, setInView] = useState(true);
-  const [tabVisible, setTabVisible] = useState(true);
-  const [isDark, setIsDark] = useState<boolean | null>(null);
+  const inView = useHeroWaveInView(rootRef);
+  const tabVisible = useDocumentTabVisible();
+  const isDark = useHtmlDarkClass();
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    const onVis = () => setTabVisible(document.visibilityState !== "hidden");
-    onVis();
-    document.addEventListener("visibilitychange", onVis);
-    const el = rootRef.current;
-    if (el && typeof IntersectionObserver !== "undefined") {
-      const io = new IntersectionObserver(([e]) => setInView(e.isIntersecting), {
-        root: null,
-        rootMargin: "96px 0px 96px 0px",
-        threshold: 0,
-      });
-      io.observe(el);
-      return () => {
-        document.removeEventListener("visibilitychange", onVis);
-        io.disconnect();
-      };
-    }
-    return () => document.removeEventListener("visibilitychange", onVis);
-  }, []);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const root = document.documentElement;
-    const check = () => setIsDark(root.classList.contains("dark"));
-    check();
-    const obs = new MutationObserver(check);
-    obs.observe(root, { attributes: true, attributeFilter: ["class"] });
-    return () => obs.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (isDark === null) return;
     const canvas = canvasRef.current;
     const container = containerRef.current;
     if (!canvas || !container) return;
@@ -770,7 +744,7 @@ export function HeroWaveformOsc() {
       <div className="hero-osc" ref={containerRef} aria-hidden>
         <div className="hero-osc__screen">
           <div className="hero-osc__scanlines" />
-          <canvas ref={canvasRef} className="hero-osc__canvas" aria-hidden />
+          <canvas ref={canvasRef} className="hero-osc__canvas" />
         </div>
         <div className="hero-osc__ui">
           <div className="hero-osc__labels">

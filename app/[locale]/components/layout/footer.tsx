@@ -8,8 +8,10 @@ import { ROUTES } from "@/lib/routes";
 import { LogoD } from "../branding/logo-d";
 
 export async function Footer({ locale }: { locale: string }) {
-  const t = await getTranslations({ locale, namespace: "contact" });
-  const tNav = await getTranslations({ locale, namespace: "nav" });
+  const [t, tNav] = await Promise.all([
+    getTranslations({ locale, namespace: "contact" }),
+    getTranslations({ locale, namespace: "nav" }),
+  ]);
   const b = brandInterpolation(locale);
   const hrefLocale = linkLocale(locale);
 
@@ -68,7 +70,10 @@ export async function Footer({ locale }: { locale: string }) {
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-muted/50 font-mono text-xs tracking-widest">
+            <span
+              className="text-muted/50 font-mono text-xs tracking-widest"
+              suppressHydrationWarning
+            >
               © {new Date().getFullYear()}
             </span>
             <span className="text-edge mx-1">·</span>

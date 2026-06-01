@@ -66,7 +66,7 @@ function buildItem(ep: Episode): string {
 }
 
 export function GET() {
-  const sorted = [...episodes].sort((a, b) => {
+  const sorted = episodes.toSorted((a, b) => {
     const byTime = episodePublishedAtMs(b) - episodePublishedAtMs(a);
     return byTime !== 0 ? byTime : b.id.localeCompare(a.id);
   });

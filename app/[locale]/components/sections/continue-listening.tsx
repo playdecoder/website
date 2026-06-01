@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useMemo, useSyncExternalStore } from "react";
+import { useSyncExternalStore } from "react";
 
 import { Link, usePathname } from "@/i18n/navigation";
 import { episodes, episodeListenPathSegment } from "@/lib/episode-catalog";
@@ -53,17 +53,12 @@ export function ContinueListening({ locale }: { locale: string }) {
   );
   const entry = entryKey ? (JSON.parse(entryKey) as EpisodeProgressEntry) : null;
 
-  const episode = useMemo(
-    () => (entry ? (episodes.find((candidate) => candidate.id === entry.id) ?? null) : null),
-    [entry],
-  );
-
-  const descriptionSnippet = useMemo(() => {
-    if (!episode) {
-      return "";
-    }
-    return episodeDescriptionSnippet(episode.description, DESCRIPTION_SNIPPET_MAX);
-  }, [episode]);
+  const episode = entry
+    ? (episodes.find((candidate) => candidate.id === entry.id) ?? null)
+    : null;
+  const descriptionSnippet = episode
+    ? episodeDescriptionSnippet(episode.description, DESCRIPTION_SNIPPET_MAX)
+    : "";
 
   if (!entry || !episode) {
     return null;
@@ -120,8 +115,8 @@ export function ContinueListening({ locale }: { locale: string }) {
         />
       </div>
 
-      <span className="border-edge pointer-events-none absolute top-4 left-4 hidden h-3.5 w-3.5 border-t border-l opacity-70 sm:block md:top-5 md:left-6 lg:opacity-100" />
-      <span className="border-edge pointer-events-none absolute top-4 right-4 hidden h-3.5 w-3.5 border-t border-r opacity-70 sm:block md:top-5 md:right-6 lg:opacity-100" />
+      <span className="border-edge pointer-events-none absolute top-4 left-4 hidden size-3.5 border-t border-l opacity-70 sm:block md:top-5 md:left-6 lg:opacity-100" />
+      <span className="border-edge pointer-events-none absolute top-4 right-4 hidden size-3.5 border-t border-r opacity-70 sm:block md:top-5 md:right-6 lg:opacity-100" />
 
       <div className="relative z-10 mx-auto max-w-6xl px-5 py-9 md:py-12">
         <div className="scroll-reveal flex flex-col gap-3 lg:flex-row lg:items-start lg:gap-10">
@@ -129,7 +124,7 @@ export function ContinueListening({ locale }: { locale: string }) {
             <div className="border-edge/55 flex items-center justify-between gap-3 border-b pb-2.5 lg:hidden">
               <div className="flex min-w-0 items-center gap-2">
                 <span
-                  className="ui-pulse-dot bg-accent h-1.5 w-1.5 shrink-0 rounded-full"
+                  className="ui-pulse-dot bg-accent size-1.5 shrink-0 rounded-full"
                   aria-hidden
                 />
                 <span className="text-muted truncate font-mono text-[10px] tracking-[0.22em] uppercase">
@@ -206,7 +201,7 @@ export function ContinueListening({ locale }: { locale: string }) {
               <button
                 type="button"
                 onClick={handleClearProgress}
-                className="text-muted/45 hover:text-muted/85 focus-visible:text-primary focus-visible:outline-secondary rounded-sm px-1.5 py-1.5 font-mono text-[9px] tracking-[0.14em] uppercase underline-offset-[5px] transition-colors hover:underline focus-visible:underline focus-visible:outline-2 focus-visible:outline-offset-2"
+                className="text-muted/45 hover:text-muted/85 focus-visible:text-primary focus-visible:outline-secondary rounded-sm p-1.5 font-mono text-[9px] tracking-[0.14em] uppercase underline-offset-[5px] transition-colors hover:underline focus-visible:underline focus-visible:outline-2 focus-visible:outline-offset-2"
               >
                 {t("deleteProgress")}
               </button>

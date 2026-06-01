@@ -2,8 +2,6 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { useQueryStates } from "nuqs";
-import { useMemo } from "react";
-
 import {
   type Episode,
   getEpisodeArchiveFacets,
@@ -60,63 +58,55 @@ export function EpisodesArchiveClient({
   const hrefLocale = linkLocale(locale);
   const t = useTranslations("episodesPage");
   const tSection = useTranslations("episodesSection");
-  const { tags: facetTags } = useMemo(() => getEpisodeArchiveFacets(allEpisodes), [allEpisodes]);
-  const latestId = useMemo(() => getLatestEpisode(allEpisodes)?.id, [allEpisodes]);
+  const { tags: facetTags } = getEpisodeArchiveFacets(allEpisodes);
+  const latestId = getLatestEpisode(allEpisodes)?.id;
 
   const [filters, setFilters] = useQueryStates(episodesArchiveSearchParams, { history: "replace" });
 
-  const searchScopes = useMemo<EpisodesSearchScopes>(
-    () => ({
-      title: filters.st,
-      description: filters.sd,
-      chapters: filters.sc,
-    }),
-    [filters.st, filters.sd, filters.sc],
-  );
+  const searchScopes: EpisodesSearchScopes = {
+    title: filters.st,
+    description: filters.sd,
+    chapters: filters.sc,
+  };
 
-  const facetTagSet = useMemo(() => new Set(facetTags), [facetTags]);
-  const selectedTags = useMemo(() => {
-    if (topicFilterLocked) {
-      return new Set(initialSelectedTags);
-    }
+  const facetTagSet = new Set(facetTags);
+  let selectedTags: Set<string>;
+  if (topicFilterLocked) {
+    selectedTags = new Set(initialSelectedTags);
+  } else {
     const next = new Set<string>();
     for (const tag of filters.tags) {
       if (facetTagSet.has(tag)) {
         next.add(tag);
       }
     }
-    return next;
-  }, [topicFilterLocked, initialSelectedTags, filters.tags, facetTagSet]);
+    selectedTags = next;
+  }
 
-  const archiveTotalForResults = useMemo(() => {
-    if (!topicFilterLocked || initialSelectedTags.length === 0) {
-      return allEpisodes.length;
-    }
-    return allEpisodes.filter((ep) => initialSelectedTags.some((tag) => ep.tags.includes(tag)))
-      .length;
-  }, [topicFilterLocked, initialSelectedTags, allEpisodes]);
+  const archiveTotalForResults =
+    !topicFilterLocked || initialSelectedTags.length === 0
+      ? allEpisodes.length
+      : allEpisodes.filter((ep) => initialSelectedTags.some((tag) => ep.tags.includes(tag)))
+          .length;
 
-  const filtered = useMemo(() => {
-    const q = filters.q.trim().toLowerCase();
-    const words = q ? q.split(/\s+/).filter(Boolean) : [];
-
-    return allEpisodes.filter((ep) => {
-      if (selectedTags.size > 0) {
-        let hasAny = false;
-        for (const tag of selectedTags) {
-          if (ep.tags.includes(tag)) {
-            hasAny = true;
-            break;
-          }
-        }
-        if (!hasAny) {
-          return false;
+  const q = filters.q.trim().toLowerCase();
+  const words = q ? q.split(/\s+/).filter(Boolean) : [];
+  const filtered = allEpisodes.filter((ep) => {
+    if (selectedTags.size > 0) {
+      let hasAny = false;
+      for (const tag of ep.tags) {
+        if (selectedTags.has(tag)) {
+          hasAny = true;
+          break;
         }
       }
+      if (!hasAny) {
+        return false;
+      }
+    }
 
-      return episodeMatchesSearchQuery(ep, words, searchScopes);
-    });
-  }, [allEpisodes, filters.q, selectedTags, searchScopes]);
+    return episodeMatchesSearchQuery(ep, words, searchScopes);
+  });
 
   const searchScopesDefault = filters.st && filters.sd && filters.sc;
 
@@ -137,7 +127,7 @@ export function EpisodesArchiveClient({
         set.add(tag);
       }
       return {
-        tags: [...set].sort((a, b) => a.localeCompare(b)),
+        tags: Array.from(set).toSorted((a, b) => a.localeCompare(b)),
       };
     });
   }

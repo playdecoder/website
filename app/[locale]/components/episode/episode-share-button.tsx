@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { cn } from "@/lib/cn";
 
@@ -56,15 +56,7 @@ export function EpisodeShareButton({
     });
   }, [shareTitle, shareText]);
 
-  useEffect(() => {
-    return () => {
-      if (copyTimerRef.current !== null) {
-        clearTimeout(copyTimerRef.current);
-      }
-    };
-  }, []);
-
-  const onShare = useCallback(async () => {
+  async function onShare() {
     if (!canShare || typeof navigator.share !== "function") {
       return;
     }
@@ -78,9 +70,9 @@ export function EpisodeShareButton({
       }
       console.warn(e);
     }
-  }, [canShare, shareTitle, shareText]);
+  }
 
-  const onCopyLink = useCallback(async () => {
+  async function onCopyLink() {
     const url = window.location.href;
     try {
       await navigator.clipboard.writeText(url);
@@ -92,10 +84,10 @@ export function EpisodeShareButton({
       clearTimeout(copyTimerRef.current);
     }
     copyTimerRef.current = setTimeout(() => {
-      setCopyStatus("idle");
       copyTimerRef.current = null;
+      setCopyStatus("idle");
     }, COPY_STATUS_MS);
-  }, []);
+  }
 
   const copyVisible =
     copyStatus === "copied" ? copiedLabel : copyStatus === "error" ? copyFailedLabel : copyLabel;

@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 
 import { brandInterpolation } from "@/lib/brand";
 import { episodes, formatCatalogHours, totalEpisodeCatalogSeconds } from "@/lib/episode-catalog";
+import { formatAboutStatCount } from "@/lib/intl-formatters";
 import { PAGE_SECTION_ID } from "@/lib/routes";
 
 import { LedeIntroParagraph } from "../ui/lede-intro-paragraph";
@@ -14,7 +15,7 @@ export async function About({ locale }: { locale: string }) {
   const catalogSeconds = totalEpisodeCatalogSeconds(episodes);
   const stats = [
     {
-      value: new Intl.NumberFormat(locale).format(episodes.length),
+      value: formatAboutStatCount(episodes.length, locale),
       label: t("statEpisodes"),
     },
     {
@@ -75,7 +76,7 @@ export async function About({ locale }: { locale: string }) {
             <p className="font-body text-muted text-base leading-[1.8] md:text-lg">{t("p3")}</p>
 
             <div className="flex items-center gap-3 pt-2">
-              <span className="ui-pulse-dot bg-accent h-2 w-2 rounded-full" />
+              <span className="ui-pulse-dot bg-accent size-2 rounded-full" />
               <span className="text-muted font-mono text-xs tracking-widest uppercase">
                 {t("cadence")}
               </span>

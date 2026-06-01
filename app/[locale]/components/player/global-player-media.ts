@@ -8,13 +8,13 @@ import {
 } from "@/lib/episode-progress-storage";
 import { formatPlaybackTime } from "@/lib/format-playback-time";
 
-export const GLOBAL_PLAYER_PERSIST_THROTTLE_MS = 2000;
+const GLOBAL_PLAYER_PERSIST_THROTTLE_MS = 2000;
 
 const BUFFER_EDGE_SLOP_SEC = 0.45;
 /** Margin past `max(buffered.end)` when `readyState` is too low for a precise range membership check. */
 const BUFFER_AHEAD_MARGIN_SEC = 0.35;
 
-export function getBufferedMaxEndSec(el: HTMLMediaElement): number {
+function getBufferedMaxEndSec(el: HTMLMediaElement): number {
   const ranges = el.buffered;
   let max = 0;
   for (let i = 0; i < ranges.length; i++) {
@@ -23,7 +23,7 @@ export function getBufferedMaxEndSec(el: HTMLMediaElement): number {
   return max;
 }
 
-export function timeIsBuffered(el: HTMLAudioElement, targetSec: number): boolean {
+function timeIsBuffered(el: HTMLAudioElement, targetSec: number): boolean {
   if (!Number.isFinite(targetSec) || targetSec < 0) return true;
   const d = el.duration;
   if (!Number.isFinite(d) || d <= 0) return true;

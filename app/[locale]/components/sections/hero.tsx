@@ -26,10 +26,10 @@ export async function Hero({ locale }: { locale: string }) {
     >
       <div className="hero-top-scanline pointer-events-none absolute inset-x-0 top-0 h-px" />
 
-      <span className="border-edge absolute top-20 left-6 h-5 w-5 border-t border-l" />
-      <span className="border-edge absolute top-20 right-6 h-5 w-5 border-t border-r" />
-      <span className="border-edge absolute bottom-6 left-6 h-5 w-5 border-b border-l" />
-      <span className="border-edge absolute right-6 bottom-6 h-5 w-5 border-r border-b" />
+      <span className="border-edge absolute top-20 left-6 size-5 border-t border-l" />
+      <span className="border-edge absolute top-20 right-6 size-5 border-t border-r" />
+      <span className="border-edge absolute bottom-6 left-6 size-5 border-b border-l" />
+      <span className="border-edge absolute right-6 bottom-6 size-5 border-r border-b" />
 
       <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col items-center px-5 text-center">
         <SignalLabelRail
@@ -57,7 +57,7 @@ export async function Hero({ locale }: { locale: string }) {
                 .split("")
                 .map((char, i) => (
                   <span
-                    key={i}
+                    key={`${char}-${i}`}
                     className="hero-title__letter"
                     style={{ animationDelay: `${0.4 + i * 0.052}s` }}
                   >

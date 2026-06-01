@@ -13,7 +13,7 @@ export function EpisodeLangCompactBadge({ lang }: { lang: string }) {
       className="text-secondary border-secondary/40 bg-secondary/[0.06] inline-flex shrink-0 items-center gap-1.5 rounded-sm border px-2 py-0.5 font-mono text-[9px] tracking-[0.18em] uppercase sm:text-[10px]"
       title={t("banner")}
     >
-      <span className="ui-pulse-dot bg-secondary h-1 w-1 shrink-0 rounded-full" />
+      <span className="ui-pulse-dot bg-secondary size-1 shrink-0 rounded-full" />
       {t("compact")}
     </span>
   );

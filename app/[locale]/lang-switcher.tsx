@@ -2,7 +2,6 @@
 
 import { useLocale, useTranslations } from "next-intl";
 
-import { usePathname } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { navigateToLocale } from "@/lib/navigate-to-locale";
 
@@ -11,9 +10,23 @@ const LABELS: Record<string, string> = {
   cs: "CS",
 };
 
+function pathnameFromWindow(currentLocale: string): string {
+  const path = window.location.pathname;
+  if (currentLocale === routing.defaultLocale) {
+    return path;
+  }
+  const prefix = `/${currentLocale}`;
+  if (path === prefix) {
+    return "/";
+  }
+  if (path.startsWith(`${prefix}/`)) {
+    return path.slice(prefix.length);
+  }
+  return path;
+}
+
 export function LangSwitcher() {
   const locale = useLocale();
-  const pathname = usePathname();
   const t = useTranslations("common");
 
   const idx = routing.locales.indexOf(locale as (typeof routing.locales)[number]);
@@ -26,7 +39,7 @@ export function LangSwitcher() {
   return (
     <button
       type="button"
-      onClick={() => navigateToLocale(nextLocale, pathname, locale)}
+      onClick={() => navigateToLocale(nextLocale, pathnameFromWindow(locale), locale)}
       className="border-edge text-muted hover:text-primary hover:border-primary/40 group focus-visible:ring-secondary/50 focus-visible:ring-offset-bg flex size-10 shrink-0 items-center justify-center rounded-sm border bg-transparent font-mono text-[10px] font-semibold tracking-[0.18em] uppercase transition-all duration-200 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
       aria-label={t("switchToLanguage", { language: targetLanguageLabel })}
       title={t("switchToLanguage", { language: targetLanguageLabel })}

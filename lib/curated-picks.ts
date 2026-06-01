@@ -17,7 +17,3 @@ export function getCuratedPicks(): CuratedPick[] {
 export function hasCuratedPicks(): boolean {
   return getCuratedPicks().length === CURATED_PICK_ORDER.length;
 }
-
-export function curatedPickTopics() {
-  return getCuratedPicks().flatMap((pick) => pick.episode.tags);
-}

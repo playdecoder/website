@@ -1,5 +1,10 @@
 import episodesJson from "@/data/episodes.json";
 
+import {
+  getCatalogHoursFormatter,
+  getEpisodeDateFormatter,
+} from "@/lib/intl-formatters";
+
 export type BarColor = "primary" | "secondary" | "accent";
 
 export interface EpisodeLinks {
@@ -122,11 +127,7 @@ export function formatEpisodeDate(isoDate: string, locale: string): string {
   if (!date) {
     return isoDate;
   }
-  return new Intl.DateTimeFormat(locale, {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  }).format(date);
+  return getEpisodeDateFormatter(locale).format(date);
 }
 
 export function formatEpisodeDuration(totalSeconds: number): string {
@@ -177,20 +178,17 @@ export function totalEpisodeCatalogSeconds(eps: Episode[]): number {
 export function formatCatalogHours(totalSeconds: number, locale: string): string {
   const hours = Math.max(0, totalSeconds) / 3600;
   const rounded = Math.round(hours * 10) / 10;
-  const formatted = new Intl.NumberFormat(locale, {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 1,
-  }).format(rounded);
+  const formatted = getCatalogHoursFormatter(locale).format(rounded);
   return locale.startsWith("cs") ? `${formatted}\u00A0h` : `${formatted}h`;
 }
 
 export function getEpisodeArchiveFacets(eps: Episode[]) {
-  const tags = [...new Set(eps.flatMap((e) => e.tags))].sort((a, b) => a.localeCompare(b));
-  const langs = [...new Set(eps.map((e) => e.lang))].sort();
+  const tags = [...new Set(eps.flatMap((e) => e.tags))].toSorted((a, b) => a.localeCompare(b));
+  const langs = [...new Set(eps.map((e) => e.lang))].toSorted();
   return { tags, langs };
 }
 
-export function getEpisodeById(paramId: string): Episode | undefined {
+function getEpisodeById(paramId: string): Episode | undefined {
   const id = paramId.trim().toUpperCase();
   return episodes.find((e) => e.id.toUpperCase() === id);
 }

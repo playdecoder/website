@@ -27,10 +27,10 @@ export function DecoderPageFrame({
         }}
       />
 
-      <span className="border-edge absolute top-8 left-6 h-5 w-5 border-t border-l" />
-      <span className="border-edge absolute top-8 right-6 h-5 w-5 border-t border-r" />
-      <span className="border-edge absolute bottom-8 left-6 h-5 w-5 border-b border-l" />
-      <span className="border-edge absolute right-6 bottom-8 h-5 w-5 border-r border-b" />
+      <span className="border-edge absolute top-8 left-6 size-5 border-t border-l" />
+      <span className="border-edge absolute top-8 right-6 size-5 border-t border-r" />
+      <span className="border-edge absolute bottom-8 left-6 size-5 border-b border-l" />
+      <span className="border-edge absolute right-6 bottom-8 size-5 border-r border-b" />
 
       {children}
     </section>

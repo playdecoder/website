@@ -1,13 +1,13 @@
 import { join } from "node:path";
 
-export const OUTPUT_ROOT = "output";
+const OUTPUT_ROOT = "output";
 
 /** Lowercase episode folder: EP02 → ep02 */
-export function episodeOutputDir(episodeId) {
+function episodeOutputDir(episodeId) {
   return `${episodeId.toLowerCase()}`;
 }
 
-export function episodeOutputRoot(repoRoot, episodeId) {
+function episodeOutputRoot(repoRoot, episodeId) {
   return join(repoRoot, OUTPUT_ROOT, episodeOutputDir(episodeId));
 }
 
@@ -17,7 +17,7 @@ export function socialOutputPath(repoRoot, episodeId, layoutId, theme = "dark") 
 }
 
 /** output/ep02/social/youtube-keyart-<theme>.png */
-export function keyartOutputPath(repoRoot, episodeId, theme = "dark") {
+function keyartOutputPath(repoRoot, episodeId, theme = "dark") {
   return socialOutputPath(repoRoot, episodeId, "youtube-keyart", theme);
 }
 
@@ -31,7 +31,7 @@ export function podcastCoverOutputPath(repoRoot, episodeId, format = "jpg", them
 }
 
 /** output/ep02/youtube/ep02-<theme>.mp4 */
-export function youtubeVideoOutputPath(repoRoot, episodeId, theme = "dark") {
+function youtubeVideoOutputPath(repoRoot, episodeId, theme = "dark") {
   return join(
     episodeOutputRoot(repoRoot, episodeId),
     "youtube",

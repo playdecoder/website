@@ -1,4 +1,5 @@
 import { setRequestLocale } from "next-intl/server";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { redirect } from "@/i18n/navigation";
@@ -19,6 +20,18 @@ interface PageProps {
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { locale } = await params;
+  const latest = getLatestEpisode(episodes);
+  if (!latest) {
+    return { title: "Latest episode" };
+  }
+  return {
+    title: `${latest.id} — ${latest.title}`,
+    robots: { index: false, follow: true },
+  };
 }
 
 export default async function LatestEpisodeRedirectPage({ params }: PageProps) {

@@ -1,9 +1,10 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { startTransition, useCallback, useEffect, useReducer, useRef, useState } from "react";
+import { startTransition, useEffect, useReducer, useRef, useState } from "react";
 
 import { type TranscriptSegment, fetchEpisodeTranscript } from "@/lib/fetch-episode-transcript";
+import { useLatestRef } from "@/lib/use-latest-ref";
 
 import { EpisodeTranscriptSurface } from "./episode-transcript-surface";
 
@@ -64,7 +65,7 @@ export function EpisodeTranscriptPanel({
   const copyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const loadGuardRef = useRef(false);
 
-  const loadTranscript = useCallback(async () => {
+  async function loadTranscript() {
     if (!transcriptUrl || loadGuardRef.current) return;
     loadGuardRef.current = true;
     dispatchBundle({ type: "applyLoading" });
@@ -77,14 +78,16 @@ export function EpisodeTranscriptPanel({
     startTransition(() => {
       dispatchBundle({ type: "applyReady", segments: result.segments });
     });
-  }, [transcriptUrl]);
+  }
+
+  const loadTranscriptRef = useLatestRef(loadTranscript);
 
   useEffect(() => {
     if (!transcriptUrl) return;
     queueMicrotask(() => {
-      void loadTranscript();
+      void loadTranscriptRef.current();
     });
-  }, [transcriptUrl, loadTranscript]);
+  }, [transcriptUrl, loadTranscriptRef]);
 
   useEffect(() => {
     const audio = document.querySelector<HTMLAudioElement>("audio");
@@ -117,12 +120,6 @@ export function EpisodeTranscriptPanel({
     }
   }, [activeIndex]);
 
-  useEffect(() => {
-    return () => {
-      if (copyTimeoutRef.current) clearTimeout(copyTimeoutRef.current);
-    };
-  }, []);
-
   if (!transcriptUrl) return null;
 
   const filteredSegments = searchQuery.trim()
@@ -148,7 +145,13 @@ export function EpisodeTranscriptPanel({
         segments.map((s) => `[${formatClock(s.start)}]  ${s.text.trim()}`).join("\n\n"),
       );
       setCopied(true);
-      copyTimeoutRef.current = setTimeout(() => setCopied(false), 2200);
+      if (copyTimeoutRef.current !== null) {
+        clearTimeout(copyTimeoutRef.current);
+      }
+      copyTimeoutRef.current = setTimeout(() => {
+        copyTimeoutRef.current = null;
+        setCopied(false);
+      }, 2200);
     } catch {}
   }
 

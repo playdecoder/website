@@ -8,7 +8,7 @@ export interface EpisodeHashChapter {
   label: string;
 }
 
-export function slugifyChapterKey(label: string): string {
+function slugifyChapterKey(label: string): string {
   const s = label
     .normalize("NFKD")
     .replace(/\p{M}/gu, "")
@@ -18,10 +18,10 @@ export function slugifyChapterKey(label: string): string {
   return s || "chapter";
 }
 
-export function chapterFragmentKeys(
+function chapterFragmentKeys(
   chapters: EpisodeHashChapter[],
 ): Map<string, EpisodeHashChapter> {
-  const sorted = [...chapters].sort((a, b) => a.t - b.t);
+  const sorted = chapters.toSorted((a, b) => a.t - b.t);
   const map = new Map<string, EpisodeHashChapter>();
   const countByBase = new Map<string, number>();
   for (const ch of sorted) {
@@ -47,7 +47,7 @@ export function getChapterFragmentKey(
   return `${slugifyChapterKey(chapter.label)}-at-${chapter.t}`;
 }
 
-export function parseHashQueryParams(hash: string): Record<string, string> {
+function parseHashQueryParams(hash: string): Record<string, string> {
   const body = hash.replace(/^#/, "").trim();
   const out: Record<string, string> = {};
   if (!body) {
@@ -57,15 +57,16 @@ export function parseHashQueryParams(hash: string): Record<string, string> {
     if (!part) {
       continue;
     }
-    const eq = part.indexOf("=");
-    if (eq <= 0) {
+    const [rawKey, ...valueParts] = part.split("=");
+    if (!rawKey) {
       continue;
     }
-    const key = part.slice(0, eq).trim().toLowerCase();
+    const key = rawKey.trim().toLowerCase();
+    const rawValue = valueParts.join("=").trim();
     try {
-      out[key] = decodeURIComponent(part.slice(eq + 1).trim());
+      out[key] = decodeURIComponent(rawValue);
     } catch {
-      out[key] = part.slice(eq + 1).trim();
+      out[key] = rawValue;
     }
   }
   return out;

@@ -153,7 +153,7 @@ export function MobileNavDrawer({
         type="button"
         className="border-edge text-muted hover:border-primary/35 hover:text-primary focus-visible:ring-secondary/50 focus-visible:ring-offset-bg data-[open]:border-primary/25 data-[open]:text-primary inline-flex size-10 shrink-0 items-center justify-center rounded-sm border bg-transparent transition-[transform,color,background-color,border-color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.96] motion-reduce:transition-none motion-reduce:active:scale-100"
         data-open={mounted || undefined}
-        aria-expanded={mounted}
+        aria-expanded={open}
         aria-controls={mounted ? panelId : undefined}
         aria-label={mounted ? closeNavigationAria : openNavigationAria}
         onClick={() => setOpen((v) => !v)}

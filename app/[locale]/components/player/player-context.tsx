@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, type RefObject } from "react";
+import { createContext, use, type RefObject } from "react";
 
 import type { Episode } from "@/lib/episode-catalog";
 
@@ -39,7 +39,7 @@ export type PlayerContextValue = GlobalPlayerState & GlobalPlayerControls;
 
 const noop = () => {};
 
-export const defaultPlayerState: GlobalPlayerState = {
+const defaultPlayerState: GlobalPlayerState = {
   episode: null,
   isPlaying: false,
   currentTime: 0,
@@ -72,5 +72,5 @@ export const PlayerContext = createContext<PlayerContextValue>({
 });
 
 export function usePlayerContext(): PlayerContextValue {
-  return useContext(PlayerContext);
+  return use(PlayerContext);
 }

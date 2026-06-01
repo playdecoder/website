@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { memo } from "react";
 
 import {
   EPISODE_PLAYER_ART_GRADIENT_FADE_CLASS,
@@ -18,7 +17,7 @@ interface EpisodePlayerArtBackgroundProps {
   intensity?: keyof typeof EPISODE_PLAYER_ART_INTENSITY_CLASS;
 }
 
-export const EpisodePlayerArtBackground = memo(function EpisodePlayerArtBackground({
+export function EpisodePlayerArtBackground({
   artImage,
   fade = "gradient",
   intensity = "default",
@@ -50,4 +49,4 @@ export const EpisodePlayerArtBackground = memo(function EpisodePlayerArtBackgrou
       <div className={EPISODE_PLAYER_ART_GRADIENT_FADE_CLASS} />
     </div>
   );
-});
+}

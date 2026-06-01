@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef } from "react";
 
 interface WaveformSettleOptions {
   frozenOpacity?: number;
@@ -11,6 +11,13 @@ interface WaveformSettleOptions {
 }
 
 const DEFAULT_TRANSITION = "transform 1.1s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.9s ease 0.06s";
+
+function clearBarStyles(bar: HTMLElement) {
+  bar.style.removeProperty("animation");
+  bar.style.removeProperty("transform");
+  bar.style.removeProperty("transition");
+  bar.style.removeProperty("opacity");
+}
 
 export function useWaveformSettle(
   isPlaying: boolean,
@@ -23,90 +30,79 @@ export function useWaveformSettle(
     cleanupMs = 1300,
   }: WaveformSettleOptions = {},
 ): boolean {
-  const [cssWaveHold, setCssWaveHold] = useState(isPlaying);
-  const getBarsRef = useRef(getBars);
-  getBarsRef.current = getBars;
-
   const wasPlayingRef = useRef(isPlaying);
   const rafRef = useRef<number | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const clearStyles = useCallback((bar: HTMLElement) => {
-    bar.style.animation = "";
-    bar.style.transform = "";
-    bar.style.transition = "";
-    bar.style.opacity = "";
-  }, []);
-
-  const cancel = useCallback(() => {
-    if (rafRef.current !== null) {
-      cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-    }
-    if (timerRef.current !== null) {
-      clearTimeout(timerRef.current);
-      timerRef.current = null;
-    }
-  }, []);
-
   useLayoutEffect(() => {
-    cancel();
-    const bars = getBarsRef.current();
+    let cancelled = false;
+
+    const cancelPending = () => {
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
+      if (timerRef.current !== null) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+
+    cancelPending();
+    const bars = getBars();
 
     if (isPlaying) {
       wasPlayingRef.current = true;
-      setCssWaveHold(true);
-      bars.forEach(clearStyles);
-      return cancel;
+      bars.forEach(clearBarStyles);
+      return () => {
+        cancelled = true;
+        cancelPending();
+      };
     }
 
     if (!wasPlayingRef.current) {
-      setCssWaveHold(false);
-      return cancel;
+      return () => {
+        cancelled = true;
+        cancelPending();
+      };
     }
     wasPlayingRef.current = false;
 
     if (bars.length === 0) {
-      setCssWaveHold(false);
-      return cancel;
+      return () => {
+        cancelled = true;
+        cancelPending();
+      };
     }
 
-    bars.forEach((bar) => {
-      const frozenTransform = getComputedStyle(bar).transform;
-      bar.style.animation = "none";
-      bar.style.transform = frozenTransform;
-      bar.style.transition = "none";
-      bar.style.opacity = String(frozenOpacity);
-    });
-
-    setCssWaveHold(false);
+    const frozen = bars.map((bar) => ({
+      bar,
+      transform: getComputedStyle(bar).transform,
+    }));
+    for (const { bar, transform } of frozen) {
+      bar.style.cssText = `animation: none; transform: ${transform}; transition: none; opacity: ${String(frozenOpacity)}`;
+    }
 
     rafRef.current = requestAnimationFrame(() => {
       rafRef.current = requestAnimationFrame(() => {
         rafRef.current = null;
-        bars.forEach((bar) => {
-          bar.style.transition = settleTransition;
-          bar.style.transform = settleScale;
-          bar.style.opacity = String(settleOpacity);
-        });
+        if (cancelled) return;
+        for (const bar of bars) {
+          bar.style.cssText = `transition: ${settleTransition}; transform: ${settleScale}; opacity: ${String(settleOpacity)}`;
+        }
         timerRef.current = setTimeout(() => {
-          bars.forEach(clearStyles);
+          if (cancelled) return;
+          bars.forEach(clearBarStyles);
           timerRef.current = null;
         }, cleanupMs);
       });
     });
 
-    return cancel;
-  }, [
-    isPlaying,
-    frozenOpacity,
-    settleTransition,
-    settleScale,
-    settleOpacity,
-    cleanupMs,
-    cancel,
-    clearStyles,
-  ]);
+    return () => {
+      cancelled = true;
+      cancelPending();
+    };
+  }, [isPlaying, frozenOpacity, settleTransition, settleScale, settleOpacity, cleanupMs, getBars]);
 
-  return isPlaying || cssWaveHold;
+  return isPlaying;
 }

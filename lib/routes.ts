@@ -1,4 +1,4 @@
-export const ROUTE_SEGMENTS = {
+const ROUTE_SEGMENTS = {
   listen: "listen",
   episodes: "episodes",
   topics: "topics",

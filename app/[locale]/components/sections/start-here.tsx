@@ -93,7 +93,7 @@ export async function StartHere({ locale }: { locale: string }) {
                       className={`inline-flex items-center gap-2 font-mono text-[10px] tracking-[0.24em] uppercase ${tone.audienceClass}`}
                     >
                       <span
-                        className="inline-block h-1.5 w-1.5 rounded-full opacity-70"
+                        className="inline-block size-1.5 rounded-full opacity-70"
                         aria-hidden
                         style={{ background: tone.dot }}
                       />

@@ -65,17 +65,3 @@ export function findTopicLabelBySlug(episodes: Episode[], slug: string): string 
   }
   return getTopicEntries(episodes).find((entry) => entry.slug === normalized)?.label ?? null;
 }
-
-export function topicMicroWaveBars(slug: string, barCount = 11): number[] {
-  let h = 2166136261;
-  for (let i = 0; i < slug.length; i++) {
-    h ^= slug.charCodeAt(i);
-    h = Math.imul(h, 16777619);
-  }
-  const out: number[] = [];
-  for (let i = 0; i < barCount; i++) {
-    h = Math.imul(h ^ (h >>> 13), 1274126177);
-    out.push(18 + (Math.abs(h) % 80));
-  }
-  return out;
-}

@@ -2,9 +2,8 @@
 
 import { useTranslations } from "next-intl";
 import {
-  useCallback,
   useEffect,
-  useMemo,
+  useLayoutEffect,
   useReducer,
   useRef,
   useState,
@@ -32,8 +31,9 @@ import {
 } from "./global-player-media";
 import { MiniPlayerBar } from "./mini-player-bar";
 import { PlayerContext } from "./player-context";
+import { useGlobalPlayerKeyboardShortcuts } from "./use-global-player-keyboard";
+
 const PLAYBACK_RATES = [1, 1.25, 1.5, 1.75, 2] as const;
-const KEYBOARD_SKIP_SEC = 15;
 
 function playbackRateToIndex(rate: number): number {
   const exact = PLAYBACK_RATES.findIndex((r) => r === rate);
@@ -48,25 +48,6 @@ function playbackRateToIndex(rate: number): number {
     }
   }
   return best;
-}
-
-function isTypingTarget(el: EventTarget | null): boolean {
-  if (!(el instanceof HTMLElement)) return false;
-  if (el.isContentEditable) return true;
-  const tag = el.tagName;
-  if (tag === "TEXTAREA" || tag === "SELECT") return true;
-  if (tag !== "INPUT") return false;
-  const { type } = el as HTMLInputElement;
-  return type !== "button" && type !== "submit" && type !== "checkbox" && type !== "radio";
-}
-
-function shortcutConsumingTarget(el: EventTarget | null): boolean {
-  if (!(el instanceof HTMLElement)) return false;
-  return Boolean(
-    el.closest(
-      "button, a[href], [role='slider'], input, textarea, select, [contenteditable='true']",
-    ),
-  );
 }
 
 interface AudioPrefs {
@@ -180,19 +161,10 @@ export function GlobalPlayerProvider({ children }: { children: ReactNode }) {
       onPause: () => {
         audioRef.current?.pause();
       },
-      onSeekBackward: () => skipRef.current(-KEYBOARD_SKIP_SEC),
-      onSeekForward: () => skipRef.current(KEYBOARD_SKIP_SEC),
+      onSeekBackward: () => skipRef.current(-15),
+      onSeekForward: () => skipRef.current(15),
     });
   }, []);
-
-  useEffect(() => {
-    if (!("mediaSession" in navigator)) return;
-    if (!episode) {
-      clearMediaSessionMetadata();
-      return;
-    }
-    navigator.mediaSession.metadata = buildEpisodeMediaMetadata(episode);
-  }, [episode]);
 
   useEffect(() => {
     syncMediaSessionPlaybackState(media.isPlaying);
@@ -207,7 +179,7 @@ export function GlobalPlayerProvider({ children }: { children: ReactNode }) {
     });
   }, [episode, media.currentTime, media.duration, playbackRate]);
 
-  const seek = useCallback((seconds: number, notice?: string) => {
+  function seek(seconds: number, notice?: string) {
     const el = audioRef.current;
     if (!el) return;
     const d = Number.isFinite(el.duration) && el.duration > 0 ? el.duration : 0;
@@ -223,30 +195,30 @@ export function GlobalPlayerProvider({ children }: { children: ReactNode }) {
         ...(d > 0 ? { isSeekBuffering: needsSeekBuffer } : {}),
       },
     });
-  }, []);
+  }
 
-  const resetPlaybackState = useCallback(() => {
+  function resetPlaybackState() {
     dispatchMedia({ type: "reset" });
-  }, []);
+  }
 
-  const loadEpisode = useCallback(
-    (ep: Episode) => {
-      const el = audioRef.current;
-      if (!el) return;
-      if (el.dataset.episodeId === ep.id && el.src) return;
-      if (!el.paused) el.pause();
-      debugPlayerDiag("loadEpisode", { episodeId: ep.id, src: ep.links.mp3 });
-      setEpisode(ep);
-      resetPlaybackState();
-      dispatchMedia({ type: "patch", patch: { isInitialLoading: true, isSeekBuffering: false } });
-      el.dataset.episodeId = ep.id;
-      el.src = ep.links.mp3;
-      el.load();
-    },
-    [resetPlaybackState],
-  );
+  function loadEpisode(ep: Episode) {
+    const el = audioRef.current;
+    if (!el) return;
+    if (el.dataset.episodeId === ep.id && el.src) return;
+    if (!el.paused) el.pause();
+    debugPlayerDiag("loadEpisode", { episodeId: ep.id, src: ep.links.mp3 });
+    setEpisode(ep);
+    resetPlaybackState();
+    dispatchMedia({ type: "patch", patch: { isInitialLoading: true, isSeekBuffering: false } });
+    el.dataset.episodeId = ep.id;
+    el.src = ep.links.mp3;
+    el.load();
+    if ("mediaSession" in navigator) {
+      navigator.mediaSession.metadata = buildEpisodeMediaMetadata(ep);
+    }
+  }
 
-  const togglePlay = useCallback(() => {
+  function togglePlay() {
     const el = audioRef.current;
     if (!el || loadErrorRef.current) return;
     if (el.paused) {
@@ -256,22 +228,19 @@ export function GlobalPlayerProvider({ children }: { children: ReactNode }) {
     } else {
       el.pause();
     }
-  }, []);
+  }
 
-  const skip = useCallback(
-    (deltaSecs: number) => {
-      const el = audioRef.current;
-      if (!el) return;
-      seek(el.currentTime + deltaSecs);
-    },
-    [seek],
-  );
+  function skip(deltaSecs: number) {
+    const el = audioRef.current;
+    if (!el) return;
+    seek(el.currentTime + deltaSecs);
+  }
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     skipRef.current = skip;
-  }, [skip]);
+  });
 
-  const dismiss = useCallback(() => {
+  function dismiss() {
     const el = audioRef.current;
     if (el) {
       el.pause();
@@ -282,120 +251,68 @@ export function GlobalPlayerProvider({ children }: { children: ReactNode }) {
     setEpisode(null);
     resetPlaybackState();
     clearMediaSessionMetadata();
-  }, [resetPlaybackState]);
+  }
 
-  const setVolume = useCallback((v: number) => {
+  function setVolume(v: number) {
     setPrefs((prev) => ({ ...prev, volume: v, muted: v === 0 }));
-  }, []);
+  }
 
-  const toggleMute = useCallback(() => {
+  function toggleMute() {
     setPrefs((prev) => {
       if (prev.muted) return { ...prev, muted: false };
       if (prev.volume > 0) return { ...prev, muted: true };
       return { ...prev, volume: 0.85, muted: false };
     });
-  }, []);
+  }
 
-  const cycleRate = useCallback(() => {
+  function cycleRate() {
     setPrefs((prev) => ({
       ...prev,
       rateIdx: (prev.rateIdx + 1) % PLAYBACK_RATES.length,
     }));
-  }, []);
+  }
 
-  const clearProgress = useCallback(() => {
+  function clearProgress() {
     const id = episodeRef.current?.id;
     if (!id) return;
     clearEpisodeProgress(id);
     seek(0);
     dispatchMedia({ type: "patch", patch: { hasClearableProgress: false } });
-  }, [seek]);
+  }
 
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.defaultPrevented) return;
-      if (isTypingTarget(e.target)) return;
-      if (!episodeRef.current) return;
+  useGlobalPlayerKeyboardShortcuts(episodeRef, togglePlay, skip, cycleRate);
 
-      if (e.code === "Space" || e.key === " " || e.key === "k" || e.key === "K") {
-        if (shortcutConsumingTarget(e.target)) return;
-        e.preventDefault();
-        togglePlay();
-        return;
-      }
-      if (e.code === "ArrowLeft" || e.code === "ArrowRight") {
-        e.preventDefault();
-        skip(e.code === "ArrowLeft" ? -KEYBOARD_SKIP_SEC : KEYBOARD_SKIP_SEC);
-        return;
-      }
-      if ((e.key === "," || e.key === ".") && !e.ctrlKey && !e.metaKey && !e.altKey && !e.repeat) {
-        e.preventDefault();
-        cycleRate();
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [togglePlay, skip, cycleRate]);
-
-  const contextValue = useMemo(
-    () => ({
-      episode,
-      isPlaying: media.isPlaying,
-      currentTime: media.currentTime,
-      duration: media.duration,
-      loadError: media.loadError,
-      bufferedPct: media.bufferedPct,
-      isInitialLoading: media.isInitialLoading,
-      isSeekBuffering: media.isSeekBuffering,
-      resumeNotice: media.resumeNotice,
-      resumeHintVisible: media.resumeHintVisible,
-      volume: prefs.volume,
-      muted: prefs.muted,
-      playbackRate,
-      hasClearableProgress: media.hasClearableProgress,
-      programmaticVolume,
-      loadEpisode,
-      togglePlay,
-      seek,
-      skip,
-      dismiss,
-      setVolume,
-      toggleMute,
-      cycleRate,
-      clearProgress,
-      audioRef,
-    }),
-    [
-      episode,
-      media.isPlaying,
-      media.currentTime,
-      media.duration,
-      media.loadError,
-      media.bufferedPct,
-      media.isInitialLoading,
-      media.isSeekBuffering,
-      media.resumeNotice,
-      media.resumeHintVisible,
-      prefs.volume,
-      prefs.muted,
-      playbackRate,
-      media.hasClearableProgress,
-      programmaticVolume,
-      loadEpisode,
-      togglePlay,
-      seek,
-      skip,
-      dismiss,
-      setVolume,
-      toggleMute,
-      cycleRate,
-      clearProgress,
-    ],
-  );
+  const contextValue = {
+    episode,
+    isPlaying: media.isPlaying,
+    currentTime: media.currentTime,
+    duration: media.duration,
+    loadError: media.loadError,
+    bufferedPct: media.bufferedPct,
+    isInitialLoading: media.isInitialLoading,
+    isSeekBuffering: media.isSeekBuffering,
+    resumeNotice: media.resumeNotice,
+    resumeHintVisible: media.resumeHintVisible,
+    volume: prefs.volume,
+    muted: prefs.muted,
+    playbackRate,
+    hasClearableProgress: media.hasClearableProgress,
+    programmaticVolume,
+    loadEpisode,
+    togglePlay,
+    seek,
+    skip,
+    dismiss,
+    setVolume,
+    toggleMute,
+    cycleRate,
+    clearProgress,
+    audioRef,
+  };
 
   return (
     <PlayerContext.Provider value={contextValue}>
-      <audio ref={audioRef} preload="metadata" className="sr-only" aria-hidden>
+      <audio ref={audioRef} preload="metadata" className="sr-only" aria-label={t("playerAriaLabel", { id: episode?.id ?? "" })}>
         <track kind="captions" />
       </audio>
       {children}

@@ -1,4 +1,4 @@
-export const PODCAST_COVER_PATH = "/logo/square-podcast-cover.jpg";
+const PODCAST_COVER_PATH = "/logo/square-podcast-cover.jpg";
 
 /** Rasters from `generate-fallback-episode-cover.mjs` (must match the script’s width/height). */
 export const PODCAST_COVER_SIZE = { width: 1400, height: 1400 } as const;

@@ -1,6 +1,6 @@
 /** Dekodér brand tokens for social image generation. */
 
-export const DARK_BRAND = {
+const DARK_BRAND = {
   bg: "#0B0F14",
   surface: "#121821",
   primary: "#E6EDF3",
@@ -11,7 +11,7 @@ export const DARK_BRAND = {
   border: "#1F2A38",
 };
 
-export const LIGHT_BRAND = {
+const LIGHT_BRAND = {
   bg: "#F0F2F5",
   surface: "#E4E8EF",
   primary: "#0B0F14",
@@ -29,16 +29,13 @@ export function getBrand(theme) {
 
 export const THEMES = /** @type {const} */ (["dark", "light"]);
 
-/** Backward-compat alias (dark). */
-export const BRAND = DARK_BRAND;
-
 export const FONTS = {
   display: "Syne",
   mono: "JetBrains Mono",
 };
 
-export const DEFAULT_LOGO = "public/logo/wide-dark-crop-v4.svg";
-export const DEFAULT_LOGO_LIGHT = "public/logo/wide-light-crop-v4.svg";
+const DEFAULT_LOGO = "public/logo/wide-dark-crop-v4.svg";
+const DEFAULT_LOGO_LIGHT = "public/logo/wide-light-crop-v4.svg";
 
 /** Source SVG crop — wordmark only, excludes bottom tagline row. */
 export const LOGO_WORDMARK_HEIGHT = 90;

@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Fragment, useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
+import { Fragment, useEffect, useRef, useState, type ReactNode } from "react";
 
 import type { Episode, EpisodeChapter } from "@/lib/episode-catalog";
 import { EpisodeDescriptionRich } from "@/lib/episode-description";
@@ -47,10 +47,7 @@ export function EpisodeListenPlayerAndBody({
   const isPageEpisodeActive = playingEpisode?.id === episode.id;
   const chaptersCanSeek = isPageEpisodeActive && duration > 0;
 
-  const chapters = useMemo(
-    () => [...(episode.chapters ?? [])].sort((a, b) => a.t - b.t),
-    [episode.chapters],
-  );
+  const chapters = (episode.chapters ?? []).toSorted((a, b) => a.t - b.t);
   const hasChapters = chapters.length > 0;
   const hasTranscript = Boolean(transcriptUrl);
 
@@ -69,14 +66,10 @@ export function EpisodeListenPlayerAndBody({
   }
 
   useEffect(() => {
-    const loaded = playingEpisode;
-    if (loaded == null) {
-      loadEpisode(episode);
+    if (playingEpisode !== null && playingEpisode.id !== episode.id) {
       return;
     }
-    if (loaded.id === episode.id) {
-      loadEpisode(episode);
-    }
+    loadEpisode(episode);
   }, [episode, loadEpisode, playingEpisode]);
 
   useWaveformSettle(
@@ -107,18 +100,15 @@ export function EpisodeListenPlayerAndBody({
     };
   }, []);
 
-  const onChapterSeek = useCallback(
-    (seconds: number, chapter: EpisodeChapter) => {
-      seek(seconds);
-      if (chapters.length > 0) {
-        const key = getChapterFragmentKey(chapter, chapters);
-        const url = new URL(window.location.href);
-        url.hash = formatChapterHash(key);
-        window.history.replaceState(null, "", url.toString());
-      }
-    },
-    [chapters, seek],
-  );
+  function onChapterSeek(seconds: number, chapter: EpisodeChapter) {
+    seek(seconds);
+    if (chapters.length > 0) {
+      const key = getChapterFragmentKey(chapter, chapters);
+      const url = new URL(window.location.href);
+      url.hash = formatChapterHash(key);
+      window.history.replaceState(null, "", url.toString());
+    }
+  }
 
   return (
     <>
@@ -140,7 +130,7 @@ export function EpisodeListenPlayerAndBody({
         }`}
         style={{ animation: "fadeUp 0.65s ease both 0.22s" }}
       >
-        <div className="pointer-events-none absolute top-0 right-0 h-32 w-32 bg-[radial-gradient(circle_at_top_right,var(--secondary),transparent_65%)] opacity-[0.07]" />
+        <div className="pointer-events-none absolute top-0 right-0 size-32 bg-[radial-gradient(circle_at_top_right,var(--secondary),transparent_65%)] opacity-[0.07]" />
 
         <div className="border-edge/60 relative flex border-b px-5 sm:px-7 md:px-8" role="tablist">
           {tabs.map((tab) => (

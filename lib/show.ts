@@ -1,6 +1,6 @@
 export const SHOW_HOST_NAMES = ["Jan Tomášik", "Martin Pernica"] as const;
 
-export function showHostsEnglishAnd(): string {
+function showHostsEnglishAnd(): string {
   return `${SHOW_HOST_NAMES[0]} and ${SHOW_HOST_NAMES[1]}`;
 }
 

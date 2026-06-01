@@ -12,7 +12,6 @@ import {
   LAYOUTS,
   resolveLayout,
 } from "./social-layouts.mjs";
-import { keyartOutputPath, socialOutputPath } from "./episode-output.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, "../..");
@@ -512,8 +511,6 @@ export {
   LAYOUT_IDS,
   DEFAULT_LAYOUT,
   resolveLayout,
-  keyartOutputPath,
-  socialOutputPath,
   ensureFonts,
   coverArt,
 };
