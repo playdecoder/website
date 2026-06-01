@@ -3,8 +3,8 @@
 import { useTranslations } from "next-intl";
 import { startTransition, useEffect, useReducer, useRef, useState } from "react";
 
-import { type TranscriptSegment, fetchEpisodeTranscript } from "@/lib/fetch-episode-transcript";
-import { useLatestRef } from "@/lib/use-latest-ref";
+import { type TranscriptSegment, fetchEpisodeTranscript } from "@/lib/episode/fetch-transcript";
+import { useLatestRef } from "@/lib/react/use-latest-ref";
 
 import { EpisodeTranscriptSurface } from "./episode-transcript-surface";
 

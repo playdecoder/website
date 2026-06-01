@@ -5,19 +5,19 @@ import { notFound } from "next/navigation";
 import episodesData from "@/data/episodes.json";
 import { getPathname, redirect } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
-import { BRAND_NAME, BRAND_PODCAST, brandInterpolation } from "@/lib/brand";
+import { BRAND_NAME, BRAND_PODCAST, brandInterpolation } from "@/lib/site/brand";
 import {
   episodeListenPathSegment,
   episodeListenSlugPrefix,
   formatEpisodePublishedIso,
   resolveListenEpisodeParam,
   type Episode,
-} from "@/lib/episode-catalog";
-import { resolveEpisodeCoverForMeta } from "@/lib/episode-cover";
-import { plainEpisodeDescription } from "@/lib/episode-description";
-import { listenEpisodePath } from "@/lib/routes";
-import { showHostsForMetadata, showHostsForOpenGraphArticle } from "@/lib/show";
-import { absoluteFromPath } from "@/lib/site";
+} from "@/lib/episode/catalog";
+import { resolveEpisodeCoverForMeta } from "@/lib/episode/cover";
+import { plainEpisodeDescription } from "@/lib/episode/description";
+import { listenEpisodePath } from "@/lib/routing/routes";
+import { showHostsForMetadata, showHostsForOpenGraphArticle } from "@/lib/site/show";
+import { absoluteFromPath } from "@/lib/site/urls";
 
 import { EpisodeListenView } from "./episode-listen-view";
 

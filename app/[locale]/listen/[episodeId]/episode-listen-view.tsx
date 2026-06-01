@@ -1,7 +1,7 @@
 import { getTranslations } from "next-intl/server";
 
 import { getPathname, Link } from "@/i18n/navigation";
-import { BRAND_NAME } from "@/lib/brand";
+import { BRAND_NAME } from "@/lib/site/brand";
 import {
   type Episode,
   episodes,
@@ -9,11 +9,11 @@ import {
   episodeListenPathSegment,
   getEpisodeNeighbors,
   getLatestEpisode,
-} from "@/lib/episode-catalog";
-import { resolveEpisodeCoverImageUrl } from "@/lib/episode-cover";
-import { linkLocale } from "@/lib/link-locale";
-import { listenEpisodePath, ROUTES, homeSectionPath } from "@/lib/routes";
-import { absoluteFromPath, getPodcastCoverAbsoluteUrl, getPublicSiteUrl } from "@/lib/site";
+} from "@/lib/episode/catalog";
+import { resolveEpisodeCoverImageUrl } from "@/lib/episode/cover";
+import { linkLocale } from "@/lib/routing/link-locale";
+import { listenEpisodePath, ROUTES, homeSectionPath } from "@/lib/routing/routes";
+import { absoluteFromPath, getPodcastCoverAbsoluteUrl, getPublicSiteUrl } from "@/lib/site/urls";
 
 import { EpisodeListenDecorations } from "./episode-listen-decorations";
 import { buildEpisodeListenJsonLd } from "./episode-listen-json-ld";

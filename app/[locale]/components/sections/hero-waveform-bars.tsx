@@ -6,9 +6,9 @@ import { useRef } from "react";
 import {
   useDocumentTabVisible,
   useHeroWaveInView,
-} from "@/lib/browser-external-store";
-import { barColorCss, heroWaveformBars } from "@/lib/episode-catalog";
-import { scaleHeroWaveTime } from "@/lib/hero-waveform-timing";
+} from "@/lib/react/browser-external-store";
+import { barColorCss, heroWaveformBars } from "@/lib/episode/catalog";
+import { scaleHeroWaveTime } from "@/lib/ui/hero-waveform-timing";
 
 export function HeroWaveformBars() {
   const rootRef = useRef<HTMLDivElement>(null);

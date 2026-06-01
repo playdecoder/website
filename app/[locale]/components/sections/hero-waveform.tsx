@@ -1,6 +1,6 @@
 "use client";
 
-import { useHeroWaveformEffect } from "@/lib/browser-external-store";
+import { useHeroWaveformEffect } from "@/lib/react/browser-external-store";
 
 import { HeroWaveformBars } from "./hero-waveform-bars";
 import { HeroWaveformOsc } from "./hero-waveform-osc";

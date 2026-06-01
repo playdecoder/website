@@ -3,5 +3,5 @@ export {
   parseEpisodeDescriptionMarkup,
   plainEpisodeDescription,
   type EpisodeDescriptionSegment,
-} from "./episode-description-markup";
-export { EpisodeDescriptionRich } from "./episode-description-rich";
+} from "./description-markup";
+export { EpisodeDescriptionRich } from "./description-rich";

@@ -1,11 +1,11 @@
-import type { Episode } from "@/lib/episode-catalog";
+import type { Episode } from "@/lib/episode/catalog";
 import {
   episodeListenPathSegment,
   formatEpisodeDate,
   formatEpisodeDuration,
-} from "@/lib/episode-catalog";
-import { EpisodeDescriptionRich } from "@/lib/episode-description";
-import { listenEpisodePath } from "@/lib/routes";
+} from "@/lib/episode/catalog";
+import { EpisodeDescriptionRich } from "@/lib/episode/description";
+import { listenEpisodePath } from "@/lib/routing/routes";
 
 import { Link } from "@/i18n/navigation";
 

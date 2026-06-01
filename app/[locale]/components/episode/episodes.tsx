@@ -7,10 +7,10 @@ import {
   formatEpisodeDate,
   formatEpisodeDuration,
   getLatestEpisode,
-} from "@/lib/episode-catalog";
-import { EpisodeDescriptionRich } from "@/lib/episode-description";
-import { linkLocale } from "@/lib/link-locale";
-import { PAGE_SECTION_ID, ROUTES, listenEpisodePath } from "@/lib/routes";
+} from "@/lib/episode/catalog";
+import { EpisodeDescriptionRich } from "@/lib/episode/description";
+import { linkLocale } from "@/lib/routing/link-locale";
+import { PAGE_SECTION_ID, ROUTES, listenEpisodePath } from "@/lib/routing/routes";
 
 import { IconEpisodeAirDate, IconEpisodeDuration } from "../ui/icons";
 import { LedeIntroParagraph } from "../ui/lede-intro-paragraph";

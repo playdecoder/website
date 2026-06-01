@@ -8,8 +8,8 @@ import {
   episodeListenPathSegment,
   episodes,
   getLatestEpisode,
-} from "@/lib/episode-catalog";
-import { listenEpisodePath } from "@/lib/routes";
+} from "@/lib/episode/catalog";
+import { listenEpisodePath } from "@/lib/routing/routes";
 
 export const dynamic = "force-static";
 export const revalidate = false;

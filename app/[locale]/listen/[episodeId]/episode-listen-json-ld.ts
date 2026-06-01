@@ -1,11 +1,11 @@
-import { BRAND_NAME } from "@/lib/brand";
+import { BRAND_NAME } from "@/lib/site/brand";
 import {
   type Episode,
   formatEpisodeDurationIso8601,
   formatEpisodePublishedIso,
-} from "@/lib/episode-catalog";
-import { plainEpisodeDescription } from "@/lib/episode-description";
-import { showHostsSchemaPersons } from "@/lib/show";
+} from "@/lib/episode/catalog";
+import { plainEpisodeDescription } from "@/lib/episode/description";
+import { showHostsSchemaPersons } from "@/lib/site/show";
 
 import { isHttpUrl, trimEpisodeHosts } from "./episode-listen-helpers";
 

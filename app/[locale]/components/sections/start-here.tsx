@@ -1,14 +1,14 @@
 import { getTranslations } from "next-intl/server";
 
 import { Link } from "@/i18n/navigation";
-import { getCuratedPicks, hasCuratedPicks } from "@/lib/curated-picks";
+import { getCuratedPicks, hasCuratedPicks } from "@/lib/episode/curated-picks";
 import {
   episodeListenPathSegment,
   formatEpisodeDate,
   formatEpisodeDuration,
-} from "@/lib/episode-catalog";
-import { linkLocale } from "@/lib/link-locale";
-import { listenEpisodePath } from "@/lib/routes";
+} from "@/lib/episode/catalog";
+import { linkLocale } from "@/lib/routing/link-locale";
+import { listenEpisodePath } from "@/lib/routing/routes";
 
 import { TopicLinkChip } from "../episode/topic-link-chip";
 import { LedeIntroParagraph } from "../ui/lede-intro-paragraph";

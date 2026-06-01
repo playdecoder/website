@@ -2,8 +2,8 @@
 
 import { useTranslations } from "next-intl";
 
-import type { EpisodeChapter } from "@/lib/episode-catalog";
-import { formatPlaybackTime } from "@/lib/format-playback-time";
+import type { EpisodeChapter } from "@/lib/episode/catalog";
+import { formatPlaybackTime } from "@/lib/player/format-playback-time";
 
 interface EpisodeChapterListProps {
   chapters: EpisodeChapter[];

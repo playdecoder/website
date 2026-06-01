@@ -2,7 +2,7 @@
 
 import { createContext, use, type RefObject } from "react";
 
-import type { Episode } from "@/lib/episode-catalog";
+import type { Episode } from "@/lib/episode/catalog";
 
 export interface GlobalPlayerState {
   episode: Episode | null;

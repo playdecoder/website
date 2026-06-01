@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 
-import { episodes } from "@/lib/episode-catalog";
-import { findTopicLabelBySlug, getTopicEntries } from "@/lib/episode-topics";
-import { localizedAlternates } from "@/lib/metadata-alternates";
-import { topicPath } from "@/lib/routes";
+import { episodes } from "@/lib/episode/catalog";
+import { findTopicLabelBySlug, getTopicEntries } from "@/lib/episode/topics";
+import { localizedAlternates } from "@/lib/site/metadata-alternates";
+import { topicPath } from "@/lib/routing/routes";
 
 import { EpisodesArchiveClient } from "../../components/episode/episodes-archive-client";
 import { Navbar } from "../../components/layout/navbar";

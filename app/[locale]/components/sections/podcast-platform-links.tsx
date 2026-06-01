@@ -1,13 +1,13 @@
-import { cn } from "@/lib/cn";
-import type { EpisodeLinks } from "@/lib/episode-catalog";
+import { cn } from "@/lib/ui/cn";
+import type { EpisodeLinks } from "@/lib/episode/catalog";
 import {
   EPISODE_LISTEN_PLATFORM_KEYS,
   PODCAST_PLATFORM_KEYS,
   type EpisodeListenPlatformKey,
   type PodcastPlatformKey,
-} from "@/lib/podcast-ui";
-import { ROUTES } from "@/lib/routes";
-import { PODCAST_SOCIAL_HREF } from "@/lib/socials";
+} from "@/lib/site/podcast-ui";
+import { ROUTES } from "@/lib/routing/routes";
+import { PODCAST_SOCIAL_HREF } from "@/lib/site/socials";
 
 const PODCAST_PLATFORM_HREF: Record<PodcastPlatformKey, string> = {
   platformSpotify: "https://open.spotify.com/show/4XY6pyUQxGWnyp8lrC94m5",

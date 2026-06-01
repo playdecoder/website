@@ -1,5 +1,5 @@
-import type { Episode, EpisodeHost } from "@/lib/episode-catalog";
-import { formatEpisodeDate, formatEpisodeDuration } from "@/lib/episode-catalog";
+import type { Episode, EpisodeHost } from "@/lib/episode/catalog";
+import { formatEpisodeDate, formatEpisodeDuration } from "@/lib/episode/catalog";
 
 import { EpisodeShareButton } from "../../components/episode/episode-share-button";
 import { TopicLinkChip } from "../../components/episode/topic-link-chip";

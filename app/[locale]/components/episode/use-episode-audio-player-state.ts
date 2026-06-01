@@ -4,13 +4,13 @@ import { useTranslations } from "next-intl";
 import { useQueryState } from "nuqs";
 import { useEffect, useRef, useState, type RefObject } from "react";
 
-import type { Episode } from "@/lib/episode-catalog";
-import type { EpisodeHashChapter } from "@/lib/episode-hash";
-import { resolveEpisodeSeekFromHash } from "@/lib/episode-hash";
-import { getSavedPosition } from "@/lib/episode-progress-storage";
-import { formatEpisodeTimeHash } from "@/lib/episode-time-fragment";
-import { formatPlaybackTime } from "@/lib/format-playback-time";
-import { LISTEN_AUTOPLAY_QUERY_KEY, parseAsListenAutoplay } from "@/lib/listen-autoplay-query";
+import type { Episode } from "@/lib/episode/catalog";
+import type { EpisodeHashChapter } from "@/lib/episode/hash";
+import { resolveEpisodeSeekFromHash } from "@/lib/episode/hash";
+import { getSavedPosition } from "@/lib/episode/progress-storage";
+import { formatEpisodeTimeHash } from "@/lib/episode/time-fragment";
+import { formatPlaybackTime } from "@/lib/player/format-playback-time";
+import { LISTEN_AUTOPLAY_QUERY_KEY, parseAsListenAutoplay } from "@/lib/player/listen-autoplay-query";
 
 import { usePlayerContext } from "../player/player-context";
 import { useWaveformSettle } from "../player/use-waveform-settle";

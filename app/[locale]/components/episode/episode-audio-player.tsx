@@ -3,8 +3,8 @@
 import { useTranslations } from "next-intl";
 import { type ReactNode } from "react";
 
-import type { Episode } from "@/lib/episode-catalog";
-import type { EpisodeHashChapter } from "@/lib/episode-hash";
+import type { Episode } from "@/lib/episode/catalog";
+import type { EpisodeHashChapter } from "@/lib/episode/hash";
 
 import { EpisodeAudioPlayerHeader } from "./episode-audio-player-header";
 import { EpisodeAudioPlayerLoadError } from "./episode-audio-player-load-error";

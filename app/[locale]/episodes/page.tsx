@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { Link } from "@/i18n/navigation";
-import { brandInterpolation } from "@/lib/brand";
-import { episodes } from "@/lib/episode-catalog";
-import { linkLocale } from "@/lib/link-locale";
-import { localizedAlternates } from "@/lib/metadata-alternates";
-import { ROUTES } from "@/lib/routes";
+import { brandInterpolation } from "@/lib/site/brand";
+import { episodes } from "@/lib/episode/catalog";
+import { linkLocale } from "@/lib/routing/link-locale";
+import { localizedAlternates } from "@/lib/site/metadata-alternates";
+import { ROUTES } from "@/lib/routing/routes";
 
 import { EpisodesArchiveClient } from "../components/episode/episodes-archive-client";
 import { Navbar } from "../components/layout/navbar";

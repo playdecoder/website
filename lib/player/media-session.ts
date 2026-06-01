@@ -1,7 +1,7 @@
-import { BRAND_NAME } from "@/lib/brand";
-import type { Episode } from "@/lib/episode-catalog";
-import { resolveEpisodeCoverImageUrl } from "@/lib/episode-cover";
-import { showHostsAmpersand } from "@/lib/show";
+import { BRAND_NAME } from "@/lib/site/brand";
+import type { Episode } from "@/lib/episode/catalog";
+import { resolveEpisodeCoverImageUrl } from "@/lib/episode/cover";
+import { showHostsAmpersand } from "@/lib/site/show";
 
 function artworkMimeType(url: string): string {
   const base = url.split("?")[0]?.toLowerCase() ?? "";

@@ -1,4 +1,4 @@
-import type { Episode } from "@/lib/episode-catalog";
+import type { Episode } from "@/lib/episode/catalog";
 
 function slugPart(value: string): string {
   return value

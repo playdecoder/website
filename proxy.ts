@@ -2,7 +2,7 @@ import createMiddleware from "next-intl/middleware";
 import type { NextRequest } from "next/server";
 
 import { routing } from "./i18n/routing";
-import { INCOMING_PATHNAME_HEADER } from "./lib/incoming-pathname";
+import { INCOMING_PATHNAME_HEADER } from "./lib/routing/incoming-pathname";
 
 const intlMiddleware = createMiddleware(routing);
 

@@ -1,13 +1,13 @@
 import { getTranslations } from "next-intl/server";
 import { Fragment } from "react";
 
-import { PAGE_SECTION_ID } from "@/lib/routes";
+import { PAGE_SECTION_ID } from "@/lib/routing/routes";
 import {
   PODCAST_SOCIAL_HREF,
   PODCAST_SOCIAL_KEYS,
   SITE_CONTACT_EMAIL,
   SITE_CONTACT_MAILTO,
-} from "@/lib/socials";
+} from "@/lib/site/socials";
 
 import { SectionHeading } from "../ui/section-heading";
 

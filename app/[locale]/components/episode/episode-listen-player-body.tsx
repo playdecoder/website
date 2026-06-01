@@ -3,9 +3,9 @@
 import { useTranslations } from "next-intl";
 import { Fragment, useEffect, useRef, useState, type ReactNode } from "react";
 
-import type { Episode, EpisodeChapter } from "@/lib/episode-catalog";
-import { EpisodeDescriptionRich } from "@/lib/episode-description";
-import { formatChapterHash, getChapterFragmentKey } from "@/lib/episode-hash";
+import type { Episode, EpisodeChapter } from "@/lib/episode/catalog";
+import { EpisodeDescriptionRich } from "@/lib/episode/description";
+import { formatChapterHash, getChapterFragmentKey } from "@/lib/episode/hash";
 
 import { usePlayerContext } from "../player/player-context";
 import { useWaveformSettle } from "../player/use-waveform-settle";

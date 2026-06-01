@@ -6,7 +6,7 @@ import {
   useDocumentTabVisible,
   useHtmlDarkClass,
   useHeroWaveInView,
-} from "@/lib/browser-external-store";
+} from "@/lib/react/browser-external-store";
 
 type ChannelVisual = {
   rgb: readonly [number, number, number];

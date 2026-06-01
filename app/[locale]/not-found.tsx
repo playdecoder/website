@@ -3,8 +3,8 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { headers } from "next/headers";
 
 import { routing } from "@/i18n/routing";
-import { brandInterpolation } from "@/lib/brand";
-import { INCOMING_PATHNAME_HEADER, localeFromIncomingPathname } from "@/lib/incoming-pathname";
+import { brandInterpolation } from "@/lib/site/brand";
+import { INCOMING_PATHNAME_HEADER, localeFromIncomingPathname } from "@/lib/routing/incoming-pathname";
 
 import { DecoderNotFoundView } from "./components/not-found-view";
 

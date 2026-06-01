@@ -10,17 +10,17 @@ import {
   type ReactNode,
 } from "react";
 
-import type { Episode } from "@/lib/episode-catalog";
-import { clearEpisodeProgress, writeProgressSnapshot } from "@/lib/episode-progress-storage";
-import { isIosLikeWebKitNoProgrammaticVolume } from "@/lib/ios-webkit";
+import type { Episode } from "@/lib/episode/catalog";
+import { clearEpisodeProgress, writeProgressSnapshot } from "@/lib/episode/progress-storage";
+import { isIosLikeWebKitNoProgrammaticVolume } from "@/lib/player/ios-webkit";
 import {
   bindPlayerMediaSessionHandlers,
   buildEpisodeMediaMetadata,
   clearMediaSessionMetadata,
   syncMediaSessionPlaybackState,
   syncMediaSessionPositionState,
-} from "@/lib/player-media-session";
-import { readPlayerPreferences, writePlayerPreferences } from "@/lib/player-preferences-storage";
+} from "@/lib/player/media-session";
+import { readPlayerPreferences, writePlayerPreferences } from "@/lib/player/preferences-storage";
 
 import {
   debugPlayerDiag,

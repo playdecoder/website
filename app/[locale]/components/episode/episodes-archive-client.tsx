@@ -6,10 +6,10 @@ import {
   type Episode,
   getEpisodeArchiveFacets,
   getLatestEpisode,
-} from "@/lib/episode-catalog";
-import { plainEpisodeDescription } from "@/lib/episode-description";
-import { episodesArchiveSearchParams } from "@/lib/episodes-archive-search-params";
-import { linkLocale } from "@/lib/link-locale";
+} from "@/lib/episode/catalog";
+import { plainEpisodeDescription } from "@/lib/episode/description";
+import { episodesArchiveSearchParams } from "@/lib/episode/archive-search-params";
+import { linkLocale } from "@/lib/routing/link-locale";
 
 import { EpisodeGridCard } from "./episode-grid-card";
 import {

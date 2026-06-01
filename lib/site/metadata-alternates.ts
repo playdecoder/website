@@ -1,6 +1,6 @@
 import { getPathname } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
-import { absoluteFromPath } from "@/lib/site";
+import { absoluteFromPath } from "@/lib/site/urls";
 
 export function localizedAlternates(href: string, locale: string) {
   const pathnameFor = (loc: string) => getPathname({ locale: loc, href });

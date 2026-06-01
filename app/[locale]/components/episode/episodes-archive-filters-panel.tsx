@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 
-import { cn } from "@/lib/cn";
+import { cn } from "@/lib/ui/cn";
 
 export interface EpisodesSearchScopes {
   title: boolean;

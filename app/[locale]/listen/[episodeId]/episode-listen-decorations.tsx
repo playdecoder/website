@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 
-import { type Episode, barColorCss, listenBackgroundBarsForEpisode } from "@/lib/episode-catalog";
-import { scaleListenWaveDuration } from "@/lib/hero-waveform-timing";
+import { type Episode, barColorCss, listenBackgroundBarsForEpisode } from "@/lib/episode/catalog";
+import { scaleListenWaveDuration } from "@/lib/ui/hero-waveform-timing";
 
 interface EpisodeListenDecorationsProps {
   episode: Episode;

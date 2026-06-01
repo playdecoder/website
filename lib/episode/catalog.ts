@@ -3,7 +3,7 @@ import episodesJson from "@/data/episodes.json";
 import {
   getCatalogHoursFormatter,
   getEpisodeDateFormatter,
-} from "@/lib/intl-formatters";
+} from "@/lib/i18n/intl-formatters";
 
 export type BarColor = "primary" | "secondary" | "accent";
 

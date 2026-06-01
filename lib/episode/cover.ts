@@ -1,6 +1,6 @@
-import type { Episode, EpisodeCoverImage, EpisodeCoverVariant } from "@/lib/episode-catalog";
+import type { Episode, EpisodeCoverImage, EpisodeCoverVariant } from "@/lib/episode/catalog";
 
-import { absoluteFromPath, getPodcastCoverAbsoluteUrl, PODCAST_COVER_SIZE } from "./site";
+import { absoluteFromPath, getPodcastCoverAbsoluteUrl, PODCAST_COVER_SIZE } from "@/lib/site/urls";
 
 type CoverVariantKey = keyof EpisodeCoverImage;
 

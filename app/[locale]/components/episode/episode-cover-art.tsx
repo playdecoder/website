@@ -1,7 +1,7 @@
 import Image from "next/image";
 
-import type { Episode } from "@/lib/episode-catalog";
-import { cn } from "@/lib/cn";
+import type { Episode } from "@/lib/episode/catalog";
+import { cn } from "@/lib/ui/cn";
 
 export const episodeArtBannerFadeClassName =
   "from-bg pointer-events-none absolute inset-x-0 bottom-0 z-10 h-24 bg-gradient-to-t to-transparent";

@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
-import { brandInterpolation } from "@/lib/brand";
-import { localizedAlternates } from "@/lib/metadata-alternates";
-import { ROUTES } from "@/lib/routes";
-import { showTaglineEn } from "@/lib/show";
+import { brandInterpolation } from "@/lib/site/brand";
+import { localizedAlternates } from "@/lib/site/metadata-alternates";
+import { ROUTES } from "@/lib/routing/routes";
+import { showTaglineEn } from "@/lib/site/show";
 
 import { Episodes } from "./components/episode/episodes";
 import { Navbar } from "./components/layout/navbar";

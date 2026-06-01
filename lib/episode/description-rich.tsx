@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { parseEpisodeDescriptionMarkup } from "./episode-description-markup";
+import { parseEpisodeDescriptionMarkup } from "./description-markup";
 
 function RichInlineNodes({ text, keyPrefix }: { text: string; keyPrefix: string }): ReactNode {
   return parseEpisodeDescriptionMarkup(text).map((seg, idx) => {

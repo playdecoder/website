@@ -1,6 +1,6 @@
 import type { RefObject } from "react";
 
-import type { TranscriptSegment } from "@/lib/fetch-episode-transcript";
+import type { TranscriptSegment } from "@/lib/episode/fetch-transcript";
 
 type LoadState = "idle" | "loading" | "ready" | "error";
 

@@ -5,7 +5,7 @@ import "./globals.css";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-import { BRAND_NAME } from "@/lib/brand";
+import { BRAND_NAME } from "@/lib/site/brand";
 
 const MESSAGES = {
   en: {

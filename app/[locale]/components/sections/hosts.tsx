@@ -2,11 +2,11 @@ import { getTranslations } from "next-intl/server";
 import Image from "next/image";
 import type { ReactNode } from "react";
 
-import { brandInterpolation } from "@/lib/brand";
-import { HOST_PHOTOS } from "@/lib/episode-catalog";
-import { PAGE_SECTION_ID } from "@/lib/routes";
-import { SHOW_HOST_NAMES } from "@/lib/show";
-import { HOST_SOCIAL_X_HREF } from "@/lib/socials";
+import { brandInterpolation } from "@/lib/site/brand";
+import { HOST_PHOTOS } from "@/lib/episode/catalog";
+import { PAGE_SECTION_ID } from "@/lib/routing/routes";
+import { SHOW_HOST_NAMES } from "@/lib/site/show";
+import { HOST_SOCIAL_X_HREF } from "@/lib/site/socials";
 
 import { SectionHeading } from "../ui/section-heading";
 

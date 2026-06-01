@@ -5,7 +5,7 @@ import { useEffect, useId, useReducer, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { Link } from "@/i18n/navigation";
-import { linkLocale } from "@/lib/link-locale";
+import { linkLocale } from "@/lib/routing/link-locale";
 
 const PANEL_EASE = "cubic-bezier(0.32, 0.72, 0, 1)";
 const SCRIM_MS = 340;

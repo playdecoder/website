@@ -4,19 +4,19 @@ import { useTranslations } from "next-intl";
 import { useSyncExternalStore } from "react";
 
 import { Link, usePathname } from "@/i18n/navigation";
-import { episodes, episodeListenPathSegment } from "@/lib/episode-catalog";
-import { episodeDescriptionSnippet } from "@/lib/episode-description";
+import { episodes, episodeListenPathSegment } from "@/lib/episode/catalog";
+import { episodeDescriptionSnippet } from "@/lib/episode/description";
 import {
   clearEpisodeProgress,
   readProgressStore,
   subscribeEpisodeProgressStore,
   type EpisodeProgressEntry,
-} from "@/lib/episode-progress-storage";
-import { formatEpisodeTimeHash } from "@/lib/episode-time-fragment";
-import { formatPlaybackTime } from "@/lib/format-playback-time";
-import { linkLocale } from "@/lib/link-locale";
-import { LISTEN_AUTOPLAY_QUERY_KEY, LISTEN_AUTOPLAY_SERIALIZED } from "@/lib/listen-autoplay-query";
-import { listenEpisodePath } from "@/lib/routes";
+} from "@/lib/episode/progress-storage";
+import { formatEpisodeTimeHash } from "@/lib/episode/time-fragment";
+import { formatPlaybackTime } from "@/lib/player/format-playback-time";
+import { linkLocale } from "@/lib/routing/link-locale";
+import { LISTEN_AUTOPLAY_QUERY_KEY, LISTEN_AUTOPLAY_SERIALIZED } from "@/lib/player/listen-autoplay-query";
+import { listenEpisodePath } from "@/lib/routing/routes";
 
 import { PlayGlyphIcon } from "../player/play-glyph-icon";
 import { usePlayerContext } from "../player/player-context";

@@ -2,10 +2,10 @@ import type { MetadataRoute } from "next";
 
 import { getPathname } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
-import { episodes, episodeListenPathSegment, parseEpisodePublishedAt } from "@/lib/episode-catalog";
-import { getTopicEntries } from "@/lib/episode-topics";
-import { listenEpisodePath, ROUTES, topicPath } from "@/lib/routes";
-import { absoluteFromPath, getPublicSiteUrl } from "@/lib/site";
+import { episodes, episodeListenPathSegment, parseEpisodePublishedAt } from "@/lib/episode/catalog";
+import { getTopicEntries } from "@/lib/episode/topics";
+import { listenEpisodePath, ROUTES, topicPath } from "@/lib/routing/routes";
+import { absoluteFromPath, getPublicSiteUrl } from "@/lib/site/urls";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = getPublicSiteUrl();

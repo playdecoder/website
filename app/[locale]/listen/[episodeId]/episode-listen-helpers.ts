@@ -2,8 +2,8 @@ import {
   type Episode,
   type EpisodeHost,
   parseEpisodeIsoDate,
-} from "@/lib/episode-catalog";
-import { getEpisodeAirMonthFormatter } from "@/lib/intl-formatters";
+} from "@/lib/episode/catalog";
+import { getEpisodeAirMonthFormatter } from "@/lib/i18n/intl-formatters";
 
 export function isHttpUrl(link: string): boolean {
   try {

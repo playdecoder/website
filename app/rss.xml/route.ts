@@ -1,4 +1,4 @@
-import { BRAND_NAME, BRAND_PODCAST } from "@/lib/brand";
+import { BRAND_NAME, BRAND_PODCAST } from "@/lib/site/brand";
 import {
   episodeListenSlugPrefix,
   episodeOrdinal,
@@ -6,13 +6,13 @@ import {
   episodes,
   formatEpisodePublishedRfc822,
   type Episode,
-} from "@/lib/episode-catalog";
-import { resolveEpisodeCoverImageUrlForRss } from "@/lib/episode-cover";
-import { plainEpisodeDescription } from "@/lib/episode-description";
-import { absoluteListenEpisodeUrl } from "@/lib/routes";
-import { showHostsAmpersand, showTaglineCs } from "@/lib/show";
-import { absoluteFromPath, getPodcastCoverAbsoluteUrl, getPublicSiteUrl } from "@/lib/site";
-import { SITE_CONTACT_EMAIL } from "@/lib/socials";
+} from "@/lib/episode/catalog";
+import { resolveEpisodeCoverImageUrlForRss } from "@/lib/episode/cover";
+import { plainEpisodeDescription } from "@/lib/episode/description";
+import { absoluteListenEpisodeUrl } from "@/lib/routing/routes";
+import { showHostsAmpersand, showTaglineCs } from "@/lib/site/show";
+import { absoluteFromPath, getPodcastCoverAbsoluteUrl, getPublicSiteUrl } from "@/lib/site/urls";
+import { SITE_CONTACT_EMAIL } from "@/lib/site/socials";
 
 const SITE_URL = getPublicSiteUrl();
 const COVER_ART_URL = getPodcastCoverAbsoluteUrl();

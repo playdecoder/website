@@ -6,9 +6,9 @@ import type { Metadata, Viewport } from "next";
 import { JetBrains_Mono, Literata, Syne } from "next/font/google";
 import type { ReactNode } from "react";
 
-import { BRAND_NAME } from "@/lib/brand";
-import { showTaglineCs } from "@/lib/show";
-import { getPublicSiteUrl } from "@/lib/site";
+import { BRAND_NAME } from "@/lib/site/brand";
+import { showTaglineCs } from "@/lib/site/show";
+import { getPublicSiteUrl } from "@/lib/site/urls";
 
 import { ThemeProvider } from "./[locale]/theme-provider";
 

@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, type RefObject } from "react";
 
-import type { Episode } from "@/lib/episode-catalog";
-import { useLatestRef } from "@/lib/use-latest-ref";
+import type { Episode } from "@/lib/episode/catalog";
+import { useLatestRef } from "@/lib/react/use-latest-ref";
 
 const KEYBOARD_SKIP_SEC = 15;
 

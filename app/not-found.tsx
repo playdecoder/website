@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 
 import cs from "@/i18n/cs.json";
-import { BRAND_NAME } from "@/lib/brand";
+import { BRAND_NAME } from "@/lib/site/brand";
 
 import { DecoderNotFoundView } from "./[locale]/components/not-found-view";
 

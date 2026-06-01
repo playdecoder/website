@@ -1,7 +1,7 @@
 import {
   clampEpisodeFragmentSeconds,
   parseTimeFragmentFromHash,
-} from "@/lib/episode-time-fragment";
+} from "@/lib/episode/time-fragment";
 
 export interface EpisodeHashChapter {
   t: number;

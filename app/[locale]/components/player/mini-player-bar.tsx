@@ -5,10 +5,10 @@ import { type CSSProperties, useEffect, useReducer, useRef, useState } from "rea
 
 import { Link } from "@/i18n/navigation";
 import { usePathname } from "@/i18n/navigation";
-import { episodeListenPathSegment } from "@/lib/episode-catalog";
-import { formatPlaybackTime } from "@/lib/format-playback-time";
-import { linkLocale } from "@/lib/link-locale";
-import { listenEpisodePath } from "@/lib/routes";
+import { episodeListenPathSegment } from "@/lib/episode/catalog";
+import { formatPlaybackTime } from "@/lib/player/format-playback-time";
+import { linkLocale } from "@/lib/routing/link-locale";
+import { listenEpisodePath } from "@/lib/routing/routes";
 
 import { EpisodePlayerArtBackground } from "../episode/episode-player-art-background.client";
 import { PLAYER_ART_SHELL_CLASS, episodeHasPlayerArt } from "../episode/episode-player-art.constants";

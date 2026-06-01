@@ -1,4 +1,4 @@
-import { cn } from "@/lib/cn";
+import { cn } from "@/lib/ui/cn";
 
 const VIEWBOX = "23.4 83.6 203.7 194.4" as const;
 const VIEWBOX_W = 203.7;

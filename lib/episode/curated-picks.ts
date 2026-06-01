@@ -1,4 +1,4 @@
-import { episodes, type CuratedPickKey, type Episode } from "@/lib/episode-catalog";
+import { episodes, type CuratedPickKey, type Episode } from "@/lib/episode/catalog";
 
 const CURATED_PICK_ORDER: CuratedPickKey[] = ["founders", "designers", "builders"];
 

@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 
-import { cn } from "@/lib/cn";
+import { cn } from "@/lib/ui/cn";
 
 import { EpisodeLangCompactBadge } from "./episode-lang-compact-badge";
 

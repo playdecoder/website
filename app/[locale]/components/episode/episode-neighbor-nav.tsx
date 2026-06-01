@@ -1,7 +1,7 @@
 import { Link } from "@/i18n/navigation";
-import { episodeListenPathSegment, type Episode } from "@/lib/episode-catalog";
-import { linkLocale } from "@/lib/link-locale";
-import { listenEpisodePath } from "@/lib/routes";
+import { episodeListenPathSegment, type Episode } from "@/lib/episode/catalog";
+import { linkLocale } from "@/lib/routing/link-locale";
+import { listenEpisodePath } from "@/lib/routing/routes";
 
 interface NeighborLabels {
   newer: string;

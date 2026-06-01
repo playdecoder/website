@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { type CSSProperties } from "react";
 
-import { formatPlaybackTime } from "@/lib/format-playback-time";
+import { formatPlaybackTime } from "@/lib/player/format-playback-time";
 
 import type { PlayerContextValue } from "../player/player-context";
 import { VolumeIcon } from "../player/volume-icon";

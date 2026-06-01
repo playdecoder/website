@@ -3,7 +3,7 @@
 import { useLocale, useTranslations } from "next-intl";
 
 import { routing } from "@/i18n/routing";
-import { navigateToLocale } from "@/lib/navigate-to-locale";
+import { navigateToLocale } from "@/lib/routing/navigate-to-locale";
 
 const LABELS: Record<string, string> = {
   en: "EN",

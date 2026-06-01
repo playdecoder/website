@@ -1,7 +1,7 @@
 import { Link } from "@/i18n/navigation";
-import { topicSlug } from "@/lib/episode-topics";
-import { linkLocale } from "@/lib/link-locale";
-import { topicPath } from "@/lib/routes";
+import { topicSlug } from "@/lib/episode/topics";
+import { linkLocale } from "@/lib/routing/link-locale";
+import { topicPath } from "@/lib/routing/routes";
 
 interface TopicLinkChipProps {
   tag: string;

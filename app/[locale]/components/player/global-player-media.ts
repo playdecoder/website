@@ -5,8 +5,8 @@ import {
   episodeHasStoredProgress,
   getSavedPosition,
   writeProgressSnapshot,
-} from "@/lib/episode-progress-storage";
-import { formatPlaybackTime } from "@/lib/format-playback-time";
+} from "@/lib/episode/progress-storage";
+import { formatPlaybackTime } from "@/lib/player/format-playback-time";
 
 const GLOBAL_PLAYER_PERSIST_THROTTLE_MS = 2000;
 
