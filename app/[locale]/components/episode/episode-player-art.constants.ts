@@ -1,4 +1,4 @@
-/** Episode art already blurs the right half — use a denser shell + left-only frost instead of full-panel backdrop blur. */
+/** Episode art already blurs the right half; the mini player adds one full-width glass topcoat to avoid a split plate. */
 export function episodeHasPlayerArt(artImage?: string): boolean {
   return Boolean(artImage);
 }
@@ -12,9 +12,9 @@ export const PLAYER_ART_SHELL_CLASS = {
   },
   mini: {
     section:
-      "bg-[color-mix(in_srgb,var(--surface)_48%,transparent)] dark:bg-[color-mix(in_srgb,var(--surface)_38%,transparent)]",
+      "bg-[color-mix(in_srgb,var(--surface)_60%,transparent)] backdrop-blur-3xl backdrop-brightness-[1.04] backdrop-contrast-[1.04] backdrop-saturate-200 dark:bg-[color-mix(in_srgb,var(--surface)_52%,transparent)] dark:backdrop-brightness-[1.08] dark:backdrop-contrast-[1.03]",
     frost:
-      "pointer-events-none absolute inset-y-0 left-0 z-0 w-[58%] bg-[color-mix(in_srgb,var(--surface)_22%,transparent)] backdrop-blur-xl dark:bg-[color-mix(in_srgb,var(--surface)_16%,transparent)]",
+      "pointer-events-none absolute inset-0 z-0 bg-[color-mix(in_srgb,var(--surface)_18%,transparent)] backdrop-blur-xl dark:bg-[color-mix(in_srgb,var(--surface)_16%,transparent)]",
   },
 } as const;
 

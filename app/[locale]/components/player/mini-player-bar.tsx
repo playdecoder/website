@@ -247,15 +247,15 @@ export function MiniPlayerBar() {
           aria-hidden
         />
 
-        {hasArt ? (
-          <div className={PLAYER_ART_SHELL_CLASS.mini.frost} aria-hidden />
-        ) : null}
-
         <EpisodePlayerArtBackground
           artImage={episode.artImage}
           fade="mask"
           intensity="subtle"
         />
+
+        {hasArt ? (
+          <div className={PLAYER_ART_SHELL_CLASS.mini.frost} aria-hidden />
+        ) : null}
 
         <div className="relative mx-auto flex max-w-6xl items-center gap-2 px-3 py-2.5 sm:gap-3 sm:px-5">
           <Link
