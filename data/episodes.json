@@ -1,5 +1,78 @@
 [
   {
+    "id": "EP03",
+    "slug": "arkane-studios-svoboda-system-a-pad-jednoho-snu",
+    "lang": "cs",
+    "explicit": true,
+    "title": "Arkane Studios: Svoboda, systém a pád jednoho snu",
+    "date": "2026-06-28",
+    "duration": 6761,
+    "description": "Arkane Studios patří mezi nejvýraznější herní studia posledních dvou dekád. V této epizodě se vracíme k jeho kořenům v immersive sim žánru, rozebíráme vznik kultovních sérií jako Dishonored, Prey a Deathloop a hledáme odpověď na otázku, proč byly jejich hry tak výjimečné. Mluvíme o filozofii designu, svobodě hráče, systémových světech i o tom, jak se studio vyrovnávalo s komerčními očekáváními. Zastavíme se také u problematického Redfallu, uzavření Arkane Austin a zamyslíme se nad budoucností studia v čele s připravovaným Marvel's Blade.",
+    "tags": [
+      "Arkane Studios",
+      "Dishonored",
+      "Prey",
+      "Deathloop",
+      "Immersive sim",
+      "Herní design"
+    ],
+    "artImage": "/social/art/ep03-arkane.jpg",
+    "coverImage": {
+      "dark": {
+        "url": "https://cdn.play-decoder.com/podcast/covers/ep03.jpg"
+      },
+      "light": {
+        "url": "https://cdn.play-decoder.com/podcast/covers/ep03-light.jpg",
+        "useForRss": true
+      }
+    },
+    "chapters": [
+      {
+        "t": 30,
+        "label": "Úvod a co nás zaujalo"
+      },
+      {
+        "t": 126,
+        "label": "GTA 6, fyzické kopie a vlastnictví her"
+      },
+      {
+        "t": 715,
+        "label": "Oxygen Not Included a AI restrikce"
+      },
+      {
+        "t": 1020,
+        "label": "Hlavní téma: Arkane Studios"
+      },
+      {
+        "t": 1310,
+        "label": "Kořeny Arkane, Arx Fatalis a Dark Messiah"
+      },
+      {
+        "t": 1630,
+        "label": "Dishonored a vrchol immersive sim designu"
+      },
+      {
+        "t": 3110,
+        "label": "Prey, Mooncrash a systémové světy"
+      },
+      {
+        "t": 4450,
+        "label": "Deathloop, Redfall a zlomové období Arkane"
+      },
+      {
+        "t": 6470,
+        "label": "Marvel's Blade, budoucnost studia a závěr"
+      }
+    ],
+    "links": {
+      "spotify": "",
+      "applePodcasts": "https://podcasts.apple.com/us/podcast/dekod%C3%A9r/id1895560433",
+      "youtube": "https://youtu.be/kgRR16vDnXk",
+      "mp3": "https://cdn.play-decoder.com/podcast/episodes/ep03.mp3",
+      "transcript": "https://cdn.play-decoder.com/podcast/transcripts/ep03.transcript.json"
+    }
+  },
+  {
     "id": "EP02",
     "slug": "overwatch-hra-ktera-prezila-vlastni-sequel",
     "lang": "cs",

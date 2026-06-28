@@ -4,7 +4,7 @@ This directory holds **source key art and promotional imagery** used as input wh
 
 ## Third-party ownership
 
-Game titles, logos, characters, artwork, screenshots, and other visual assets depicted in these files are the property of their **respective owners** (including publishers, developers, and licensors). Examples currently in this folder include assets related to **Marathon** (Bungie) and **Overwatch** (Blizzard Entertainment).
+Game titles, logos, characters, artwork, screenshots, and other visual assets depicted in these files are the property of their **respective owners** (including publishers, developers, and licensors). Examples currently in this folder include assets related to **Marathon** (Bungie), **Overwatch** (Blizzard Entertainment), and **Arkane Studios** titles such as *Dishonored*, *Prey*, *Deathloop*, and *Redfall* (Bethesda / ZeniMax / Microsoft), as well as **Marvel's Blade** (Marvel).
 
 All trademarks, service marks, trade names, and copyrighted material remain the property of their owners. Listing a title here does not imply a complete or up-to-date inventory; additional files may be added over time.
 

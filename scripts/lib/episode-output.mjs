@@ -17,7 +17,7 @@ export function socialOutputPath(repoRoot, episodeId, layoutId, theme = "dark") 
 }
 
 /** output/ep02/social/youtube-keyart-<theme>.png */
-function keyartOutputPath(repoRoot, episodeId, theme = "dark") {
+export function keyartOutputPath(repoRoot, episodeId, theme = "dark") {
   return socialOutputPath(repoRoot, episodeId, "youtube-keyart", theme);
 }
 
@@ -31,7 +31,7 @@ export function podcastCoverOutputPath(repoRoot, episodeId, format = "jpg", them
 }
 
 /** output/ep02/youtube/ep02-<theme>.mp4 */
-function youtubeVideoOutputPath(repoRoot, episodeId, theme = "dark") {
+export function youtubeVideoOutputPath(repoRoot, episodeId, theme = "dark") {
   return join(
     episodeOutputRoot(repoRoot, episodeId),
     "youtube",

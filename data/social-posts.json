@@ -12,6 +12,15 @@
   },
   "posts": [
     {
+      "episodeId": "EP03",
+      "shortDescription": "Svoboda hráče, systémový design a příběh studia, které změnilo immersive sim.",
+      "art": "public/social/art/ep03-arkane.jpg",
+      "artFocalPoint": { "x": 0, "y": 0.5 },
+      "layouts": {
+        "podcast-cover": { "artFocalPoint": "top" }
+      }
+    },
+    {
       "episodeId": "EP01",
       "shortDescription": "Bungie míří do extraction shooterů — ale dělá věci jinak.",
       "art": "public/social/art/ep01-marathon.jpg"
