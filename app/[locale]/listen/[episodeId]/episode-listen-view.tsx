@@ -173,6 +173,7 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
                 artBackground={
                   <EpisodePlayerArtBackground
                     artImage={episode.artImage}
+                    artFocalPoint={episode.artFocalPoint}
                     fade="gradient"
                     priority
                   />

@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 
+import { artFocalPointToObjectPosition, type ArtFocalPoint } from "@/lib/episode/art-focal-point";
+
 import {
   EPISODE_PLAYER_ART_GRADIENT_FADE_CLASS,
   EPISODE_PLAYER_ART_IMAGE_CLASS,
@@ -13,12 +15,14 @@ import {
 
 interface EpisodePlayerArtBackgroundProps {
   artImage?: string;
+  artFocalPoint?: ArtFocalPoint;
   fade?: "gradient" | "mask";
   intensity?: keyof typeof EPISODE_PLAYER_ART_INTENSITY_CLASS;
 }
 
 export function EpisodePlayerArtBackground({
   artImage,
+  artFocalPoint,
   fade = "gradient",
   intensity = "default",
 }: EpisodePlayerArtBackgroundProps) {
@@ -32,6 +36,7 @@ export function EpisodePlayerArtBackground({
       sizes={EPISODE_PLAYER_ART_SIZES}
       quality={25}
       className={`${EPISODE_PLAYER_ART_IMAGE_CLASS} ${EPISODE_PLAYER_ART_INTENSITY_CLASS[intensity]}`}
+      style={{ objectPosition: artFocalPointToObjectPosition(artFocalPoint) }}
     />
   );
 

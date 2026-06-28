@@ -68,7 +68,7 @@ export function EpisodeAudioPlayer({ episode, chapters, artBackground }: Episode
       ) : null}
 
       {artBackground ?? (
-        <EpisodePlayerArtBackground artImage={episode.artImage} fade="gradient" />
+        <EpisodePlayerArtBackground artImage={episode.artImage} artFocalPoint={episode.artFocalPoint} fade="gradient" />
       )}
 
       <div className="relative p-4 sm:p-5 md:p-6 flex flex-col gap-4 sm:gap-5">

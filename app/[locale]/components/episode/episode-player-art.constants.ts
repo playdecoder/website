@@ -24,7 +24,7 @@ export const episodePlayerArtMaskStyle = {
 } as const;
 
 export const EPISODE_PLAYER_ART_IMAGE_CLASS =
-  "scale-[1.08] object-cover object-center blur-[28px] saturate-[0.75]";
+  "scale-[1.08] object-cover blur-[28px] saturate-[0.75]";
 
 export const EPISODE_PLAYER_ART_WRAPPER_CLASS =
   "pointer-events-none absolute inset-y-0 right-0 z-0 w-1/2 overflow-hidden isolation-isolate";

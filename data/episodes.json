@@ -17,6 +17,7 @@
       "Herní design"
     ],
     "artImage": "/social/art/ep03-arkane.jpg",
+    "artFocalPoint": { "x": 0, "y": 0 },
     "coverImage": {
       "dark": {
         "url": "https://cdn.play-decoder.com/podcast/covers/ep03.jpg"

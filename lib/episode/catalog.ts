@@ -5,6 +5,8 @@ import {
   getEpisodeDateFormatter,
 } from "@/lib/i18n/intl-formatters";
 
+import type { ArtFocalPoint } from "./art-focal-point";
+
 export type BarColor = "primary" | "secondary" | "accent";
 
 export interface EpisodeLinks {
@@ -46,6 +48,8 @@ export interface Episode {
   tags: string[];
   /** Local public path to the unbranded 16:9 key art (e.g. "/social/art/ep02-overwatch.jpg"). */
   artImage?: string;
+  /** CSS object-position for artImage crops (sharp gravity name or { x, y } 0–1). */
+  artFocalPoint?: ArtFocalPoint;
   coverImage?: EpisodeCoverImage;
   curatedAs?: CuratedPickKey[];
   links: EpisodeLinks;

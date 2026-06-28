@@ -1,6 +1,7 @@
 import Image from "next/image";
 
 import type { Episode } from "@/lib/episode/catalog";
+import { artFocalPointToObjectPosition } from "@/lib/episode/art-focal-point";
 import { cn } from "@/lib/ui/cn";
 
 export const episodeArtBannerFadeClassName =
@@ -23,7 +24,8 @@ export function EpisodeCoverArt({ episode, className, sizes }: EpisodeCoverArtPr
         fill
         sizes={sizes ?? "600px"}
         quality={80}
-        className="object-cover object-center"
+        className="object-cover"
+        style={{ objectPosition: artFocalPointToObjectPosition(episode.artFocalPoint) }}
       />
     </div>
   );

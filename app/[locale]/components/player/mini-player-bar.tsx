@@ -249,6 +249,7 @@ export function MiniPlayerBar() {
 
         <EpisodePlayerArtBackground
           artImage={episode.artImage}
+          artFocalPoint={episode.artFocalPoint}
           fade="mask"
           intensity="subtle"
         />
