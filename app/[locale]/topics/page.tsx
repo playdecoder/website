@@ -3,12 +3,12 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { CSSProperties } from "react";
 
 import { Link } from "@/i18n/navigation";
-import { brandInterpolation } from "@/lib/site/brand";
 import { episodes } from "@/lib/episode/catalog";
 import { getTopicIndexEntries } from "@/lib/episode/topics";
 import { linkLocale } from "@/lib/routing/link-locale";
-import { localizedAlternates } from "@/lib/site/metadata-alternates";
 import { ROUTES, topicPath } from "@/lib/routing/routes";
+import { brandInterpolation } from "@/lib/site/brand";
+import { localizedAlternates } from "@/lib/site/metadata-alternates";
 
 import { Navbar } from "../components/layout/navbar";
 import { Contact } from "../components/sections/contact";

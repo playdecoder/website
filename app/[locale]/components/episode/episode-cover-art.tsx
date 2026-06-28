@@ -1,7 +1,7 @@
 import Image from "next/image";
 
-import type { Episode } from "@/lib/episode/catalog";
 import { artFocalPointToObjectPosition } from "@/lib/episode/art-focal-point";
+import type { Episode } from "@/lib/episode/catalog";
 import { cn } from "@/lib/ui/cn";
 
 export const episodeArtBannerFadeClassName =

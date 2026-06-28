@@ -15,9 +15,8 @@ interface EpisodeTranscriptLoadingProps {
 
 export function EpisodeTranscriptLoading({ label }: EpisodeTranscriptLoadingProps) {
   return (
-    <div
+    <output
       className="transcript-loading relative flex h-full flex-col items-center justify-center overflow-hidden px-5 py-6 sm:px-7 md:px-8"
-      role="status"
       aria-live="polite"
       aria-busy="true"
     >
@@ -28,28 +27,25 @@ export function EpisodeTranscriptLoading({ label }: EpisodeTranscriptLoadingProp
             className="transcript-loading__ghost-row grid grid-cols-[4rem_minmax(0,1fr)] items-start gap-4 px-5 py-3.5 sm:grid-cols-[5.5rem_minmax(0,1fr)] sm:gap-5 sm:px-7 sm:py-4 md:px-8"
             style={{ animationDelay: `${index * 120}ms` }}
           >
-            <div
-              className="bg-edge/12 mt-0.5 h-3 rounded-full"
-              style={{ width: row.timeW }}
-            />
+            <div className="bg-edge/12 mt-0.5 h-3 rounded-full" style={{ width: row.timeW }} />
             <div className="space-y-2">
-              <div
-                className="bg-edge/10 h-3 rounded-full"
-                style={{ width: row.line1 }}
-              />
-              <div
-                className="bg-edge/8 h-3 rounded-full"
-                style={{ width: row.line2 }}
-              />
+              <div className="bg-edge/10 h-3 rounded-full" style={{ width: row.line1 }} />
+              <div className="bg-edge/8 h-3 rounded-full" style={{ width: row.line2 }} />
             </div>
           </div>
         ))}
       </div>
 
-      <div className="transcript-loading__scan pointer-events-none absolute inset-x-6 top-0 h-px sm:inset-x-8" aria-hidden />
+      <div
+        className="transcript-loading__scan pointer-events-none absolute inset-x-6 top-0 h-px sm:inset-x-8"
+        aria-hidden
+      />
 
       <div className="relative z-[1] flex flex-col items-center gap-5">
-        <div className="transcript-loading__wave flex h-8 items-end justify-center gap-[3px] sm:h-9 sm:gap-1" aria-hidden>
+        <div
+          className="transcript-loading__wave flex h-8 items-end justify-center gap-[3px] sm:h-9 sm:gap-1"
+          aria-hidden
+        >
           {WAVE_HEIGHTS.map((height, index) => (
             <div
               key={index}
@@ -69,6 +65,6 @@ export function EpisodeTranscriptLoading({ label }: EpisodeTranscriptLoadingProp
           <span className="transcript-loading__label">{label}</span>
         </p>
       </div>
-    </div>
+    </output>
   );
 }

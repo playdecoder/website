@@ -14,8 +14,11 @@ import {
 } from "@/lib/episode/progress-storage";
 import { formatEpisodeTimeHash } from "@/lib/episode/time-fragment";
 import { formatPlaybackTime } from "@/lib/player/format-playback-time";
+import {
+  LISTEN_AUTOPLAY_QUERY_KEY,
+  LISTEN_AUTOPLAY_SERIALIZED,
+} from "@/lib/player/listen-autoplay-query";
 import { linkLocale } from "@/lib/routing/link-locale";
-import { LISTEN_AUTOPLAY_QUERY_KEY, LISTEN_AUTOPLAY_SERIALIZED } from "@/lib/player/listen-autoplay-query";
 import { listenEpisodePath } from "@/lib/routing/routes";
 
 import { PlayGlyphIcon } from "../player/play-glyph-icon";
@@ -53,9 +56,7 @@ export function ContinueListening({ locale }: { locale: string }) {
   );
   const entry = entryKey ? (JSON.parse(entryKey) as EpisodeProgressEntry) : null;
 
-  const episode = entry
-    ? (episodes.find((candidate) => candidate.id === entry.id) ?? null)
-    : null;
+  const episode = entry ? (episodes.find((candidate) => candidate.id === entry.id) ?? null) : null;
   const descriptionSnippet = episode
     ? episodeDescriptionSnippet(episode.description, DESCRIPTION_SNIPPET_MAX)
     : "";

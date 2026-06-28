@@ -157,10 +157,7 @@ export function EpisodeAudioPlayerTransportToolbar({
             time: formatPlaybackTime(ctx.currentTime),
           })}
         >
-          <span
-            className="bg-accent absolute top-0 bottom-0 left-0 w-px opacity-90"
-            aria-hidden
-          />
+          <span className="bg-accent absolute top-0 bottom-0 left-0 w-px opacity-90" aria-hidden />
           <span
             className="border-edge/80 text-accent-text flex size-7 shrink-0 items-center justify-center rounded-[3px] border bg-[color-mix(in_srgb,var(--surface-2)_92%,transparent)] shadow-[inset_0_1px_0_color-mix(in_srgb,var(--primary)_8%,transparent)]"
             aria-hidden
@@ -213,9 +210,7 @@ export function EpisodeAudioPlayerTransportToolbar({
                 ctx.setVolume(Number(e.target.value));
               }}
               className="decoder-audio-volume flex-1 disabled:opacity-35 sm:max-w-[10rem]"
-              style={
-                { "--decoder-vol": `${(ctx.muted ? 0 : ctx.volume) * 100}%` } as CSSProperties
-              }
+              style={{ "--decoder-vol": `${(ctx.muted ? 0 : ctx.volume) * 100}%` } as CSSProperties}
               aria-label={t("playerVolume")}
             />
           </div>

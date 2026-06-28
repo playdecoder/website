@@ -10,7 +10,10 @@ import { resolveEpisodeSeekFromHash } from "@/lib/episode/hash";
 import { getSavedPosition } from "@/lib/episode/progress-storage";
 import { formatEpisodeTimeHash } from "@/lib/episode/time-fragment";
 import { formatPlaybackTime } from "@/lib/player/format-playback-time";
-import { LISTEN_AUTOPLAY_QUERY_KEY, parseAsListenAutoplay } from "@/lib/player/listen-autoplay-query";
+import {
+  LISTEN_AUTOPLAY_QUERY_KEY,
+  parseAsListenAutoplay,
+} from "@/lib/player/listen-autoplay-query";
 
 import { usePlayerContext } from "../player/player-context";
 import { useWaveformSettle } from "../player/use-waveform-settle";
@@ -44,10 +47,7 @@ export type EpisodeAudioPlayerTransportState = {
   onMainPlayPause: () => void;
 };
 
-export function useEpisodeAudioPlayerState(
-  episode: Episode,
-  chapters?: EpisodeHashChapter[],
-) {
+export function useEpisodeAudioPlayerState(episode: Episode, chapters?: EpisodeHashChapter[]) {
   const t = useTranslations("listen");
   const ctx = usePlayerContext();
   const { seek, loadEpisode, togglePlay, episode: ctxEpisode, audioRef } = ctx;
@@ -173,20 +173,14 @@ export function useEpisodeAudioPlayerState(
   const decoderWavePlaying = useWaveformSettle(
     isPageEpisodeActive && ctx.isPlaying && !ctx.isSeekBuffering,
     () =>
-      Array.from(
-        waveformRef.current?.querySelectorAll<HTMLElement>(".decoder-waveform-bar") ?? [],
-      ),
+      Array.from(waveformRef.current?.querySelectorAll<HTMLElement>(".decoder-waveform-bar") ?? []),
   );
 
   useEffect(() => {
     if (!isPageEpisodeActive || ctx.duration <= 0 || hashHandledRef.current) return;
     hashHandledRef.current = true;
 
-    const resolved = resolveEpisodeSeekFromHash(
-      window.location.hash,
-      chapters ?? [],
-      ctx.duration,
-    );
+    const resolved = resolveEpisodeSeekFromHash(window.location.hash, chapters ?? [], ctx.duration);
     if (resolved.seconds === null) return;
 
     const notice = resolved.fromChapter

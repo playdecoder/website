@@ -2129,10 +2129,7 @@ html[data-episode-playing="true"] .waveform-bar--listen-bg {
   }
 
   .decoder-audio-player[data-playing="true"] .decoder-chapter-tick--current {
-    transform: translate(
-      -50%,
-      calc(-100% - var(--decoder-track-h) / 2 - var(--chapter-tick-lift))
-    );
+    transform: translate(-50%, calc(-100% - var(--decoder-track-h) / 2 - var(--chapter-tick-lift)));
   }
 }
 

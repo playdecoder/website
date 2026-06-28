@@ -1,12 +1,12 @@
 import { getTranslations } from "next-intl/server";
 
 import { Link } from "@/i18n/navigation";
-import { getCuratedPicks, hasCuratedPicks } from "@/lib/episode/curated-picks";
 import {
   episodeListenPathSegment,
   formatEpisodeDate,
   formatEpisodeDuration,
 } from "@/lib/episode/catalog";
+import { getCuratedPicks, hasCuratedPicks } from "@/lib/episode/curated-picks";
 import { linkLocale } from "@/lib/routing/link-locale";
 import { listenEpisodePath } from "@/lib/routing/routes";
 

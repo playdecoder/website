@@ -4,8 +4,8 @@ import { notFound } from "next/navigation";
 
 import { episodes } from "@/lib/episode/catalog";
 import { findTopicLabelBySlug, getTopicEntries } from "@/lib/episode/topics";
-import { localizedAlternates } from "@/lib/site/metadata-alternates";
 import { topicPath } from "@/lib/routing/routes";
+import { localizedAlternates } from "@/lib/site/metadata-alternates";
 
 import { EpisodesArchiveClient } from "../../components/episode/episodes-archive-client";
 import { Navbar } from "../../components/layout/navbar";

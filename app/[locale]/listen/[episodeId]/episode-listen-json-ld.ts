@@ -1,10 +1,10 @@
-import { BRAND_NAME } from "@/lib/site/brand";
 import {
   type Episode,
   formatEpisodeDurationIso8601,
   formatEpisodePublishedIso,
 } from "@/lib/episode/catalog";
 import { plainEpisodeDescription } from "@/lib/episode/description";
+import { BRAND_NAME } from "@/lib/site/brand";
 import { showHostsSchemaPersons } from "@/lib/site/show";
 
 import { isHttpUrl, trimEpisodeHosts } from "./episode-listen-helpers";
@@ -19,9 +19,7 @@ export function buildEpisodeListenJsonLd(
   const descriptionPlain = plainEpisodeDescription(episode.description);
   const displayHosts = trimEpisodeHosts(episode);
   const episodeContributors = displayHosts.flatMap((h) =>
-    isHttpUrl(h.link)
-      ? [{ "@type": "Person" as const, name: h.fullName, url: h.link }]
-      : [],
+    isHttpUrl(h.link) ? [{ "@type": "Person" as const, name: h.fullName, url: h.link }] : [],
   );
 
   return {

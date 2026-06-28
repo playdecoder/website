@@ -1,10 +1,10 @@
 import { getTranslations } from "next-intl/server";
 
 import { Link } from "@/i18n/navigation";
-import { BRAND_NAME } from "@/lib/site/brand";
 import { episodes, episodeListenPathSegment, getLatestEpisode } from "@/lib/episode/catalog";
 import { linkLocale } from "@/lib/routing/link-locale";
 import { PAGE_SECTION_ID, ROUTES, listenEpisodePath } from "@/lib/routing/routes";
+import { BRAND_NAME } from "@/lib/site/brand";
 
 import { LogoD } from "../branding/logo-d";
 

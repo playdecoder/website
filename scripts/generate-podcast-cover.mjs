@@ -4,14 +4,14 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { podcastCoverOutputPath } from "./lib/episode-output.mjs";
+import { PODCAST_COVER_SIZE, renderPodcastCover, repoRoot } from "./lib/podcast-cover-frame.mjs";
+import { THEMES } from "./lib/social-brand.mjs";
 import {
   findSocialPost,
   loadSocialPosts,
   resolveArtFocalPoint,
   SOCIAL_POSTS_FILE,
 } from "./lib/social-config.mjs";
-import { PODCAST_COVER_SIZE, renderPodcastCover, repoRoot } from "./lib/podcast-cover-frame.mjs";
-import { THEMES } from "./lib/social-brand.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const LAYOUT_ID = "podcast-cover";
@@ -118,7 +118,11 @@ function parseArgs(argv) {
   }
 
   const themes =
-    themeArg === "all" ? [...THEMES] : themeArg === "dark" || themeArg === "light" ? [themeArg] : null;
+    themeArg === "all"
+      ? [...THEMES]
+      : themeArg === "dark" || themeArg === "light"
+        ? [themeArg]
+        : null;
   if (!themes) {
     console.error(`Unknown theme "${themeArg}". Use dark, light, or all.`);
     process.exit(1);
@@ -180,7 +184,9 @@ async function renderOne({ episodeId, title, artPath, artFocalPoint, format, the
 }
 
 async function main() {
-  const { config, episode, output, artOverride, format, all, themes } = parseArgs(process.argv.slice(2));
+  const { config, episode, output, artOverride, format, all, themes } = parseArgs(
+    process.argv.slice(2),
+  );
   const file = await loadConfigFile(config);
   const postEntries = all ? (file.posts ?? []) : [{ episodeId: episode }];
 

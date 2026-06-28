@@ -209,7 +209,7 @@ export function MobileNavDrawer({
                 id={panelId}
                 open={mounted}
                 aria-label={openNavigationAria}
-                className="border-edge fixed top-16 right-3 left-3 z-[45] w-auto max-h-[min(32rem,calc(100dvh-5rem))] overflow-x-hidden overflow-y-auto rounded-sm border bg-[color-mix(in_srgb,var(--bg)_94%,var(--secondary)_4%)] p-0 shadow-[0_28px_56px_-28px_color-mix(in_srgb,var(--primary)_38%,transparent)] transition-[opacity,transform,box-shadow] duration-[var(--mobile-nav-panel-ms,420ms)] ease-[var(--mobile-nav-ease)] will-change-[transform,opacity] motion-reduce:transition-none motion-reduce:duration-0 dark:bg-[color-mix(in_srgb,var(--bg)_92%,var(--secondary)_6%)] dark:shadow-[0_28px_56px_-32px_rgb(0_0_0/0.5)]"
+                className="border-edge fixed top-16 right-3 left-3 z-[45] max-h-[min(32rem,calc(100dvh-5rem))] w-auto overflow-x-hidden overflow-y-auto rounded-sm border bg-[color-mix(in_srgb,var(--bg)_94%,var(--secondary)_4%)] p-0 shadow-[0_28px_56px_-28px_color-mix(in_srgb,var(--primary)_38%,transparent)] transition-[opacity,transform,box-shadow] duration-[var(--mobile-nav-panel-ms,420ms)] ease-[var(--mobile-nav-ease)] will-change-[transform,opacity] motion-reduce:transition-none motion-reduce:duration-0 dark:bg-[color-mix(in_srgb,var(--bg)_92%,var(--secondary)_6%)] dark:shadow-[0_28px_56px_-32px_rgb(0_0_0/0.5)]"
                 style={
                   {
                     "--mobile-nav-panel-ms": `${PANEL_MS}ms`,

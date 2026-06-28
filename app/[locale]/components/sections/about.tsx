@@ -1,9 +1,9 @@
 import { getTranslations } from "next-intl/server";
 
-import { brandInterpolation } from "@/lib/site/brand";
 import { episodes, formatCatalogHours, totalEpisodeCatalogSeconds } from "@/lib/episode/catalog";
 import { formatAboutStatCount } from "@/lib/i18n/intl-formatters";
 import { PAGE_SECTION_ID } from "@/lib/routing/routes";
+import { brandInterpolation } from "@/lib/site/brand";
 
 import { LedeIntroParagraph } from "../ui/lede-intro-paragraph";
 import { SectionHeading } from "../ui/section-heading";

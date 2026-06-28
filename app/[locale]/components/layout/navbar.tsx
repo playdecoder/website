@@ -3,10 +3,10 @@ import Image from "next/image";
 
 import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
-import { BRAND_NAME } from "@/lib/site/brand";
 import { episodes, episodeListenPathSegment, getLatestEpisode } from "@/lib/episode/catalog";
 import { linkLocale } from "@/lib/routing/link-locale";
 import { ROUTES, homeSectionPath, listenEpisodePath } from "@/lib/routing/routes";
+import { BRAND_NAME } from "@/lib/site/brand";
 
 import { LangSwitcher } from "../../lang-switcher";
 import { ThemeToggle } from "../../theme-toggle";

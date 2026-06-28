@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, type RefObject } from "react";
+import { useEffect, type RefObject } from "react";
 
 import type { Episode } from "@/lib/episode/catalog";
 import { useLatestRef } from "@/lib/react/use-latest-ref";

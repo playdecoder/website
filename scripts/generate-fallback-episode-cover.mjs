@@ -25,15 +25,9 @@ const svg = await readFile(input);
 // 1) High-res raster so trim + scale stay sharp.
 // 2) `trim` removes Figma/artboard whitespace that would appear as a huge border in Podcasts/Spotify.
 // 3) `cover` fills 1400×1400 (no 90px margin we used to get from `width - 180` + `inside`).
-const raster = await sharp(svg)
-  .resize(2400, 2400, { fit: "inside" })
-  .toBuffer();
-const trimmed = await sharp(raster)
-  .trim({ threshold: 10 })
-  .toBuffer();
-const filled = await sharp(trimmed)
-  .resize({ width, height, fit: "cover" })
-  .toBuffer();
+const raster = await sharp(svg).resize(2400, 2400, { fit: "inside" }).toBuffer();
+const trimmed = await sharp(raster).trim({ threshold: 10 }).toBuffer();
+const filled = await sharp(trimmed).resize({ width, height, fit: "cover" }).toBuffer();
 
 const base = sharp({
   create: {

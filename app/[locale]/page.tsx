@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
+import { ROUTES } from "@/lib/routing/routes";
 import { brandInterpolation } from "@/lib/site/brand";
 import { localizedAlternates } from "@/lib/site/metadata-alternates";
-import { ROUTES } from "@/lib/routing/routes";
 import { showTaglineEn } from "@/lib/site/show";
 
 import { Episodes } from "./components/episode/episodes";

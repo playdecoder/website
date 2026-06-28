@@ -8,14 +8,7 @@
     "date": "2026-06-28",
     "duration": 6761,
     "description": "Arkane Studios patří mezi nejvýraznější herní studia posledních dvou dekád. V této epizodě se vracíme k jeho kořenům v immersive sim žánru, rozebíráme vznik kultovních sérií jako Dishonored, Prey a Deathloop a hledáme odpověď na otázku, proč byly jejich hry tak výjimečné. Mluvíme o filozofii designu, svobodě hráče, systémových světech i o tom, jak se studio vyrovnávalo s komerčními očekáváními. Zastavíme se také u problematického Redfallu, uzavření Arkane Austin a zamyslíme se nad budoucností studia v čele s připravovaným Marvel's Blade.",
-    "tags": [
-      "Arkane Studios",
-      "Dishonored",
-      "Prey",
-      "Deathloop",
-      "Immersive sim",
-      "Herní design"
-    ],
+    "tags": ["Arkane Studios", "Dishonored", "Prey", "Deathloop", "Immersive sim", "Herní design"],
     "artImage": "/social/art/ep03-arkane.jpg",
     "artFocalPoint": { "x": 0, "y": 0 },
     "coverImage": {
@@ -82,13 +75,7 @@
     "date": "2026-05-24T15:00:00.000Z",
     "duration": 5565,
     "description": "Overwatch si prošel cestou od obrovského fenoménu přes kontroverze a nejasnou identitu až po dnešní návrat na výsluní. Rozebíráme jeho začátky, peak, Overwatch 2, změny ve filozofii hry i otázku, proč se z něj nakonec znovu stal „Overwatch“ bez dvojky. Zastavíme se i u toho, co dělalo hru výjimečnou a proč si stále drží své místo mezi hero shootery.",
-    "tags": [
-      "Blizzard",
-      "Overwatch",
-      "Hero shooter",
-      "Live service",
-      "Herní design"
-    ],
+    "tags": ["Blizzard", "Overwatch", "Hero shooter", "Live service", "Herní design"],
     "artImage": "/social/art/ep02-overwatch.jpg",
     "coverImage": {
       "dark": {
@@ -153,13 +140,7 @@
     "date": "2026-04-26",
     "duration": 4811,
     "description": "Marathon od Bungie míří do světa *extraction shooterů* - ale dělá věci jinak. Martin sdílí první dojmy a naráží na **tvrdý onboarding** i pocit, že „dělá něco špatně“, zatímco Jan to vyvažuje pohledem po desítkách hodin - vysvětluje, proč je hra postavená na znalosti map, rozhodování a nekompromisním přístupu. Společně rozebíráme design, *core loop* i to, proč je Marathon tak nehostinný - a jestli je to *problém*, nebo *záměr*.",
-    "tags": [
-      "Bungie",
-      "Marathon",
-      "Extraction",
-      "Herní design",
-      "Live service"
-    ],
+    "tags": ["Bungie", "Marathon", "Extraction", "Herní design", "Live service"],
     "artImage": "/social/art/ep01-marathon.jpg",
     "coverImage": {
       "dark": {

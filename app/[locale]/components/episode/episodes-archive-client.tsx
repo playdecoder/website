@@ -2,13 +2,10 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { useQueryStates } from "nuqs";
-import {
-  type Episode,
-  getEpisodeArchiveFacets,
-  getLatestEpisode,
-} from "@/lib/episode/catalog";
-import { plainEpisodeDescription } from "@/lib/episode/description";
+
 import { episodesArchiveSearchParams } from "@/lib/episode/archive-search-params";
+import { type Episode, getEpisodeArchiveFacets, getLatestEpisode } from "@/lib/episode/catalog";
+import { plainEpisodeDescription } from "@/lib/episode/description";
 import { linkLocale } from "@/lib/routing/link-locale";
 
 import { EpisodeGridCard } from "./episode-grid-card";
@@ -86,8 +83,7 @@ export function EpisodesArchiveClient({
   const archiveTotalForResults =
     !topicFilterLocked || initialSelectedTags.length === 0
       ? allEpisodes.length
-      : allEpisodes.filter((ep) => initialSelectedTags.some((tag) => ep.tags.includes(tag)))
-          .length;
+      : allEpisodes.filter((ep) => initialSelectedTags.some((tag) => ep.tags.includes(tag))).length;
 
   const q = filters.q.trim().toLowerCase();
   const words = q ? q.split(/\s+/).filter(Boolean) : [];

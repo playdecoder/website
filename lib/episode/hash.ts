@@ -18,9 +18,7 @@ function slugifyChapterKey(label: string): string {
   return s || "chapter";
 }
 
-function chapterFragmentKeys(
-  chapters: EpisodeHashChapter[],
-): Map<string, EpisodeHashChapter> {
+function chapterFragmentKeys(chapters: EpisodeHashChapter[]): Map<string, EpisodeHashChapter> {
   const sorted = chapters.toSorted((a, b) => a.t - b.t);
   const map = new Map<string, EpisodeHashChapter>();
   const countByBase = new Map<string, number>();

@@ -1,9 +1,5 @@
 import episodesJson from "@/data/episodes.json";
-
-import {
-  getCatalogHoursFormatter,
-  getEpisodeDateFormatter,
-} from "@/lib/i18n/intl-formatters";
+import { getCatalogHoursFormatter, getEpisodeDateFormatter } from "@/lib/i18n/intl-formatters";
 
 import type { ArtFocalPoint } from "./art-focal-point";
 

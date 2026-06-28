@@ -53,7 +53,7 @@ export function EpisodeAudioPlayerHeader({
     <div className="flex items-start justify-between gap-3">
       <div className="min-w-0">
         <p className="font-display text-primary pr-2 text-sm leading-snug font-semibold sm:text-base">
-          <span className="bg-accent/12 border border-accent/28 text-accent-text mr-2 inline-block rounded-sm px-1.5 py-0.5 font-mono text-[10px] tracking-widest align-middle sm:text-[11px]">
+          <span className="bg-accent/12 border-accent/28 text-accent-text mr-2 inline-block rounded-sm border px-1.5 py-0.5 align-middle font-mono text-[10px] tracking-widest sm:text-[11px]">
             {episodeId}
           </span>
           {title}

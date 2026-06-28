@@ -11,7 +11,10 @@ import { linkLocale } from "@/lib/routing/link-locale";
 import { listenEpisodePath } from "@/lib/routing/routes";
 
 import { EpisodePlayerArtBackground } from "../episode/episode-player-art-background.client";
-import { PLAYER_ART_SHELL_CLASS, episodeHasPlayerArt } from "../episode/episode-player-art.constants";
+import {
+  PLAYER_ART_SHELL_CLASS,
+  episodeHasPlayerArt,
+} from "../episode/episode-player-art.constants";
 
 import { usePlayerContext } from "./player-context";
 import { useWaveformSettle } from "./use-waveform-settle";
@@ -254,9 +257,7 @@ export function MiniPlayerBar() {
           intensity="subtle"
         />
 
-        {hasArt ? (
-          <div className={PLAYER_ART_SHELL_CLASS.mini.frost} aria-hidden />
-        ) : null}
+        {hasArt ? <div className={PLAYER_ART_SHELL_CLASS.mini.frost} aria-hidden /> : null}
 
         <div className="relative mx-auto flex max-w-6xl items-center gap-2 px-3 py-2.5 sm:gap-3 sm:px-5">
           <Link
@@ -288,7 +289,7 @@ export function MiniPlayerBar() {
 
             <div className="min-w-0">
               <p className="text-primary flex items-center gap-2 leading-tight">
-                <span className="bg-accent/12 border border-accent/28 text-accent-text shrink-0 rounded-sm px-1.5 py-0.5 font-mono text-[9px] font-medium tracking-[0.22em] uppercase leading-none">
+                <span className="bg-accent/12 border-accent/28 text-accent-text shrink-0 rounded-sm border px-1.5 py-0.5 font-mono text-[9px] leading-none font-medium tracking-[0.22em] uppercase">
                   {episode.id}
                 </span>
                 <span className="font-display truncate text-sm font-semibold tracking-tight group-hover:underline">

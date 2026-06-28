@@ -18,8 +18,18 @@ const root = join(__dirname, "../..");
 const fontsDir = join(__dirname, "../assets/fonts");
 
 const FONT_SPECS = [
-  { id: "syne-800", family: "Syne", weight: 800, cssUrl: "https://fonts.googleapis.com/css2?family=Syne:wght@800&display=swap" },
-  { id: "jetbrains-mono-500", family: "JetBrains Mono", weight: 500, cssUrl: "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&display=swap" },
+  {
+    id: "syne-800",
+    family: "Syne",
+    weight: 800,
+    cssUrl: "https://fonts.googleapis.com/css2?family=Syne:wght@800&display=swap",
+  },
+  {
+    id: "jetbrains-mono-500",
+    family: "JetBrains Mono",
+    weight: 500,
+    cssUrl: "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&display=swap",
+  },
 ];
 
 async function fileExists(path) {
@@ -375,14 +385,34 @@ async function coverArt(artPath, w, h, focalPoint = "centre") {
   const left = Math.max(0, Math.min(scaledW - w, Math.round((scaledW - w) * focal.x)));
   const top = Math.max(0, Math.min(scaledH - h, Math.round((scaledH - h) * focal.y)));
 
-  return sharp(artPath).resize(scaledW, scaledH).extract({ left, top, width: w, height: h }).png().toBuffer();
+  return sharp(artPath)
+    .resize(scaledW, scaledH)
+    .extract({ left, top, width: w, height: h })
+    .png()
+    .toBuffer();
 }
 
 const SHARP_GRAVITY = new Set([
-  "centre", "center", "top", "right top", "right", "right bottom",
-  "bottom", "left bottom", "left", "left top",
-  "north", "northeast", "east", "southeast", "south", "southwest", "west", "northwest",
-  "attention", "entropy",
+  "centre",
+  "center",
+  "top",
+  "right top",
+  "right",
+  "right bottom",
+  "bottom",
+  "left bottom",
+  "left",
+  "left top",
+  "north",
+  "northeast",
+  "east",
+  "southeast",
+  "south",
+  "southwest",
+  "west",
+  "northwest",
+  "attention",
+  "entropy",
 ]);
 
 function normalizeArtFocalPoint(focal) {
@@ -390,7 +420,9 @@ function normalizeArtFocalPoint(focal) {
     const key = focal.toLowerCase();
     if (key === "center") return "centre";
     if (SHARP_GRAVITY.has(key)) return key;
-    throw new Error(`Unknown artFocalPoint "${focal}". Use a sharp gravity name or { x, y } (0–1).`);
+    throw new Error(
+      `Unknown artFocalPoint "${focal}". Use a sharp gravity name or { x, y } (0–1).`,
+    );
   }
 
   if (focal && typeof focal.x === "number" && typeof focal.y === "number") {

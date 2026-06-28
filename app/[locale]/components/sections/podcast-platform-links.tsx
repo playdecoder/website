@@ -1,13 +1,13 @@
-import { cn } from "@/lib/ui/cn";
 import type { EpisodeLinks } from "@/lib/episode/catalog";
+import { ROUTES } from "@/lib/routing/routes";
 import {
   EPISODE_LISTEN_PLATFORM_KEYS,
   PODCAST_PLATFORM_KEYS,
   type EpisodeListenPlatformKey,
   type PodcastPlatformKey,
 } from "@/lib/site/podcast-ui";
-import { ROUTES } from "@/lib/routing/routes";
 import { PODCAST_SOCIAL_HREF } from "@/lib/site/socials";
+import { cn } from "@/lib/ui/cn";
 
 const PODCAST_PLATFORM_HREF: Record<PodcastPlatformKey, string> = {
   platformSpotify: "https://open.spotify.com/show/4XY6pyUQxGWnyp8lrC94m5",
@@ -125,11 +125,7 @@ export function EpisodeListenPlatformLinks({
         const href = hrefs[key].trim();
         if (!href) {
           return (
-            <span
-              key={key}
-              className={cn(linkCn, episodeListenPillDisabled)}
-              aria-disabled="true"
-            >
+            <span key={key} className={cn(linkCn, episodeListenPillDisabled)} aria-disabled="true">
               <span className={episodeListenDotClass(key)} />
               {getLabel(key)}
             </span>

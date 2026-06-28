@@ -3,13 +3,13 @@ import { formatEpisodeDate, formatEpisodeDuration } from "@/lib/episode/catalog"
 
 import { EpisodeShareButton } from "../../components/episode/episode-share-button";
 import { TopicLinkChip } from "../../components/episode/topic-link-chip";
+import { BarMotif } from "../../components/ui/bar-motif";
 import {
   IconEpisodeAirDate,
   IconEpisodeDuration,
   IconExternalLink,
   IconLatestDrop,
 } from "../../components/ui/icons";
-import { BarMotif } from "../../components/ui/bar-motif";
 
 import { episodeAirDateSpine, hostInitials, isHttpUrl } from "./episode-listen-helpers";
 

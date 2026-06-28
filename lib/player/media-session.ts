@@ -1,6 +1,6 @@
-import { BRAND_NAME } from "@/lib/site/brand";
 import type { Episode } from "@/lib/episode/catalog";
 import { resolveEpisodeCoverImageUrl } from "@/lib/episode/cover";
+import { BRAND_NAME } from "@/lib/site/brand";
 import { showHostsAmpersand } from "@/lib/site/show";
 
 function artworkMimeType(url: string): string {

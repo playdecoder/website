@@ -1,7 +1,6 @@
 import { getTranslations } from "next-intl/server";
 
 import { getPathname, Link } from "@/i18n/navigation";
-import { BRAND_NAME } from "@/lib/site/brand";
 import {
   type Episode,
   episodes,
@@ -13,9 +12,18 @@ import {
 import { resolveEpisodeCoverImageUrl } from "@/lib/episode/cover";
 import { linkLocale } from "@/lib/routing/link-locale";
 import { listenEpisodePath, ROUTES, homeSectionPath } from "@/lib/routing/routes";
+import { BRAND_NAME } from "@/lib/site/brand";
 import { absoluteFromPath, getPodcastCoverAbsoluteUrl, getPublicSiteUrl } from "@/lib/site/urls";
 
+import { EpisodeListenPlayerAndBody } from "../../components/episode/episode-listen-player-body";
+import { EpisodeNeighborNav } from "../../components/episode/episode-neighbor-nav";
+import { EpisodePlayerArtBackground } from "../../components/episode/episode-player-art-background";
+import { EpisodeSpokenLangNote } from "../../components/episode/episode-spoken-lang-note";
+import { Navbar } from "../../components/layout/navbar";
+import { DecoderPageFrame } from "../../components/layout/page-frame";
+
 import { EpisodeListenDecorations } from "./episode-listen-decorations";
+import { trimEpisodeHosts } from "./episode-listen-helpers";
 import { buildEpisodeListenJsonLd } from "./episode-listen-json-ld";
 import {
   EpisodeListenDesktopSidebar,
@@ -25,13 +33,6 @@ import {
   EpisodeListenTags,
   type EpisodeListenMetaLabels,
 } from "./episode-listen-parts";
-import { trimEpisodeHosts } from "./episode-listen-helpers";
-import { EpisodeListenPlayerAndBody } from "../../components/episode/episode-listen-player-body";
-import { EpisodePlayerArtBackground } from "../../components/episode/episode-player-art-background";
-import { EpisodeNeighborNav } from "../../components/episode/episode-neighbor-nav";
-import { EpisodeSpokenLangNote } from "../../components/episode/episode-spoken-lang-note";
-import { Navbar } from "../../components/layout/navbar";
-import { DecoderPageFrame } from "../../components/layout/page-frame";
 
 interface EpisodeListenViewProps {
   episode: Episode;

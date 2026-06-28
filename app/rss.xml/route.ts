@@ -1,4 +1,3 @@
-import { BRAND_NAME, BRAND_PODCAST } from "@/lib/site/brand";
 import {
   episodeListenSlugPrefix,
   episodeOrdinal,
@@ -10,9 +9,10 @@ import {
 import { resolveEpisodeCoverImageUrlForRss } from "@/lib/episode/cover";
 import { plainEpisodeDescription } from "@/lib/episode/description";
 import { absoluteListenEpisodeUrl } from "@/lib/routing/routes";
+import { BRAND_NAME, BRAND_PODCAST } from "@/lib/site/brand";
 import { showHostsAmpersand, showTaglineCs } from "@/lib/site/show";
-import { absoluteFromPath, getPodcastCoverAbsoluteUrl, getPublicSiteUrl } from "@/lib/site/urls";
 import { SITE_CONTACT_EMAIL } from "@/lib/site/socials";
+import { absoluteFromPath, getPodcastCoverAbsoluteUrl, getPublicSiteUrl } from "@/lib/site/urls";
 
 const SITE_URL = getPublicSiteUrl();
 const COVER_ART_URL = getPodcastCoverAbsoluteUrl();

@@ -4,13 +4,13 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { socialOutputPath } from "./lib/episode-output.mjs";
+import { THEMES } from "./lib/social-brand.mjs";
 import {
   findSocialPost,
   loadSocialPosts,
   resolveArtFocalPoint,
   SOCIAL_POSTS_FILE,
 } from "./lib/social-config.mjs";
-import { THEMES } from "./lib/social-brand.mjs";
 import {
   DEFAULT_LAYOUT,
   LAYOUT_IDS,
@@ -23,7 +23,9 @@ import {
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 function usage() {
-  const layoutList = LAYOUT_IDS.map((id) => `    ${id.padEnd(16)} ${LAYOUTS[id].width}×${LAYOUTS[id].height}  ${LAYOUTS[id].label}`).join("\n");
+  const layoutList = LAYOUT_IDS.map(
+    (id) => `    ${id.padEnd(16)} ${LAYOUTS[id].width}×${LAYOUTS[id].height}  ${LAYOUTS[id].label}`,
+  ).join("\n");
 
   console.log(`Generate Dekodér-branded social post frames (PNG).
 
@@ -138,7 +140,11 @@ function parseArgs(argv) {
   }
 
   const themes =
-    themeArg === "all" ? [...THEMES] : themeArg === "dark" || themeArg === "light" ? [themeArg] : null;
+    themeArg === "all"
+      ? [...THEMES]
+      : themeArg === "dark" || themeArg === "light"
+        ? [themeArg]
+        : null;
   if (!themes) {
     console.error(`Unknown theme "${themeArg}". Use dark, light, or all.`);
     process.exit(1);
@@ -207,7 +213,15 @@ async function renderOne(resolved, layoutId, theme, outputPath, { file, post }) 
   console.log("Wrote", outputPath);
 }
 
-async function generateForEpisode({ file, episodeId, artOverride, layout, allLayouts, output, themes }) {
+async function generateForEpisode({
+  file,
+  episodeId,
+  artOverride,
+  layout,
+  allLayouts,
+  output,
+  themes,
+}) {
   const bundle = await resolvePostBundle(file, episodeId);
   const resolved = await enrichFromEpisodeCatalog(bundle.post);
 
@@ -216,7 +230,9 @@ async function generateForEpisode({ file, episodeId, artOverride, layout, allLay
   }
 
   if (!resolved.description) {
-    console.warn(`Warning: no shortDescription for ${resolved.episodeId} — add one for social copy.`);
+    console.warn(
+      `Warning: no shortDescription for ${resolved.episodeId} — add one for social copy.`,
+    );
   }
 
   const layoutsToRender = allLayouts ? LAYOUT_IDS : [layout];
@@ -242,13 +258,10 @@ async function generateForEpisode({ file, episodeId, artOverride, layout, allLay
 }
 
 async function main() {
-  const { config, episode, output, artOverride, layout, allLayouts, allEpisodes, themes } = parseArgs(
-    process.argv.slice(2),
-  );
+  const { config, episode, output, artOverride, layout, allLayouts, allEpisodes, themes } =
+    parseArgs(process.argv.slice(2));
   const file = await loadConfigFile(config);
-  const episodeIds = allEpisodes
-    ? (file.posts ?? []).map((post) => post.episodeId)
-    : [episode];
+  const episodeIds = allEpisodes ? (file.posts ?? []).map((post) => post.episodeId) : [episode];
 
   if (episodeIds.length === 0) {
     throw new Error("No posts found in config.");

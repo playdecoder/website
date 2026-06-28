@@ -1,3 +1,4 @@
+import { Link } from "@/i18n/navigation";
 import type { Episode } from "@/lib/episode/catalog";
 import {
   episodeListenPathSegment,
@@ -6,8 +7,6 @@ import {
 } from "@/lib/episode/catalog";
 import { EpisodeDescriptionRich } from "@/lib/episode/description";
 import { listenEpisodePath } from "@/lib/routing/routes";
-
-import { Link } from "@/i18n/navigation";
 
 import { IconEpisodeAirDate, IconEpisodeDuration } from "../ui/icons";
 
@@ -53,13 +52,19 @@ export function EpisodeGridCard({
 
       {hasArt ? (
         <div className="relative h-40 sm:h-44">
-          <Link href={href} locale={hrefLocale} className="absolute inset-0 block" tabIndex={-1} aria-hidden>
+          <Link
+            href={href}
+            locale={hrefLocale}
+            className="absolute inset-0 block"
+            tabIndex={-1}
+            aria-hidden
+          >
             <EpisodeCoverArt episode={ep} sizes={artSizes} className="absolute inset-0" />
           </Link>
 
           <div className={episodeArtBannerFadeClassName} />
 
-          <div className="absolute inset-x-0 bottom-0 z-20 flex items-end gap-x-2 bg-gradient-to-t from-bg/90 via-bg/40 to-transparent pb-3 pl-7 pr-5 pt-16 dark:from-black/85 dark:via-black/55 sm:pl-8">
+          <div className="from-bg/90 via-bg/40 absolute inset-x-0 bottom-0 z-20 flex items-end gap-x-2 bg-gradient-to-t to-transparent pt-16 pr-5 pb-3 pl-7 sm:pl-8 dark:from-black/85 dark:via-black/55">
             <div className="flex shrink-0 items-center gap-1.5">
               <span className="text-primary dark:text-accent-text font-mono text-sm font-medium tracking-widest dark:drop-shadow-sm">
                 {ep.id}
@@ -72,7 +77,7 @@ export function EpisodeGridCard({
                   key={tag}
                   tag={tag}
                   locale={locale}
-                  className={`${i >= 2 ? "hidden sm:inline-flex" : "inline-flex"} shrink-0 min-h-[28px] items-center rounded-[3px] border border-secondary/25 bg-secondary/10 px-[5px] py-0.5 font-mono text-[0.58rem] tracking-[0.08em] text-secondary transition-colors hover:border-secondary/45 hover:text-primary`}
+                  className={`${i >= 2 ? "hidden sm:inline-flex" : "inline-flex"} border-secondary/25 bg-secondary/10 text-secondary hover:border-secondary/45 hover:text-primary min-h-[28px] shrink-0 items-center rounded-[3px] border px-[5px] py-0.5 font-mono text-[0.58rem] tracking-[0.08em] transition-colors`}
                 />
               ))}
             </div>
@@ -81,7 +86,7 @@ export function EpisodeGridCard({
       ) : (
         <div
           className={`flex flex-wrap items-center gap-2 pl-7 sm:gap-3 sm:pl-8 ${
-            isLatest ? "pr-20 pt-9 sm:pr-20 sm:pt-10" : "pr-5 pt-7 sm:pr-7 sm:pt-9"
+            isLatest ? "pt-9 pr-20 sm:pt-10 sm:pr-20" : "pt-7 pr-5 sm:pt-9 sm:pr-7"
           }`}
         >
           <span className="text-accent-text font-mono text-sm font-medium tracking-widest">

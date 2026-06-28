@@ -1,14 +1,10 @@
-import { setRequestLocale } from "next-intl/server";
 import type { Metadata } from "next";
+import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 
 import { redirect } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
-import {
-  episodeListenPathSegment,
-  episodes,
-  getLatestEpisode,
-} from "@/lib/episode/catalog";
+import { episodeListenPathSegment, episodes, getLatestEpisode } from "@/lib/episode/catalog";
 import { listenEpisodePath } from "@/lib/routing/routes";
 
 export const dynamic = "force-static";
@@ -23,7 +19,7 @@ export function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { locale } = await params;
+  await params;
   const latest = getLatestEpisode(episodes);
   if (!latest) {
     return { title: "Latest episode" };

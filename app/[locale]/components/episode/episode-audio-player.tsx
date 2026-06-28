@@ -44,7 +44,7 @@ export function EpisodeAudioPlayer({ episode, chapters, artBackground }: Episode
             : "border-secondary/40 bg-surface/90 dark:bg-surface/60 shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--secondary)_8%,transparent)] backdrop-blur-md"
           : hasArt
             ? `border-edge ${PLAYER_ART_SHELL_CLASS.audio.section} hover:border-secondary/35 hover:shadow-[0_0_0_1px_color-mix(in_srgb,var(--secondary)_12%,transparent)]`
-            : "border-edge bg-surface/85 dark:bg-surface/55 backdrop-blur-md hover:border-secondary/35 hover:shadow-[0_0_0_1px_color-mix(in_srgb,var(--secondary)_12%,transparent)]"
+            : "border-edge bg-surface/85 dark:bg-surface/55 hover:border-secondary/35 backdrop-blur-md hover:shadow-[0_0_0_1px_color-mix(in_srgb,var(--secondary)_12%,transparent)]"
       }`}
       style={{ animation: "fadeUp 0.7s ease both 0.18s" }}
       data-playing={isPageEpisodeActive && ctx.isPlaying}
@@ -58,20 +58,22 @@ export function EpisodeAudioPlayer({ episode, chapters, artBackground }: Episode
       />
       {!hasArt ? (
         <div
-          className={`pointer-events-none absolute top-0 right-0 left-0 bg-gradient-to-r from-transparent to-transparent transition-all duration-500 ease-out ${ctx.isPlaying ? "h-[2px] via-accent/80" : "h-px via-secondary/25"}`}
+          className={`pointer-events-none absolute top-0 right-0 left-0 bg-gradient-to-r from-transparent to-transparent transition-all duration-500 ease-out ${ctx.isPlaying ? "via-accent/80 h-[2px]" : "via-secondary/25 h-px"}`}
           aria-hidden
         />
       ) : null}
 
-      {hasArt ? (
-        <div className={PLAYER_ART_SHELL_CLASS.audio.frost} aria-hidden />
-      ) : null}
+      {hasArt ? <div className={PLAYER_ART_SHELL_CLASS.audio.frost} aria-hidden /> : null}
 
       {artBackground ?? (
-        <EpisodePlayerArtBackground artImage={episode.artImage} artFocalPoint={episode.artFocalPoint} fade="gradient" />
+        <EpisodePlayerArtBackground
+          artImage={episode.artImage}
+          artFocalPoint={episode.artFocalPoint}
+          fade="gradient"
+        />
       )}
 
-      <div className="relative p-4 sm:p-5 md:p-6 flex flex-col gap-4 sm:gap-5">
+      <div className="relative flex flex-col gap-4 p-4 sm:gap-5 sm:p-5 md:p-6">
         <EpisodeAudioPlayerHeader
           episodeId={episodeId}
           title={title}

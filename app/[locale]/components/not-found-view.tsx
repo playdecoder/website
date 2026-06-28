@@ -2,9 +2,9 @@ import { getTranslations } from "next-intl/server";
 
 import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
-import { brandInterpolation } from "@/lib/site/brand";
 import { linkLocale } from "@/lib/routing/link-locale";
 import { ROUTES } from "@/lib/routing/routes";
+import { brandInterpolation } from "@/lib/site/brand";
 
 import { Navbar } from "./layout/navbar";
 import { DecoderPageFrame } from "./layout/page-frame";

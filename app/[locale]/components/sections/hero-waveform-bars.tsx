@@ -3,11 +3,8 @@
 import type { CSSProperties } from "react";
 import { useRef } from "react";
 
-import {
-  useDocumentTabVisible,
-  useHeroWaveInView,
-} from "@/lib/react/browser-external-store";
 import { barColorCss, heroWaveformBars } from "@/lib/episode/catalog";
+import { useDocumentTabVisible, useHeroWaveInView } from "@/lib/react/browser-external-store";
 import { scaleHeroWaveTime } from "@/lib/ui/hero-waveform-timing";
 
 export function HeroWaveformBars() {

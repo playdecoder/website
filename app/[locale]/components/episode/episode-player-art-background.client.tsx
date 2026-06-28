@@ -42,7 +42,11 @@ export function EpisodePlayerArtBackground({
 
   if (fade === "mask") {
     return (
-      <div className={EPISODE_PLAYER_ART_WRAPPER_CLASS} style={episodePlayerArtMaskStyle} aria-hidden>
+      <div
+        className={EPISODE_PLAYER_ART_WRAPPER_CLASS}
+        style={episodePlayerArtMaskStyle}
+        aria-hidden
+      >
         {image}
       </div>
     );

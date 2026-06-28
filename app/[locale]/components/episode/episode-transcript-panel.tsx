@@ -1,14 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import {
-  startTransition,
-  useEffect,
-  useLayoutEffect,
-  useReducer,
-  useRef,
-  useState,
-} from "react";
+import { startTransition, useEffect, useLayoutEffect, useReducer, useRef, useState } from "react";
 
 import { type TranscriptSegment, fetchEpisodeTranscript } from "@/lib/episode/fetch-transcript";
 import { useLatestRef } from "@/lib/react/use-latest-ref";
@@ -126,12 +119,7 @@ export function EpisodeTranscriptPanel({
   }
 
   useLayoutEffect(() => {
-    if (
-      loadState !== "ready" ||
-      activeIndex === -1 ||
-      !activeRef.current ||
-      !scrollRef.current
-    ) {
+    if (loadState !== "ready" || activeIndex === -1 || !activeRef.current || !scrollRef.current) {
       return;
     }
     const container = scrollRef.current;

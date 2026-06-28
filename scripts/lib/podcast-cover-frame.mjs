@@ -78,7 +78,10 @@ function motifBarsSvg(x, bottomY, scale, brand) {
     { h: 14 * scale, fill: brand.accent },
   ];
   return bars
-    .map((bar, i) => `<rect x="${x + i * (w + gap)}" y="${bottomY - bar.h}" width="${w}" height="${bar.h}" rx="2" fill="${bar.fill}"/>`)
+    .map(
+      (bar, i) =>
+        `<rect x="${x + i * (w + gap)}" y="${bottomY - bar.h}" width="${w}" height="${bar.h}" rx="2" fill="${bar.fill}"/>`,
+    )
     .join("");
 }
 
@@ -98,19 +101,19 @@ function buildMetrics() {
   const titleBoost = 1.6;
 
   // Slightly less art (0.60) to give the text panel more vertical room
-  const artRatio = 0.60;
+  const artRatio = 0.6;
   const artH = Math.round(size * artRatio);
   const pad = Math.round(52 * scale);
 
   const titleSize = Math.round(46 * scale * titleBoost);
   const titleLineHeight = Math.round(54 * scale * titleBoost);
-  const badgeH = Math.round(52 * scale);         // was 40
-  const badgeFontSize = Math.round(26 * scale);  // was 18
-  const badgeCharW = Math.round(20 * scale);     // was 14
-  const badgePadX = Math.round(22 * scale);      // was 18
-  const urlFontSize = Math.round(22 * scale);    // was 16
+  const badgeH = Math.round(52 * scale); // was 40
+  const badgeFontSize = Math.round(26 * scale); // was 18
+  const badgeCharW = Math.round(20 * scale); // was 14
+  const badgePadX = Math.round(22 * scale); // was 18
+  const urlFontSize = Math.round(22 * scale); // was 16
   const footerGap = Math.round(14 * scale);
-  const motifScale = 1.5 * scale;               // was 1.15 — bigger bars
+  const motifScale = 1.5 * scale; // was 1.15 — bigger bars
   const motifTallest = Math.round(28 * motifScale);
   const footerLogoMaxH = Math.round(52 * scale); // was 40
   const footerContentH = Math.max(motifTallest, footerLogoMaxH);
@@ -238,7 +241,15 @@ function computeContent({ episodeId, title, m, logoWidth, logoHeight }) {
   const logoX = m.size - m.pad - logoWidth;
   const logoY = m.footerBottom - logoHeight;
 
-  return { badgeLabel, badgeW, badgeY: clampedBadgeY, titleLines, titleY: clampedTitleY, logoX, logoY };
+  return {
+    badgeLabel,
+    badgeW,
+    badgeY: clampedBadgeY,
+    titleLines,
+    titleY: clampedTitleY,
+    logoX,
+    logoY,
+  };
 }
 
 async function loadArtLayer(artPath, width, height, focalPoint, brand) {
@@ -249,8 +260,9 @@ async function loadArtLayer(artPath, width, height, focalPoint, brand) {
   return sharp({
     create: { width, height, channels: 4, background: { ...bg, alpha: 1 } },
   })
-    .composite([{
-      input: Buffer.from(`
+    .composite([
+      {
+        input: Buffer.from(`
         <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
@@ -261,16 +273,21 @@ async function loadArtLayer(artPath, width, height, focalPoint, brand) {
           <rect width="100%" height="100%" fill="url(#g)"/>
         </svg>
       `),
-      top: 0,
-      left: 0,
-    }])
+        top: 0,
+        left: 0,
+      },
+    ])
     .png()
     .toBuffer();
 }
 
 function parseBgRgb(hex) {
   const h = hex.replace("#", "");
-  return { r: parseInt(h.slice(0, 2), 16), g: parseInt(h.slice(2, 4), 16), b: parseInt(h.slice(4, 6), 16) };
+  return {
+    r: parseInt(h.slice(0, 2), 16),
+    g: parseInt(h.slice(2, 4), 16),
+    b: parseInt(h.slice(4, 6), 16),
+  };
 }
 
 /**
@@ -319,16 +336,20 @@ export async function renderPodcastCover(options) {
   const bg = parseBgRgb(brand.bg);
   const base = sharp({
     create: { width: m.size, height: m.size, channels: 4, background: { ...bg, alpha: 1 } },
-  }).composite([
-    { input: artBuf, top: 0, left: 0 },
-    { input: overlayBuf, top: 0, left: 0 },
-    { input: logoBuf, top: content.logoY, left: content.logoX },
-  ]).flatten({ background: bg });
+  })
+    .composite([
+      { input: artBuf, top: 0, left: 0 },
+      { input: overlayBuf, top: 0, left: 0 },
+      { input: logoBuf, top: content.logoY, left: content.logoX },
+    ])
+    .flatten({ background: bg });
 
   if (format === "png") {
     return base.png({ compressionLevel: 6, effort: 9, palette: false }).toBuffer();
   }
-  return base.jpeg({ quality: 88, progressive: false, mozjpeg: false, chromaSubsampling: "4:2:0" }).toBuffer();
+  return base
+    .jpeg({ quality: 88, progressive: false, mozjpeg: false, chromaSubsampling: "4:2:0" })
+    .toBuffer();
 }
 
 export { root as repoRoot };

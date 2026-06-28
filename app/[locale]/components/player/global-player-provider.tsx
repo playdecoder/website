@@ -1,14 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import {
-  useEffect,
-  useLayoutEffect,
-  useReducer,
-  useRef,
-  useState,
-  type ReactNode,
-} from "react";
+import { useEffect, useLayoutEffect, useReducer, useRef, useState, type ReactNode } from "react";
 
 import type { Episode } from "@/lib/episode/catalog";
 import { clearEpisodeProgress, writeProgressSnapshot } from "@/lib/episode/progress-storage";
@@ -312,7 +305,12 @@ export function GlobalPlayerProvider({ children }: { children: ReactNode }) {
 
   return (
     <PlayerContext.Provider value={contextValue}>
-      <audio ref={audioRef} preload="metadata" className="sr-only" aria-label={t("playerAriaLabel", { id: episode?.id ?? "" })}>
+      <audio
+        ref={audioRef}
+        preload="metadata"
+        className="sr-only"
+        aria-label={t("playerAriaLabel", { id: episode?.id ?? "" })}
+      >
         <track kind="captions" />
       </audio>
       {children}

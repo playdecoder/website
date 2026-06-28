@@ -4,9 +4,9 @@ import { useLocale, useTranslations } from "next-intl";
 import { useEffect } from "react";
 
 import { Link } from "@/i18n/navigation";
-import { BRAND_NAME, brandInterpolation } from "@/lib/site/brand";
 import { linkLocale } from "@/lib/routing/link-locale";
 import { ROUTES } from "@/lib/routing/routes";
+import { BRAND_NAME, brandInterpolation } from "@/lib/site/brand";
 
 import { DecoderPageFrame } from "./components/layout/page-frame";
 import { SignalLabelRail } from "./components/sections/signal-label-rail";
