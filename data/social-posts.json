@@ -13,7 +13,7 @@
   "posts": [
     {
       "episodeId": "EP03",
-      "shortDescription": "Svoboda hráče, systémový design a příběh studia, které změnilo immersive sim.",
+      "shortDescription": "Dishonored, Prey, Deathloop, Redfall a otázka, kam Arkane míří dál.",
       "art": "public/social/art/ep03-arkane.jpg",
       "artFocalPoint": { "x": 0, "y": 0.5 },
       "layouts": {
