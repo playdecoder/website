@@ -10,9 +10,9 @@ import { listenEpisodePath } from "@/lib/routing/routes";
 
 import { IconEpisodeAirDate, IconEpisodeDuration } from "../ui/icons";
 
+import { EpisodeCardTopicChips } from "./episode-card-topic-chips";
 import { EpisodeCoverArt, episodeArtBannerFadeClassName } from "./episode-cover-art";
 import { EpisodeLangCompactBadge } from "./episode-lang-compact-badge";
-import { TopicLinkChip } from "./topic-link-chip";
 
 interface EpisodeGridCardProps {
   episode: Episode;
@@ -37,6 +37,8 @@ export function EpisodeGridCard({
 }: EpisodeGridCardProps) {
   const href = listenEpisodePath(episodeListenPathSegment(ep));
   const hasArt = Boolean(ep.artImage);
+  const overlayChipClassName =
+    "inline-flex min-h-[28px] shrink-0 items-center rounded-[3px] border border-secondary/25 bg-secondary/10 px-[5px] py-0.5 font-mono text-[0.58rem] tracking-[0.08em] text-secondary transition-colors hover:border-secondary/45 hover:text-primary";
 
   return (
     <article className="border-edge bg-bg group hover:border-accent/35 active:border-secondary/45 relative flex h-full flex-col overflow-hidden rounded-sm border transition-colors duration-300">
@@ -72,14 +74,12 @@ export function EpisodeGridCard({
               <EpisodeLangCompactBadge lang={ep.lang} />
             </div>
             <div className="ml-auto flex min-w-0 items-center gap-1 overflow-hidden">
-              {ep.tags.map((tag, i) => (
-                <TopicLinkChip
-                  key={tag}
-                  tag={tag}
-                  locale={locale}
-                  className={`${i >= 2 ? "hidden sm:inline-flex" : "inline-flex"} border-secondary/25 bg-secondary/10 text-secondary hover:border-secondary/45 hover:text-primary min-h-[28px] shrink-0 items-center rounded-[3px] border px-[5px] py-0.5 font-mono text-[0.58rem] tracking-[0.08em] transition-colors`}
-                />
-              ))}
+              <EpisodeCardTopicChips
+                tags={ep.tags}
+                locale={locale}
+                chipClassName={overlayChipClassName}
+                overflowClassName={`${overlayChipClassName} pointer-events-none opacity-80`}
+              />
             </div>
           </div>
         </div>
@@ -94,9 +94,7 @@ export function EpisodeGridCard({
           </span>
           <EpisodeLangCompactBadge lang={ep.lang} />
           <div className="ml-auto flex flex-wrap justify-end gap-1.5">
-            {ep.tags.map((tag) => (
-              <TopicLinkChip key={tag} tag={tag} locale={locale} />
-            ))}
+            <EpisodeCardTopicChips tags={ep.tags} locale={locale} />
           </div>
         </div>
       )}

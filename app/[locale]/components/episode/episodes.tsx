@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 
 import { Link } from "@/i18n/navigation";
+import { splitEpisodeCardTags } from "@/lib/episode/card-tags";
 import {
   episodes,
   episodeListenPathSegment,
@@ -16,9 +17,9 @@ import { IconEpisodeAirDate, IconEpisodeDuration } from "../ui/icons";
 import { LedeIntroParagraph } from "../ui/lede-intro-paragraph";
 import { SectionHeading } from "../ui/section-heading";
 
+import { EpisodeCardTopicChips } from "./episode-card-topic-chips";
 import { EpisodeCoverArt, episodeArtBannerFadeClassName } from "./episode-cover-art";
 import { EpisodeSpokenLangNote } from "./episode-spoken-lang-note";
-import { TopicLinkChip } from "./topic-link-chip";
 
 export async function Episodes({ locale }: { locale: string }) {
   const t = await getTranslations({ locale, namespace: "episodesSection" });
@@ -65,9 +66,7 @@ export async function Episodes({ locale }: { locale: string }) {
                   {t("latest")}
                 </span>
                 <div className="flex basis-full flex-wrap gap-1.5 md:ml-auto md:basis-auto md:justify-end">
-                  {latestEpisode.tags.map((tag) => (
-                    <TopicLinkChip key={tag} tag={tag} locale={locale} />
-                  ))}
+                  <EpisodeCardTopicChips tags={latestEpisode.tags} locale={locale} />
                 </div>
               </div>
 
@@ -113,62 +112,73 @@ export async function Episodes({ locale }: { locale: string }) {
         </div>
 
         <div className="scroll-reveal">
-          {archiveEpisodes.map((ep, i) => (
-            <Link
-              key={ep.id}
-              href={listenEpisodePath(episodeListenPathSegment(ep))}
-              locale={hrefLocale}
-              className="episode-row group border-edge hover:bg-surface/60 active:bg-surface/75 -mx-3 flex cursor-pointer flex-col gap-2 border-b px-3 py-5 transition-colors duration-200 sm:flex-row sm:items-center sm:gap-6"
-              style={{ animationDelay: `${0.05 * i}s` }}
-            >
-              <div className="flex w-full min-w-0 items-center justify-between gap-3 sm:hidden">
-                <div className="flex min-w-0 items-center gap-2">
-                  <span className="text-secondary w-10 shrink-0 font-mono text-xs font-medium tracking-widest">
+          {archiveEpisodes.map((ep, i) => {
+            const { visible: rowTags, overflowCount: rowTagOverflow } = splitEpisodeCardTags(
+              ep.tags,
+            );
+
+            return (
+              <Link
+                key={ep.id}
+                href={listenEpisodePath(episodeListenPathSegment(ep))}
+                locale={hrefLocale}
+                className="episode-row group border-edge hover:bg-surface/60 active:bg-surface/75 -mx-3 flex cursor-pointer flex-col gap-2 border-b px-3 py-5 transition-colors duration-200 sm:flex-row sm:items-center sm:gap-6"
+                style={{ animationDelay: `${0.05 * i}s` }}
+              >
+                <div className="flex w-full min-w-0 items-center justify-between gap-3 sm:hidden">
+                  <div className="flex min-w-0 items-center gap-2">
+                    <span className="text-secondary w-10 shrink-0 font-mono text-xs font-medium tracking-widest">
+                      {ep.id}
+                    </span>
+                    <EpisodeSpokenLangNote lang={ep.lang} locale={locale} variant="compact" />
+                  </div>
+                  <div className="text-muted flex shrink-0 items-center gap-2.5 font-mono text-xs tracking-widest">
+                    <span className="tabular-nums">{formatEpisodeDuration(ep.duration)}</span>
+                    <span className="episode-row__arrow text-muted/40 group-hover:text-accent-text/70 inline-flex transition-colors">
+                      →
+                    </span>
+                  </div>
+                </div>
+
+                <div className="hidden min-w-0 shrink-0 items-center gap-2 sm:flex">
+                  <span className="text-secondary w-10 font-mono text-xs font-medium tracking-widest">
                     {ep.id}
                   </span>
                   <EpisodeSpokenLangNote lang={ep.lang} locale={locale} variant="compact" />
                 </div>
-                <div className="text-muted flex shrink-0 items-center gap-2.5 font-mono text-xs tracking-widest">
-                  <span className="tabular-nums">{formatEpisodeDuration(ep.duration)}</span>
-                  <span className="episode-row__arrow text-muted/40 group-hover:text-accent-text/70 inline-flex transition-colors">
+
+                <div className="min-w-0 flex-1">
+                  <p className="font-display text-primary group-hover:text-accent-text text-base leading-snug font-semibold transition-colors sm:truncate md:text-lg">
+                    {ep.title}
+                  </p>
+                </div>
+
+                <div className="hidden shrink-0 items-center gap-4 sm:flex">
+                  <div className="flex gap-1.5">
+                    {rowTags.map((tag) => (
+                      <span key={tag} className="tag-pill">
+                        {tag}
+                      </span>
+                    ))}
+                    {rowTagOverflow > 0 ? (
+                      <span className="tag-pill opacity-80" aria-hidden>
+                        +{rowTagOverflow}
+                      </span>
+                    ) : null}
+                  </div>
+                  <span className="text-muted w-20 text-right font-mono text-xs tracking-widest">
+                    {formatEpisodeDuration(ep.duration)}
+                  </span>
+                  <span className="text-muted hidden shrink-0 text-right font-mono text-xs tracking-widest whitespace-nowrap md:block">
+                    {formatEpisodeDate(ep.date, locale)}
+                  </span>
+                  <span className="episode-row__arrow text-muted/30 group-hover:text-accent-text/70 transition-colors">
                     →
                   </span>
                 </div>
-              </div>
-
-              <div className="hidden min-w-0 shrink-0 items-center gap-2 sm:flex">
-                <span className="text-secondary w-10 font-mono text-xs font-medium tracking-widest">
-                  {ep.id}
-                </span>
-                <EpisodeSpokenLangNote lang={ep.lang} locale={locale} variant="compact" />
-              </div>
-
-              <div className="min-w-0 flex-1">
-                <p className="font-display text-primary group-hover:text-accent-text text-base leading-snug font-semibold transition-colors sm:truncate md:text-lg">
-                  {ep.title}
-                </p>
-              </div>
-
-              <div className="hidden shrink-0 items-center gap-4 sm:flex">
-                <div className="flex gap-1.5">
-                  {ep.tags.map((tag) => (
-                    <span key={tag} className="tag-pill">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-                <span className="text-muted w-20 text-right font-mono text-xs tracking-widest">
-                  {formatEpisodeDuration(ep.duration)}
-                </span>
-                <span className="text-muted hidden shrink-0 text-right font-mono text-xs tracking-widest whitespace-nowrap md:block">
-                  {formatEpisodeDate(ep.date, locale)}
-                </span>
-                <span className="episode-row__arrow text-muted/30 group-hover:text-accent-text/70 transition-colors">
-                  →
-                </span>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            );
+          })}
 
           <div className="border-edge scroll-reveal mt-10 flex justify-center border-t pt-8">
             <Link
