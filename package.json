@@ -28,10 +28,10 @@
     "botid": "^1.5.11",
     "clsx": "^2.1.1",
     "next": "^16.2.10",
-    "next-intl": "^4.13.1",
+    "next-intl": "^4.13.2",
     "next-themes": "^0.4.6",
     "nuqs": "^2.9.0",
-    "postcss": "^8.5.16",
+    "postcss": "^8.5.19",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "sharp": "^0.35.3",
@@ -39,13 +39,13 @@
     "tailwindcss": "^4.3.2"
   },
   "devDependencies": {
-    "@types/node": "^26.1.0",
+    "@types/node": "^26.1.1",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "eslint-plugin-react-hooks": "^7.1.1",
-    "oxfmt": "^0.57.0",
-    "oxlint": "^1.72.0",
-    "typescript": "^6.0.3"
+    "oxfmt": "^0.58.0",
+    "oxlint": "^1.73.0",
+    "typescript": "^7.0.2"
   },
   "next-intl": {
     "locales": [
