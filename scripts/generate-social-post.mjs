@@ -9,8 +9,14 @@ import {
   findSocialPost,
   loadSocialPosts,
   resolveArtFocalPoint,
+  resolveArtPath,
   SOCIAL_POSTS_FILE,
 } from "./lib/social-config.mjs";
+import {
+  EPISODE_FORMAT_LABELS,
+  isSpecialSocialFormat,
+  normalizeSocialFormat,
+} from "./lib/format-tokens.mjs";
 import {
   DEFAULT_LAYOUT,
   LAYOUT_IDS,
@@ -42,16 +48,29 @@ Options:
   --theme THEME       dark | light | all (default: all)
   -o, --output PATH   Output PNG (single layout + single episode + single theme only)
   --art PATH          Override hero art image path
+  --format FORMAT     normal | spotlight | flashback (default: from episode / post config)
   -h, --help          Show this help
 
 Output:
   output/<ep>/social/<layout>-<theme>.png   e.g. output/ep02/social/ig-post-dark.png
+
+Post config (${SOCIAL_POSTS_FILE}, per entry in posts[]):
+  episodeId           Required — matches data/episodes.json id
+  format              normal | spotlight | flashback (optional)
+  title               Social frame headline (optional; spotlight defaults to host name)
+  shortDescription    Subtitle / description line on the frame
+  description         Alias for shortDescription
+  art                 Hero image path (optional)
+  artFocalPoint       centre | top | { x, y } (optional)
+  layouts             Per-layout overrides (optional)
 
 Layouts:
 ${layoutList}
 
 Examples:
   node scripts/generate-social-post.mjs --episode EP02 --all-layouts
+  node scripts/generate-social-post.mjs --episode SP01 --format spotlight --all-layouts
+  node scripts/generate-social-post.mjs --episode EP03 --format normal --layout ig-post
   node scripts/generate-social-post.mjs --all-episodes --all-layouts
 `);
 }
@@ -74,6 +93,7 @@ function parseArgs(argv) {
   let allLayouts = false;
   let allEpisodes = false;
   let themeArg = "all";
+  let formatOverride = "";
 
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
@@ -103,6 +123,9 @@ function parseArgs(argv) {
         break;
       case "--theme":
         themeArg = (argv[++i] ?? "all").toLowerCase();
+        break;
+      case "--format":
+        formatOverride = (argv[++i] ?? "").toLowerCase();
         break;
       case "-h":
       case "--help":
@@ -155,7 +178,11 @@ function parseArgs(argv) {
     process.exit(1);
   }
 
-  return { config, episode, output, artOverride, layout, allLayouts, allEpisodes, themes };
+  if (formatOverride) {
+    formatOverride = normalizeSocialFormat(formatOverride);
+  }
+
+  return { config, episode, output, artOverride, layout, allLayouts, allEpisodes, themes, formatOverride };
 }
 
 async function loadEpisodes() {
@@ -187,12 +214,23 @@ async function enrichFromEpisodeCatalog(postConfig) {
     throw new Error(`Episode ${postConfig.episodeId} not found in data/episodes.json`);
   }
 
+  const format = normalizeSocialFormat(
+    postConfig.format ?? postConfig.variant ?? episode.format ?? "normal",
+  );
+  const formatOrdinal = parseInt(episode.id.replace(/\D/g, ""), 10) || 1;
+  const hostName = episode.hosts?.[0]?.fullName ?? "";
+  const defaultTitle = format === "spotlight" && hostName ? hostName : episode.title;
+
   return {
     episodeId: episode.id,
     slug: episode.slug,
-    title: postConfig.title ?? episode.title,
+    title: postConfig.title ?? defaultTitle,
     description: postConfig.shortDescription ?? postConfig.description ?? "",
     artPath: postConfig.art ? resolve(repoRoot, postConfig.art) : undefined,
+    format,
+    formatLabel: isSpecialSocialFormat(format) ? EPISODE_FORMAT_LABELS[format] : undefined,
+    formatOrdinal,
+    hostName,
   };
 }
 
@@ -203,10 +241,14 @@ async function renderOne(resolved, layoutId, theme, outputPath, { file, post }) 
     episodeId: resolved.episodeId,
     title: resolved.title,
     description: resolved.description,
-    artPath: resolved.artPath,
+    artPath: resolveArtPath({ repoRoot, post, layoutId }) ?? resolved.artPath,
     artFocalPoint: resolveArtFocalPoint({ file, post, layoutId }),
     layout: layoutId,
     theme,
+    format: resolved.format,
+    formatLabel: resolved.formatLabel,
+    formatOrdinal: resolved.formatOrdinal,
+    hostName: resolved.hostName,
   });
 
   await writeFile(outputPath, png);
@@ -221,9 +263,14 @@ async function generateForEpisode({
   allLayouts,
   output,
   themes,
+  formatOverride,
 }) {
   const bundle = await resolvePostBundle(file, episodeId);
   const resolved = await enrichFromEpisodeCatalog(bundle.post);
+
+  if (formatOverride) {
+    resolved.format = normalizeSocialFormat(formatOverride);
+  }
 
   if (artOverride) {
     resolved.artPath = resolve(repoRoot, artOverride);
@@ -258,7 +305,7 @@ async function generateForEpisode({
 }
 
 async function main() {
-  const { config, episode, output, artOverride, layout, allLayouts, allEpisodes, themes } =
+  const { config, episode, output, artOverride, layout, allLayouts, allEpisodes, themes, formatOverride } =
     parseArgs(process.argv.slice(2));
   const file = await loadConfigFile(config);
   const episodeIds = allEpisodes ? (file.posts ?? []).map((post) => post.episodeId) : [episode];
@@ -278,6 +325,7 @@ async function main() {
       allLayouts,
       output: allEpisodes ? "" : output,
       themes,
+      formatOverride,
     });
     written.push(...paths);
   }

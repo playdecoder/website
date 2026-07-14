@@ -6,6 +6,7 @@ import { type CSSProperties, useEffect, useReducer, useRef, useState } from "rea
 import { Link } from "@/i18n/navigation";
 import { usePathname } from "@/i18n/navigation";
 import { episodeListenPathSegment } from "@/lib/episode/catalog";
+import { episodePublicationTitle } from "@/lib/episode/format";
 import { formatPlaybackTime } from "@/lib/player/format-playback-time";
 import { linkLocale } from "@/lib/routing/link-locale";
 import { listenEpisodePath } from "@/lib/routing/routes";
@@ -264,7 +265,10 @@ export function MiniPlayerBar() {
             href={listenHref}
             locale={hrefLocale}
             className="group flex min-w-0 flex-1 items-center gap-2.5 sm:gap-3"
-            aria-label={t("goToEpisodeAria", { id: episode.id, title: episode.title })}
+            aria-label={t("goToEpisodeAria", {
+              id: episode.id,
+              title: episodePublicationTitle(episode),
+            })}
           >
             <div
               ref={waveformRef}
@@ -293,7 +297,7 @@ export function MiniPlayerBar() {
                   {episode.id}
                 </span>
                 <span className="font-display truncate text-sm font-semibold tracking-tight group-hover:underline">
-                  {episode.title}
+                  {episodePublicationTitle(episode)}
                 </span>
               </p>
               {duration > 0 ? (

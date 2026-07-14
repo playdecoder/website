@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./format-tokens.generated.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -232,6 +233,7 @@
   --waveform-accent: var(--brand-accent);
   --waveform-secondary-glow: rgb(30 58 255 / 0.4);
   --waveform-accent-glow: rgb(230 255 0 / 0.45);
+
   --hero-waveform-fog: color-mix(in srgb, var(--primary) 14%, transparent);
   --hero-waveform-heat: color-mix(in srgb, var(--brand-accent) 14%, transparent);
   --hero-waveform-floor: color-mix(in srgb, var(--surface-2) 75%, var(--brand-primary) 25%);
@@ -251,10 +253,19 @@
   --color-muted: var(--muted);
   --color-brand-primary: var(--brand-primary);
   --color-brand-accent: var(--brand-accent);
+  --color-spotlight: var(--spotlight);
+  --color-spotlight-text: var(--spotlight-text);
+  --color-flashback: var(--flashback);
+  --color-flashback-text: var(--flashback-text);
 
   --font-display: var(--font-syne), "Syne", sans-serif;
   --font-mono: var(--font-jetbrains-mono), "JetBrains Mono", monospace;
   --font-body: var(--font-literata), "Literata", "Georgia", serif;
+}
+
+/* CTA-on-lime always keeps the brand lime background, regardless of format accent. */
+[data-episode-format] .cta-on-lime {
+  --accent: var(--brand-accent);
 }
 
 @keyframes wave {
@@ -2377,6 +2388,66 @@ html[data-episode-playing="true"] .waveform-bar--listen-bg {
   transform: translateY(-1px);
   background: color-mix(in srgb, var(--secondary) 18%, transparent);
   border-color: color-mix(in srgb, var(--secondary) 40%, transparent);
+}
+
+.group:hover .episode-format-badge,
+.group:focus-visible .episode-format-badge {
+  transform: translateY(-1px);
+}
+
+.episode-format-badge {
+  transition:
+    transform 0.22s ease,
+    background-color 0.22s ease,
+    border-color 0.22s ease,
+    color 0.22s ease;
+}
+
+.episode-player-id-pill {
+  display: inline-block;
+  border-radius: 2px;
+  padding: 0.125rem 0.375rem;
+  vertical-align: middle;
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+  color: color-mix(in srgb, var(--accent) 88%, var(--primary));
+}
+
+.listen-page-id-watermark {
+  color: color-mix(in srgb, var(--edge) 12%, transparent);
+}
+
+.dark .listen-page-id-watermark {
+  color: color-mix(in srgb, var(--edge) 6.5%, transparent);
+}
+
+.listen-page-format-bloom {
+  background:
+    radial-gradient(
+      ellipse 80% 55% at var(--bloom-x, 50%) var(--bloom-y, 50%),
+      color-mix(in srgb, var(--secondary) 11%, transparent),
+      transparent 58%
+    ),
+    radial-gradient(
+      ellipse 70% 50% at var(--bloom-2-x, 50%) var(--bloom-2-y, 50%),
+      color-mix(in srgb, var(--accent) 6%, transparent),
+      transparent 52%
+    );
+}
+
+/* Neon format accents read louder than brand lime/blue — keep blooms as subtle as normal EPs. */
+[data-episode-format] .listen-page-format-bloom {
+  background:
+    radial-gradient(
+      ellipse 80% 55% at var(--bloom-x, 50%) var(--bloom-y, 50%),
+      color-mix(in srgb, var(--accent) 4%, transparent),
+      transparent 58%
+    ),
+    radial-gradient(
+      ellipse 70% 50% at var(--bloom-2-x, 50%) var(--bloom-2-y, 50%),
+      color-mix(in srgb, var(--secondary) 5%, transparent),
+      transparent 52%
+    );
 }
 
 .stat-card {

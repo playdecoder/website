@@ -12,6 +12,22 @@
   },
   "posts": [
     {
+      "episodeId": "SP01",
+      "format": "spotlight",
+      "title": "Jarek Kolář",
+      "shortDescription": "Od Oslího ostrova a Pterodonu přes Vietcong, Mafii a Bohemia Interactive až po INGAME STUDIOS a Crime Boss - tři dekády českého herního vývoje s Jarkem Kolářem, plné velkých her, těžkých rozhodnutí, úspěchů i slepých uliček.",
+      "art": "public/social/art/sp01-jarek-kolar.jpg",
+      "artFocalPoint": { "x": 0.5, "y": 0.28 },
+      "layouts": {
+        "linkedin-post": { "artFocalPoint": { "x": 0.5, "y": 0.22 } },
+        "facebook-post": { "artFocalPoint": { "x": 0.5, "y": 0.22 } },
+        "youtube-keyart": { "artFocalPoint": { "x": 0.5, "y": 0.26 } },
+        "ig-post": { "artFocalPoint": { "x": 0.5, "y": 0.24 } },
+        "ig-story": { "artFocalPoint": { "x": 0.5, "y": 0.2 } },
+        "podcast-cover": { "art": "public/social/art/sp01-keyart.jpg", "artFocalPoint": "centre" }
+      }
+    },
+    {
       "episodeId": "EP03",
       "shortDescription": "Dishonored, Prey, Deathloop, Redfall a otázka, kam Arkane míří dál.",
       "art": "public/social/art/ep03-arkane.jpg",

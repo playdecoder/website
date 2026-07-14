@@ -50,6 +50,7 @@ export function EpisodeAudioPlayer({ episode, chapters, artBackground }: Episode
       data-playing={isPageEpisodeActive && ctx.isPlaying}
       data-seek-buffering={transport.showSeekBuffering || undefined}
       data-load-error={ctx.loadError || undefined}
+      data-episode-format={episode.format ?? undefined}
       aria-label={t("playerAriaLabel", { id: episodeId })}
     >
       <div

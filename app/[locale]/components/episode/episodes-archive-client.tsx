@@ -6,6 +6,7 @@ import { useQueryStates } from "nuqs";
 import { episodesArchiveSearchParams } from "@/lib/episode/archive-search-params";
 import { type Episode, getEpisodeArchiveFacets, getLatestEpisode } from "@/lib/episode/catalog";
 import { plainEpisodeDescription } from "@/lib/episode/description";
+import { episodePublicationTitle } from "@/lib/episode/format";
 import { linkLocale } from "@/lib/routing/link-locale";
 
 import { EpisodeGridCard } from "./episode-grid-card";
@@ -16,6 +17,7 @@ import {
 
 function episodeMatchesSearchQuery(
   ep: Episode,
+  catalog: Episode[],
   words: string[],
   scopes: EpisodesSearchScopes,
 ): boolean {
@@ -24,7 +26,7 @@ function episodeMatchesSearchQuery(
   }
   const parts: string[] = [];
   if (scopes.title) {
-    parts.push(ep.title, ...ep.tags);
+    parts.push(ep.title, episodePublicationTitle(ep), ...ep.tags);
   }
   if (scopes.description) {
     parts.push(plainEpisodeDescription(ep.description));
@@ -55,6 +57,11 @@ export function EpisodesArchiveClient({
   const hrefLocale = linkLocale(locale);
   const t = useTranslations("episodesPage");
   const tSection = useTranslations("episodesSection");
+  const tFormat = useTranslations("episodeFormat");
+  const formatLabels = {
+    spotlight: tFormat("spotlight"),
+    flashback: tFormat("flashback"),
+  } as const;
   const { tags: facetTags } = getEpisodeArchiveFacets(allEpisodes);
   const latestId = getLatestEpisode(allEpisodes)?.id;
 
@@ -101,7 +108,7 @@ export function EpisodesArchiveClient({
       }
     }
 
-    return episodeMatchesSearchQuery(ep, words, searchScopes);
+    return episodeMatchesSearchQuery(ep, allEpisodes, words, searchScopes);
   });
 
   const searchScopesDefault = filters.st && filters.sd && filters.sc;
@@ -190,6 +197,7 @@ export function EpisodesArchiveClient({
               isLatest={ep.id === latestId}
               latestLabel={tSection("latest")}
               playLabel={tSection("playEpisode")}
+              formatLabels={formatLabels}
             />
           </li>
         ))}

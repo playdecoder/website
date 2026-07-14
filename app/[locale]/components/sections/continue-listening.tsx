@@ -6,6 +6,7 @@ import { useSyncExternalStore } from "react";
 import { Link, usePathname } from "@/i18n/navigation";
 import { episodes, episodeListenPathSegment } from "@/lib/episode/catalog";
 import { episodeDescriptionSnippet } from "@/lib/episode/description";
+import { episodePublicationTitle } from "@/lib/episode/format";
 import {
   clearEpisodeProgress,
   readProgressStore,
@@ -175,7 +176,7 @@ export function ContinueListening({ locale }: { locale: string }) {
               style={{ fontSize: "clamp(1.25rem, 2.85vw, 1.95rem)" }}
             >
               <span className="sr-only">{t("label")}: </span>
-              {episode.title}
+              {episodePublicationTitle(episode)}
             </h2>
             <p className="font-body text-muted mb-4 max-w-2xl text-[15px] leading-relaxed sm:text-base">
               {descriptionSnippet || t("body")}

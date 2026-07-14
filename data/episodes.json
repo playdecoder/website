@@ -1,5 +1,81 @@
 [
   {
+    "id": "SP01",
+    "format": "spotlight",
+    "slug": "jarek-kolar-tri-dekady-ceskeho-game-devu",
+    "lang": "cs",
+    "title": "Jarek Kolář: Tři dekády českého game devu - od Oslího ostrova po Crime Boss",
+    "date": "2026-07-08",
+    "duration": 9677,
+    "description": "V první epizodě Dekodér Spotlight přivítáme Jarka Koláře, jednu z nejvýraznějších osobností českého herního průmyslu. Projdeme jeho cestu od Tajemství Oslího ostrova a vzniku Pterodonu přes Vietcong, Mafii II a Mafii III nebo působení v Bohemia Interactive až po vedení INGAME STUDIOS. Budeme mluvit o herním designu, technologiích, řízení týmů, práci s vydavateli i o rozhodnutích, která ovlivnila vývoj některých z nejznámějších českých her. Otevřeně se dostaneme také k neúspěchům, škrtům, náročným produkcím a proměně Crime Boss: Rockay City po jeho problematickém vydání.",
+    "tags": [
+      "Jarek Kolář",
+      "Pterodon",
+      "Mafia",
+      "Bohemia Interactive",
+      "Crime Boss",
+      "Herní design"
+    ],
+    "artImage": "/social/art/sp01-keyart.jpg",
+    "artFocalPoint": "centre",
+    "coverImage": {
+      "dark": {
+        "url": "https://cdn.play-decoder.com/podcast/covers/sp01.jpg"
+      },
+      "light": {
+        "url": "https://cdn.play-decoder.com/podcast/covers/sp01-light.jpg",
+        "useForRss": true
+      }
+    },
+    "hosts": [
+      {
+        "fullName": "Jarek Kolář",
+        "link": "https://www.linkedin.com/in/jarek-kolar-4b60a11/"
+      }
+    ],
+    "chapters": [
+      {
+        "t": 30,
+        "label": "Úvod a Jarek Kolář dnes"
+      },
+      {
+        "t": 357,
+        "label": "První adventury a zkušenosti z Německa"
+      },
+      {
+        "t": 1893,
+        "label": "Vznik Pterodonu, Hesperian Wars a Flying Heroes"
+      },
+      {
+        "t": 2640,
+        "label": "Vietcong: vznik, úspěch a problematické pokračování"
+      },
+      {
+        "t": 5087,
+        "label": "Konec Pterodonu a přechod do Illusion Softworks"
+      },
+      {
+        "t": 6223,
+        "label": "Mafia 2, Mafia 3 a vznik Hangar 13"
+      },
+      {
+        "t": 7204,
+        "label": "Bohemia Interactive, BadFly a vznik INGAME STUDIOS"
+      },
+      {
+        "t": 8005,
+        "label": "Crime Boss: Rockay City, budoucnost studia a závěr"
+      }
+    ],
+    "links": {
+      "spotify": "https://open.spotify.com/show/4XY6pyUQxGWnyp8lrC94m5",
+      "applePodcasts": "https://podcasts.apple.com/us/podcast/dekod%C3%A9r/id1895560433",
+      "youtube": "https://youtu.be/16Sxim7LKjw",
+      "mp3": "https://cdn.play-decoder.com/podcast/episodes/sp01.mp3",
+      "transcript": "https://cdn.play-decoder.com/podcast/transcripts/sp01.transcript.json"
+    }
+  },
+  {
     "id": "EP03",
     "slug": "arkane-studios-svoboda-system-a-pad-jednoho-snu",
     "lang": "cs",

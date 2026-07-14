@@ -8,6 +8,11 @@ import {
 } from "@/lib/episode/catalog";
 import { resolveEpisodeCoverImageUrlForRss } from "@/lib/episode/cover";
 import { plainEpisodeDescription } from "@/lib/episode/description";
+import {
+  EPISODE_FORMAT_LABELS,
+  episodePublicationTitle,
+  resolveItunesEpisodeType,
+} from "@/lib/episode/format";
 import { absoluteListenEpisodeUrl } from "@/lib/routing/routes";
 import { BRAND_NAME, BRAND_PODCAST } from "@/lib/site/brand";
 import { showHostsAmpersand, showTaglineCs } from "@/lib/site/show";
@@ -45,21 +50,28 @@ function buildItem(ep: Episode): string {
   const episodePage = absoluteListenEpisodeUrl(SITE_URL, episodeListenSlugPrefix(ep));
   const guid = `dekoder.fm/episodes/${ep.id}`;
   const summary = plainEpisodeDescription(ep.description);
+  const formatKey = ep.format;
+  const formatLabel = formatKey ? EPISODE_FORMAT_LABELS[formatKey] : undefined;
+  const rssTitle = episodePublicationTitle(ep, formatLabel);
+  const itunesType = resolveItunesEpisodeType(ep);
+  const formatCategory = formatLabel
+    ? `\n      <category>${escapeXml(formatLabel)}</category>`
+    : "";
 
   return `
     <item>
-      <title>${escapeXml(ep.title)}</title>
+      <title>${escapeXml(rssTitle)}</title>
       <link>${episodePage}</link>
       <guid isPermaLink="false">${guid}</guid>
       <pubDate>${formatEpisodePublishedRfc822(ep.date)}</pubDate>
       <description>${escapeXml(summary)}</description>
-      <content:encoded><![CDATA[<p>${escapeXml(summary)}</p>]]></content:encoded>
+      <content:encoded><![CDATA[<p>${escapeXml(summary)}</p>]]></content:encoded>${formatCategory}
                 <enclosure url="${escapeXml(ep.links.mp3.trim().startsWith("/") ? absoluteFromPath(ep.links.mp3.trim()) : ep.links.mp3)}" length="${estimateMp3Bytes(ep.duration)}" type="audio/mpeg" />
-      <itunes:title>${escapeXml(ep.title)}</itunes:title>
+      <itunes:title>${escapeXml(rssTitle)}</itunes:title>
       <itunes:summary>${escapeXml(summary)}</itunes:summary>
       <itunes:duration>${toItunesDuration(ep.duration)}</itunes:duration>
       <itunes:episode>${epNum}</itunes:episode>
-      <itunes:episodeType>full</itunes:episodeType>
+      <itunes:episodeType>${itunesType}</itunes:episodeType>
       <itunes:explicit>${ep.explicit ? "yes" : "no"}</itunes:explicit>
       <itunes:image href="${escapeXml(resolveEpisodeCoverImageUrlForRss(ep))}" />
     </item>`;

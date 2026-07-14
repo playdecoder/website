@@ -17,6 +17,7 @@
     "generate:podcast-cover:all": "node scripts/generate-podcast-cover.mjs --all",
     "generate:social-post": "node scripts/generate-social-post.mjs",
     "generate:social-post:all": "node scripts/generate-social-post.mjs --all-episodes --all-layouts",
+    "generate:format-tokens-css": "node scripts/generate-format-tokens-css.mjs",
     "check": "oxlint --fix . && oxfmt --write .",
     "clean": "bun pm cache rm && rm -rf node_modules bun.lock && bun install"
   },
@@ -45,7 +46,7 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "oxfmt": "^0.58.0",
     "oxlint": "^1.73.0",
-    "typescript": "^7.0.2"
+    "typescript": "^6.0.3"
   },
   "next-intl": {
     "locales": [

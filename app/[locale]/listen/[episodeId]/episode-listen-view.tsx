@@ -10,6 +10,7 @@ import {
   getLatestEpisode,
 } from "@/lib/episode/catalog";
 import { resolveEpisodeCoverImageUrl } from "@/lib/episode/cover";
+import { getEpisodeFormat, composeFormattedEpisodeTitle, episodeDisplayTags } from "@/lib/episode/format";
 import { linkLocale } from "@/lib/routing/link-locale";
 import { listenEpisodePath, ROUTES, homeSectionPath } from "@/lib/routing/routes";
 import { BRAND_NAME } from "@/lib/site/brand";
@@ -41,8 +42,14 @@ interface EpisodeListenViewProps {
 
 export async function EpisodeListenView({ episode, locale }: EpisodeListenViewProps) {
   const t = await getTranslations({ locale, namespace: "listen" });
+  const tFormat = await getTranslations({ locale, namespace: "episodeFormat" });
   const hrefLocale = linkLocale(locale);
   const segment = episodeListenPathSegment(episode);
+  const episodeFormat = getEpisodeFormat(episode);
+  const publicationTitle = composeFormattedEpisodeTitle(
+    episode,
+    episodeFormat ? tFormat(episodeFormat) : undefined,
+  );
   const canonicalUrl = absoluteFromPath(getPathname({ locale, href: listenEpisodePath(segment) }));
   const episodeCoverUrl = resolveEpisodeCoverImageUrl(episode);
   const seriesCoverUrl = getPodcastCoverAbsoluteUrl();
@@ -64,6 +71,7 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
   const bloom2Y = 75 - ((seed >>> 16) % 35);
   const stagger = (i: number) => `${0.04 * i + (seed % 7) * 0.01}s`;
   const displayHosts = trimEpisodeHosts(episode);
+  const displayTags = episodeDisplayTags(episode);
   const episodeListenMetaLabels: EpisodeListenMetaLabels = {
     shareLabel: t("shareEpisode"),
     shareAria: t("shareEpisodeAria"),
@@ -91,7 +99,10 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
           bloom2Y={bloom2Y}
         />
 
-        <div className="relative z-10 mx-auto w-full max-w-6xl px-4 pt-20 pb-16 sm:px-5 sm:pt-24 sm:pb-20 md:pt-28 md:pb-28">
+        <div
+          className="relative z-10 mx-auto w-full max-w-6xl px-4 pt-20 pb-16 sm:px-5 sm:pt-24 sm:pb-20 md:pt-28 md:pb-28"
+          data-episode-format={episodeFormat ?? undefined}
+        >
           <nav
             className="text-muted mb-5 flex flex-wrap items-center gap-x-2 gap-y-2 font-mono text-[10px] tracking-[0.12em] uppercase sm:mb-10 sm:tracking-[0.2em] md:mb-14 md:text-xs"
             style={{ animation: "fadeUp 0.55s ease both" }}
@@ -136,7 +147,7 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
               <div className="hidden lg:block lg:space-y-6">
                 <EpisodeSpokenLangNote lang={episode.lang} locale={locale} variant="banner" />
                 <div style={{ animation: "fadeUp 0.6s ease both 0.08s" }}>
-                  <EpisodeListenTags tags={episode.tags} locale={locale} stagger={stagger} />
+                  <EpisodeListenTags tags={displayTags} locale={locale} stagger={stagger} />
                 </div>
               </div>
 
@@ -147,7 +158,7 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
                   animation: "fadeUp 0.65s ease both 0.1s",
                 }}
               >
-                {episode.title}
+                {publicationTitle}
               </h1>
 
               {displayHosts.length > 0 ? (
@@ -191,7 +202,7 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
                       embedded
                       className="mb-0"
                     />
-                    <EpisodeListenTags tags={episode.tags} locale={locale} stagger={stagger} />
+                    <EpisodeListenTags tags={displayTags} locale={locale} stagger={stagger} />
                     <EpisodeListenMetadata
                       episode={episode}
                       locale={locale}

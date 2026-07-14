@@ -14,6 +14,7 @@ import {
 } from "@/lib/episode/catalog";
 import { resolveEpisodeCoverForMeta } from "@/lib/episode/cover";
 import { plainEpisodeDescription } from "@/lib/episode/description";
+import { episodePublicationTitle } from "@/lib/episode/format";
 import { listenEpisodePath } from "@/lib/routing/routes";
 import { BRAND_NAME, BRAND_PODCAST, brandInterpolation } from "@/lib/site/brand";
 import { showHostsForMetadata, showHostsForOpenGraphArticle } from "@/lib/site/show";
@@ -65,10 +66,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const ogLocale = locale === "cs" ? "cs_CZ" : "en_US";
   const ogAlternateLocales = locale === "cs" ? ["en_US"] : ["cs_CZ"];
 
-  const pageTitle = `${episode.id} — ${episode.title} | ${BRAND_NAME}`;
-  const ogTitle = `${episode.id} — ${episode.title}`;
+  const publicationTitle = episodePublicationTitle(episode);
+  const pageTitle = `${episode.id} — ${publicationTitle} | ${BRAND_NAME}`;
+  const ogTitle = `${episode.id} — ${publicationTitle}`;
   const description = plainEpisodeDescription(episode.description);
-  const imageAlt = `${episode.id} — ${episode.title} — ${BRAND_NAME}`;
+  const imageAlt = `${episode.id} — ${publicationTitle} — ${BRAND_NAME}`;
 
   return {
     title: pageTitle,

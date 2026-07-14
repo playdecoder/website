@@ -1,0 +1,28 @@
+{
+  "spotlight": {
+    "label": "Spotlight",
+    "light": {
+      "color": "#E040FB",
+      "text": "#1A0020",
+      "glow": "rgb(224 64 251 / 0.32)"
+    },
+    "dark": {
+      "color": "#F075FF",
+      "text": "#0F0014",
+      "glow": "rgb(240 117 255 / 0.4)"
+    }
+  },
+  "flashback": {
+    "label": "Flashback",
+    "light": {
+      "color": "#FF3366",
+      "text": "#2A0010",
+      "glow": "rgb(255 51 102 / 0.35)"
+    },
+    "dark": {
+      "color": "#FF6688",
+      "text": "#180008",
+      "glow": "rgb(255 102 136 / 0.42)"
+    }
+  }
+}

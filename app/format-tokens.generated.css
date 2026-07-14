@@ -1,0 +1,62 @@
+/* AUTO-GENERATED from lib/brand/format-tokens.json — do not edit */
+/* Regenerate: bun run generate:format-tokens-css */
+
+:root {
+  --format-spotlight: #e040fb;
+  --format-spotlight-text: #1a0020;
+  --format-spotlight-glow: rgb(224 64 251 / 0.32);
+  --format-flashback: #ff3366;
+  --format-flashback-text: #2a0010;
+  --format-flashback-glow: rgb(255 51 102 / 0.35);
+  --spotlight: var(--format-spotlight);
+  --spotlight-text: var(--format-spotlight-text);
+  --spotlight-glow: var(--format-spotlight-glow);
+  --flashback: var(--format-flashback);
+  --flashback-text: var(--format-flashback-text);
+  --flashback-glow: var(--format-flashback-glow);
+}
+
+.dark {
+  --format-spotlight: #f075ff;
+  --format-spotlight-text: #0f0014;
+  --format-spotlight-glow: rgb(240 117 255 / 0.4);
+  --format-flashback: #ff6688;
+  --format-flashback-text: #180008;
+  --format-flashback-glow: rgb(255 102 136 / 0.42);
+}
+
+[data-episode-format="spotlight"],
+.episode-format-badge--spotlight,
+.episode-format-rail--spotlight {
+  --format-color: var(--format-spotlight);
+  --format-text: var(--format-spotlight-text);
+  --format-glow: var(--format-spotlight-glow);
+}
+
+[data-episode-format="flashback"],
+.episode-format-badge--flashback,
+.episode-format-rail--flashback {
+  --format-color: var(--format-flashback);
+  --format-text: var(--format-flashback-text);
+  --format-glow: var(--format-flashback-glow);
+}
+
+[data-episode-format] {
+  --accent: var(--format-color);
+  --accent-text: color-mix(in srgb, var(--format-color) 88%, var(--primary));
+  --secondary: color-mix(in srgb, var(--format-color) 34%, var(--brand-primary));
+  --waveform-secondary: var(--format-color);
+  --waveform-accent: color-mix(in srgb, var(--format-color) 92%, var(--primary));
+  --waveform-accent-glow: var(--format-glow);
+}
+
+.episode-format-badge[class*="episode-format-badge--"] {
+  background: color-mix(in srgb, var(--format-color) 14%, transparent);
+  color: color-mix(in srgb, var(--format-color) 88%, var(--primary));
+  border-color: color-mix(in srgb, var(--format-color) 32%, transparent);
+}
+
+.episode-format-rail[class*="episode-format-rail--"] {
+  background-color: var(--format-color);
+}
+

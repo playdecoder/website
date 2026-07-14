@@ -4,6 +4,7 @@ import {
   formatEpisodePublishedIso,
 } from "@/lib/episode/catalog";
 import { plainEpisodeDescription } from "@/lib/episode/description";
+import { episodePublicationTitle, EPISODE_FORMAT_LABELS } from "@/lib/episode/format";
 import { BRAND_NAME } from "@/lib/site/brand";
 import { showHostsSchemaPersons } from "@/lib/site/show";
 
@@ -18,6 +19,7 @@ export function buildEpisodeListenJsonLd(
 ) {
   const descriptionPlain = plainEpisodeDescription(episode.description);
   const displayHosts = trimEpisodeHosts(episode);
+  const publicationTitle = episodePublicationTitle(episode);
   const episodeContributors = displayHosts.flatMap((h) =>
     isHttpUrl(h.link) ? [{ "@type": "Person" as const, name: h.fullName, url: h.link }] : [],
   );
@@ -27,13 +29,14 @@ export function buildEpisodeListenJsonLd(
     "@type": "PodcastEpisode",
     "@id": `${canonicalUrl}#episode`,
     url: canonicalUrl,
-    name: `${episode.id} — ${episode.title}`,
-    headline: episode.title,
+    name: `${episode.id} — ${publicationTitle}`,
+    headline: publicationTitle,
     description: descriptionPlain,
     datePublished: formatEpisodePublishedIso(episode.date),
     duration: formatEpisodeDurationIso8601(episode.duration),
     inLanguage: episode.lang,
     image: episodeCoverUrl,
+    ...(episode.format ? { genre: EPISODE_FORMAT_LABELS[episode.format] } : {}),
     author: showHostsSchemaPersons(),
     ...(episodeContributors.length > 0 ? { contributor: episodeContributors } : {}),
     associatedMedia: {

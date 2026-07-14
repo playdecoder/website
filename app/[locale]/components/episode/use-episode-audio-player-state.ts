@@ -5,6 +5,7 @@ import { useQueryState } from "nuqs";
 import { useEffect, useRef, useState, type RefObject } from "react";
 
 import type { Episode } from "@/lib/episode/catalog";
+import { episodePublicationTitle } from "@/lib/episode/format";
 import type { EpisodeHashChapter } from "@/lib/episode/hash";
 import { resolveEpisodeSeekFromHash } from "@/lib/episode/hash";
 import { getSavedPosition } from "@/lib/episode/progress-storage";
@@ -52,7 +53,7 @@ export function useEpisodeAudioPlayerState(episode: Episode, chapters?: EpisodeH
   const ctx = usePlayerContext();
   const { seek, loadEpisode, togglePlay, episode: ctxEpisode, audioRef } = ctx;
   const episodeId = episode.id;
-  const title = episode.title;
+  const title = episodePublicationTitle(episode);
   const isPageEpisodeActive = ctxEpisode?.id === episodeId;
 
   const waveformRef = useRef<HTMLDivElement>(null);

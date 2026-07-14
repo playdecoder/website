@@ -111,7 +111,10 @@ export function EpisodeListenPlayerAndBody({
   }
 
   return (
-    <>
+    <div
+      data-episode-format={episode.format ?? undefined}
+      className="flex flex-col gap-6 lg:gap-10"
+    >
       <EpisodeAudioPlayer
         key={`listen-audio-${episode.id}`}
         episode={episode}
@@ -219,6 +222,6 @@ export function EpisodeListenPlayerAndBody({
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 }

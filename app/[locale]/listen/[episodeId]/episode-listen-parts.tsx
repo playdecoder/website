@@ -1,5 +1,6 @@
 import type { Episode, EpisodeHost } from "@/lib/episode/catalog";
 import { formatEpisodeDate, formatEpisodeDuration } from "@/lib/episode/catalog";
+import { episodePublicationTitle } from "@/lib/episode/format";
 
 import { EpisodeShareButton } from "../../components/episode/episode-share-button";
 import { TopicLinkChip } from "../../components/episode/topic-link-chip";
@@ -158,7 +159,7 @@ export function EpisodeListenMetadata({
         </span>
       </div>
       <EpisodeShareButton
-        shareTitle={`${episode.id} — ${episode.title}`}
+        shareTitle={`${episode.id} — ${episodePublicationTitle(episode)}`}
         shareText={episode.description}
         label={shareLabel}
         labelAria={shareAria}

@@ -3,13 +3,14 @@ import { access, mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { podcastCoverOutputPath } from "./lib/episode-output.mjs";
+import { podcastCoverCanonicalOutputPath, podcastCoverOutputPath } from "./lib/episode-output.mjs";
 import { PODCAST_COVER_SIZE, renderPodcastCover, repoRoot } from "./lib/podcast-cover-frame.mjs";
 import { THEMES } from "./lib/social-brand.mjs";
 import {
   findSocialPost,
   loadSocialPosts,
   resolveArtFocalPoint,
+  resolveArtPath,
   SOCIAL_POSTS_FILE,
 } from "./lib/social-config.mjs";
 
@@ -35,6 +36,7 @@ Options:
 
 Output:
   output/<ep>/rss/<ep>-<theme>.jpg   ${PODCAST_COVER_SIZE}×${PODCAST_COVER_SIZE}
+  output/<ep>/rss/<ep>.jpg           canonical cover (dark theme, no suffix)
 
 Examples:
   node scripts/generate-podcast-cover.mjs --episode EP02
@@ -151,6 +153,31 @@ async function loadConfigFile(config) {
   return loadSocialPosts(repoRoot);
 }
 
+function resolveCoverTitle(postConfig, episode) {
+  if (postConfig.title) {
+    return postConfig.title;
+  }
+  const hostName = episode.hosts?.[0]?.fullName;
+  if (episode.format === "spotlight" && hostName) {
+    return hostName;
+  }
+  return episode.title;
+}
+
+function resolveCoverSubtitle(postConfig, episode) {
+  const explicit = postConfig.subtitle ?? postConfig.coverSubtitle;
+  if (explicit) {
+    return explicit;
+  }
+  if (episode.format === "spotlight") {
+    const colon = episode.title.indexOf(":");
+    if (colon >= 0) {
+      return episode.title.slice(colon + 1).trim();
+    }
+  }
+  return "";
+}
+
 async function enrichPost(postConfig) {
   const episodes = await loadEpisodes();
   const episode = episodes.find((ep) => ep.id.toUpperCase() === postConfig.episodeId.toUpperCase());
@@ -161,26 +188,52 @@ async function enrichPost(postConfig) {
   return {
     episodeId: episode.id,
     slug: episode.slug,
-    title: postConfig.title ?? episode.title,
+    title: resolveCoverTitle(postConfig, episode),
+    subtitle: resolveCoverSubtitle(postConfig, episode),
+    episodeFormat: episode.format,
     artPath: postConfig.art ? resolve(repoRoot, postConfig.art) : undefined,
   };
 }
 
-async function renderOne({ episodeId, title, artPath, artFocalPoint, format, theme, outputPath }) {
-  await mkdir(dirname(outputPath), { recursive: true });
-
-  const buf = await renderPodcastCover({
+async function renderCoverBuffer({
+  episodeId,
+  title,
+  subtitle,
+  episodeFormat,
+  artPath,
+  artFocalPoint,
+  imageFormat,
+  theme,
+}) {
+  return renderPodcastCover({
     episodeId,
     title,
+    subtitle,
+    episodeFormat,
     artPath,
     artFocalPoint,
-    format,
+    format: imageFormat,
+    theme,
+  });
+}
+
+async function renderOne({ episodeId, title, subtitle, episodeFormat, artPath, artFocalPoint, imageFormat, theme, outputPath }) {
+  await mkdir(dirname(outputPath), { recursive: true });
+
+  const buf = await renderCoverBuffer({
+    episodeId,
+    title,
+    subtitle,
+    episodeFormat,
+    artPath,
+    artFocalPoint,
+    imageFormat,
     theme,
   });
 
   await writeFile(outputPath, buf);
   console.log("Wrote", outputPath);
-  return outputPath;
+  return buf;
 }
 
 async function main() {
@@ -205,20 +258,31 @@ async function main() {
       resolved.artPath = resolve(repoRoot, artOverride);
     }
 
+    const artPath = resolveArtPath({ repoRoot, post, layoutId: LAYOUT_ID }) ?? resolved.artPath;
+    const artFocalPoint = resolveArtFocalPoint({ file, post, layoutId: LAYOUT_ID });
+    const renderArgs = { ...resolved, artPath, artFocalPoint, imageFormat: format };
+    const themeBuffers = new Map();
+
     for (const theme of themes) {
       const outPath = output
         ? resolve(repoRoot, output)
         : podcastCoverOutputPath(repoRoot, resolved.episodeId, format, theme);
 
-      await renderOne({
-        ...resolved,
-        artFocalPoint: resolveArtFocalPoint({ file, post, layoutId: LAYOUT_ID }),
-        format,
-        theme,
-        outputPath: outPath,
-      });
+      const buf = await renderOne({ ...renderArgs, theme, outputPath: outPath });
+      themeBuffers.set(theme, buf);
       written.push(outPath);
     }
+
+    let darkBuf = themeBuffers.get("dark");
+    if (!darkBuf) {
+      darkBuf = await renderCoverBuffer({ ...renderArgs, theme: "dark" });
+    }
+
+    const canonicalPath = podcastCoverCanonicalOutputPath(repoRoot, resolved.episodeId, format);
+    await mkdir(dirname(canonicalPath), { recursive: true });
+    await writeFile(canonicalPath, darkBuf);
+    console.log("Wrote", canonicalPath);
+    written.push(canonicalPath);
 
     if (resolved.artPath && !(await fileExists(resolved.artPath))) {
       console.warn("Art file missing:", resolved.artPath);

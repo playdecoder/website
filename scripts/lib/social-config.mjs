@@ -32,3 +32,9 @@ export function resolveArtFocalPoint({ file, post, layoutId }) {
     "centre"
   );
 }
+
+/** Post layout art → post art (paths relative to repo root). */
+export function resolveArtPath({ repoRoot, post, layoutId }) {
+  const rel = post.layouts?.[layoutId]?.art ?? post.art;
+  return rel ? join(repoRoot, rel) : undefined;
+}

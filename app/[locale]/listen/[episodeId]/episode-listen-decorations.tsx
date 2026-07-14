@@ -23,18 +23,22 @@ export function EpisodeListenDecorations({
   const bars = listenBackgroundBarsForEpisode(episode.id);
 
   return (
-    <>
-      <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden>
-        <div
-          className="absolute inset-0 opacity-90 dark:opacity-100"
-          style={{
-            background: [
-              `radial-gradient(ellipse 80% 55% at ${bloomX}% ${bloomY}%, color-mix(in srgb, var(--secondary) 11%, transparent), transparent 58%)`,
-              `radial-gradient(ellipse 70% 50% at ${bloom2X}% ${bloom2Y}%, color-mix(in srgb, var(--accent) 6%, transparent), transparent 52%)`,
-            ].join(", "),
-          }}
-        />
-      </div>
+    <div
+      className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
+      aria-hidden
+      data-episode-format={episode.format ?? undefined}
+    >
+      <div
+        className="listen-page-format-bloom absolute inset-0 opacity-90 dark:opacity-100"
+        style={
+          {
+            "--bloom-x": `${bloomX}%`,
+            "--bloom-y": `${bloomY}%`,
+            "--bloom-2-x": `${bloom2X}%`,
+            "--bloom-2-y": `${bloom2Y}%`,
+          } as CSSProperties
+        }
+      />
 
       <div
         className="listen-page-wave-layer pointer-events-none fixed inset-0 z-[1] flex items-end overflow-hidden select-none"
@@ -67,7 +71,7 @@ export function EpisodeListenDecorations({
         aria-hidden
       >
         <span
-          className="font-display text-edge/[0.12] dark:text-edge/[0.065] max-w-[100vw] px-2 leading-none font-extrabold tracking-tighter whitespace-nowrap"
+          className="listen-page-id-watermark font-display max-w-[100vw] px-2 leading-none font-extrabold tracking-tighter whitespace-nowrap"
           style={{
             fontSize: "clamp(2.75rem, 18vw, 16rem)",
             transform: `translateX(clamp(-4%, ${(seed % 5) - 2}%, 4%)) rotate(${(seed % 3) - 1}deg)`,
@@ -76,6 +80,6 @@ export function EpisodeListenDecorations({
           {episode.id}
         </span>
       </div>
-    </>
+    </div>
   );
 }

@@ -10,6 +10,7 @@ import { fileURLToPath } from "node:url";
 import sharp from "sharp";
 
 import { FONTS, getBrand, getLogoPath, LOGO_WORDMARK_HEIGHT } from "./social-brand.mjs";
+import { getFormatTokens, isSpecialSocialFormat } from "./format-tokens.mjs";
 import { coverArt, ensureFonts } from "./social-frame.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -137,6 +138,10 @@ function buildMetrics() {
     titleLineHeight,
     maxTitleLines: 3,
     maxTitleChars: 24,
+    descSize: Math.round(28 * scale * 1.45),
+    descLineHeight: Math.round(36 * scale * 1.45),
+    maxDescLines: 2,
+    maxDescChars: 40,
     badgeH,
     badgeFontSize,
     badgeCharW,
@@ -157,7 +162,15 @@ function buildMetrics() {
   };
 }
 
-function overlaySvg({ fonts, m, content, brand }) {
+function resolveBadgeStyle(brand, episodeFormat, theme) {
+  if (episodeFormat && isSpecialSocialFormat(episodeFormat)) {
+    const tokens = getFormatTokens(episodeFormat, theme);
+    return { fill: tokens.color, text: tokens.text };
+  }
+  return { fill: brand.accent, text: brand.accentText };
+}
+
+function overlaySvg({ fonts, m, content, brand, badgeStyle }) {
   return Buffer.from(`
     <svg width="${m.size}" height="${m.size}" xmlns="http://www.w3.org/2000/svg">
       <defs>
@@ -171,13 +184,13 @@ function overlaySvg({ fonts, m, content, brand }) {
       <rect x="0" y="${m.artH - m.seamH}" width="${m.size}" height="${m.seamH}" fill="url(#seam)"/>
       <rect x="0" y="${m.artH}" width="${m.size}" height="${m.size - m.artH}" fill="${brand.bg}"/>
 
-      <rect x="${m.pad}" y="${m.accentBarTop}" width="${m.accentBarW}" height="${m.accentBarH}" rx="2" fill="${brand.secondary}"/>
+      <rect x="${m.pad}" y="${m.accentBarTop}" width="${m.accentBarW}" height="${m.accentBarH}" rx="2" fill="${badgeStyle.fill}"/>
 
-      <rect x="${m.textX}" y="${content.badgeY}" width="${content.badgeW}" height="${m.badgeH}" rx="4" fill="${brand.accent}"/>
+      <rect x="${m.textX}" y="${content.badgeY}" width="${content.badgeW}" height="${m.badgeH}" rx="4" fill="${badgeStyle.fill}"/>
       <text
         x="${m.textX + m.badgePadX}"
         y="${content.badgeY + Math.round(m.badgeH * 0.68)}"
-        fill="${brand.accentText}"
+        fill="${badgeStyle.text}"
         font-family="'${FONTS.mono}', monospace"
         font-size="${m.badgeFontSize}"
         font-weight="500"
@@ -185,6 +198,7 @@ function overlaySvg({ fonts, m, content, brand }) {
       >${escapeXml(content.badgeLabel)}</text>
 
       ${titleBlockSvg(m, content, brand)}
+      ${descBlockSvg(m, content, brand)}
 
       ${footerMotifSvg(m, brand)}
     </svg>
@@ -203,6 +217,21 @@ function titleBlockSvg(m, content, brand) {
       font-weight="800"
       letter-spacing="-0.02em"
     >${content.titleLines.map((line, i) => `<tspan x="${m.textX}" dy="${i === 0 ? 0 : m.titleLineHeight}">${escapeXml(line)}</tspan>`).join("")}</text>
+  `;
+}
+
+function descBlockSvg(m, content, brand) {
+  if (content.descLines.length === 0) return "";
+  return `
+    <text
+      x="${m.textX}"
+      y="${content.descStartY + m.descSize}"
+      fill="${brand.muted}"
+      font-family="'${FONTS.display}', sans-serif"
+      font-size="${m.descSize}"
+      font-weight="800"
+      letter-spacing="-0.015em"
+    >${content.descLines.map((line, i) => `<tspan x="${m.textX}" dy="${i === 0 ? 0 : m.descLineHeight}">${escapeXml(line)}</tspan>`).join("")}</text>
   `;
 }
 
@@ -225,18 +254,30 @@ function footerMotifSvg(m, brand) {
   `;
 }
 
-function computeContent({ episodeId, title, m, logoWidth, logoHeight }) {
-  const titleLines = wrapLines(title, m.maxTitleChars).slice(0, m.maxTitleLines);
+function computeContent({ episodeId, title, subtitle = "", m, logoWidth, logoHeight }) {
+  const hasSubtitle = Boolean(subtitle.trim());
+  const maxTitleLines = hasSubtitle ? 1 : m.maxTitleLines;
+  const titleLines = wrapLines(title, m.maxTitleChars).slice(0, maxTitleLines);
+  const descLines = hasSubtitle
+    ? wrapLines(subtitle, m.maxDescChars).slice(0, m.maxDescLines)
+    : [];
   const badgeLabel = episodeId.toUpperCase();
   const badgeW = badgeLabel.length * m.badgeCharW + m.badgePadX * 2;
   const titleBlockH = titleLines.length * m.titleLineHeight;
+  const descBlockH = descLines.length * m.descLineHeight;
 
   const badgeY = m.textTop;
-  const titleY = badgeY + m.badgeH + Math.round(28 * m.scale);
+  const titleY = badgeY + m.badgeH + Math.round(24 * m.scale);
+  const descStartY = titleY + titleBlockH + Math.round(10 * m.scale);
+  const textBlockH = m.badgeH + titleBlockH + (hasSubtitle ? descBlockH + Math.round(34 * m.scale) : 0);
 
-  // Clamp if title overflows into footer
-  const clampedTitleY = Math.min(titleY, m.footerTop - titleBlockH - m.sectionGap);
-  const clampedBadgeY = Math.min(badgeY, clampedTitleY - m.badgeH - Math.round(28 * m.scale));
+  const maxTextBottom = m.footerTop - m.sectionGap;
+  const clampedBadgeY = Math.max(
+    m.textTop,
+    Math.min(badgeY, maxTextBottom - textBlockH),
+  );
+  const clampedTitleY = clampedBadgeY + m.badgeH + Math.round(24 * m.scale);
+  const clampedDescStartY = clampedTitleY + titleBlockH + Math.round(10 * m.scale);
 
   const logoX = m.size - m.pad - logoWidth;
   const logoY = m.footerBottom - logoHeight;
@@ -247,6 +288,8 @@ function computeContent({ episodeId, title, m, logoWidth, logoHeight }) {
     badgeY: clampedBadgeY,
     titleLines,
     titleY: clampedTitleY,
+    descLines,
+    descStartY: clampedDescStartY,
     logoX,
     logoY,
   };
@@ -294,6 +337,8 @@ function parseBgRgb(hex) {
  * @param {object} options
  * @param {string} options.episodeId
  * @param {string} options.title
+ * @param {string} [options.subtitle]
+ * @param {string} [options.episodeFormat]
  * @param {string} [options.artPath]
  * @param {string|{x:number,y:number}} [options.artFocalPoint]
  * @param {string} [options.logoPath]
@@ -304,6 +349,8 @@ export async function renderPodcastCover(options) {
   const {
     episodeId,
     title = "",
+    subtitle = "",
+    episodeFormat,
     artPath,
     artFocalPoint = "centre",
     logoPath,
@@ -328,10 +375,13 @@ export async function renderPodcastCover(options) {
     .png()
     .toBuffer();
 
-  const content = computeContent({ episodeId, title, m, logoWidth: logoW, logoHeight: logoH });
+  const content = computeContent({ episodeId, title, subtitle, m, logoWidth: logoW, logoHeight: logoH });
+  const badgeStyle = resolveBadgeStyle(brand, episodeFormat, theme);
 
   const artBuf = await loadArtLayer(artPath, m.size, m.artH, artFocalPoint, brand);
-  const overlayBuf = await sharp(overlaySvg({ fonts, m, content, brand })).png().toBuffer();
+  const overlayBuf = await sharp(
+    overlaySvg({ fonts, m, content, brand, badgeStyle }),
+  ).png().toBuffer();
 
   const bg = parseBgRgb(brand.bg);
   const base = sharp({

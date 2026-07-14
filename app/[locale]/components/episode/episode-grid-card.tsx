@@ -6,12 +6,14 @@ import {
   formatEpisodeDuration,
 } from "@/lib/episode/catalog";
 import { EpisodeDescriptionRich } from "@/lib/episode/description";
+import { composeFormattedEpisodeTitle, episodeCardRailClass, getEpisodeFormat } from "@/lib/episode/format";
 import { listenEpisodePath } from "@/lib/routing/routes";
 
 import { IconEpisodeAirDate, IconEpisodeDuration } from "../ui/icons";
 
 import { EpisodeCardTopicChips } from "./episode-card-topic-chips";
 import { EpisodeCoverArt, episodeArtBannerFadeClassName } from "./episode-cover-art";
+import { EpisodeFormatBadge } from "./episode-format-badge";
 import { EpisodeLangCompactBadge } from "./episode-lang-compact-badge";
 
 interface EpisodeGridCardProps {
@@ -21,6 +23,7 @@ interface EpisodeGridCardProps {
   isLatest: boolean;
   latestLabel: string;
   playLabel: string;
+  formatLabels?: Partial<Record<NonNullable<Episode["format"]>, string>>;
   /** `sizes` hint for the art image. */
   artSizes?: string;
 }
@@ -33,17 +36,24 @@ export function EpisodeGridCard({
   isLatest,
   latestLabel,
   playLabel,
+  formatLabels,
   artSizes = "(min-width: 1024px) 400px, (min-width: 640px) calc(50vw - 24px), calc(100vw - 40px)",
 }: EpisodeGridCardProps) {
   const href = listenEpisodePath(episodeListenPathSegment(ep));
   const hasArt = Boolean(ep.artImage);
+  const episodeFormat = getEpisodeFormat(ep);
+  const formatLabel = episodeFormat ? formatLabels?.[episodeFormat] : undefined;
+  const displayTitle = composeFormattedEpisodeTitle(ep, formatLabel);
   const overlayChipClassName =
     "inline-flex min-h-[28px] shrink-0 items-center rounded-[3px] border border-secondary/25 bg-secondary/10 px-[5px] py-0.5 font-mono text-[0.58rem] tracking-[0.08em] text-secondary transition-colors hover:border-secondary/45 hover:text-primary";
 
   return (
-    <article className="border-edge bg-bg group hover:border-accent/35 active:border-secondary/45 relative flex h-full flex-col overflow-hidden rounded-sm border transition-colors duration-300">
+    <article
+      className="border-edge bg-bg group hover:border-accent/35 active:border-secondary/45 relative flex h-full flex-col overflow-hidden rounded-sm border transition-colors duration-300"
+      data-episode-format={episodeFormat ?? undefined}
+    >
       <div
-        className={`absolute top-0 bottom-0 left-0 z-30 w-1 ${isLatest ? "bg-accent" : "bg-secondary"}`}
+        className={`absolute top-0 bottom-0 left-0 z-30 w-1 ${episodeCardRailClass(ep, isLatest)}`}
       />
 
       {isLatest && (
@@ -71,6 +81,9 @@ export function EpisodeGridCard({
               <span className="text-primary dark:text-accent-text font-mono text-sm font-medium tracking-widest dark:drop-shadow-sm">
                 {ep.id}
               </span>
+              {formatLabel && episodeFormat ? (
+                <EpisodeFormatBadge format={episodeFormat} label={formatLabel} size="compact" />
+              ) : null}
               <EpisodeLangCompactBadge lang={ep.lang} />
             </div>
             <div className="ml-auto flex min-w-0 items-center gap-1 overflow-hidden">
@@ -92,6 +105,9 @@ export function EpisodeGridCard({
           <span className="text-accent-text font-mono text-sm font-medium tracking-widest">
             {ep.id}
           </span>
+          {formatLabel && episodeFormat ? (
+            <EpisodeFormatBadge format={episodeFormat} label={formatLabel} size="compact" />
+          ) : null}
           <EpisodeLangCompactBadge lang={ep.lang} />
           <div className="ml-auto flex flex-wrap justify-end gap-1.5">
             <EpisodeCardTopicChips tags={ep.tags} locale={locale} />
@@ -111,7 +127,7 @@ export function EpisodeGridCard({
             locale={hrefLocale}
             className="focus-visible:outline-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
           >
-            {ep.title}
+            {displayTitle}
           </Link>
         </h2>
 

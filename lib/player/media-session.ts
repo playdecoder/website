@@ -1,5 +1,6 @@
 import type { Episode } from "@/lib/episode/catalog";
 import { resolveEpisodeCoverImageUrl } from "@/lib/episode/cover";
+import { episodePublicationTitle } from "@/lib/episode/format";
 import { BRAND_NAME } from "@/lib/site/brand";
 import { showHostsAmpersand } from "@/lib/site/show";
 
@@ -15,7 +16,7 @@ export function buildEpisodeMediaMetadata(episode: Episode): MediaMetadata {
   const type = artworkMimeType(coverUrl);
 
   return new MediaMetadata({
-    title: `${episode.id} — ${episode.title}`,
+    title: `${episode.id} — ${episodePublicationTitle(episode)}`,
     artist: showHostsAmpersand(),
     album: BRAND_NAME,
     artwork: [

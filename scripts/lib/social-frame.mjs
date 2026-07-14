@@ -12,6 +12,7 @@ import {
   LAYOUTS,
   resolveLayout,
 } from "./social-layouts.mjs";
+import { isSpecialSocialFormat } from "./format-tokens.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, "../..");
@@ -113,6 +114,78 @@ function wrapLines(text, maxChars) {
   return lines;
 }
 
+function estimateCharsPerLine(textWidth, fontSize, scale = 0.68) {
+  if (textWidth <= 0) return 24;
+  // Syne 800 runs wide; stay conservative so lines don't clip in SVG.
+  return Math.max(12, Math.floor(textWidth / (fontSize * scale)));
+}
+
+function resolveTextWidth(m, textRightLimit) {
+  if (m.textWidth != null) return m.textWidth;
+  return Math.max(0, textRightLimit - m.textX);
+}
+
+function capLineCount(lines, maxLines) {
+  if (maxLines == null) return lines;
+  return lines.slice(0, maxLines);
+}
+
+function layoutTextPositions(m, titleBlockH, descBlockH) {
+  let badgeY;
+  let titleY;
+  let descStartY;
+  let accentTop;
+
+  if (m.artMode === "backdrop") {
+    const descBottom = m.footerTop - m.sectionGap;
+    descStartY = descBottom - descBlockH;
+    const titleBottom = descStartY - m.sectionGap;
+    titleY = titleBottom - titleBlockH;
+    badgeY = titleY - m.sectionGap - m.badgeH;
+    accentTop = badgeY - Math.round(14 * m.scale);
+  } else if (m.artMode === "top") {
+    badgeY = m.textTop;
+    titleY = badgeY + m.badgeH + Math.round(32 * m.scale);
+    descStartY = titleY + titleBlockH + Math.round(16 * m.scale);
+
+    if (descStartY + descBlockH + m.sectionGap > m.footerTop) {
+      descStartY = m.footerTop - m.sectionGap - descBlockH;
+      titleY = descStartY - Math.round(16 * m.scale) - titleBlockH;
+      badgeY = titleY - Math.round(32 * m.scale) - m.badgeH;
+    }
+    accentTop = m.accentLine.top;
+  } else {
+    badgeY = m.textTop;
+    titleY = badgeY + m.badgeH + Math.round(24 * m.scale);
+    descStartY = titleY + titleBlockH + Math.round(14 * m.scale);
+
+    if (descStartY + descBlockH + m.sectionGap > m.footerTop) {
+      descStartY = m.footerTop - m.sectionGap - descBlockH;
+      titleY = descStartY - Math.round(14 * m.scale) - titleBlockH;
+      badgeY = Math.max(m.textTop, titleY - Math.round(24 * m.scale) - m.badgeH);
+    } else if (m.textVerticalAlign === "center") {
+      const gapAfterBadge = Math.round(24 * m.scale);
+      const gapAfterTitle = Math.round(14 * m.scale);
+      const blockH = m.badgeH + gapAfterBadge + titleBlockH + gapAfterTitle + descBlockH;
+      const availableH = m.footerTop - m.textTop - m.sectionGap;
+      const offsetY = Math.max(0, Math.round((availableH - blockH) / 2));
+      badgeY = m.textTop + offsetY;
+      titleY = badgeY + m.badgeH + gapAfterBadge;
+      descStartY = titleY + titleBlockH + gapAfterTitle;
+    }
+    accentTop = m.accentLine.barY;
+  }
+
+  return { badgeY, titleY, descStartY, accentTop };
+}
+
+function fitDescriptionLines(description, m, descStartY, descCharsPerLine) {
+  const availableDescH = Math.max(0, m.footerTop - descStartY - m.sectionGap);
+  const maxFitLines = Math.max(1, Math.floor(availableDescH / m.descLineHeight));
+  const lineCap = m.maxDescLines != null ? Math.min(m.maxDescLines, maxFitLines) : maxFitLines;
+  return capLineCount(wrapLines(description, descCharsPerLine), lineCap);
+}
+
 function fontFaceStyles(fonts) {
   return `
     @font-face {
@@ -173,11 +246,6 @@ function footerBrandSvg(m, brand) {
 }
 
 function computeContentLayout({ episodeId, title, description, m, logoWidth, logoHeight }) {
-  const titleLines = wrapLines(title, m.maxTitleChars).slice(0, m.maxTitleLines);
-  const descLines = wrapLines(description, m.maxDescChars).slice(0, m.maxDescLines);
-
-  const titleBlockH = titleLines.length * m.titleLineHeight;
-  const descBlockH = descLines.length * m.descLineHeight;
   const badgeLabel = episodeId.toUpperCase();
   const badgeW = badgeLabel.length * m.badgeCharW + m.badgePadX * 2;
 
@@ -189,40 +257,48 @@ function computeContentLayout({ episodeId, title, description, m, logoWidth, log
       ? m.textX + Math.round(m.width * (m.textMaxWidthRatio ?? 0.62))
       : m.width - m.pad;
 
+  const textWidth = resolveTextWidth(m, textRightLimit);
+  const titleCharsPerLine =
+    m.maxTitleChars ??
+    estimateCharsPerLine(textWidth, m.titleSize, m.titleCharsScale ?? 0.68);
+  const descCharsPerLine =
+    m.maxDescChars ??
+    estimateCharsPerLine(textWidth, m.descSize, m.descCharsScale ?? 0.76);
+
+  const titleLines = capLineCount(wrapLines(title, titleCharsPerLine), m.maxTitleLines);
+  const titleBlockH = titleLines.length * m.titleLineHeight;
+
   let badgeY;
   let titleY;
   let descStartY;
   let accentTop;
+  let descLines;
+  let descBlockH;
 
-  if (m.artMode === "backdrop") {
-    const descBottom = m.footerTop - m.sectionGap;
-    descStartY = descBottom - descBlockH;
-    const titleBottom = descStartY - m.sectionGap;
-    titleY = titleBottom - titleBlockH;
-    badgeY = titleY - m.sectionGap - m.badgeH;
-    accentTop = badgeY - Math.round(14 * m.scale);
-  } else if (m.artMode === "top") {
-    badgeY = m.textTop;
-    titleY = badgeY + m.badgeH + Math.round(32 * m.scale);
-    descStartY = titleY + titleBlockH + Math.round(16 * m.scale);
-
-    if (descStartY + descBlockH + m.sectionGap > m.footerTop) {
-      descStartY = m.footerTop - m.sectionGap - descBlockH;
-      titleY = descStartY - Math.round(16 * m.scale) - titleBlockH;
-      badgeY = titleY - Math.round(32 * m.scale) - m.badgeH;
-    }
-    accentTop = m.accentLine.top;
+  if (m.textVerticalAlign === "center" && m.artMode === "left") {
+    const gapAfterBadge = Math.round(24 * m.scale);
+    const gapAfterTitle = Math.round(14 * m.scale);
+    const fixedBlockH = m.badgeH + gapAfterBadge + titleBlockH + gapAfterTitle;
+    const availableDescH = Math.max(0, m.footerTop - m.textTop - m.sectionGap - fixedBlockH);
+    const maxFitLines = Math.max(1, Math.floor(availableDescH / m.descLineHeight));
+    descLines = capLineCount(wrapLines(description, descCharsPerLine), maxFitLines);
+    descBlockH = descLines.length * m.descLineHeight;
+    ({ badgeY, titleY, descStartY, accentTop } = layoutTextPositions(m, titleBlockH, descBlockH));
   } else {
-    badgeY = m.textTop;
-    titleY = badgeY + m.badgeH + Math.round(24 * m.scale);
-    descStartY = titleY + titleBlockH + Math.round(14 * m.scale);
+    ({ badgeY, titleY, descStartY, accentTop } = layoutTextPositions(
+      m,
+      titleBlockH,
+      m.descLineHeight,
+    ));
+
+    descLines = fitDescriptionLines(description, m, descStartY, descCharsPerLine);
+    descBlockH = descLines.length * m.descLineHeight;
 
     if (descStartY + descBlockH + m.sectionGap > m.footerTop) {
-      descStartY = m.footerTop - m.sectionGap - descBlockH;
-      titleY = descStartY - Math.round(14 * m.scale) - titleBlockH;
-      badgeY = Math.max(m.textTop, titleY - Math.round(24 * m.scale) - m.badgeH);
+      ({ badgeY, titleY, descStartY, accentTop } = layoutTextPositions(m, titleBlockH, descBlockH));
+      descLines = fitDescriptionLines(description, m, descStartY, descCharsPerLine);
+      descBlockH = descLines.length * m.descLineHeight;
     }
-    accentTop = m.accentLine.barY;
   }
 
   return {
@@ -472,6 +548,12 @@ async function loadArtLayer(artPath, m, focalPoint = "centre", brand) {
 }
 
 export async function renderSocialFrame(options) {
+  const { format = "normal", ...rest } = options;
+  if (isSpecialSocialFormat(format)) {
+    const { renderFormatSocialFrame } = await import("./social-format-frame.mjs");
+    return renderFormatSocialFrame({ format, ...rest });
+  }
+
   const {
     episodeId,
     title,
@@ -481,7 +563,7 @@ export async function renderSocialFrame(options) {
     logoPath,
     layout: layoutId = DEFAULT_LAYOUT,
     theme = "dark",
-  } = options;
+  } = rest;
 
   const brand = getBrand(theme);
   const resolvedLogoPath = logoPath ?? join(root, getLogoPath(theme));
@@ -545,4 +627,12 @@ export {
   resolveLayout,
   ensureFonts,
   coverArt,
+  normalizeArtFocalPoint,
+  fontFaceStyles,
+  wrapLines,
+  computeContentLayout,
+  textBlockSvg,
+  footerBrandSvg,
+  motifWidth,
+  accentLineSvg,
 };

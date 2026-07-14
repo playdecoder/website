@@ -81,6 +81,12 @@
     "playEpisode": "Přehrát epizodu",
     "archiveLink": "Celý archiv"
   },
+  "episodeFormat": {
+    "spotlight": "Spotlight",
+    "flashback": "Flashback",
+    "spotlightDescription": "Rozhovor s hostem pořadu",
+    "flashbackDescription": "Návrat k tématu z dřívějších epizod"
+  },
   "episodesPage": {
     "label": "Archiv",
     "headingLead": "Všechny",

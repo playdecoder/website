@@ -10,6 +10,11 @@ import {
   getLatestEpisode,
 } from "@/lib/episode/catalog";
 import { EpisodeDescriptionRich } from "@/lib/episode/description";
+import {
+  composeFormattedEpisodeTitle,
+  episodeCardRailClass,
+  getEpisodeFormat,
+} from "@/lib/episode/format";
 import { linkLocale } from "@/lib/routing/link-locale";
 import { PAGE_SECTION_ID, ROUTES, listenEpisodePath } from "@/lib/routing/routes";
 
@@ -19,16 +24,23 @@ import { SectionHeading } from "../ui/section-heading";
 
 import { EpisodeCardTopicChips } from "./episode-card-topic-chips";
 import { EpisodeCoverArt, episodeArtBannerFadeClassName } from "./episode-cover-art";
+import { EpisodeFormatBadge } from "./episode-format-badge";
 import { EpisodeSpokenLangNote } from "./episode-spoken-lang-note";
 
 export async function Episodes({ locale }: { locale: string }) {
   const t = await getTranslations({ locale, namespace: "episodesSection" });
+  const tFormat = await getTranslations({ locale, namespace: "episodeFormat" });
   const hrefLocale = linkLocale(locale);
   const latestEpisode = getLatestEpisode(episodes);
   if (!latestEpisode) {
     return null;
   }
   const archiveEpisodes = episodes.filter((e) => e.id !== latestEpisode.id);
+  const latestFormat = getEpisodeFormat(latestEpisode);
+  const latestTitle = composeFormattedEpisodeTitle(
+    latestEpisode,
+    latestFormat ? tFormat(latestFormat) : undefined,
+  );
 
   return (
     <section id={PAGE_SECTION_ID.episodes} className="border-edge relative border-t py-24 md:py-32">
@@ -36,8 +48,11 @@ export async function Episodes({ locale }: { locale: string }) {
         <SectionHeading variant="rail" label={t("label")} className="mb-16" />
 
         <div className="scroll-reveal mb-6">
-          <div className="episode-feature-card border-edge group hover:border-accent/40 active:border-secondary/45 relative overflow-hidden rounded-sm border transition-colors duration-300">
-            <div className="episode-feature-card__rail bg-accent absolute top-0 bottom-0 left-0 z-10 w-1" />
+          <div
+            className="episode-feature-card border-edge group hover:border-accent/40 active:border-secondary/45 relative overflow-hidden rounded-sm border transition-colors duration-300"
+            data-episode-format={latestFormat ?? undefined}
+          >
+            <div className={`episode-feature-card__rail absolute top-0 bottom-0 left-0 z-10 w-1 ${episodeCardRailClass(latestEpisode, true)}`} />
 
             {latestEpisode.artImage && (
               <div className="relative h-44 sm:h-52">
@@ -62,6 +77,9 @@ export async function Episodes({ locale }: { locale: string }) {
                 <span className="text-accent-text font-mono text-sm font-medium tracking-widest">
                   {latestEpisode.id}
                 </span>
+                {latestFormat ? (
+                  <EpisodeFormatBadge format={latestFormat} label={tFormat(latestFormat)} />
+                ) : null}
                 <span className="cta-on-lime rounded-sm px-2.5 py-0.5 font-mono text-xs font-medium tracking-widest uppercase">
                   {t("latest")}
                 </span>
@@ -79,7 +97,7 @@ export async function Episodes({ locale }: { locale: string }) {
                   locale={hrefLocale}
                   className="focus-visible:outline-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                 >
-                  {latestEpisode.title}
+                  {latestTitle}
                 </Link>
               </h2>
 
@@ -100,6 +118,7 @@ export async function Episodes({ locale }: { locale: string }) {
                   href={listenEpisodePath(episodeListenPathSegment(latestEpisode))}
                   locale={hrefLocale}
                   className="premium-cta cta-on-lime ml-auto flex items-center gap-2 rounded-sm px-5 py-2.5 font-mono text-xs font-medium tracking-widest uppercase transition-all hover:scale-[1.02] hover:opacity-90 active:scale-[0.98]"
+                  data-episode-format={latestFormat ?? undefined}
                 >
                   <svg width="11" height="13" viewBox="0 0 12 14" fill="currentColor" aria-hidden>
                     <path d="M0 0L12 7L0 14V0Z" />
@@ -116,6 +135,11 @@ export async function Episodes({ locale }: { locale: string }) {
             const { visible: rowTags, overflowCount: rowTagOverflow } = splitEpisodeCardTags(
               ep.tags,
             );
+            const rowFormat = getEpisodeFormat(ep);
+            const rowTitle = composeFormattedEpisodeTitle(
+              ep,
+              rowFormat ? tFormat(rowFormat) : undefined,
+            );
 
             return (
               <Link
@@ -123,6 +147,7 @@ export async function Episodes({ locale }: { locale: string }) {
                 href={listenEpisodePath(episodeListenPathSegment(ep))}
                 locale={hrefLocale}
                 className="episode-row group border-edge hover:bg-surface/60 active:bg-surface/75 -mx-3 flex cursor-pointer flex-col gap-2 border-b px-3 py-5 transition-colors duration-200 sm:flex-row sm:items-center sm:gap-6"
+                data-episode-format={rowFormat ?? undefined}
                 style={{ animationDelay: `${0.05 * i}s` }}
               >
                 <div className="flex w-full min-w-0 items-center justify-between gap-3 sm:hidden">
@@ -130,6 +155,13 @@ export async function Episodes({ locale }: { locale: string }) {
                     <span className="text-secondary w-10 shrink-0 font-mono text-xs font-medium tracking-widest">
                       {ep.id}
                     </span>
+                    {rowFormat ? (
+                      <EpisodeFormatBadge
+                        format={rowFormat}
+                        label={tFormat(rowFormat)}
+                        size="compact"
+                      />
+                    ) : null}
                     <EpisodeSpokenLangNote lang={ep.lang} locale={locale} variant="compact" />
                   </div>
                   <div className="text-muted flex shrink-0 items-center gap-2.5 font-mono text-xs tracking-widest">
@@ -144,12 +176,19 @@ export async function Episodes({ locale }: { locale: string }) {
                   <span className="text-secondary w-10 font-mono text-xs font-medium tracking-widest">
                     {ep.id}
                   </span>
+                  {rowFormat ? (
+                    <EpisodeFormatBadge
+                      format={rowFormat}
+                      label={tFormat(rowFormat)}
+                      size="compact"
+                    />
+                  ) : null}
                   <EpisodeSpokenLangNote lang={ep.lang} locale={locale} variant="compact" />
                 </div>
 
                 <div className="min-w-0 flex-1">
                   <p className="font-display text-primary group-hover:text-accent-text text-base leading-snug font-semibold transition-colors sm:truncate md:text-lg">
-                    {ep.title}
+                    {rowTitle}
                   </p>
                 </div>
 

@@ -33,6 +33,10 @@ export interface EpisodeCoverImage {
   dark?: EpisodeCoverVariant;
 }
 
+import type { EpisodeFormat } from "@/lib/brand/format-tokens";
+
+export type { EpisodeFormat };
+
 export interface Episode {
   id: string;
   slug: string;
@@ -42,6 +46,8 @@ export interface Episode {
   duration: number;
   description: string;
   tags: string[];
+  /** Special episode format — regular episodes omit this field. */
+  format?: EpisodeFormat;
   /** Local public path to the unbranded 16:9 key art (e.g. "/social/art/ep02-overwatch.jpg"). */
   artImage?: string;
   /** CSS object-position for artImage crops (sharp gravity name or { x, y } 0–1). */
@@ -193,23 +199,45 @@ function getEpisodeById(paramId: string): Episode | undefined {
   return episodes.find((e) => e.id.toUpperCase() === id);
 }
 
-const LISTEN_EP_SHORT = /^ep(\d+)$/i;
-const LISTEN_EP_FULL = /^ep(\d+)-(.+)$/i;
+export type EpisodeSeries = "main" | EpisodeFormat;
 
-export function episodeOrdinal(ep: Episode): number {
+const EPISODE_SERIES_SLUG_PREFIX: Record<EpisodeSeries, string> = {
+  main: "ep",
+  spotlight: "sp",
+  flashback: "fb",
+};
+
+const EPISODE_SERIES_FROM_SLUG = Object.fromEntries(
+  Object.entries(EPISODE_SERIES_SLUG_PREFIX).map(([series, prefix]) => [prefix, series]),
+) as Record<string, EpisodeSeries>;
+
+const LISTEN_SLUG_SHORT = /^(ep|sp|fb)(\d+)$/i;
+const LISTEN_SLUG_FULL = /^(ep|sp|fb)(\d+)-(.+)$/i;
+
+export function episodeSeries(ep: Episode): EpisodeSeries {
+  return ep.format ?? "main";
+}
+
+export function episodeSeriesOrdinal(ep: Episode): number {
   return parseInt(ep.id.replace(/\D/g, ""), 10) || 0;
 }
 
+/** Episode number within its series (main, spotlight, or flashback). */
+export function episodeOrdinal(ep: Episode): number {
+  return episodeSeriesOrdinal(ep);
+}
+
 export function episodeListenSlugPrefix(ep: Episode): string {
-  return `ep${String(episodeOrdinal(ep)).padStart(2, "0")}`;
+  const slugPrefix = EPISODE_SERIES_SLUG_PREFIX[episodeSeries(ep)];
+  return `${slugPrefix}${String(episodeSeriesOrdinal(ep)).padStart(2, "0")}`;
 }
 
 export function episodeListenPathSegment(ep: Episode): string {
   return `${episodeListenSlugPrefix(ep)}-${ep.slug}`;
 }
 
-function findEpisodeByOrdinal(n: number): Episode | undefined {
-  return episodes.find((e) => episodeOrdinal(e) === n);
+function findEpisodeBySeriesAndOrdinal(series: EpisodeSeries, n: number): Episode | undefined {
+  return episodes.find((e) => episodeSeries(e) === series && episodeSeriesOrdinal(e) === n);
 }
 
 export function resolveListenEpisodeParam(param: string): {
@@ -226,20 +254,22 @@ export function resolveListenEpisodeParam(param: string): {
     return { episode: byId, canonicalSegment: episodeListenPathSegment(byId) };
   }
 
-  const short = LISTEN_EP_SHORT.exec(raw);
+  const short = LISTEN_SLUG_SHORT.exec(raw);
   if (short && short[0].length === raw.length) {
-    const n = parseInt(short[1], 10);
-    const ep = findEpisodeByOrdinal(n);
+    const series = EPISODE_SERIES_FROM_SLUG[short[1].toLowerCase()];
+    const n = parseInt(short[2], 10);
+    const ep = series ? findEpisodeBySeriesAndOrdinal(series, n) : undefined;
     if (!ep) {
       return null;
     }
     return { episode: ep, canonicalSegment: episodeListenPathSegment(ep) };
   }
 
-  const full = LISTEN_EP_FULL.exec(raw);
+  const full = LISTEN_SLUG_FULL.exec(raw);
   if (full) {
-    const n = parseInt(full[1], 10);
-    const ep = findEpisodeByOrdinal(n);
+    const series = EPISODE_SERIES_FROM_SLUG[full[1].toLowerCase()];
+    const n = parseInt(full[2], 10);
+    const ep = series ? findEpisodeBySeriesAndOrdinal(series, n) : undefined;
     if (!ep) {
       return null;
     }

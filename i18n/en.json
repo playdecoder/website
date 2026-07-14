@@ -80,6 +80,12 @@
     "playEpisode": "Play Episode",
     "archiveLink": "Full archive"
   },
+  "episodeFormat": {
+    "spotlight": "Spotlight",
+    "flashback": "Flashback",
+    "spotlightDescription": "Interview with a show host",
+    "flashbackDescription": "Revisiting a topic from earlier episodes"
+  },
   "episodesPage": {
     "label": "Archive",
     "headingLead": "Every",
