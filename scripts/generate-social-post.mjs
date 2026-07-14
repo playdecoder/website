@@ -4,6 +4,11 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { socialOutputPath } from "./lib/episode-output.mjs";
+import {
+  EPISODE_FORMAT_LABELS,
+  isSpecialSocialFormat,
+  normalizeSocialFormat,
+} from "./lib/format-tokens.mjs";
 import { THEMES } from "./lib/social-brand.mjs";
 import {
   findSocialPost,
@@ -12,11 +17,6 @@ import {
   resolveArtPath,
   SOCIAL_POSTS_FILE,
 } from "./lib/social-config.mjs";
-import {
-  EPISODE_FORMAT_LABELS,
-  isSpecialSocialFormat,
-  normalizeSocialFormat,
-} from "./lib/format-tokens.mjs";
 import {
   DEFAULT_LAYOUT,
   LAYOUT_IDS,
@@ -182,7 +182,17 @@ function parseArgs(argv) {
     formatOverride = normalizeSocialFormat(formatOverride);
   }
 
-  return { config, episode, output, artOverride, layout, allLayouts, allEpisodes, themes, formatOverride };
+  return {
+    config,
+    episode,
+    output,
+    artOverride,
+    layout,
+    allLayouts,
+    allEpisodes,
+    themes,
+    formatOverride,
+  };
 }
 
 async function loadEpisodes() {
@@ -305,8 +315,17 @@ async function generateForEpisode({
 }
 
 async function main() {
-  const { config, episode, output, artOverride, layout, allLayouts, allEpisodes, themes, formatOverride } =
-    parseArgs(process.argv.slice(2));
+  const {
+    config,
+    episode,
+    output,
+    artOverride,
+    layout,
+    allLayouts,
+    allEpisodes,
+    themes,
+    formatOverride,
+  } = parseArgs(process.argv.slice(2));
   const file = await loadConfigFile(config);
   const episodeIds = allEpisodes ? (file.posts ?? []).map((post) => post.episodeId) : [episode];
 

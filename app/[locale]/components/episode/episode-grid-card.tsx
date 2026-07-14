@@ -6,7 +6,11 @@ import {
   formatEpisodeDuration,
 } from "@/lib/episode/catalog";
 import { EpisodeDescriptionRich } from "@/lib/episode/description";
-import { composeFormattedEpisodeTitle, episodeCardRailClass, getEpisodeFormat } from "@/lib/episode/format";
+import {
+  composeFormattedEpisodeTitle,
+  episodeCardRailClass,
+  getEpisodeFormat,
+} from "@/lib/episode/format";
 import { listenEpisodePath } from "@/lib/routing/routes";
 
 import { IconEpisodeAirDate, IconEpisodeDuration } from "../ui/icons";

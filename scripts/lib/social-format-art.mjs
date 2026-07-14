@@ -61,8 +61,14 @@ function edgeFadeMaskSvg(w, h, { right = 0, bottom = 0 } = {}) {
 }
 
 async function applyEdgeFade(imageBuf, w, h, fade) {
-  const mask = await sharp(edgeFadeMaskSvg(w, h, fade)).png().toBuffer();
-  return sharp(imageBuf).ensureAlpha().composite([{ input: mask, blend: "dest-in" }]).png().toBuffer();
+  const mask = await sharp(edgeFadeMaskSvg(w, h, fade))
+    .png()
+    .toBuffer();
+  return sharp(imageBuf)
+    .ensureAlpha()
+    .composite([{ input: mask, blend: "dest-in" }])
+    .png()
+    .toBuffer();
 }
 
 function bottomScrimSvg(w, h, brand, formatAccent, strength = 0.92) {
@@ -117,7 +123,16 @@ async function placeholderColumnArt(w, h, brand, hostName, scale, formatAccent) 
     .toBuffer();
 }
 
-async function composeFormatColumnArt({ artPath, w, h, focal, brand, hostName, scale, formatAccent }) {
+async function composeFormatColumnArt({
+  artPath,
+  w,
+  h,
+  focal,
+  brand,
+  hostName,
+  scale,
+  formatAccent,
+}) {
   if (!artPath || !(await fileExists(artPath))) {
     return placeholderColumnArt(w, h, brand, hostName, scale, formatAccent);
   }
@@ -127,7 +142,16 @@ async function composeFormatColumnArt({ artPath, w, h, focal, brand, hostName, s
   return cover;
 }
 
-async function composeFormatBannerArt({ artPath, w, h, focal, brand, hostName, scale, formatAccent }) {
+async function composeFormatBannerArt({
+  artPath,
+  w,
+  h,
+  focal,
+  brand,
+  hostName,
+  scale,
+  formatAccent,
+}) {
   if (!artPath || !(await fileExists(artPath))) {
     const placeholder = await placeholderColumnArt(w, h, brand, hostName, scale, formatAccent);
     return sharp(placeholder)

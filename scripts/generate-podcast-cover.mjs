@@ -217,7 +217,17 @@ async function renderCoverBuffer({
   });
 }
 
-async function renderOne({ episodeId, title, subtitle, episodeFormat, artPath, artFocalPoint, imageFormat, theme, outputPath }) {
+async function renderOne({
+  episodeId,
+  title,
+  subtitle,
+  episodeFormat,
+  artPath,
+  artFocalPoint,
+  imageFormat,
+  theme,
+  outputPath,
+}) {
   await mkdir(dirname(outputPath), { recursive: true });
 
   const buf = await renderCoverBuffer({

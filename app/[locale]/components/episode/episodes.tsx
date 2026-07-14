@@ -52,7 +52,9 @@ export async function Episodes({ locale }: { locale: string }) {
             className="episode-feature-card border-edge group hover:border-accent/40 active:border-secondary/45 relative overflow-hidden rounded-sm border transition-colors duration-300"
             data-episode-format={latestFormat ?? undefined}
           >
-            <div className={`episode-feature-card__rail absolute top-0 bottom-0 left-0 z-10 w-1 ${episodeCardRailClass(latestEpisode, true)}`} />
+            <div
+              className={`episode-feature-card__rail absolute top-0 bottom-0 left-0 z-10 w-1 ${episodeCardRailClass(latestEpisode, true)}`}
+            />
 
             {latestEpisode.artImage && (
               <div className="relative h-44 sm:h-52">

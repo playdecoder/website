@@ -9,8 +9,8 @@ import { fileURLToPath } from "node:url";
 
 import sharp from "sharp";
 
-import { FONTS, getBrand, getLogoPath, LOGO_WORDMARK_HEIGHT } from "./social-brand.mjs";
 import { getFormatTokens, isSpecialSocialFormat } from "./format-tokens.mjs";
+import { FONTS, getBrand, getLogoPath, LOGO_WORDMARK_HEIGHT } from "./social-brand.mjs";
 import { coverArt, ensureFonts } from "./social-frame.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -258,24 +258,18 @@ function computeContent({ episodeId, title, subtitle = "", m, logoWidth, logoHei
   const hasSubtitle = Boolean(subtitle.trim());
   const maxTitleLines = hasSubtitle ? 1 : m.maxTitleLines;
   const titleLines = wrapLines(title, m.maxTitleChars).slice(0, maxTitleLines);
-  const descLines = hasSubtitle
-    ? wrapLines(subtitle, m.maxDescChars).slice(0, m.maxDescLines)
-    : [];
+  const descLines = hasSubtitle ? wrapLines(subtitle, m.maxDescChars).slice(0, m.maxDescLines) : [];
   const badgeLabel = episodeId.toUpperCase();
   const badgeW = badgeLabel.length * m.badgeCharW + m.badgePadX * 2;
   const titleBlockH = titleLines.length * m.titleLineHeight;
   const descBlockH = descLines.length * m.descLineHeight;
 
   const badgeY = m.textTop;
-  const titleY = badgeY + m.badgeH + Math.round(24 * m.scale);
-  const descStartY = titleY + titleBlockH + Math.round(10 * m.scale);
-  const textBlockH = m.badgeH + titleBlockH + (hasSubtitle ? descBlockH + Math.round(34 * m.scale) : 0);
+  const textBlockH =
+    m.badgeH + titleBlockH + (hasSubtitle ? descBlockH + Math.round(34 * m.scale) : 0);
 
   const maxTextBottom = m.footerTop - m.sectionGap;
-  const clampedBadgeY = Math.max(
-    m.textTop,
-    Math.min(badgeY, maxTextBottom - textBlockH),
-  );
+  const clampedBadgeY = Math.max(m.textTop, Math.min(badgeY, maxTextBottom - textBlockH));
   const clampedTitleY = clampedBadgeY + m.badgeH + Math.round(24 * m.scale);
   const clampedDescStartY = clampedTitleY + titleBlockH + Math.round(10 * m.scale);
 
@@ -375,13 +369,20 @@ export async function renderPodcastCover(options) {
     .png()
     .toBuffer();
 
-  const content = computeContent({ episodeId, title, subtitle, m, logoWidth: logoW, logoHeight: logoH });
+  const content = computeContent({
+    episodeId,
+    title,
+    subtitle,
+    m,
+    logoWidth: logoW,
+    logoHeight: logoH,
+  });
   const badgeStyle = resolveBadgeStyle(brand, episodeFormat, theme);
 
   const artBuf = await loadArtLayer(artPath, m.size, m.artH, artFocalPoint, brand);
-  const overlayBuf = await sharp(
-    overlaySvg({ fonts, m, content, brand, badgeStyle }),
-  ).png().toBuffer();
+  const overlayBuf = await sharp(overlaySvg({ fonts, m, content, brand, badgeStyle }))
+    .png()
+    .toBuffer();
 
   const bg = parseBgRgb(brand.bg);
   const base = sharp({

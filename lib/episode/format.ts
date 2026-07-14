@@ -1,12 +1,10 @@
 import {
-  type Episode,
-  episodeSeriesOrdinal,
-} from "./catalog";
-import {
   EPISODE_FORMAT_LABELS,
   EPISODE_FORMATS,
   type EpisodeFormat,
 } from "@/lib/brand/format-tokens";
+
+import { type Episode, episodeSeriesOrdinal } from "./catalog";
 
 export type { EpisodeFormat };
 export { EPISODE_FORMAT_LABELS, EPISODE_FORMATS };
@@ -45,10 +43,7 @@ export function composeFormattedEpisodeTitle(
   return ep.title;
 }
 
-export function episodePublicationTitle(
-  ep: Episode,
-  formatLabel?: string,
-): string {
+export function episodePublicationTitle(ep: Episode, formatLabel?: string): string {
   const label = formatLabel ?? (ep.format ? EPISODE_FORMAT_LABELS[ep.format] : undefined);
   return composeFormattedEpisodeTitle(ep, label);
 }

@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 
 import sharp from "sharp";
 
+import { isSpecialSocialFormat } from "./format-tokens.mjs";
 import { FONTS, getBrand, getLogoPath, LOGO_WORDMARK_HEIGHT } from "./social-brand.mjs";
 import {
   buildLayoutMetrics,
@@ -12,7 +13,6 @@ import {
   LAYOUTS,
   resolveLayout,
 } from "./social-layouts.mjs";
-import { isSpecialSocialFormat } from "./format-tokens.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, "../..");
@@ -259,11 +259,9 @@ function computeContentLayout({ episodeId, title, description, m, logoWidth, log
 
   const textWidth = resolveTextWidth(m, textRightLimit);
   const titleCharsPerLine =
-    m.maxTitleChars ??
-    estimateCharsPerLine(textWidth, m.titleSize, m.titleCharsScale ?? 0.68);
+    m.maxTitleChars ?? estimateCharsPerLine(textWidth, m.titleSize, m.titleCharsScale ?? 0.68);
   const descCharsPerLine =
-    m.maxDescChars ??
-    estimateCharsPerLine(textWidth, m.descSize, m.descCharsScale ?? 0.76);
+    m.maxDescChars ?? estimateCharsPerLine(textWidth, m.descSize, m.descCharsScale ?? 0.76);
 
   const titleLines = capLineCount(wrapLines(title, titleCharsPerLine), m.maxTitleLines);
   const titleBlockH = titleLines.length * m.titleLineHeight;

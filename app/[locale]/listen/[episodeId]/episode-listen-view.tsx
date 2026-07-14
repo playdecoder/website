@@ -10,7 +10,11 @@ import {
   getLatestEpisode,
 } from "@/lib/episode/catalog";
 import { resolveEpisodeCoverImageUrl } from "@/lib/episode/cover";
-import { getEpisodeFormat, composeFormattedEpisodeTitle, episodeDisplayTags } from "@/lib/episode/format";
+import {
+  getEpisodeFormat,
+  composeFormattedEpisodeTitle,
+  episodeDisplayTags,
+} from "@/lib/episode/format";
 import { linkLocale } from "@/lib/routing/link-locale";
 import { listenEpisodePath, ROUTES, homeSectionPath } from "@/lib/routing/routes";
 import { BRAND_NAME } from "@/lib/site/brand";

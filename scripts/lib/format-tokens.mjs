@@ -29,9 +29,7 @@ export function normalizeSocialFormat(value) {
   if (normalized === "normal" || isSpecialSocialFormat(normalized)) {
     return normalized;
   }
-  throw new Error(
-    `Unknown format "${value}". Use ${SOCIAL_FORMATS.join(", ")}.`,
-  );
+  throw new Error(`Unknown format "${value}". Use ${SOCIAL_FORMATS.join(", ")}.`);
 }
 
 /** @param {string} format @param {"light" | "dark"} theme */

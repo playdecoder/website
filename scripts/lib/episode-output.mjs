@@ -32,7 +32,11 @@ export function podcastCoverOutputPath(repoRoot, episodeId, format = "jpg", them
 
 /** output/ep02/rss/ep02.jpg — canonical dark cover without theme suffix */
 export function podcastCoverCanonicalOutputPath(repoRoot, episodeId, format = "jpg") {
-  return join(episodeOutputRoot(repoRoot, episodeId), "rss", `${episodeId.toLowerCase()}.${format}`);
+  return join(
+    episodeOutputRoot(repoRoot, episodeId),
+    "rss",
+    `${episodeId.toLowerCase()}.${format}`,
+  );
 }
 
 /** output/ep02/youtube/ep02-<theme>.mp4 */

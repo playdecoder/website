@@ -224,8 +224,14 @@ function seamSoftenerSvg(w, h) {
 }
 
 async function applyEdgeFade(imageBuf, w, h, fade) {
-  const mask = await sharp(edgeFadeMaskSvg(w, h, fade)).png().toBuffer();
-  return sharp(imageBuf).ensureAlpha().composite([{ input: mask, blend: "dest-in" }]).png().toBuffer();
+  const mask = await sharp(edgeFadeMaskSvg(w, h, fade))
+    .png()
+    .toBuffer();
+  return sharp(imageBuf)
+    .ensureAlpha()
+    .composite([{ input: mask, blend: "dest-in" }])
+    .png()
+    .toBuffer();
 }
 
 async function optimizePortrait(portraitPath) {
@@ -282,7 +288,9 @@ async function composeKeyart({ portraitPath, keyartPath, backgroundPath, focal, 
   const layers = [];
 
   if (backgroundPath) {
-    layers.push({ input: await composeBackgroundLayer(backgroundPath, KEYART_W, KEYART_H, bgFocal) });
+    layers.push({
+      input: await composeBackgroundLayer(backgroundPath, KEYART_W, KEYART_H, bgFocal),
+    });
   } else {
     layers.push({
       input: Buffer.from(
@@ -298,7 +306,9 @@ async function composeKeyart({ portraitPath, keyartPath, backgroundPath, focal, 
     layers.push({ input: await sharp(seamSoftenerSvg(KEYART_W, KEYART_H)).png().toBuffer() });
   } else {
     layers.push({
-      input: await sharp(scrimSvg(KEYART_W, KEYART_H, { transparent: true })).png().toBuffer(),
+      input: await sharp(scrimSvg(KEYART_W, KEYART_H, { transparent: true }))
+        .png()
+        .toBuffer(),
     });
   }
 
@@ -317,7 +327,9 @@ async function composeKeyart({ portraitPath, keyartPath, backgroundPath, focal, 
 }
 
 async function main() {
-  const { portrait, background, keyart, focal, bgFocal, skipOptimize } = parseArgs(process.argv.slice(2));
+  const { portrait, background, keyart, focal, bgFocal, skipOptimize } = parseArgs(
+    process.argv.slice(2),
+  );
   const portraitPath = resolve(repoRoot, portrait);
 
   try {
@@ -329,7 +341,9 @@ async function main() {
 
   const keyartPath = keyart ? resolve(repoRoot, keyart) : defaultKeyartPath(portraitPath);
 
-  let backgroundPath = background ? resolve(repoRoot, background) : defaultBackgroundPath(portraitPath);
+  let backgroundPath = background
+    ? resolve(repoRoot, background)
+    : defaultBackgroundPath(portraitPath);
   try {
     await access(backgroundPath);
   } catch {

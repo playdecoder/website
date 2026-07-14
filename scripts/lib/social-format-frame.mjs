@@ -2,8 +2,9 @@ import { join } from "node:path";
 
 import sharp from "sharp";
 
+import { getFormatTokens } from "./format-tokens.mjs";
 import { getBrand, getLogoPath, LOGO_WORDMARK_HEIGHT, FONTS } from "./social-brand.mjs";
-import { buildLayoutMetrics, DEFAULT_LAYOUT, resolveLayout } from "./social-layouts.mjs";
+import { composeFormatPortraitArt } from "./social-format-art.mjs";
 import {
   computeContentLayout,
   ensureFonts,
@@ -13,8 +14,7 @@ import {
   textBlockSvg,
   wrapLines,
 } from "./social-frame.mjs";
-import { composeFormatPortraitArt } from "./social-format-art.mjs";
-import { getFormatTokens } from "./format-tokens.mjs";
+import { buildLayoutMetrics, DEFAULT_LAYOUT, resolveLayout } from "./social-layouts.mjs";
 
 function escapeXml(text) {
   return text
@@ -121,9 +121,7 @@ function computeFormatContentLayout({
 
   const formatBadgeLabel = `${formatLabel} #${formatOrdinal}`.toUpperCase();
   const textRightLimit =
-    m.artMode === "left" && m.textWidth
-      ? m.textX + m.textWidth
-      : base.textRightLimit;
+    m.artMode === "left" && m.textWidth ? m.textX + m.textWidth : base.textRightLimit;
 
   return {
     ...base,
@@ -296,7 +294,9 @@ export async function renderFormatSocialFrame(options) {
     formatAccent: formatTokens.color,
   });
 
-  const overlayBuf = await sharp(formatOverlaySvg({ fonts, m, content, brand, formatTokens })).png().toBuffer();
+  const overlayBuf = await sharp(formatOverlaySvg({ fonts, m, content, brand, formatTokens }))
+    .png()
+    .toBuffer();
   const accentLine = formatAccentLineSvg(m, formatTokens.color);
 
   const composites = [
