@@ -85,7 +85,7 @@ export function resolveEpisodeCoverForMeta(episode: Episode): {
 } {
   const cover = episode.coverImage;
   const hasEpisodeCover = Boolean(cover && (variantUrl(cover.dark) || variantUrl(cover.light)));
-  const url = resolveEpisodeCoverImageUrl(episode);
+  const url = resolveCoverFromEpisode(episode, ["light", "dark"], { preferUseForRss: true });
 
   return {
     url,
