@@ -71,8 +71,8 @@
       }
     ],
     "links": {
-      "spotify": "",
-      "applePodcasts": "",
+      "spotify": "https://open.spotify.com/episode/2Uu580cUpLvbr1EsmEH7Ny",
+      "applePodcasts": "https://podcasts.apple.com/us/podcast/splatoon-tofu-inkoust-a-zrozen%C3%AD-nov%C3%A9-ikony-nintenda/id1895560433?i=1000781274433",
       "youtube": "https://youtu.be/OaUsCYSP2Do",
       "mp3": "https://cdn.play-decoder.com/podcast/episodes/ep04.mp3",
       "transcript": "https://cdn.play-decoder.com/podcast/transcripts/ep04.transcript.json"
