@@ -7,7 +7,9 @@
     "notFoundTitle": "404 — Stránka nenalezena | {brand}",
     "notFoundDescription": "Tuto stránku jsme nenašli. Vraťte se na {brand} — hry, technologie, kontext.",
     "episodesArchiveTitle": "Epizody — {brand}",
-    "episodesArchiveDescription": "Projděte si všechny epizody {brandGenitive} — filtrujte podle tématu, hledejte v archivu a přehrávejte v plné délce."
+    "episodesArchiveDescription": "Projděte si všechny epizody {brandGenitive} — filtrujte podle tématu, hledejte v archivu a přehrávejte v plné délce.",
+    "attributionTitle": "Poznámky k artworku — {brand}",
+    "attributionDescription": "Poznámky třetích stran ke zdrojovému key artu a propagačním materiálům používaným podcastem {brand}."
   },
   "common": {
     "switchToLanguage": "Přepnout na {language}",
@@ -170,7 +172,27 @@
     "socialYoutube": "YouTube",
     "footerBrand": "PODCAST {brandUpper}",
     "footerTagline": "HRY • TECHNOLOGIE • KONTEXT",
-    "footerNavAria": "Rychlé odkazy v patičce"
+    "footerNavAria": "Rychlé odkazy v patičce",
+    "footerAttribution": "Attribution"
+  },
+  "attribution": {
+    "railLabel": "Attribution",
+    "titleLead": "Zdrojový",
+    "titleAccent": "artwork",
+    "intro": "Tato stránka popisuje key art a propagační materiály třetích stran, které používáme jako podklad při generování sociálních postů, podcastových coverů a YouTube keyartu {brandGenitive}. Tyto soubory nejsou původními díly {brandGenitive} / Play Decoder.",
+    "sectionsAria": "Poznámky k artworku",
+    "ownershipLabel": "Vlastnictví třetích stran",
+    "ownershipBody": "Herní názvy, loga, postavy, artwork, screenshoty a další vizuální materiály zobrazené v těchto souborech jsou majetkem jejich příslušných vlastníků — včetně vydavatelů, vývojářů a poskytovatelů licencí.",
+    "ownershipExamplesLead": "Mezi aktuálně používané příklady patří materiály související s:",
+    "ownershipExamples": "Marathon (Bungie) · Overwatch (Blizzard Entertainment) · tituly Arkane Studios jako Dishonored, Prey, Deathloop a Redfall (Bethesda / ZeniMax / Microsoft) · Marvel's Blade (Marvel) · Splatoon (Nintendo)",
+    "ownershipFootnote": "Všechny ochranné známky, obchodní označení, obchodní jména a autorsky chráněný materiál zůstávají majetkem svých vlastníků. Uvedení titulu zde neznamená úplný ani aktuální inventář; další soubory mohou přibývat.",
+    "affiliationLabel": "Žádné spojení ani podpora",
+    "affiliationBody": "{brand} / Play Decoder není spojen, sponzorován ani podporován žádnou ze společností nebo držitelů práv, jejichž hry či značky se v tomto artworku objevují. Tyto materiály používáme výhradně k identifikaci a diskusi o daných hrách v nezávislém podcastovém a editorialním obsahu.",
+    "brandingLabel": "Naše značka",
+    "brandingBody": "Pouze vlastní layout, typografie, loga a rámování {brandGenitive} aplikované při generování patří nám nebo je kontrolujeme. Samotný key art třetích stran zůstává podřízen právům popsaným výše.",
+    "questionsLabel": "Dotazy",
+    "questionsBody": "Pokud jste držitel práv a domníváte se, že materiál používáme způsobem, který by měl být upraven nebo odstraněn, ozvěte se nám.",
+    "questionsCta": "Napsat na {email}"
   },
   "listen": {
     "breadcrumbEpisodes": "Epizody",

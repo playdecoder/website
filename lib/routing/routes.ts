@@ -2,12 +2,14 @@ const ROUTE_SEGMENTS = {
   listen: "listen",
   episodes: "episodes",
   topics: "topics",
+  attribution: "attribution",
 } as const;
 
 export const ROUTES = {
   home: "/",
   episodes: `/${ROUTE_SEGMENTS.episodes}`,
   topics: `/${ROUTE_SEGMENTS.topics}`,
+  attribution: `/${ROUTE_SEGMENTS.attribution}`,
   rssFeed: "/rss.xml",
 } as const;
 

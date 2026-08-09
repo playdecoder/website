@@ -59,6 +59,16 @@ export async function Footer({ locale }: { locale: string }) {
           >
             {t("platformRss")}
           </a>
+          <span className="text-edge/60" aria-hidden>
+            ·
+          </span>
+          <Link
+            href={ROUTES.attribution}
+            locale={hrefLocale}
+            className="text-muted/70 hover:text-primary decoration-from-font underline-offset-[5px] transition-colors hover:underline"
+          >
+            {t("footerAttribution")}
+          </Link>
         </nav>
 
         <div className="flex w-full flex-col items-center justify-between gap-4 sm:flex-row">

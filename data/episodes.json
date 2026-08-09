@@ -1,5 +1,84 @@
 [
   {
+    "id": "EP04",
+    "slug": "splatoon-tofu-inkoust-a-zrozeni-nove-ikony-nintenda",
+    "lang": "cs",
+    "explicit": true,
+    "title": "Splatoon: Tofu, inkoust a zrození nové ikony Nintenda",
+    "date": "2026-08-09",
+    "duration": 7289,
+    "description": "Splatoon začal jako jednoduchý prototyp, ve kterém proti sobě bojovaly černé a bílé kvádry připomínající tofu. Během několika let z něj ale vyrostla jedna z nejvýraznějších moderních značek Nintenda. V této epizodě rozebíráme, jak vzniklo elegantní propojení střelby, barvení prostředí, pohybu a doplňování inkoustu, proč byl první díl tak úzce spojený s hardwarem Wii U a co série získala i ztratila přechodem na Nintendo Switch. Procházíme Splatoon 2 a 3, Splatfesty, Salmon Run, Octo Expansion i roguelite experiment Side Order. Nakonec se dostáváme ke Splatoon Raiders a ptáme se, zda nový spin-off dál rozvíjí původní DNA série, nebo ukazuje širší proměnu toho, jak dnes Nintendo navrhuje své hry.",
+    "tags": [
+      "Splatoon",
+      "Nintendo",
+      "Splatoon Raiders",
+      "Wii U",
+      "Nintendo Switch",
+      "Herní design",
+      "Multiplayer"
+    ],
+    "artImage": "/social/art/ep04-splatoon.jpg",
+    "artFocalPoint": { "x": 0.32, "y": 0.35 },
+    "coverImage": {
+      "dark": {
+        "url": "https://cdn.play-decoder.com/podcast/covers/ep04.jpg"
+      },
+      "light": {
+        "url": "https://cdn.play-decoder.com/podcast/covers/ep04-light.jpg",
+        "useForRss": true
+      }
+    },
+    "chapters": [
+      {
+        "t": 30,
+        "label": "Úvod a co nás zaujalo"
+      },
+      {
+        "t": 135,
+        "label": "The Big Catch: Tacklebox a expresivní pohyb"
+      },
+      {
+        "t": 415,
+        "label": "Grok 4.5, AI nástroje a limity kreativity"
+      },
+      {
+        "t": 838,
+        "label": "Hlavní téma: Splatoon a cesta od tofu prototypu"
+      },
+      {
+        "t": 1596,
+        "label": "Splatoon 1: kampaň, Wii U a technické výzvy"
+      },
+      {
+        "t": 2916,
+        "label": "Splatoon 2: Switch, Splatfesty, Salmon Run a Octo Expansion"
+      },
+      {
+        "t": 4246,
+        "label": "Splatoon 3: chaos, komunita a nové herní prvky"
+      },
+      {
+        "t": 5412,
+        "label": "Side Order a roguelite experiment"
+      },
+      {
+        "t": 5758,
+        "label": "Splatoon Raiders, proměna Nintenda a budoucnost série"
+      },
+      {
+        "t": 6983,
+        "label": "Unreal 6, co herním enginům chybí a závěr"
+      }
+    ],
+    "links": {
+      "spotify": "",
+      "applePodcasts": "",
+      "youtube": "https://youtu.be/OaUsCYSP2Do",
+      "mp3": "https://cdn.play-decoder.com/podcast/episodes/ep04.mp3",
+      "transcript": "https://cdn.play-decoder.com/podcast/transcripts/ep04.transcript.json"
+    }
+  },
+  {
     "id": "SP01",
     "format": "spotlight",
     "slug": "jarek-kolar-tri-dekady-ceskeho-game-devu",

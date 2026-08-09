@@ -87,12 +87,17 @@ def transcribe_mlx(
     print(f"Loading MLX model {mlx_model!r} on Apple GPU...", flush=True)
     print(f"Transcribing {audio_path} (language={language})...", flush=True)
 
+    # condition_on_previous_text=True often loops on the Dekodér jingle
+    # ("Dekodér" × N) and drops the real spoken intro. initial_prompt steers
+    # the first window toward the shared tagline without forcing later text.
     result = mlx_whisper.transcribe(
         str(audio_path),
         path_or_hf_repo=mlx_model,
         language=language,
         word_timestamps=True,
         verbose=False,
+        condition_on_previous_text=False,
+        initial_prompt="Dekodér. Hry, technologie, zákulisí.",
     )
 
     segments_out: list[dict[str, object]] = []
@@ -159,6 +164,8 @@ def transcribe_faster_whisper(
         language=language,
         word_timestamps=True,
         vad_filter=True,
+        condition_on_previous_text=False,
+        initial_prompt="Dekodér. Hry, technologie, zákulisí.",
     )
 
     segments_out: list[dict[str, object]] = []

@@ -6,7 +6,9 @@
     "notFoundTitle": "404 — Page not found | {brand}",
     "notFoundDescription": "This page could not be found. Return to {brand} — Games, Tech, Context.",
     "episodesArchiveTitle": "Episodes — {brand}",
-    "episodesArchiveDescription": "Browse every {brand} episode — filter by topic, search the archive, and play in full."
+    "episodesArchiveDescription": "Browse every {brand} episode — filter by topic, search the archive, and play in full.",
+    "attributionTitle": "Art attribution — {brand}",
+    "attributionDescription": "Third-party notices for source key art and promotional imagery used by {brand}."
   },
   "common": {
     "switchToLanguage": "Switch to {language}",
@@ -169,7 +171,27 @@
     "socialYoutube": "YouTube",
     "footerBrand": "{brandUpper} PODCAST",
     "footerTagline": "GAMES • TECH • CONTEXT",
-    "footerNavAria": "Footer quick links"
+    "footerNavAria": "Footer quick links",
+    "footerAttribution": "Attribution"
+  },
+  "attribution": {
+    "railLabel": "Attribution",
+    "titleLead": "Source art",
+    "titleAccent": "notices",
+    "intro": "This page covers third-party key art and promotional imagery used as input when generating {brand} social posts, podcast covers, and YouTube keyart. Those files are not original works of {brand} / Play Decoder.",
+    "sectionsAria": "Attribution notices",
+    "ownershipLabel": "Third-party ownership",
+    "ownershipBody": "Game titles, logos, characters, artwork, screenshots, and other visual assets depicted in these files are the property of their respective owners — including publishers, developers, and licensors.",
+    "ownershipExamplesLead": "Examples currently in use include assets related to:",
+    "ownershipExamples": "Marathon (Bungie) · Overwatch (Blizzard Entertainment) · Arkane Studios titles such as Dishonored, Prey, Deathloop, and Redfall (Bethesda / ZeniMax / Microsoft) · Marvel's Blade (Marvel) · Splatoon (Nintendo)",
+    "ownershipFootnote": "All trademarks, service marks, trade names, and copyrighted material remain the property of their owners. Listing a title here does not imply a complete or up-to-date inventory; additional files may be added over time.",
+    "affiliationLabel": "No affiliation or endorsement",
+    "affiliationBody": "{brand} / Play Decoder is not affiliated with, sponsored by, or endorsed by any of the companies or rights holders whose games or brands appear in this art. Use of these assets is for identifying and discussing those games in independent podcast and editorial content only.",
+    "brandingLabel": "Our branding",
+    "brandingBody": "Only {brand}’s own layout, typography, logos, and framing applied during generation are owned or controlled by us. The underlying third-party key art remains subject to the rights described above.",
+    "questionsLabel": "Questions",
+    "questionsBody": "If you are a rights holder and believe material is used in a way that should be changed or removed, contact us.",
+    "questionsCta": "Write to {email}"
   },
   "listen": {
     "breadcrumbEpisodes": "Episodes",

@@ -186,6 +186,41 @@ function fitDescriptionLines(description, m, descStartY, descCharsPerLine) {
   return capLineCount(wrapLines(description, descCharsPerLine), lineCap);
 }
 
+/** Minimum Y the badge may occupy without colliding with art / leaving the safe zone. */
+function contentTopLimit(m) {
+  if (m.artMode === "top") return m.textTop;
+  if (m.artMode === "backdrop") return m.vignetteTop ?? m.pad;
+  return m.textTop ?? m.pad;
+}
+
+/**
+ * Resolve description lines + positions together.
+ * Important: never seed layout with a 1-line desc block — that permanently
+ * underestimates available height and truncates mid-sentence.
+ */
+function layoutWithDescription({ description, m, titleBlockH, descCharsPerLine }) {
+  const wrapped = wrapLines(description, descCharsPerLine);
+  const maxLines = m.maxDescLines ?? wrapped.length;
+  let lineCount = Math.min(wrapped.length, Math.max(1, maxLines));
+
+  while (lineCount >= 1) {
+    const descLines = wrapped.slice(0, lineCount);
+    const descBlockH = descLines.length * m.descLineHeight;
+    const positions = layoutTextPositions(m, titleBlockH, descBlockH);
+    if (positions.badgeY >= contentTopLimit(m) - 0.5) {
+      return { descLines, descBlockH, ...positions };
+    }
+    if (lineCount === 1) {
+      return { descLines, descBlockH, ...positions };
+    }
+    lineCount -= 1;
+  }
+
+  const descLines = wrapped.slice(0, 1);
+  const descBlockH = descLines.length * m.descLineHeight;
+  return { descLines, descBlockH, ...layoutTextPositions(m, titleBlockH, descBlockH) };
+}
+
 function fontFaceStyles(fonts) {
   return `
     @font-face {
@@ -283,20 +318,14 @@ function computeContentLayout({ episodeId, title, description, m, logoWidth, log
     descBlockH = descLines.length * m.descLineHeight;
     ({ badgeY, titleY, descStartY, accentTop } = layoutTextPositions(m, titleBlockH, descBlockH));
   } else {
-    ({ badgeY, titleY, descStartY, accentTop } = layoutTextPositions(
-      m,
-      titleBlockH,
-      m.descLineHeight,
-    ));
-
-    descLines = fitDescriptionLines(description, m, descStartY, descCharsPerLine);
-    descBlockH = descLines.length * m.descLineHeight;
-
-    if (descStartY + descBlockH + m.sectionGap > m.footerTop) {
-      ({ badgeY, titleY, descStartY, accentTop } = layoutTextPositions(m, titleBlockH, descBlockH));
-      descLines = fitDescriptionLines(description, m, descStartY, descCharsPerLine);
-      descBlockH = descLines.length * m.descLineHeight;
-    }
+    ({
+      badgeY,
+      titleY,
+      descStartY,
+      accentTop,
+      descLines,
+      descBlockH,
+    } = layoutWithDescription({ description, m, titleBlockH, descCharsPerLine }));
   }
 
   return {

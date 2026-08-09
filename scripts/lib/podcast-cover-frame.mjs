@@ -98,11 +98,11 @@ function motifWidth(scale) {
 function buildMetrics() {
   const size = PODCAST_COVER_SIZE;
   const scale = size / 1080;
-  // Larger boost: social posts use 1.25×, RSS covers need ~1.6× for readability
-  const titleBoost = 1.6;
+  // Larger boost than social posts for thumbnail legibility; keep room for 3-line titles
+  const titleBoost = 1.35;
 
-  // Slightly less art (0.60) to give the text panel more vertical room
-  const artRatio = 0.6;
+  // Slightly less art to give the text panel more vertical room
+  const artRatio = 0.58;
   const artH = Math.round(size * artRatio);
   const pad = Math.round(52 * scale);
 

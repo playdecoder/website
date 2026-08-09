@@ -12,6 +12,18 @@
   },
   "posts": [
     {
+      "episodeId": "EP04",
+      "shortDescription": "Splatoon 1–3, Side Order, Raiders a otázka, kam inkoustová série míří dál.",
+      "art": "public/social/art/ep04-splatoon.jpg",
+      "artFocalPoint": { "x": 0.32, "y": 0.35 },
+      "layouts": {
+        "ig-post": { "artFocalPoint": { "x": 0.32, "y": 0.28 } },
+        "ig-story": { "artFocalPoint": { "x": 0.32, "y": 0.22 } },
+        "youtube-keyart": { "artFocalPoint": { "x": 0.35, "y": 0.38 } },
+        "podcast-cover": { "artFocalPoint": { "x": 0.32, "y": 0.28 } }
+      }
+    },
+    {
       "episodeId": "SP01",
       "format": "spotlight",
       "title": "Jarek Kolář",

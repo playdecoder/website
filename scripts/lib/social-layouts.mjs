@@ -7,7 +7,8 @@ export const LAYOUTS = {
     width: 1080,
     height: 1080,
     artMode: "top",
-    artRatio: 0.63,
+    // Keep room for 2-line title + 2–3 line short description above the footer.
+    artRatio: 0.56,
   },
   "ig-story": {
     id: "ig-story",
@@ -78,7 +79,7 @@ export function buildLayoutMetrics(layout) {
     footerGap: Math.round(12 * scale),
     sectionGap: Math.round(18 * scale),
     maxTitleLines: height > 1500 ? 4 : 3,
-    maxDescLines: 2,
+    maxDescLines: 3,
   };
 
   metrics.motifScale = 1.15 * scale;
@@ -132,9 +133,14 @@ export function buildLayoutMetrics(layout) {
     metrics.textX = pad;
     metrics.titleSize = Math.round(40 * scale);
     metrics.titleLineHeight = Math.round(48 * scale);
-    metrics.maxTitleChars = 24;
+    metrics.maxTitleChars = 28;
     metrics.maxDescChars = 44;
-    metrics.maxTitleLines = 2;
+    metrics.maxTitleLines = 3;
+    // Slightly smaller type so 2-line titles + full short descriptions fit the lower third.
+    metrics.titleSize = Math.round(36 * scale);
+    metrics.titleLineHeight = Math.round(44 * scale);
+    metrics.descSize = Math.round(22 * scale);
+    metrics.descLineHeight = Math.round(30 * scale);
     metrics.textMaxWidthRatio = 0.62;
     metrics.vignetteTop = Math.round(height * 0.22);
     metrics.vignetteBottom = Math.round(height * 0.66);
