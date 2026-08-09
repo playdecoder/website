@@ -6,7 +6,6 @@ const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
 const nextConfig = {
   reactStrictMode: true,
-  output: "standalone",
   reactCompiler: true,
   poweredByHeader: false,
   allowedDevOrigins: ["localhost", "elixeum.local"],
