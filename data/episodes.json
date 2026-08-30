@@ -4,6 +4,7 @@
     "format": "spotlight",
     "slug": "lukas-macura-proc-cinemax-nikdy-neprestal-experimentovat",
     "lang": "cs",
+    "explicit": true,
     "title": "Lukáš Macura: Proč Cinemax nikdy nepřestal experimentovat",
     "date": "2026-08-30",
     "duration": 10442,
@@ -72,9 +73,9 @@
       }
     ],
     "links": {
-      "spotify": "",
-      "applePodcasts": "",
-      "youtube": "https://youtu.be/7TD_2RwG86A",
+      "spotify": "https://open.spotify.com/episode/11XJDrxQpIqAMX8XIZcwmk",
+      "applePodcasts": "https://podcasts.apple.com/us/podcast/luk%C3%A1%C5%A1-macura-pro%C4%8D-cinemax-nikdy-nep%C5%99estal-experimentovat/id1895560433?i=1000786875251",
+      "youtube": "https://youtu.be/kKqL76xEYyU",
       "mp3": "https://cdn.play-decoder.com/podcast/episodes/sp02.mp3",
       "transcript": "https://cdn.play-decoder.com/podcast/transcripts/sp02.transcript.json"
     }

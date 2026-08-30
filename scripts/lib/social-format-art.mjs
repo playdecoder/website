@@ -1,4 +1,5 @@
 import { access } from "node:fs/promises";
+import { extname } from "node:path";
 
 import sharp from "sharp";
 
@@ -123,6 +124,80 @@ async function placeholderColumnArt(w, h, brand, hostName, scale, formatAccent) 
     .toBuffer();
 }
 
+function portraitSiblingPaths(artPath) {
+  const ext = extname(artPath);
+  const stem = artPath.slice(0, -ext.length).replace(/-transparent$/, "");
+  return {
+    transparent: `${stem}-transparent.png`,
+    background: `${stem}-bg.jpg`,
+  };
+}
+
+async function opaqueContentBox(imagePath) {
+  const { data, info } = await sharp(imagePath)
+    .ensureAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+  const { width: w, height: h, channels: ch } = info;
+  let minX = w;
+  let minY = h;
+  let maxX = 0;
+  let maxY = 0;
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      if (data[(y * w + x) * ch + 3] <= 32) continue;
+      if (x < minX) minX = x;
+      if (y < minY) minY = y;
+      if (x > maxX) maxX = x;
+      if (y > maxY) maxY = y;
+    }
+  }
+  if (maxX < minX || maxY < minY) return null;
+  return { minX, minY, maxX, maxY, w, h, bw: maxX - minX + 1, bh: maxY - minY + 1 };
+}
+
+async function coverBottomAlign(imageBuf, w, h) {
+  return sharp(imageBuf)
+    .resize(w, h, { fit: "cover", position: "bottom" })
+    .png()
+    .toBuffer();
+}
+
+async function composeCutoutColumnArt({ transparentPath, backgroundPath, box, w, h, brand }) {
+  const sidePad = 8;
+  const topPad = 8;
+  const bottomOverscan = 3;
+  const left = Math.max(0, box.minX - sidePad);
+  const top = Math.max(0, box.minY - topPad);
+  const right = Math.min(box.w, box.maxX + 1 + sidePad);
+  const bottom = Math.min(box.h, Math.max(top + 1, box.maxY + 1 - bottomOverscan));
+  const extractW = right - left;
+  const extractH = bottom - top;
+  const cutout = await sharp(transparentPath)
+    .extract({ left, top, width: extractW, height: extractH })
+    .png()
+    .toBuffer();
+  const person = await coverBottomAlign(cutout, w, h);
+
+  const background = backgroundPath
+    ? await sharp(await coverArt(backgroundPath, w, h, { x: 0.62, y: 0.42 }))
+        .blur(10)
+        .modulate({ brightness: 0.62, saturation: 0.85 })
+        .png()
+        .toBuffer()
+    : await sharp({
+        create: { width: w, height: h, channels: 4, background: brand.bg },
+      })
+        .png()
+        .toBuffer();
+
+  const composed = await sharp(background)
+    .composite([{ input: person, top: 0, left: 0 }])
+    .png()
+    .toBuffer();
+  return applyEdgeFade(composed, w, h, { right: 0.2 });
+}
+
 async function composeFormatColumnArt({
   artPath,
   w,
@@ -135,6 +210,21 @@ async function composeFormatColumnArt({
 }) {
   if (!artPath || !(await fileExists(artPath))) {
     return placeholderColumnArt(w, h, brand, hostName, scale, formatAccent);
+  }
+
+  const siblings = portraitSiblingPaths(artPath);
+  const transparentPath = (await fileExists(siblings.transparent))
+    ? siblings.transparent
+    : (await sharp(artPath).metadata()).hasAlpha
+      ? artPath
+      : "";
+
+  if (transparentPath) {
+    const box = await opaqueContentBox(transparentPath);
+    if (box && (box.bh / box.h < 0.85 || box.maxY / box.h < 0.9)) {
+      const backgroundPath = (await fileExists(siblings.background)) ? siblings.background : "";
+      return composeCutoutColumnArt({ transparentPath, backgroundPath, box, w, h, brand });
+    }
   }
 
   let cover = await coverArt(artPath, w, h, focal);
