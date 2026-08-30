@@ -3,24 +3,109 @@
     "artFocalPoint": "centre"
   },
   "layouts": {
-    "ig-post": { "artFocalPoint": "top" },
-    "ig-story": { "artFocalPoint": "top" },
-    "facebook-post": { "artFocalPoint": "centre" },
-    "linkedin-post": { "artFocalPoint": "centre" },
-    "youtube-keyart": { "artFocalPoint": { "x": 0.5, "y": 0.38 } },
-    "podcast-cover": { "artFocalPoint": "top" }
+    "ig-post": {
+      "artFocalPoint": "top"
+    },
+    "ig-story": {
+      "artFocalPoint": "top"
+    },
+    "facebook-post": {
+      "artFocalPoint": "centre"
+    },
+    "linkedin-post": {
+      "artFocalPoint": "centre"
+    },
+    "youtube-keyart": {
+      "artFocalPoint": {
+        "x": 0.5,
+        "y": 0.38
+      }
+    },
+    "podcast-cover": {
+      "artFocalPoint": "top"
+    }
   },
   "posts": [
+    {
+      "episodeId": "SP02",
+      "format": "spotlight",
+      "title": "Lukáš Macura",
+      "shortDescription": "Cinemax za svou historii vyzkoušel skoro všechno - vlastní hry i publishing, krabicovou distribuci, Nintendo handheldy, mobily, netradiční technologie i hudební software. S Lukášem Macurou o zvědavosti, která studio pořád žene k novým nápadům, a o tom, proč je dnes možná těžší hru prodat než ji vytvořit.",
+      "art": "public/social/art/sp02-lukas-macura.jpg",
+      "artFocalPoint": {
+        "x": 0.5,
+        "y": 0.28
+      },
+      "layouts": {
+        "linkedin-post": {
+          "artFocalPoint": {
+            "x": 0.5,
+            "y": 0.22
+          }
+        },
+        "facebook-post": {
+          "artFocalPoint": {
+            "x": 0.5,
+            "y": 0.22
+          }
+        },
+        "youtube-keyart": {
+          "artFocalPoint": {
+            "x": 0.5,
+            "y": 0.26
+          }
+        },
+        "ig-post": {
+          "artFocalPoint": {
+            "x": 0.5,
+            "y": 0.24
+          }
+        },
+        "ig-story": {
+          "artFocalPoint": {
+            "x": 0.5,
+            "y": 0.2
+          }
+        },
+        "podcast-cover": {
+          "art": "public/social/art/sp02-keyart.jpg",
+          "artFocalPoint": "centre"
+        }
+      }
+    },
     {
       "episodeId": "EP04",
       "shortDescription": "Splatoon 1–3, Side Order, Raiders a otázka, kam inkoustová série míří dál.",
       "art": "public/social/art/ep04-splatoon.jpg",
-      "artFocalPoint": { "x": 0.32, "y": 0.35 },
+      "artFocalPoint": {
+        "x": 0.32,
+        "y": 0.35
+      },
       "layouts": {
-        "ig-post": { "artFocalPoint": { "x": 0.32, "y": 0.28 } },
-        "ig-story": { "artFocalPoint": { "x": 0.32, "y": 0.22 } },
-        "youtube-keyart": { "artFocalPoint": { "x": 0.35, "y": 0.38 } },
-        "podcast-cover": { "artFocalPoint": { "x": 0.32, "y": 0.28 } }
+        "ig-post": {
+          "artFocalPoint": {
+            "x": 0.32,
+            "y": 0.28
+          }
+        },
+        "ig-story": {
+          "artFocalPoint": {
+            "x": 0.32,
+            "y": 0.22
+          }
+        },
+        "youtube-keyart": {
+          "artFocalPoint": {
+            "x": 0.35,
+            "y": 0.38
+          }
+        },
+        "podcast-cover": {
+          "artFocalPoint": {
+            "x": 0.32,
+            "y": 0.28
+          }
+        }
       }
     },
     {
@@ -29,23 +114,59 @@
       "title": "Jarek Kolář",
       "shortDescription": "Od Oslího ostrova a Pterodonu přes Vietcong, Mafii a Bohemia Interactive až po INGAME STUDIOS a Crime Boss - tři dekády českého herního vývoje s Jarkem Kolářem, plné velkých her, těžkých rozhodnutí, úspěchů i slepých uliček.",
       "art": "public/social/art/sp01-jarek-kolar.jpg",
-      "artFocalPoint": { "x": 0.5, "y": 0.28 },
+      "artFocalPoint": {
+        "x": 0.5,
+        "y": 0.28
+      },
       "layouts": {
-        "linkedin-post": { "artFocalPoint": { "x": 0.5, "y": 0.22 } },
-        "facebook-post": { "artFocalPoint": { "x": 0.5, "y": 0.22 } },
-        "youtube-keyart": { "artFocalPoint": { "x": 0.5, "y": 0.26 } },
-        "ig-post": { "artFocalPoint": { "x": 0.5, "y": 0.24 } },
-        "ig-story": { "artFocalPoint": { "x": 0.5, "y": 0.2 } },
-        "podcast-cover": { "art": "public/social/art/sp01-keyart.jpg", "artFocalPoint": "centre" }
+        "linkedin-post": {
+          "artFocalPoint": {
+            "x": 0.5,
+            "y": 0.22
+          }
+        },
+        "facebook-post": {
+          "artFocalPoint": {
+            "x": 0.5,
+            "y": 0.22
+          }
+        },
+        "youtube-keyart": {
+          "artFocalPoint": {
+            "x": 0.5,
+            "y": 0.26
+          }
+        },
+        "ig-post": {
+          "artFocalPoint": {
+            "x": 0.5,
+            "y": 0.24
+          }
+        },
+        "ig-story": {
+          "artFocalPoint": {
+            "x": 0.5,
+            "y": 0.2
+          }
+        },
+        "podcast-cover": {
+          "art": "public/social/art/sp01-keyart.jpg",
+          "artFocalPoint": "centre"
+        }
       }
     },
     {
       "episodeId": "EP03",
       "shortDescription": "Dishonored, Prey, Deathloop, Redfall a otázka, kam Arkane míří dál.",
       "art": "public/social/art/ep03-arkane.jpg",
-      "artFocalPoint": { "x": 0, "y": 0.5 },
+      "artFocalPoint": {
+        "x": 0,
+        "y": 0.5
+      },
       "layouts": {
-        "podcast-cover": { "artFocalPoint": "top" }
+        "podcast-cover": {
+          "artFocalPoint": "top"
+        }
       }
     },
     {

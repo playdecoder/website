@@ -193,6 +193,11 @@ function contentTopLimit(m) {
   return m.textTop ?? m.pad;
 }
 
+function titleClearsBadge(m, positions) {
+  const minTitleY = positions.badgeY + m.badgeH + Math.round(20 * (m.scale ?? 1));
+  return positions.titleY >= minTitleY - 0.5;
+}
+
 /**
  * Resolve description lines + positions together.
  * Important: never seed layout with a 1-line desc block — that permanently
@@ -207,7 +212,7 @@ function layoutWithDescription({ description, m, titleBlockH, descCharsPerLine }
     const descLines = wrapped.slice(0, lineCount);
     const descBlockH = descLines.length * m.descLineHeight;
     const positions = layoutTextPositions(m, titleBlockH, descBlockH);
-    if (positions.badgeY >= contentTopLimit(m) - 0.5) {
+    if (positions.badgeY >= contentTopLimit(m) - 0.5 && titleClearsBadge(m, positions)) {
       return { descLines, descBlockH, ...positions };
     }
     if (lineCount === 1) {
