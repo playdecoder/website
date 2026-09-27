@@ -255,6 +255,7 @@ FFMPEG_ARGS=(
   -framerate 1
   -i "$KEYART"
   -i "$MP3_ABS"
+  -t "$DURATION"
   -vf "$VF"
   -c:v libx264
   -preset medium
