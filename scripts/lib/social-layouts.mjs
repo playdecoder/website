@@ -118,7 +118,6 @@ export function buildLayoutMetrics(layout) {
     metrics.textTop = metrics.artHeight + Math.round(pad * 0.35);
     metrics.textX = pad;
     metrics.maxTitleChars = height > 1500 ? 32 : 28;
-    metrics.maxDescChars = height > 1500 ? 48 : 42;
     metrics.accentLine = {
       axis: "h",
       top: metrics.artHeight + Math.round(4 * scale),
@@ -134,13 +133,15 @@ export function buildLayoutMetrics(layout) {
     metrics.titleSize = Math.round(40 * scale);
     metrics.titleLineHeight = Math.round(48 * scale);
     metrics.maxTitleChars = 28;
-    metrics.maxDescChars = 44;
     metrics.maxTitleLines = 3;
     // Slightly smaller type so 2-line titles + full short descriptions fit the lower third.
     metrics.titleSize = Math.round(36 * scale);
     metrics.titleLineHeight = Math.round(44 * scale);
     metrics.descSize = Math.round(22 * scale);
     metrics.descLineHeight = Math.round(30 * scale);
+    // Syne 800 averages ~0.46em here. 0.55 wraps a word early and leaves a
+    // visible gap before the text box ends.
+    metrics.descCharsScale = 0.48;
     metrics.textMaxWidthRatio = 0.62;
     metrics.vignetteTop = Math.round(height * 0.22);
     metrics.vignetteBottom = Math.round(height * 0.66);
@@ -158,7 +159,6 @@ export function buildLayoutMetrics(layout) {
     metrics.textWidth = width - metrics.artWidth - pad * 2;
     metrics.textTop = pad + Math.round(12 * scale);
     metrics.maxTitleChars = 22;
-    metrics.maxDescChars = 34;
     metrics.maxTitleLines = 3;
     metrics.seamW = Math.round(72 * scale);
     metrics.accentLine = {

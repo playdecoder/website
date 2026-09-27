@@ -114,9 +114,10 @@ function wrapLines(text, maxChars) {
   return lines;
 }
 
-function estimateCharsPerLine(textWidth, fontSize, scale = 0.68) {
+function estimateCharsPerLine(textWidth, fontSize, scale = 0.55) {
   if (textWidth <= 0) return 24;
-  // Syne 800 runs wide; stay conservative so lines don't clip in SVG.
+  // Syne 800 is about 0.47–0.52em per character. 0.55 keeps a margin so lines
+  // fill the text box without running into the padding.
   return Math.max(12, Math.floor(textWidth / (fontSize * scale)));
 }
 
@@ -128,6 +129,14 @@ function resolveTextWidth(m, textRightLimit) {
 function capLineCount(lines, maxLines) {
   if (maxLines == null) return lines;
   return lines.slice(0, maxLines);
+}
+
+function capDescriptionLines(lines, maxLines) {
+  if (maxLines == null || lines.length <= maxLines) return lines;
+  const kept = lines.slice(0, maxLines);
+  const last = kept[kept.length - 1]?.replace(/[\s.,;:–—-]+$/u, "") ?? "";
+  kept[kept.length - 1] = last ? `${last}…` : "…";
+  return kept;
 }
 
 function layoutTextPositions(m, titleBlockH, descBlockH) {
@@ -183,7 +192,7 @@ function fitDescriptionLines(description, m, descStartY, descCharsPerLine) {
   const availableDescH = Math.max(0, m.footerTop - descStartY - m.sectionGap);
   const maxFitLines = Math.max(1, Math.floor(availableDescH / m.descLineHeight));
   const lineCap = m.maxDescLines != null ? Math.min(m.maxDescLines, maxFitLines) : maxFitLines;
-  return capLineCount(wrapLines(description, descCharsPerLine), lineCap);
+  return capDescriptionLines(wrapLines(description, descCharsPerLine), lineCap);
 }
 
 /** Minimum Y the badge may occupy without colliding with art / leaving the safe zone. */
@@ -194,7 +203,11 @@ function contentTopLimit(m) {
 }
 
 function titleClearsBadge(m, positions) {
-  const minTitleY = positions.badgeY + m.badgeH + Math.round(20 * (m.scale ?? 1));
+  // Match the gap layoutTextPositions actually inserts. A larger minimum
+  // (20×scale vs sectionGap at 18×scale) can never pass on backdrop, so the
+  // fitter drops every extra description line and adds an ellipsis.
+  const gap = m.sectionGap ?? Math.round(18 * (m.scale ?? 1));
+  const minTitleY = positions.badgeY + m.badgeH + gap;
   return positions.titleY >= minTitleY - 0.5;
 }
 
@@ -209,7 +222,7 @@ function layoutWithDescription({ description, m, titleBlockH, descCharsPerLine }
   let lineCount = Math.min(wrapped.length, Math.max(1, maxLines));
 
   while (lineCount >= 1) {
-    const descLines = wrapped.slice(0, lineCount);
+    const descLines = capDescriptionLines(wrapped, lineCount);
     const descBlockH = descLines.length * m.descLineHeight;
     const positions = layoutTextPositions(m, titleBlockH, descBlockH);
     if (positions.badgeY >= contentTopLimit(m) - 0.5 && titleClearsBadge(m, positions)) {
@@ -221,7 +234,7 @@ function layoutWithDescription({ description, m, titleBlockH, descCharsPerLine }
     lineCount -= 1;
   }
 
-  const descLines = wrapped.slice(0, 1);
+  const descLines = capDescriptionLines(wrapped, 1);
   const descBlockH = descLines.length * m.descLineHeight;
   return { descLines, descBlockH, ...layoutTextPositions(m, titleBlockH, descBlockH) };
 }
@@ -301,7 +314,7 @@ function computeContentLayout({ episodeId, title, description, m, logoWidth, log
   const titleCharsPerLine =
     m.maxTitleChars ?? estimateCharsPerLine(textWidth, m.titleSize, m.titleCharsScale ?? 0.68);
   const descCharsPerLine =
-    m.maxDescChars ?? estimateCharsPerLine(textWidth, m.descSize, m.descCharsScale ?? 0.76);
+    m.maxDescChars ?? estimateCharsPerLine(textWidth, m.descSize, m.descCharsScale ?? 0.55);
 
   const titleLines = capLineCount(wrapLines(title, titleCharsPerLine), m.maxTitleLines);
   const titleBlockH = titleLines.length * m.titleLineHeight;
@@ -319,7 +332,7 @@ function computeContentLayout({ episodeId, title, description, m, logoWidth, log
     const fixedBlockH = m.badgeH + gapAfterBadge + titleBlockH + gapAfterTitle;
     const availableDescH = Math.max(0, m.footerTop - m.textTop - m.sectionGap - fixedBlockH);
     const maxFitLines = Math.max(1, Math.floor(availableDescH / m.descLineHeight));
-    descLines = capLineCount(wrapLines(description, descCharsPerLine), maxFitLines);
+    descLines = capDescriptionLines(wrapLines(description, descCharsPerLine), maxFitLines);
     descBlockH = descLines.length * m.descLineHeight;
     ({ badgeY, titleY, descStartY, accentTop } = layoutTextPositions(m, titleBlockH, descBlockH));
   } else {

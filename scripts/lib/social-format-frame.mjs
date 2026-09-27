@@ -26,6 +26,7 @@ function escapeXml(text) {
 }
 
 function applyFormatLeftMetrics(m, artWidth) {
+  const keepCharCaps = m.artMode === "left";
   m.formatArtStyle = "column";
   m.artMode = "left";
   m.artWidth = artWidth;
@@ -41,6 +42,16 @@ function applyFormatLeftMetrics(m, artWidth) {
     barH: Math.round(96 * m.scale),
     barY: m.pad,
   };
+  // ig-post/youtube start as top/backdrop, so their char caps are for a wider
+  // text box and clip in the column. Native left layouts (facebook/linkedin)
+  // already sized those caps for this width.
+  if (!keepCharCaps) {
+    delete m.maxDescChars;
+    delete m.maxTitleChars;
+  }
+  // Syne 800 is ~0.47–0.52em per Czech character; 0.55 leaves a clip-safe margin
+  // without leaving a wide empty column (0.78–0.8 was wrapping ~22 chars in 471px).
+  m.descCharsScale = m.descCharsScale ?? 0.55;
 }
 
 function buildFormatLayoutMetrics(layout) {
@@ -54,8 +65,8 @@ function buildFormatLayoutMetrics(layout) {
     m.titleLineHeight = Math.round(48 * m.scale);
     m.descSize = Math.round(26 * m.scale);
     m.descLineHeight = Math.round(36 * m.scale);
-    m.titleCharsScale = 0.74;
-    m.descCharsScale = 0.8;
+    m.titleCharsScale = 0.62;
+    m.descCharsScale = 0.55;
     m.maxTitleLines = 5;
     m.textVerticalAlign = "center";
     return m;

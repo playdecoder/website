@@ -1,5 +1,100 @@
 [
   {
+    "id": "EP05",
+    "slug": "silent-hill-townfall-co-zustane-kdyz-zmenite-skoro-vsechno",
+    "lang": "cs",
+    "explicit": true,
+    "title": "Silent Hill Townfall: Co zůstane, když změníte skoro všechno?",
+    "date": "2026-09-27",
+    "duration": 6626,
+    "description": "Silent Hill už dávno není jen mlha, rádio a opuštěné americké město. Townfall přesouvá sérii na skotský ostrov, mění perspektivu na first person a místo klasického rádia dává hráči do ruky podivnou CRT televizi. Otázka ale zůstává stejná - co vlastně dělá Silent Hill Silent Hillem? Vracíme se ke kořenům série, prvním čtyřem dílům Team Silent, české stopě v podobě Vatra Games i fenoménu P.T. Hlavně se ale pouštíme do Townfallu: jeho prostředí, puzzlů, stealthu, combatu, CRTV, práce se zvukem a psychological horrorem. A narážíme přitom na větší spor - jestli lze identitu hry přenést na úplně jiný tým a kulturu, nebo zda v určité chvíli zůstává už jen známé jméno na něčem novém.",
+    "tags": [
+      "Silent Hill",
+      "Silent Hill Townfall",
+      "Konami",
+      "Screen Burn",
+      "Team Silent",
+      "Psychological horror",
+      "Herní design",
+      "Survival horror"
+    ],
+    "artImage": "/social/art/ep05-silent-hill-townfall.jpg",
+    "artFocalPoint": {
+      "x": 0.75,
+      "y": 0.35
+    },
+    "coverImage": {
+      "dark": {
+        "url": "https://cdn.play-decoder.com/podcast/covers/ep05.jpg"
+      },
+      "light": {
+        "url": "https://cdn.play-decoder.com/podcast/covers/ep05-light.jpg",
+        "useForRss": true
+      }
+    },
+    "chapters": [
+      {
+        "t": 30,
+        "label": "Úvod a co nás zaujalo"
+      },
+      {
+        "t": 615,
+        "label": "Hororové hry: atmosféra, psychologie a co nás děsí"
+      },
+      {
+        "t": 1069,
+        "label": "Hlavní téma: Silent Hill a kořeny série"
+      },
+      {
+        "t": 1993,
+        "label": "Po Team Silent: Origins, Homecoming, Downpour, remake a Silent Hill f"
+      },
+      {
+        "t": 2377,
+        "label": "Co vlastně dělá Silent Hill Silent Hillem?"
+      },
+      {
+        "t": 2925,
+        "label": "P.T., Kojima a zrušený Silent Hills"
+      },
+      {
+        "t": 3197,
+        "label": "Silent Hill Townfall: Skotsko, rok 1996 a nový směr"
+      },
+      {
+        "t": 3922,
+        "label": "First person, puzzle a práce s perspektivou"
+      },
+      {
+        "t": 4284,
+        "label": "CRTV: radar, který mění strach a stealth"
+      },
+      {
+        "t": 4685,
+        "label": "Combat, gyro, DualSense a problémy stealthu"
+      },
+      {
+        "t": 5123,
+        "label": "Příběh, spoilery, monstra a konce"
+      },
+      {
+        "t": 5781,
+        "label": "Unreal Engine 5, vizuál a Otherworld"
+      },
+      {
+        "t": 5990,
+        "label": "Je Townfall ještě Silent Hill? Budoucnost série a závěr"
+      }
+    ],
+    "links": {
+      "spotify": "",
+      "applePodcasts": "",
+      "youtube": "https://youtu.be/kBWP4YUL53U",
+      "mp3": "https://cdn.play-decoder.com/podcast/episodes/ep05.mp3",
+      "transcript": "https://cdn.play-decoder.com/podcast/transcripts/ep05.transcript.json"
+    }
+  },
+  {
     "id": "SP02",
     "format": "spotlight",
     "slug": "lukas-macura-proc-cinemax-nikdy-neprestal-experimentovat",

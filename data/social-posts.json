@@ -27,6 +27,53 @@
   },
   "posts": [
     {
+      "episodeId": "EP05",
+      "shortDescription": "Silent Hill, P.T., Townfall a otázka, kde končí evoluce série a začíná už něco jiného.",
+      "art": "public/social/art/ep05-silent-hill-townfall.jpg",
+      "artFocalPoint": {
+        "x": 0.75,
+        "y": 0.35
+      },
+      "layouts": {
+        "ig-post": {
+          "artFocalPoint": {
+            "x": 0.75,
+            "y": 0.32
+          }
+        },
+        "ig-story": {
+          "artFocalPoint": {
+            "x": 0.84,
+            "y": 0.3
+          }
+        },
+        "facebook-post": {
+          "artFocalPoint": {
+            "x": 0.86,
+            "y": 0.35
+          }
+        },
+        "linkedin-post": {
+          "artFocalPoint": {
+            "x": 0.86,
+            "y": 0.35
+          }
+        },
+        "youtube-keyart": {
+          "artFocalPoint": {
+            "x": 0.72,
+            "y": 0.38
+          }
+        },
+        "podcast-cover": {
+          "artFocalPoint": {
+            "x": 0.75,
+            "y": 0.32
+          }
+        }
+      }
+    },
+    {
       "episodeId": "SP02",
       "format": "spotlight",
       "title": "Lukáš Macura",
