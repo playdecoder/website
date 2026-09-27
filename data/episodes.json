@@ -87,8 +87,8 @@
       }
     ],
     "links": {
-      "spotify": "",
-      "applePodcasts": "",
+      "spotify": "https://open.spotify.com/episode/2pVYpyUec9nEkK0Iy9V226",
+      "applePodcasts": "https://podcasts.apple.com/us/podcast/silent-hill-townfall-co-z%C5%AFstane-kdy%C5%BE-zm%C4%9Bn%C3%ADte-skoro-v%C5%A1echno/id1895560433?i=1000791902726",
       "youtube": "https://youtu.be/kBWP4YUL53U",
       "mp3": "https://cdn.play-decoder.com/podcast/episodes/ep05.mp3",
       "transcript": "https://cdn.play-decoder.com/podcast/transcripts/ep05.transcript.json"
