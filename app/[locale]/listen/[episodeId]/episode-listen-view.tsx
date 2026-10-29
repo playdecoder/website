@@ -23,6 +23,11 @@ import { absoluteFromPath, getPodcastCoverAbsoluteUrl, getPublicSiteUrl } from "
 import { EpisodeListenPlayerAndBody } from "../../components/episode/episode-listen-player-body";
 import { EpisodeNeighborNav } from "../../components/episode/episode-neighbor-nav";
 import { EpisodePlayerArtBackground } from "../../components/episode/episode-player-art-background";
+import {
+  EpisodeReviewAssets,
+  REVIEW_ASSETS_SECTION_ID,
+  ReviewPill,
+} from "../../components/episode/episode-review-assets";
 import { EpisodeSpokenLangNote } from "../../components/episode/episode-spoken-lang-note";
 import { Navbar } from "../../components/layout/navbar";
 import { DecoderPageFrame } from "../../components/layout/page-frame";
@@ -58,13 +63,9 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
   const episodeCoverUrl = resolveEpisodeCoverImageUrl(episode);
   const seriesCoverUrl = getPodcastCoverAbsoluteUrl();
   const seriesUrl = `${getPublicSiteUrl()}/`;
-  const episodeJsonLd = buildEpisodeListenJsonLd(
-    episode,
-    canonicalUrl,
-    episodeCoverUrl,
-    seriesCoverUrl,
-    seriesUrl,
-  );
+  const episodeJsonLd = episode.unreleased
+    ? null
+    : buildEpisodeListenJsonLd(episode, canonicalUrl, episodeCoverUrl, seriesCoverUrl, seriesUrl);
   const seed = episodeLayoutSeed(episode.id);
   const { older, newer } = getEpisodeNeighbors(episode);
   const isLatest = getLatestEpisode(episodes)?.id === episode.id;
@@ -88,9 +89,11 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
 
   return (
     <div className="page-shell">
-      <script type="application/ld+json" suppressHydrationWarning>
-        {JSON.stringify(episodeJsonLd)}
-      </script>
+      {episodeJsonLd ? (
+        <script type="application/ld+json" suppressHydrationWarning>
+          {JSON.stringify(episodeJsonLd)}
+        </script>
+      ) : null}
       <Navbar locale={locale} />
 
       <DecoderPageFrame className="min-h-0" scanPeriodSec={16} scanOpacity={0.22}>
@@ -155,6 +158,25 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
                 </div>
               </div>
 
+              {episode.unreleased ? (
+                <div
+                  role="note"
+                  className="review-surface unreleased-note flex flex-wrap items-center gap-x-3 gap-y-2 rounded-sm px-4 py-3 sm:px-5"
+                >
+                  <ReviewPill>{t("unreleasedLabel")}</ReviewPill>
+                  <p className="text-muted min-w-0 flex-1 basis-64 font-mono text-[11px] leading-relaxed tracking-wide sm:text-xs">
+                    {t("unreleasedBody")}{" "}
+                    <a
+                      href={`#${REVIEW_ASSETS_SECTION_ID}`}
+                      className="hover-underline text-review inline-flex items-center gap-1 whitespace-nowrap"
+                    >
+                      {t("reviewAssetsAnchor")}
+                      <span aria-hidden>↓</span>
+                    </a>
+                  </p>
+                </div>
+              ) : null}
+
               <h1
                 className="font-display text-primary leading-[1.08] font-bold tracking-tight text-balance sm:leading-[1.05]"
                 style={{
@@ -215,6 +237,10 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
                   </div>
                 }
               />
+
+              {episode.unreleased ? (
+                <EpisodeReviewAssets episode={episode} locale={locale} />
+              ) : null}
 
               <EpisodeNeighborNav
                 locale={hrefLocale}

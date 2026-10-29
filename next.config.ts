@@ -14,6 +14,7 @@ const nextConfig = {
   },
   images: {
     qualities: [25, 75, 80, 85, 88, 90, 92, 95, 100],
+    remotePatterns: [{ protocol: "https", hostname: "cdn.play-decoder.com" }],
   },
 } satisfies NextConfig;
 

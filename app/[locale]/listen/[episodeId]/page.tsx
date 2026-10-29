@@ -2,15 +2,14 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 
-import episodesData from "@/data/episodes.json";
 import { getPathname, redirect } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import {
   episodeListenPathSegment,
   episodeListenSlugPrefix,
   formatEpisodePublishedIso,
+  listenEpisodes,
   resolveListenEpisodeParam,
-  type Episode,
 } from "@/lib/episode/catalog";
 import { resolveEpisodeCoverForMeta } from "@/lib/episode/cover";
 import { plainEpisodeDescription } from "@/lib/episode/description";
@@ -31,8 +30,7 @@ interface Props {
 }
 
 export function generateStaticParams() {
-  const eps = episodesData as Episode[];
-  return eps.flatMap((ep) => {
+  return listenEpisodes.flatMap((ep) => {
     const canonical = episodeListenPathSegment(ep);
     const short = episodeListenSlugPrefix(ep);
     return routing.locales.flatMap((locale) => [
@@ -79,11 +77,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     authors: showHostsForMetadata(),
     creator: BRAND_PODCAST,
     publisher: BRAND_PODCAST,
-    robots: {
-      index: true,
-      follow: true,
-      googleBot: { index: true, follow: true },
-    },
+    robots: episode.unreleased
+      ? { index: false, follow: false, googleBot: { index: false, follow: false } }
+      : { index: true, follow: true, googleBot: { index: true, follow: true } },
     keywords: [...episode.tags, "podcast", BRAND_NAME],
     alternates: {
       canonical: canonicalUrl,

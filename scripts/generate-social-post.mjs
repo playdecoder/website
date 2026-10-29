@@ -14,6 +14,7 @@ import {
   findSocialPost,
   loadSocialPosts,
   resolveArtFocalPoint,
+  resolveArtZoom,
   resolveArtPath,
   SOCIAL_POSTS_FILE,
 } from "./lib/social-config.mjs";
@@ -62,6 +63,7 @@ Post config (${SOCIAL_POSTS_FILE}, per entry in posts[]):
   description         Alias for shortDescription
   art                 Hero image path (optional)
   artFocalPoint       centre | top | { x, y } (optional)
+  artZoom             0–1; scales a spotlight portrait down inside its column (optional)
   layouts             Per-layout overrides (optional)
 
 Layouts:
@@ -253,6 +255,7 @@ async function renderOne(resolved, layoutId, theme, outputPath, { file, post }) 
     description: resolved.description,
     artPath: resolveArtPath({ repoRoot, post, layoutId }) ?? resolved.artPath,
     artFocalPoint: resolveArtFocalPoint({ file, post, layoutId }),
+    artZoom: resolveArtZoom({ file, post, layoutId }),
     layout: layoutId,
     theme,
     format: resolved.format,

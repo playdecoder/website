@@ -38,3 +38,21 @@ export function resolveArtPath({ repoRoot, post, layoutId }) {
   const rel = post.layouts?.[layoutId]?.art ?? post.art;
   return rel ? join(repoRoot, rel) : undefined;
 }
+
+/**
+ * Post layout → post → layout default → file default. 1 = cover crop (default);
+ * below 1 scales the portrait down inside the column so a wide head fits.
+ */
+export function resolveArtZoom({ file, post, layoutId }) {
+  const raw =
+    post.layouts?.[layoutId]?.artZoom ??
+    post.artZoom ??
+    file.layouts?.[layoutId]?.artZoom ??
+    file.defaults?.artZoom ??
+    1;
+  const zoom = Number(raw);
+  if (!Number.isFinite(zoom) || zoom <= 0 || zoom > 1) {
+    throw new Error(`artZoom must be a number in (0, 1]; got ${JSON.stringify(raw)}`);
+  }
+  return zoom;
+}

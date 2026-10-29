@@ -59,11 +59,26 @@ export interface Episode {
   hosts?: EpisodeHost[];
   /** When true, RSS emits `<itunes:explicit>yes</itunes:explicit>` for this episode. */
   explicit?: boolean;
+  /**
+   * Omit the episode from listings, RSS, and the sitemap. The listen URL still
+   * resolves, so it can be shared for review before publication.
+   */
+  unreleased?: boolean;
 }
 
 export type CuratedPickKey = "founders" | "designers" | "builders";
 
-export const episodes = episodesJson as Episode[];
+export function isEpisodeReleased(episode: Episode): boolean {
+  return episode.unreleased !== true;
+}
+
+const catalogEpisodes = episodesJson as Episode[];
+
+/** Published episodes shown in listings, RSS, and the sitemap. */
+export const episodes = catalogEpisodes.filter(isEpisodeReleased);
+
+/** Full catalog. Direct listen URLs include unreleased episodes. */
+export const listenEpisodes = catalogEpisodes;
 
 const ISO_DATE = /^(\d{4})-(\d{2})-(\d{2})$/;
 
@@ -196,7 +211,7 @@ export function getEpisodeArchiveFacets(eps: Episode[]) {
 
 function getEpisodeById(paramId: string): Episode | undefined {
   const id = paramId.trim().toUpperCase();
-  return episodes.find((e) => e.id.toUpperCase() === id);
+  return listenEpisodes.find((e) => e.id.toUpperCase() === id);
 }
 
 export type EpisodeSeries = "main" | EpisodeFormat;
@@ -237,7 +252,7 @@ export function episodeListenPathSegment(ep: Episode): string {
 }
 
 function findEpisodeBySeriesAndOrdinal(series: EpisodeSeries, n: number): Episode | undefined {
-  return episodes.find((e) => episodeSeries(e) === series && episodeSeriesOrdinal(e) === n);
+  return listenEpisodes.find((e) => episodeSeries(e) === series && episodeSeriesOrdinal(e) === n);
 }
 
 export function resolveListenEpisodeParam(param: string): {

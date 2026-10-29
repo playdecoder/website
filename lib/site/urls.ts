@@ -16,3 +16,17 @@ export function absoluteFromPath(pathname: string): string {
 export function getPodcastCoverAbsoluteUrl(): string {
   return absoluteFromPath(PODCAST_COVER_PATH);
 }
+
+/** Origin the podcast assets (audio, covers, social frames) are uploaded to by hand. */
+export const PODCAST_CDN_ORIGIN = "https://cdn.play-decoder.com";
+
+export type SocialFrameTheme = "dark" | "light";
+
+/**
+ * Social frames rendered by `scripts/generate-social-post.mjs` land in the gitignored
+ * `output/<ep>/social/<layout>-<theme>.png`; upload that folder to
+ * `${PODCAST_CDN_ORIGIN}/podcast/posts/<ep>/` for the review gallery to pick them up.
+ */
+export function socialFrameCdnUrl(episodeId: string, layoutId: string, theme: SocialFrameTheme) {
+  return `${PODCAST_CDN_ORIGIN}/podcast/posts/${episodeId.toLowerCase()}/${layoutId}-${theme}.png`;
+}

@@ -201,6 +201,8 @@
   --secondary: var(--brand-primary);
   --accent: var(--brand-accent);
   --accent-text: #3d4400;
+  /* Pre-release review UI (note + artwork gallery): amber, never the format accent. */
+  --review: #a16207;
   --muted: rgb(11 15 20 / 0.55);
   --dot-color: rgb(11 15 20 / 0.08);
   --waveform-primary: rgb(11 15 20 / 0.22);
@@ -227,6 +229,7 @@
   --edge: #1f2a38;
   --primary: #e6edf3;
   --accent-text: var(--brand-accent);
+  --review: #fbbf24;
   --muted: rgb(230 237 243 / 0.55);
   --dot-color: rgb(31 42 56 / 0.9);
   --waveform-primary: rgb(230 237 243 / 0.45);
@@ -251,6 +254,7 @@
   --color-accent: var(--accent);
   --color-accent-text: var(--accent-text);
   --color-muted: var(--muted);
+  --color-review: var(--review);
   --color-brand-primary: var(--brand-primary);
   --color-brand-accent: var(--brand-accent);
   --color-spotlight: var(--spotlight);
@@ -731,6 +735,77 @@
   }
   50% {
     opacity: 0.68;
+  }
+}
+
+/* Pre-release review layer (note + artwork gallery): one dashed accent surface in both themes. */
+.review-surface {
+  position: relative;
+  isolation: isolate;
+  border: 1px dashed color-mix(in srgb, var(--review) 42%, transparent);
+  background:
+    linear-gradient(
+      color-mix(in srgb, var(--review) 6%, transparent),
+      color-mix(in srgb, var(--review) 6%, transparent)
+    ),
+    color-mix(in srgb, var(--surface-2) 55%, transparent);
+}
+
+/* Faint "under construction" stripes, strongest in the top-left corner, gone by the middle. */
+.review-surface::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    -45deg,
+    color-mix(in srgb, var(--review) 16%, transparent) 0 8px,
+    transparent 8px 20px
+  );
+  /* Two masks intersected: fade across the width and fade down past the pill row, so the
+     texture stays in the top-left band and never runs under body text. */
+  -webkit-mask-image:
+    linear-gradient(100deg, #000 0%, rgb(0 0 0 / 0.4) 26%, transparent 50%),
+    linear-gradient(to bottom, #000 0, #000 18px, transparent 76px);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(100deg, #000 0%, rgb(0 0 0 / 0.4) 26%, transparent 50%),
+    linear-gradient(to bottom, #000 0, #000 18px, transparent 76px);
+  mask-composite: intersect;
+}
+
+/* Static halo for the large block, so only the note breathes. */
+.review-surface--halo {
+  box-shadow: 0 0 26px -6px color-mix(in srgb, var(--review) 26%, transparent);
+}
+
+/* Unreleased review note: soft accent halo that breathes. Shadow-only so layout never shifts. */
+@keyframes unreleased-note-glow {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 0 color-mix(in srgb, var(--review) 0%, transparent),
+      0 0 18px -4px color-mix(in srgb, var(--review) 18%, transparent);
+  }
+  50% {
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--review) 22%, transparent),
+      0 0 28px -2px color-mix(in srgb, var(--review) 42%, transparent);
+  }
+}
+
+.unreleased-note {
+  animation:
+    fadeUp 0.6s ease both 0.06s,
+    unreleased-note-glow 3.2s ease-in-out 0.66s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .unreleased-note {
+    animation: none;
+    box-shadow: 0 0 22px -3px color-mix(in srgb, var(--review) 28%, transparent);
   }
 }
 

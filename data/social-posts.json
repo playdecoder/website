@@ -27,6 +27,30 @@
   },
   "posts": [
     {
+      "episodeId": "SP03",
+      "format": "spotlight",
+      "title": "Vojtěch Schubert",
+      "shortDescription": "Vtip musí pobavit, dialog znít přirozeně a příběh neztratit emoce. S Vojtěchem Schubertem z Context Heroes o cestě od titulků pro kamarády k vlastnímu studiu, neviditelné práci za dobrým překladem a budoucnosti řemesla, do kterého naplno vstoupila AI.",
+      "art": "public/social/art/sp03-vojtech-schubert-transparent.png",
+      "artFocalPoint": {
+        "x": 0.5,
+        "y": 0.42
+      },
+      "layouts": {
+        "ig-post": {
+          "artZoom": 0.8,
+          "artFocalPoint": {
+            "x": 0.48,
+            "y": 0.42
+          }
+        },
+        "podcast-cover": {
+          "art": "public/social/art/sp03-keyart.jpg",
+          "artFocalPoint": "centre"
+        }
+      }
+    },
+    {
       "episodeId": "EP05",
       "shortDescription": "Silent Hill, P.T., Townfall a otázka, kde končí evoluce série a začíná už něco jiného.",
       "art": "public/social/art/ep05-silent-hill-townfall.jpg",

@@ -157,10 +157,7 @@ async function opaqueContentBox(imagePath) {
 }
 
 async function coverBottomAlign(imageBuf, w, h) {
-  return sharp(imageBuf)
-    .resize(w, h, { fit: "cover", position: "bottom" })
-    .png()
-    .toBuffer();
+  return sharp(imageBuf).resize(w, h, { fit: "cover", position: "bottom" }).png().toBuffer();
 }
 
 async function composeCutoutColumnArt({ transparentPath, backgroundPath, box, w, h, brand }) {
@@ -198,11 +195,48 @@ async function composeCutoutColumnArt({ transparentPath, backgroundPath, box, w,
   return applyEdgeFade(composed, w, h, { right: 0.2 });
 }
 
+/**
+ * Column art at `zoom` × the cover scale: bottom-aligned, horizontal window centred on
+ * focal.x, transparent around it so the frame background shows. Lets a wide head fit a
+ * narrow column (ig-post) instead of bleeding off the edge.
+ */
+async function composeZoomedColumnArt({ artPath, w, h, focal, zoom }) {
+  const meta = await sharp(artPath).metadata();
+  const srcW = meta.width ?? w;
+  const srcH = meta.height ?? h;
+  const scale = Math.max(w / srcW, h / srcH) * zoom;
+  const scaledW = Math.max(1, Math.round(srcW * scale));
+  const scaledH = Math.max(1, Math.round(srcH * scale));
+  const fx = typeof focal === "string" ? 0.5 : focal.x;
+  const visibleW = Math.min(w, scaledW);
+  const visibleH = Math.min(h, scaledH);
+  const srcLeft = Math.max(
+    0,
+    Math.min(scaledW - visibleW, Math.round(fx * scaledW - visibleW / 2)),
+  );
+  const srcTop = scaledH - visibleH;
+
+  const person = await sharp(artPath)
+    .resize(scaledW, scaledH)
+    .extract({ left: srcLeft, top: srcTop, width: visibleW, height: visibleH })
+    .png()
+    .toBuffer();
+
+  const composed = await sharp({
+    create: { width: w, height: h, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } },
+  })
+    .composite([{ input: person, left: Math.round((w - visibleW) / 2), top: h - visibleH }])
+    .png()
+    .toBuffer();
+  return applyEdgeFade(composed, w, h, { right: 0.2 });
+}
+
 async function composeFormatColumnArt({
   artPath,
   w,
   h,
   focal,
+  zoom = 1,
   brand,
   hostName,
   scale,
@@ -210,6 +244,10 @@ async function composeFormatColumnArt({
 }) {
   if (!artPath || !(await fileExists(artPath))) {
     return placeholderColumnArt(w, h, brand, hostName, scale, formatAccent);
+  }
+
+  if (zoom < 1) {
+    return composeZoomedColumnArt({ artPath, w, h, focal, zoom });
   }
 
   const siblings = portraitSiblingPaths(artPath);
@@ -263,6 +301,7 @@ export async function composeFormatPortraitArt({
   artPath,
   m,
   focalPoint = "centre",
+  zoom = 1,
   brand,
   hostName = "",
   formatAccent,
@@ -278,6 +317,7 @@ export async function composeFormatPortraitArt({
       w,
       h,
       focal,
+      zoom,
       brand,
       hostName,
       scale: m.scale,

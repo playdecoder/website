@@ -69,6 +69,14 @@ function resolveCoverFromEpisode(
   return getPodcastCoverAbsoluteUrl();
 }
 
+/** Absolute URL of one declared cover variant, or null when the episode does not declare it. */
+export function resolveEpisodeCoverVariantUrl(
+  episode: Episode,
+  variant: CoverVariantKey,
+): string | null {
+  return variantUrl(episode.coverImage?.[variant]);
+}
+
 export function resolveEpisodeCoverImageUrl(episode: Episode): string {
   return resolveCoverFromEpisode(episode, ["dark", "light"]);
 }
