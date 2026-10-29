@@ -5,6 +5,7 @@ import {
   resolveEpisodeCoverVariantUrl,
 } from "@/lib/episode/cover";
 import { PODCAST_COVER_SIZE, socialFrameCdnUrl, type SocialFrameTheme } from "@/lib/site/urls";
+import { LAYOUTS } from "@/scripts/lib/social-layouts.mjs";
 
 /** rss: podcast feed artwork · page: episode page and share previews · web: site UI only. */
 export type ReviewAssetUse = "rss" | "page" | "web";
@@ -32,21 +33,17 @@ export interface EpisodeReviewAssets {
 const KEYART_FALLBACK_SIZE = { width: 1920, height: 1080 } as const;
 
 /**
- * Sample of social layouts shown on the review page. Mirrors `scripts/lib/social-layouts.mjs`;
- * the full set is deliberately not shown, just enough to sanity-check art crop and copy.
+ * Sample of social layouts shown on the review page; sizes come from the generator's own
+ * layout definitions. The full set is deliberately not shown, just enough to sanity-check
+ * art crop and copy.
  */
-const SOCIAL_SAMPLE: ReadonlyArray<{
-  layoutId: string;
-  theme: SocialFrameTheme;
-  width: number;
-  height: number;
-}> = [
+const SOCIAL_SAMPLE: ReadonlyArray<{ layoutId: keyof typeof LAYOUTS; theme: SocialFrameTheme }> = [
   // Order matters for the review grid: the two-row story packs beside two stacked squares.
-  { layoutId: "ig-story", theme: "dark", width: 1080, height: 1920 },
-  { layoutId: "ig-post", theme: "dark", width: 1080, height: 1080 },
-  { layoutId: "ig-post", theme: "light", width: 1080, height: 1080 },
-  { layoutId: "youtube-keyart", theme: "dark", width: 1920, height: 1080 },
-  { layoutId: "linkedin-post", theme: "light", width: 1200, height: 627 },
+  { layoutId: "ig-story", theme: "dark" },
+  { layoutId: "ig-post", theme: "dark" },
+  { layoutId: "ig-post", theme: "light" },
+  { layoutId: "youtube-keyart", theme: "dark" },
+  { layoutId: "linkedin-post", theme: "light" },
 ];
 
 const COVER_SIZE = PODCAST_COVER_SIZE;
@@ -104,8 +101,8 @@ export function buildEpisodeReviewAssets(
     layoutId: sample.layoutId,
     theme: sample.theme,
     url: socialFrameCdnUrl(episode.id, sample.layoutId, sample.theme),
-    width: sample.width,
-    height: sample.height,
+    width: LAYOUTS[sample.layoutId].width,
+    height: LAYOUTS[sample.layoutId].height,
     usedFor: [],
   }));
 

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import type { MouseEvent } from "react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { cn } from "@/lib/ui/cn";
 
@@ -84,6 +84,14 @@ export function EpisodeReviewGallery({
 }: EpisodeReviewGalleryProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const cardRefs = useRef(new Map<number, HTMLAnchorElement>());
+  const focusAfterCloseRef = useRef<number | null>(null);
+
+  // Restore focus only once the modal dialog is gone; while it is open the page is inert.
+  useEffect(() => {
+    if (openIndex !== null || focusAfterCloseRef.current === null) return;
+    cardRefs.current.get(focusAfterCloseRef.current)?.focus();
+    focusAfterCloseRef.current = null;
+  }, [openIndex]);
 
   const allItems = sections.flatMap((section) => section.items);
   const lightboxItems = allItems.map(toLightboxItem);
@@ -146,6 +154,8 @@ export function EpisodeReviewGallery({
                       width={item.width}
                       height={item.height}
                       sizes={SHAPE_SIZES[shape]}
+                      // Skip the optimiser: its cache would keep showing a file for hours after a re-upload.
+                      unoptimized
                       className={cn(
                         "block w-full transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-[1.015] motion-reduce:transition-none motion-reduce:group-hover:scale-100",
                         // Inside a two-row cell the story should fill the cell height, not overflow it.
@@ -194,8 +204,8 @@ export function EpisodeReviewGallery({
           startIndex={openIndex}
           labels={lightboxLabels}
           onClose={(lastIndex) => {
+            focusAfterCloseRef.current = lastIndex;
             setOpenIndex(null);
-            cardRefs.current.get(lastIndex)?.focus();
           }}
         />
       )}

@@ -7,6 +7,7 @@ import { createPortal } from "react-dom";
 import { cn } from "@/lib/ui/cn";
 
 import { ReviewSpecsPanel } from "./episode-review-specs";
+import { clearRemoteImageInfoCache } from "./use-remote-image-info";
 
 export interface LightboxItem {
   key: string;
@@ -451,11 +452,14 @@ export function ReviewLightbox({ items, startIndex, labels, onClose }: ReviewLig
       cancelAnimationFrame(frame);
       document.body.style.overflow = previousOverflow;
       if (dialog?.open) dialog.close();
+      clearRemoteImageInfoCache();
     };
   }, []);
 
   const onWindowKey = useEffectEvent((e: KeyboardEvent) => {
     if (closingRef.current) return;
+    // Leave browser shortcuts (page zoom, DevTools, history) alone.
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
     switch (e.key) {
       case "Escape":
         e.preventDefault();
@@ -492,7 +496,9 @@ export function ReviewLightbox({ items, startIndex, labels, onClose }: ReviewLig
     const view = viewRef.current;
     if (e.ctrlKey || e.metaKey) {
       // Trackpad pinch arrives as ctrl + wheel.
-      const s = clamp(view.s * Math.exp(-e.deltaY * 0.01), 1, MAX_SCALE);
+      // Mouse wheels report ~100 per notch (or lines); cap it so one notch is ~1.3×, not 2.7×.
+      const delta = clamp(e.deltaY * (e.deltaMode === 1 ? 16 : 1), -25, 25);
+      const s = clamp(view.s * Math.exp(-delta * 0.01), 1, MAX_SCALE);
       settle(zoomAround(view, { x: e.clientX, y: e.clientY }, s), 0);
     } else if (view.s > 1.01) {
       applyView(clampView({ ...view, x: view.x - e.deltaX, y: view.y - e.deltaY }));

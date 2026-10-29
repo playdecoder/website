@@ -242,17 +242,20 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
                 <EpisodeReviewAssets episode={episode} locale={locale} />
               ) : null}
 
-              <EpisodeNeighborNav
-                locale={hrefLocale}
-                newer={newer}
-                older={older}
-                labels={{
-                  newer: t("newer"),
-                  older: t("older"),
-                  newestEpisodeStub: t("newestEpisodeStub"),
-                  debutEpisodeStub: t("debutEpisodeStub"),
-                }}
-              />
+              {/* Unreleased episodes sit outside the published order, so they have no neighbours. */}
+              {episode.unreleased ? null : (
+                <EpisodeNeighborNav
+                  locale={hrefLocale}
+                  newer={newer}
+                  older={older}
+                  labels={{
+                    newer: t("newer"),
+                    older: t("older"),
+                    newestEpisodeStub: t("newestEpisodeStub"),
+                    debutEpisodeStub: t("debutEpisodeStub"),
+                  }}
+                />
+              )}
 
               <div
                 className="flex flex-col flex-wrap gap-3 pt-4 min-[420px]:flex-row"

@@ -253,7 +253,7 @@
     "specsCheckKeyartAspectWrong": "Key arty se připravují v 16:9, jinak je web ořízne",
     "specsCheckProfileOk": "Barvy v sRGB, všude budou vypadat stejně",
     "specsCheckProfileWrong": "Profil {profile} mimo sRGB, barvy se jinde můžou posunout",
-    "specsUnavailable": "Z této adresy CDN nepovolí čtení souboru, proto chybí formát, hloubka a velikost. Na dekoder.fm a localhostu se zobrazí.",
+    "specsUnavailable": "Údaje o souboru se nepodařilo načíst. Zkontrolujte, že soubor na CDN existuje.",
     "reviewAssetAlt": "{episodeId} – {layout}, {theme}",
     "onTheWire": "Na vlně",
     "latestDrop": "Čerstvě venku",

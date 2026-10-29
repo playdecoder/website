@@ -252,7 +252,7 @@
     "specsCheckKeyartAspectWrong": "Key art is prepared at 16:9, otherwise the site crops it",
     "specsCheckProfileOk": "sRGB colors, consistent everywhere",
     "specsCheckProfileWrong": "{profile} profile is outside sRGB, colors may shift elsewhere",
-    "specsUnavailable": "The CDN doesn't allow this address to read the file, so format, depth and size are missing. They show on dekoder.fm and localhost.",
+    "specsUnavailable": "Couldn't read the file details. Check that the file exists on the CDN.",
     "reviewAssetAlt": "{episodeId} – {layout}, {theme}",
     "onTheWire": "On the wire",
     "latestDrop": "Latest drop",

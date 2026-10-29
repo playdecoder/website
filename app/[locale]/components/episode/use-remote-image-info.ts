@@ -2,17 +2,12 @@
 
 import { useEffect, useState } from "react";
 
-import { type ImageSpecs, inspectImageBytes } from "@/lib/image/inspect-image";
+import { type ImageInfoPayload, readImageInfo } from "@/lib/image/read-image-info";
+import { PODCAST_CDN_ORIGIN } from "@/lib/site/urls";
 
-export interface RemoteImageInfo {
-  /** Full file size from the HEAD response. */
-  bytes: number | null;
-  contentType: string | null;
-  /** Epoch ms of the CDN's Last-Modified header, i.e. when the file was last uploaded. */
-  lastModified: number | null;
+export interface RemoteImageInfo extends ImageInfoPayload {
   /** Epoch ms when the info was fetched, so "x hours ago" stays pure during render. */
   fetchedAt: number;
-  specs: ImageSpecs;
 }
 
 export type RemoteImageInfoState =
@@ -20,41 +15,24 @@ export type RemoteImageInfoState =
   | { status: "ready"; info: RemoteImageInfo }
   | { status: "error" };
 
-/** Headers sit at the start; 128 KB covers PNG chunks before IDAT and JPEG ICC segments. */
-const PROBE_BYTES = 128 * 1024;
+const IMAGE_INFO_ENDPOINT = "/api/review/image-info";
 
 const cache = new Map<string, Promise<RemoteImageInfo>>();
 
 async function loadRemoteImageInfo(src: string): Promise<RemoteImageInfo> {
-  // no-store: after a re-upload the panel must show the new file, not a cached answer.
-  const [head, probe] = await Promise.all([
-    fetch(src, { method: "HEAD", mode: "cors", cache: "no-store" }),
-    fetch(src, {
-      mode: "cors",
+  let payload: ImageInfoPayload;
+  if (src.startsWith(`${PODCAST_CDN_ORIGIN}/`)) {
+    // Cross-origin: read on the server so CDN CORS rules don't matter.
+    const response = await fetch(`${IMAGE_INFO_ENDPOINT}?src=${encodeURIComponent(src)}`, {
       cache: "no-store",
-      headers: { Range: `bytes=0-${PROBE_BYTES - 1}` },
-    }),
-  ]);
-  if (!probe.ok) throw new Error(`HTTP ${probe.status}`);
-
-  const buffer = new Uint8Array(await probe.arrayBuffer());
-  const headLength = head.ok ? Number(head.headers.get("content-length")) : Number.NaN;
-  const lastModified = Date.parse(
-    head.headers.get("last-modified") ?? probe.headers.get("last-modified") ?? "",
-  );
-
-  return {
-    bytes:
-      Number.isFinite(headLength) && headLength > 0
-        ? headLength
-        : probe.status === 200
-          ? buffer.length
-          : null,
-    contentType: head.headers.get("content-type") ?? probe.headers.get("content-type"),
-    lastModified: Number.isNaN(lastModified) ? null : lastModified,
-    fetchedAt: Date.now(),
-    specs: await inspectImageBytes(buffer.subarray(0, PROBE_BYTES)),
-  };
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    payload = (await response.json()) as ImageInfoPayload;
+  } else {
+    // Site files (key art) are same-origin and can be read directly.
+    payload = await readImageInfo(src);
+  }
+  return { ...payload, fetchedAt: Date.now() };
 }
 
 function getRemoteImageInfo(src: string) {
@@ -62,16 +40,21 @@ function getRemoteImageInfo(src: string) {
   if (!pending) {
     pending = loadRemoteImageInfo(src);
     cache.set(src, pending);
-    // Let a later open retry, e.g. after a CORS or network hiccup.
+    // Let a later open retry after a network hiccup.
     pending.catch(() => cache.delete(src));
   }
   return pending;
 }
 
 /**
- * Live file details for a CDN image, read in the browser so re-uploads show up without a
- * redeploy. Needs the CDN to allow this origin via CORS; otherwise resolves to `error`.
+ * Forget cached file details. The lightbox calls this on close so the next open re-reads
+ * the files and shows a re-upload without a page reload.
  */
+export function clearRemoteImageInfoCache() {
+  cache.clear();
+}
+
+/** Live file details for a review image, read on demand so re-uploads show without a redeploy. */
 export function useRemoteImageInfo(src: string): RemoteImageInfoState {
   const [result, setResult] = useState<{ src: string; state: RemoteImageInfoState } | null>(null);
 
