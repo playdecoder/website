@@ -227,7 +227,7 @@ const EPISODE_SERIES_FROM_SLUG = Object.fromEntries(
 ) as Record<string, EpisodeSeries>;
 
 const LISTEN_SLUG_SHORT = /^(ep|sp|fb)(\d+)$/i;
-const LISTEN_SLUG_FULL = /^(ep|sp|fb)(\d+)-(.+)$/i;
+const LISTEN_SLUG_FULL = /^(ep|sp|fb)(\d+)-(.*)$/i;
 
 export function episodeSeries(ep: Episode): EpisodeSeries {
   return ep.format ?? "main";

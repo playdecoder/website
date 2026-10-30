@@ -222,6 +222,7 @@ export function MiniPlayerBar() {
     <section
       aria-label={t("regionAria")}
       onTransitionEnd={handleTransitionEnd}
+      data-episode-format={episode.format ?? undefined}
       className={`fixed right-0 bottom-0 left-0 z-50 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform ${
         show ? "translate-y-0" : "translate-y-full"
       }`}
@@ -336,7 +337,8 @@ export function MiniPlayerBar() {
               type="button"
               onClick={ctx.togglePlay}
               disabled={loadError}
-              className="group border-primary/10 bg-accent focus-visible:outline-accent relative flex size-9 shrink-0 items-center justify-center rounded-sm border text-[#0b0f14] shadow-[inset_0_1px_0_rgb(255_255_255/0.3)] transition-transform duration-200 hover:scale-[1.06] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 active:scale-[0.95] disabled:pointer-events-none disabled:opacity-40 sm:size-10"
+              data-state={isPlaying ? "playing" : "paused"}
+              className="decoder-play-btn flex size-9 shrink-0 items-center justify-center rounded-sm sm:size-10"
               aria-label={isPlaying ? t("pause") : t("play")}
             >
               {isPlaying ? (
