@@ -18,7 +18,13 @@ import {
   type ShareKitTextKey,
 } from "@/lib/episode/share-kit";
 import { linkLocale } from "@/lib/routing/link-locale";
-import { listenEpisodePath, ROUTES } from "@/lib/routing/routes";
+import {
+  LISTEN_PLATFORMS,
+  type ListenPlatform,
+  listenEpisodePath,
+  listenEpisodePlatformPath,
+  ROUTES,
+} from "@/lib/routing/routes";
 import { BRAND_NAME } from "@/lib/site/brand";
 import { absoluteFromPath } from "@/lib/site/urls";
 
@@ -75,7 +81,7 @@ function KitSection({
 }: {
   id: string;
   heading: string;
-  note: string;
+  note?: string;
   delay: string;
   children: ReactNode;
 }) {
@@ -93,9 +99,11 @@ function KitSection({
         >
           {heading}
         </h2>
-        <p className="text-muted max-w-prose font-mono text-[11px] leading-relaxed sm:text-xs">
-          {note}
-        </p>
+        {note ? (
+          <p className="text-muted max-w-prose font-mono text-[11px] leading-relaxed sm:text-xs">
+            {note}
+          </p>
+        ) : null}
       </div>
       {children}
     </section>
@@ -115,6 +123,12 @@ export async function EpisodeKitView({ episode, locale }: EpisodeKitViewProps) {
     {
       page: absolute(listenEpisodePath(segment)),
       short: absolute(listenEpisodePath(episodeListenSlugPrefix(episode))),
+      platform: Object.fromEntries(
+        LISTEN_PLATFORMS.map((platform) => [
+          platform,
+          absolute(listenEpisodePlatformPath(episodeListenSlugPrefix(episode), platform)),
+        ]),
+      ) as Record<ListenPlatform, string>,
     },
     await readPublicImageSize(episode.artImage),
   );
@@ -130,7 +144,7 @@ export async function EpisodeKitView({ episode, locale }: EpisodeKitViewProps) {
     short: t("linkShort"),
     youtube: "YouTube",
     spotify: "Spotify",
-    applePodcasts: "Apple Podcasts",
+    apple: "Apple Podcasts",
   };
 
   const textLabel: Record<ShareKitTextKey, string> = {
@@ -367,21 +381,20 @@ export async function EpisodeKitView({ episode, locale }: EpisodeKitViewProps) {
                         key={link.key}
                         label={linkLabel[link.key]}
                         url={link.url}
+                        directUrl={link.directUrl}
+                        note={link.pending ? t("linkPending") : undefined}
                         copyAria={t("copyLinkAria", { label: linkLabel[link.key] })}
-                        openLabel={t("open")}
+                        copyDirectAria={t("copyDirectAria", { label: linkLabel[link.key] })}
                         openAria={t("openAria", { label: linkLabel[link.key] })}
+                        openDirectAria={t("openDirectAria", { label: linkLabel[link.key] })}
+                        openLabel={t("open")}
                         labels={copyLabels}
                       />
                     ))}
                   </ul>
                 </KitSection>
 
-                <KitSection
-                  id={SECTION_ID.texts}
-                  heading={t("sectionTexts")}
-                  note={t("sectionTextsNote")}
-                  delay="0.14s"
-                >
+                <KitSection id={SECTION_ID.texts} heading={t("sectionTexts")} delay="0.14s">
                   <ul className="space-y-3">
                     {kit.texts.map((text) => (
                       <li
@@ -419,12 +432,7 @@ export async function EpisodeKitView({ episode, locale }: EpisodeKitViewProps) {
                   </ul>
                 </KitSection>
 
-                <KitSection
-                  id={SECTION_ID.images}
-                  heading={t("sectionImages")}
-                  note={t("sectionImagesNote")}
-                  delay="0.18s"
-                >
+                <KitSection id={SECTION_ID.images} heading={t("sectionImages")} delay="0.18s">
                   <div className="space-y-8">
                     <EpisodeReviewGallery
                       sections={sections}

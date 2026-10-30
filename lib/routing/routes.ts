@@ -38,6 +38,14 @@ export function listenEpisodeKitPath(pathSegment: string): string {
   return `${listenEpisodePath(pathSegment)}/${LISTEN_KIT_SEGMENT}`;
 }
 
+/** Short branded links (`/listen/sp03/apple`) that redirect to the episode on each platform. */
+export const LISTEN_PLATFORMS = ["spotify", "apple", "youtube"] as const;
+export type ListenPlatform = (typeof LISTEN_PLATFORMS)[number];
+
+export function listenEpisodePlatformPath(pathSegment: string, platform: ListenPlatform): string {
+  return `${listenEpisodePath(pathSegment)}/${platform}`;
+}
+
 export function topicPath(topicSlug: string): string {
   return `${ROUTES.topics}/${topicSlug}`;
 }

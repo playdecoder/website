@@ -1,5 +1,6 @@
 import episodesJson from "@/data/episodes.json";
 import { getCatalogHoursFormatter, getEpisodeDateFormatter } from "@/lib/i18n/intl-formatters";
+import type { ListenPlatform } from "@/lib/routing/routes";
 
 import type { ArtFocalPoint } from "./art-focal-point";
 
@@ -249,6 +250,17 @@ export function episodeListenSlugPrefix(ep: Episode): string {
 
 export function episodeListenPathSegment(ep: Episode): string {
   return `${episodeListenSlugPrefix(ep)}-${ep.slug}`;
+}
+
+const PLATFORM_LINK_KEY = {
+  spotify: "spotify",
+  apple: "applePodcasts",
+  youtube: "youtube",
+} as const satisfies Record<ListenPlatform, keyof EpisodeLinks>;
+
+/** The episode's own URL on a platform, or "" while it isn't published there yet. */
+export function episodePlatformUrl(ep: Episode, platform: ListenPlatform): string {
+  return ep.links[PLATFORM_LINK_KEY[platform]]?.trim() ?? "";
 }
 
 function findEpisodeBySeriesAndOrdinal(series: EpisodeSeries, n: number): Episode | undefined {

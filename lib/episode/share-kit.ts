@@ -1,16 +1,22 @@
 import socialPostsJson from "@/data/social-posts.json";
-import type { Episode } from "@/lib/episode/catalog";
+import { type Episode, episodePlatformUrl } from "@/lib/episode/catalog";
 import { plainEpisodeDescription } from "@/lib/episode/description";
 import { episodePublicationTitle } from "@/lib/episode/format";
 import { buildEpisodeReviewAssets, type ReviewAsset } from "@/lib/episode/review-assets";
+import { LISTEN_PLATFORMS, type ListenPlatform } from "@/lib/routing/routes";
 import { socialFrameCdnUrl } from "@/lib/site/urls";
 import { LAYOUT_IDS, LAYOUTS } from "@/scripts/lib/social-layouts.mjs";
 
-export type ShareKitLinkKey = "page" | "short" | "youtube" | "spotify" | "applePodcasts";
+export type ShareKitLinkKey = "page" | "short" | ListenPlatform;
 
 export interface ShareKitLink {
   key: ShareKitLinkKey;
+  /** Our own URL, so it keeps working if the platform link changes. */
   url: string;
+  /** The platform's own URL, when it exists (opens the app directly on phones). */
+  directUrl?: string;
+  /** Platform link not filled in yet, so the short link lands on the episode page for now. */
+  pending?: boolean;
 }
 
 export type ShareKitTextKey = "post" | "title" | "short" | "long";
@@ -66,23 +72,24 @@ const KIT_SOCIAL: ReadonlyArray<{ id: string; source: GeneratedLayout }> = [
  */
 export function buildEpisodeShareKit(
   episode: Episode,
-  urls: { page: string; short: string },
+  urls: { page: string; short: string; platform: Record<ListenPlatform, string> },
   keyArtSize: { width: number; height: number } | null,
 ): EpisodeShareKit {
-  const external: ShareKitLink[] = (
-    [
-      { key: "youtube", url: episode.links.youtube },
-      { key: "spotify", url: episode.links.spotify },
-      { key: "applePodcasts", url: episode.links.applePodcasts },
-    ] as const
-  )
-    .filter((link) => Boolean(link.url?.trim()))
-    .map((link) => ({ key: link.key, url: link.url.trim() }));
+  // Every platform row is always there: the short link works before the platform link exists.
+  const platforms = LISTEN_PLATFORMS.map<ShareKitLink>((platform) => {
+    const direct = episodePlatformUrl(episode, platform);
+    return {
+      key: platform,
+      url: urls.platform[platform],
+      directUrl: direct || undefined,
+      pending: !direct,
+    };
+  });
 
   const links: ShareKitLink[] = [
     { key: "page", url: urls.page },
     { key: "short", url: urls.short },
-    ...external,
+    ...platforms,
   ];
 
   const short = socialShortDescription(episode);

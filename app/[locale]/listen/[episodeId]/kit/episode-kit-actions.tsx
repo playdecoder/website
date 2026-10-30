@@ -63,12 +63,22 @@ function useCopy(text: string) {
   return { status, copy };
 }
 
-function StatusLabel({ status, labels }: { status: CopyStatus; labels: KitCopyLabels }) {
+function StatusLabel({
+  status,
+  labels,
+  compactOnPhone = false,
+}: {
+  status: CopyStatus;
+  labels: KitCopyLabels;
+  /** Icon only below `sm`, text kept for screen readers. */
+  compactOnPhone?: boolean;
+}) {
+  const text = cn(compactOnPhone && "max-sm:sr-only");
   if (status === "copied") {
     return (
       <span className="text-accent-text inline-flex items-center gap-1.5">
         <IconCheck size={13} />
-        {labels.copied}
+        <span className={text}>{labels.copied}</span>
       </span>
     );
   }
@@ -78,56 +88,144 @@ function StatusLabel({ status, labels }: { status: CopyStatus; labels: KitCopyLa
   return (
     <span className="inline-flex items-center gap-1.5">
       <IconCopy size={13} className="text-accent-text" />
-      {labels.copy}
+      <span className={text}>{labels.copy}</span>
     </span>
   );
 }
 
 interface KitLinkRowProps {
   label: string;
+  /** Our own link (dekoder.fm/…), shown first. */
   url: string;
+  /** The platform's own URL, shown underneath when it exists. */
+  directUrl?: string;
+  /** Caveat shown instead of the direct link, e.g. that it lands on the episode page for now. */
+  note?: string;
   copyAria: string;
-  openLabel: string;
+  copyDirectAria: string;
   openAria: string;
+  openDirectAria: string;
+  openLabel: string;
   labels: KitCopyLabels;
 }
 
-/** The whole row copies the URL; the trailing icon opens it. */
-export function KitLinkRow({ label, url, copyAria, openLabel, openAria, labels }: KitLinkRowProps) {
-  const { status, copy } = useCopy(url);
-  const display = url.replace(/^https?:\/\//, "");
+/** Readable form for display only (no scheme, `vojt%C4%9Bch` → `vojtěch`); copy keeps the raw URL. */
+function displayUrl(url: string): string {
+  const bare = url.replace(/^https?:\/\//, "");
+  try {
+    return decodeURI(bare);
+  } catch {
+    return bare;
+  }
+}
 
+const miniButton =
+  "focus-visible:ring-secondary/60 inline-flex h-8 shrink-0 items-center justify-center rounded-sm transition-colors focus-visible:ring-2 focus-visible:outline-none";
+
+function CopyChip({ text, aria, labels }: { text: string; aria: string; labels: KitCopyLabels }) {
+  const { status, copy } = useCopy(text);
   return (
-    <li className="flex items-stretch">
-      <button
-        type="button"
-        onClick={copy}
-        className="hover:bg-surface-2/70 focus-visible:ring-secondary/60 group flex min-h-14 min-w-0 flex-1 flex-col justify-center gap-1 px-4 py-2.5 text-left transition-colors focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset sm:flex-row sm:items-center sm:gap-4 sm:px-5"
-        aria-label={copyAria}
-      >
-        <span className="text-muted shrink-0 font-mono text-[10px] tracking-[0.14em] uppercase sm:w-36">
-          {label}
+    <button
+      type="button"
+      onClick={copy}
+      aria-label={aria}
+      className={cn(
+        miniButton,
+        "border-edge text-primary hover:border-accent justify-self-end border font-mono text-[9px] tracking-[0.14em] uppercase max-sm:w-8 sm:px-2.5",
+      )}
+    >
+      <span aria-live="polite">
+        <StatusLabel status={status} labels={labels} compactOnPhone />
+      </span>
+    </button>
+  );
+}
+
+function CopyIcon({ text, aria, labels }: { text: string; aria: string; labels: KitCopyLabels }) {
+  const { status, copy } = useCopy(text);
+  return (
+    <button
+      type="button"
+      onClick={copy}
+      aria-label={aria}
+      title={status === "copied" ? labels.copied : aria}
+      className={cn(
+        miniButton,
+        "hover:border-edge text-muted hover:text-primary size-8 justify-self-end border border-transparent",
+      )}
+    >
+      {status === "copied" ? (
+        <IconCheck size={13} className="text-accent-text" />
+      ) : (
+        <IconCopy size={13} />
+      )}
+      <span className="sr-only" aria-live="polite">
+        {status === "copied" ? labels.copied : status === "error" ? labels.copyFailed : ""}
+      </span>
+    </button>
+  );
+}
+
+function OpenIcon({ href, aria, title }: { href: string; aria: string; title: string }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={aria}
+      title={title}
+      className={cn(miniButton, "text-muted hover:text-primary hover:bg-surface-2/70 size-8")}
+    >
+      <IconExternalLink size={14} />
+    </a>
+  );
+}
+
+/**
+ * One link per row: our short link on top, the platform's own URL underneath. Each line has its
+ * own copy and open buttons, in shared columns so they line up row to row.
+ */
+export function KitLinkRow({
+  label,
+  url,
+  directUrl,
+  note,
+  copyAria,
+  copyDirectAria,
+  openAria,
+  openDirectAria,
+  openLabel,
+  labels,
+}: KitLinkRowProps) {
+  return (
+    <li className="flex flex-col gap-1.5 px-4 py-3 sm:flex-row sm:gap-5 sm:px-5">
+      <span className="text-muted shrink-0 font-mono text-[10px] tracking-[0.14em] uppercase sm:w-32 sm:pt-[9px]">
+        {label}
+      </span>
+      <div className="grid min-w-0 flex-1 grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-x-1.5 gap-y-0.5">
+        <span className="text-primary truncate font-mono text-xs" title={url}>
+          {displayUrl(url)}
         </span>
-        <span className="text-primary min-w-0 flex-1 truncate font-mono text-xs sm:text-[13px]">
-          {display}
-        </span>
-        <span
-          className="text-muted group-hover:text-primary shrink-0 font-mono text-[10px] tracking-[0.14em] uppercase transition-colors"
-          aria-live="polite"
-        >
-          <StatusLabel status={status} labels={labels} />
-        </span>
-      </button>
-      <a
-        href={url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="border-edge/60 text-muted hover:text-primary hover:bg-surface-2/70 focus-visible:ring-secondary/60 flex w-12 shrink-0 items-center justify-center border-l transition-colors focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset sm:w-14"
-        aria-label={openAria}
-        title={openLabel}
-      >
-        <IconExternalLink size={15} />
-      </a>
+        <CopyChip text={url} aria={copyAria} labels={labels} />
+        <OpenIcon href={url} aria={openAria} title={openLabel} />
+
+        {directUrl ? (
+          <>
+            <span className="text-muted flex min-w-0 items-baseline gap-1.5 font-mono text-[11px]">
+              <span className="text-edge shrink-0" aria-hidden>
+                ↳
+              </span>
+              <span className="truncate" title={directUrl}>
+                {displayUrl(directUrl)}
+              </span>
+            </span>
+            <CopyIcon text={directUrl} aria={copyDirectAria} labels={labels} />
+            <OpenIcon href={directUrl} aria={openDirectAria} title={openLabel} />
+          </>
+        ) : note ? (
+          <p className="text-muted col-span-3 pb-1 font-mono text-[10px] leading-snug">{note}</p>
+        ) : null}
+      </div>
     </li>
   );
 }
