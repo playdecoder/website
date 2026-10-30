@@ -76,7 +76,7 @@ function StatusLabel({
   const text = cn(compactOnPhone && "max-sm:sr-only");
   if (status === "copied") {
     return (
-      <span className="text-accent-text inline-flex items-center gap-1.5">
+      <span className="text-accent-text inline-flex items-center gap-1.5 leading-none">
         <IconCheck size={13} />
         <span className={text}>{labels.copied}</span>
       </span>
@@ -86,7 +86,7 @@ function StatusLabel({
     return <span className="text-secondary">{labels.copyFailed}</span>;
   }
   return (
-    <span className="inline-flex items-center gap-1.5">
+    <span className="inline-flex items-center gap-1.5 leading-none">
       <IconCopy size={13} className="text-accent-text" />
       <span className={text}>{labels.copy}</span>
     </span>
@@ -134,7 +134,8 @@ function CopyChip({ text, aria, labels }: { text: string; aria: string; labels: 
         "border-edge text-primary hover:border-accent justify-self-end border font-mono text-[9px] tracking-[0.14em] uppercase max-sm:w-8 sm:px-2.5",
       )}
     >
-      <span aria-live="polite">
+      {/* Flex, not inline: an inline wrapper keeps descender space under the caps and lifts them. */}
+      <span aria-live="polite" className="flex items-center">
         <StatusLabel status={status} labels={labels} compactOnPhone />
       </span>
     </button>
@@ -250,7 +251,7 @@ export function KitCopyButton({ text, aria, labels, className }: KitCopyButtonPr
       )}
       aria-label={aria}
     >
-      <span aria-live="polite">
+      <span aria-live="polite" className="flex items-center">
         <StatusLabel status={status} labels={labels} />
       </span>
     </button>
