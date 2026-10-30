@@ -145,6 +145,7 @@ export async function EpisodeKitView({ episode, locale }: EpisodeKitViewProps) {
     youtube: "YouTube",
     spotify: "Spotify",
     apple: "Apple Podcasts",
+    mp3: "MP3",
   };
 
   const textLabel: Record<ShareKitTextKey, string> = {

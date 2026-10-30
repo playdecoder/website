@@ -7,7 +7,7 @@ import { LISTEN_PLATFORMS, type ListenPlatform } from "@/lib/routing/routes";
 import { socialFrameCdnUrl } from "@/lib/site/urls";
 import { LAYOUT_IDS, LAYOUTS } from "@/scripts/lib/social-layouts.mjs";
 
-export type ShareKitLinkKey = "page" | "short" | ListenPlatform;
+export type ShareKitLinkKey = "page" | "short" | ListenPlatform | "mp3";
 
 export interface ShareKitLink {
   key: ShareKitLinkKey;
@@ -90,6 +90,8 @@ export function buildEpisodeShareKit(
     { key: "page", url: urls.page },
     { key: "short", url: urls.short },
     ...platforms,
+    // Raw audio on the CDN, for anyone embedding or re-hosting the episode.
+    ...(episode.links.mp3?.trim() ? [{ key: "mp3" as const, url: episode.links.mp3.trim() }] : []),
   ];
 
   const short = socialShortDescription(episode);
