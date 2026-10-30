@@ -35,8 +35,8 @@
       }
     ],
     "links": {
-      "spotify": "",
-      "applePodcasts": "",
+      "spotify": "https://open.spotify.com/episode/2X1FfDmoIcQzjTy6vWPYqJ?si=XNhlPAohRgqT9uH0JrUP_g",
+      "applePodcasts": "https://podcasts.apple.com/us/podcast/vojt%C4%9Bch-schubert-pro%C4%8D-p%C5%99ekl%C3%A1dat-hry-znamen%C3%A1-v%C3%ADc-ne%C5%BE/id1895560433?i=1000798889493",
       "youtube": "https://youtu.be/pz6jtxzD1bY",
       "mp3": "https://cdn.play-decoder.com/podcast/episodes/sp03.mp3",
       "transcript": "https://cdn.play-decoder.com/podcast/transcripts/sp03.transcript.json"

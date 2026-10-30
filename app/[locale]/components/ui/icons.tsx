@@ -123,6 +123,57 @@ export function IconShare({ size = 14, className, ...props }: IconProps) {
   );
 }
 
+export function IconDownload({ size = 14, className, ...props }: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      className={cn("shrink-0", className)}
+      aria-hidden
+      {...strokeProps}
+      {...props}
+    >
+      <path d="M12 4.75v10.5" />
+      <path d="M7.25 10.75 12 15.5l4.75-4.75" />
+      <path d="M5 19.25h14" />
+    </svg>
+  );
+}
+
+export function IconCopy({ size = 14, className, ...props }: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      className={cn("shrink-0", className)}
+      aria-hidden
+      {...strokeProps}
+      {...props}
+    >
+      <rect x="8.75" y="8.75" width="10.5" height="10.5" rx="1.5" />
+      <path d="M15.25 8.75v-2a2 2 0 0 0-2-2h-6.5a2 2 0 0 0-2 2v6.5a2 2 0 0 0 2 2h2" />
+    </svg>
+  );
+}
+
+export function IconCheck({ size = 14, className, ...props }: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      className={cn("shrink-0", className)}
+      aria-hidden
+      {...strokeProps}
+      {...props}
+    >
+      <path d="M5.75 12.5 10 16.75l8.25-9.5" />
+    </svg>
+  );
+}
+
 export function IconCopyLink({ size = 14, className, ...props }: IconProps) {
   return (
     <svg

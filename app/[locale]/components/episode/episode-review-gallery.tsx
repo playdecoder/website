@@ -6,6 +6,8 @@ import { useEffect, useRef, useState } from "react";
 
 import { cn } from "@/lib/ui/cn";
 
+import { IconDownload } from "../ui/icons";
+
 import { type LightboxItem, type LightboxLabels, ReviewLightbox } from "./episode-review-lightbox";
 
 /** One frame, with every label already translated on the server. */
@@ -21,18 +23,101 @@ export interface ReviewGalleryItem {
   usedForLabels: string[];
   alt: string;
   goToLabel: string;
+  /** File name offered by the download button (kit tone only). */
+  downloadName?: string;
 }
 
 export interface ReviewGallerySection {
   key: string;
   heading: string;
   items: ReviewGalleryItem[];
+  /** Shown instead of the grid when every frame in the section failed to load (kit tone only). */
+  emptyNote?: string;
+}
+
+/** Shared share-kit labels; providing them switches the gallery to the kit tone. */
+export interface ShareKitGalleryLabels {
+  download: string;
+  downloadFailed: string;
+  /** Lightbox dot label with an `{n}` placeholder, renumbered after missing frames are dropped. */
+  goToTemplate: string;
 }
 
 interface EpisodeReviewGalleryProps {
   sections: ReviewGallerySection[];
   openFullLabel: string;
   lightboxLabels: LightboxLabels;
+  /**
+   * Review tone (default) keeps missing frames visible as a signal for the editor. Kit tone is
+   * for guests: neutral colours, a download button per frame, and frames that 404 are dropped.
+   */
+  kit?: ShareKitGalleryLabels;
+}
+
+const TONE = {
+  review: {
+    heading: "text-review",
+    card: "border-review/25 hover:border-review/60 focus-visible:ring-review/60",
+  },
+  kit: {
+    heading: "text-muted",
+    card: "border-edge hover:border-accent focus-visible:ring-secondary/60",
+  },
+} as const;
+
+/** CDN allows CORS from the site, so a blob keeps the file name; fall back to opening it. */
+async function downloadAsset(url: string, fileName: string): Promise<boolean> {
+  try {
+    // The <img> already cached this URL without CORS headers; reusing that entry fails the fetch.
+    const res = await fetch(url, { mode: "cors", cache: "no-store" });
+    if (!res.ok) return false;
+    const objectUrl = URL.createObjectURL(await res.blob());
+    const a = document.createElement("a");
+    a.href = objectUrl;
+    a.download = fileName;
+    document.body.append(a);
+    a.click();
+    a.remove();
+    window.setTimeout(() => URL.revokeObjectURL(objectUrl), 10_000);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function DownloadButton({
+  item,
+  labels,
+}: {
+  item: ReviewGalleryItem;
+  labels: ShareKitGalleryLabels;
+}) {
+  const [status, setStatus] = useState<"idle" | "busy" | "error">("idle");
+  const fileName = item.downloadName ?? item.url.split("/").pop() ?? "image";
+
+  return (
+    <button
+      type="button"
+      disabled={status === "busy"}
+      onClick={async () => {
+        setStatus("busy");
+        const ok = await downloadAsset(item.url, fileName);
+        if (ok) {
+          setStatus("idle");
+          return;
+        }
+        setStatus("error");
+        window.open(item.url, "_blank", "noopener,noreferrer");
+        window.setTimeout(() => setStatus("idle"), 2400);
+      }}
+      className="border-edge text-primary hover:border-accent focus-visible:ring-secondary/60 inline-flex min-h-10 items-center gap-2 self-start rounded-sm border px-3 font-mono text-[10px] tracking-[0.14em] uppercase transition-colors focus-visible:ring-2 focus-visible:outline-none disabled:cursor-progress disabled:opacity-60"
+      aria-label={`${labels.download}: ${item.alt}`}
+    >
+      <IconDownload size={13} className="text-accent-text" />
+      {status === "error" ? labels.downloadFailed : labels.download}
+      <span className="text-muted tracking-normal normal-case">{fileName}</span>
+    </button>
+  );
 }
 
 type Shape = "landscape" | "portrait" | "square";
@@ -78,13 +163,28 @@ function isPlainClick(e: MouseEvent) {
 }
 
 export function EpisodeReviewGallery({
-  sections,
+  sections: allSections,
   openFullLabel,
   lightboxLabels,
+  kit,
 }: EpisodeReviewGalleryProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [missing, setMissing] = useState<ReadonlySet<string>>(() => new Set());
   const cardRefs = useRef(new Map<number, HTMLAnchorElement>());
   const focusAfterCloseRef = useRef<number | null>(null);
+  const tone = kit ? TONE.kit : TONE.review;
+
+  const markMissing = (key: string) => {
+    if (!kit) return;
+    setMissing((prev) => (prev.has(key) ? prev : new Set(prev).add(key)));
+  };
+
+  const sections = kit
+    ? allSections.map((section) => ({
+        ...section,
+        items: section.items.filter((item) => !missing.has(item.key)),
+      }))
+    : allSections;
 
   // Restore focus only once the modal dialog is gone; while it is open the page is inert.
   useEffect(() => {
@@ -94,7 +194,10 @@ export function EpisodeReviewGallery({
   }, [openIndex]);
 
   const allItems = sections.flatMap((section) => section.items);
-  const lightboxItems = allItems.map(toLightboxItem);
+  const lightboxItems = allItems.map((item, i) => ({
+    ...toLightboxItem(item),
+    ...(kit ? { goToLabel: kit.goToTemplate.replace("{n}", String(i + 1)) } : {}),
+  }));
   const offsets = sections.map((_, i) =>
     sections.slice(0, i).reduce((sum, section) => sum + section.items.length, 0),
   );
@@ -103,15 +206,29 @@ export function EpisodeReviewGallery({
     <>
       {sections.map((section, sectionIndex) => (
         <div key={section.key}>
-          <h3 className="text-review mb-3 font-mono text-[9px] tracking-[0.22em] uppercase sm:text-[10px]">
+          <h3
+            className={cn(
+              "mb-3 font-mono text-[9px] tracking-[0.22em] uppercase sm:text-[10px]",
+              tone.heading,
+            )}
+          >
             {section.heading}
           </h3>
+          {section.items.length === 0 && section.emptyNote ? (
+            <p className="border-edge text-muted rounded-sm border border-dashed px-4 py-5 font-mono text-[11px] leading-relaxed">
+              {section.emptyNote}
+            </p>
+          ) : null}
           <ul className="grid grid-cols-1 gap-x-4 gap-y-5 sm:grid-flow-dense sm:grid-cols-2">
             {section.items.map((item, itemIndex) => {
               const globalIndex = offsets[sectionIndex] + itemIndex;
               const shape = shapeOf(item);
               return (
-                <li key={item.key} className={cn("flex min-w-0 flex-col gap-2", SHAPE_SPAN[shape])}>
+                <li
+                  key={item.key}
+                  // Kit pairs dark/light per format, so every frame keeps one cell.
+                  className={cn("flex min-w-0 flex-col gap-2", !kit && SHAPE_SPAN[shape])}
+                >
                   {/* Always one line, so neighbouring images start at the same height in any language. */}
                   <div className="flex min-w-0 items-baseline gap-2 font-mono text-[10px] tracking-wide whitespace-nowrap sm:text-[11px]">
                     <span className="text-primary shrink-0 font-medium">{item.layoutLabel}</span>
@@ -137,7 +254,8 @@ export function EpisodeReviewGallery({
                       setOpenIndex(globalIndex);
                     }}
                     className={cn(
-                      "border-review/25 hover:border-review/60 focus-visible:ring-review/60 group relative block min-h-0 flex-1 cursor-zoom-in overflow-hidden rounded-sm border transition-colors focus-visible:ring-2 focus-visible:outline-none",
+                      "group relative block min-h-0 flex-1 cursor-zoom-in overflow-hidden rounded-sm border transition-colors focus-visible:ring-2 focus-visible:outline-none",
+                      tone.card,
                       item.theme === "dark"
                         ? "bg-[#0b0f14]"
                         : item.theme === "light"
@@ -153,13 +271,20 @@ export function EpisodeReviewGallery({
                       alt=""
                       width={item.width}
                       height={item.height}
-                      sizes={SHAPE_SIZES[shape]}
+                      sizes={kit ? SHAPE_SIZES.square : SHAPE_SIZES[shape]}
                       // Skip the optimiser: its cache would keep showing a file for hours after a re-upload.
                       unoptimized
+                      // A frame that 404s before hydration never fires onError, so check on attach too.
+                      ref={(el) => {
+                        if (el?.complete && el.naturalWidth === 0) markMissing(item.key);
+                      }}
+                      onError={() => markMissing(item.key)}
                       className={cn(
                         "block w-full transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-[1.015] motion-reduce:transition-none motion-reduce:group-hover:scale-100",
                         // Inside a two-row cell the story should fill the cell height, not overflow it.
-                        shape === "portrait" ? "h-auto sm:h-full sm:object-contain" : "h-auto",
+                        shape === "portrait" && !kit
+                          ? "h-auto sm:h-full sm:object-contain"
+                          : "h-auto",
                       )}
                     />
                     {item.usedForLabels.length > 0 ? (
@@ -191,6 +316,7 @@ export function EpisodeReviewGallery({
                       </svg>
                     </span>
                   </a>
+                  {kit ? <DownloadButton item={item} labels={kit} /> : null}
                 </li>
               );
             })}

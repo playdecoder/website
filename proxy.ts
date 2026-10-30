@@ -4,11 +4,11 @@ import { type NextRequest, NextResponse } from "next/server";
 import { routing } from "./i18n/routing";
 import { resolveListenEpisodeParam } from "./lib/episode/catalog";
 import { INCOMING_PATHNAME_HEADER } from "./lib/routing/incoming-pathname";
-import { listenEpisodePath } from "./lib/routing/routes";
+import { LISTEN_KIT_SEGMENT, listenEpisodeKitPath, listenEpisodePath } from "./lib/routing/routes";
 
 const intlMiddleware = createMiddleware(routing);
 
-const LISTEN_PATH = /^(?:\/(en|cs))?\/listen\/([^/]+)\/?$/;
+const LISTEN_PATH = new RegExp(`^(?:/(en|cs))?/listen/([^/]+)(/${LISTEN_KIT_SEGMENT})?/?$`);
 
 /**
  * Listen pages are fully static, so an unknown segment would 404. When the series id
@@ -19,7 +19,7 @@ function canonicalListenRedirect(req: NextRequest): NextResponse | null {
   const match = LISTEN_PATH.exec(req.nextUrl.pathname);
   if (!match) return null;
 
-  const [, locale, rawSegment] = match;
+  const [, locale, rawSegment, kitSuffix] = match;
   let segment: string;
   try {
     segment = decodeURIComponent(rawSegment);
@@ -32,7 +32,8 @@ function canonicalListenRedirect(req: NextRequest): NextResponse | null {
 
   const localePrefix = locale && locale !== routing.defaultLocale ? `/${locale}` : "";
   const url = req.nextUrl.clone();
-  url.pathname = `${localePrefix}${listenEpisodePath(resolved.canonicalSegment)}`;
+  const path = kitSuffix ? listenEpisodeKitPath : listenEpisodePath;
+  url.pathname = `${localePrefix}${path(resolved.canonicalSegment)}`;
   return NextResponse.redirect(url, 308);
 }
 

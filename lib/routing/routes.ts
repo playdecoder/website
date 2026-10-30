@@ -31,6 +31,13 @@ export function listenEpisodePath(pathSegment: string): string {
   return `/${ROUTE_SEGMENTS.listen}/${pathSegment}`;
 }
 
+/** Unlisted share kit for guests: links, copy, and social frames for one episode. */
+export const LISTEN_KIT_SEGMENT = "kit";
+
+export function listenEpisodeKitPath(pathSegment: string): string {
+  return `${listenEpisodePath(pathSegment)}/${LISTEN_KIT_SEGMENT}`;
+}
+
 export function topicPath(topicSlug: string): string {
   return `${ROUTES.topics}/${topicSlug}`;
 }
