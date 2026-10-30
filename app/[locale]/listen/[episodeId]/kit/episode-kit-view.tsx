@@ -59,7 +59,8 @@ const NETWORKS: Record<Network, { label: string; markerClass: string }> = {
 const SOCIAL_LAYOUT_NETWORK: Record<string, { network: Network; subtype?: "story" | "post" }> = {
   "ig-story": { network: "instagram", subtype: "story" },
   "ig-post": { network: "instagram", subtype: "post" },
-  "facebook-post": { network: "facebook" },
+  "fb-story": { network: "facebook", subtype: "story" },
+  "facebook-post": { network: "facebook", subtype: "post" },
   "linkedin-post": { network: "linkedin" },
   "x-post": { network: "x" },
   "youtube-keyart": { network: "youtube" },
@@ -148,6 +149,7 @@ export async function EpisodeKitView({ episode, locale }: EpisodeKitViewProps) {
     "linkedin-post": tListen("reviewLayoutLinkedinPost"),
     "youtube-keyart": tListen("reviewLayoutYoutubeKeyart"),
     "x-post": tListen("reviewLayoutXPost"),
+    "fb-story": tListen("reviewLayoutFbStory"),
   };
 
   const toItem = (asset: ReviewAsset): ReviewGalleryItem => {
@@ -194,6 +196,8 @@ export async function EpisodeKitView({ episode, locale }: EpisodeKitViewProps) {
       const network = placement ? NETWORKS[placement.network] : undefined;
       return {
         key: layoutId,
+        // Sub-type sections get their own anchor so the ToC can list Story / Post.
+        id: placement?.subtype ? `${SECTION_ID.images}-${layoutId}` : undefined,
         group: "social",
         heading: placement?.subtype
           ? subtypeLabel[placement.subtype]
@@ -229,17 +233,24 @@ export async function EpisodeKitView({ episode, locale }: EpisodeKitViewProps) {
     },
   ].filter((section) => section.items.length > 0);
 
-  // ToC lists networks, not individual layouts.
-  const tocImageEntries = [
-    ...new Map(
-      sections
-        .filter((section) => section.cluster?.id)
-        .map((section) => [
-          section.cluster!.key,
-          { id: section.cluster!.id!, label: section.cluster!.label },
-        ]),
-    ).values(),
-  ];
+  // ToC: network → sub-type (Instagram → Story, Post), in gallery order.
+  const tocImageEntries: KitTocEntry[] = [];
+  for (const section of sections) {
+    const cluster = section.cluster;
+    if (!cluster?.id) continue;
+    let network = tocImageEntries.find((entry) => entry.id === cluster.id);
+    if (!network) {
+      network = { id: cluster.id, label: cluster.label, children: [] };
+      tocImageEntries.push(network);
+    }
+    if (section.id && section.heading) {
+      network.children?.push({
+        id: section.id,
+        label: section.heading,
+        chipLabel: `${cluster.label} ${section.heading}`,
+      });
+    }
+  }
 
   const tocEntries: KitTocEntry[] = [
     { id: SECTION_ID.links, label: t("sectionLinks") },

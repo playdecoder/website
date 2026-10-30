@@ -42,14 +42,21 @@ function socialShortDescription(episode: Episode): string {
   return (entry?.shortDescription ?? entry?.description ?? "").trim();
 }
 
-/** Stories first so the two-row frame packs beside stacked squares, as on the review gallery. */
-const SOCIAL_ORDER = [
-  "ig-story",
-  "ig-post",
-  "facebook-post",
-  "linkedin-post",
-  "x-post",
-  "youtube-keyart",
+type GeneratedLayout = keyof typeof LAYOUTS;
+
+/**
+ * Kit entries in display order (grouped by network). `source` is the generated frame to serve,
+ * so a platform with the same spec as another reuses its file instead of a duplicate upload.
+ */
+const KIT_SOCIAL: ReadonlyArray<{ id: string; source: GeneratedLayout }> = [
+  { id: "ig-story", source: "ig-story" },
+  { id: "ig-post", source: "ig-post" },
+  // Facebook Stories share Instagram's spec: 1080×1920 (9:16).
+  { id: "fb-story", source: "ig-story" },
+  { id: "facebook-post", source: "facebook-post" },
+  { id: "linkedin-post", source: "linkedin-post" },
+  { id: "x-post", source: "x-post" },
+  { id: "youtube-keyart", source: "youtube-keyart" },
 ];
 
 /**
@@ -87,17 +94,21 @@ export function buildEpisodeShareKit(
     { key: "long", text: long },
   ];
 
-  const layoutIds = [...LAYOUT_IDS].toSorted(
-    (a, b) => SOCIAL_ORDER.indexOf(a) - SOCIAL_ORDER.indexOf(b),
-  ) as (keyof typeof LAYOUTS)[];
-  const social = layoutIds.flatMap((layoutId) =>
+  // Generator layouts not placed above still show up, at the end.
+  const entries = [
+    ...KIT_SOCIAL,
+    ...(LAYOUT_IDS as GeneratedLayout[])
+      .filter((id) => !KIT_SOCIAL.some((entry) => entry.id === id))
+      .map((id) => ({ id, source: id })),
+  ];
+  const social = entries.flatMap(({ id, source }) =>
     (["dark", "light"] as const).map<ReviewAsset>((theme) => ({
-      key: `${layoutId}-${theme}`,
-      layoutId,
+      key: `${id}-${theme}`,
+      layoutId: id,
       theme,
-      url: socialFrameCdnUrl(episode.id, layoutId, theme),
-      width: LAYOUTS[layoutId].width,
-      height: LAYOUTS[layoutId].height,
+      url: socialFrameCdnUrl(episode.id, source, theme),
+      width: LAYOUTS[source].width,
+      height: LAYOUTS[source].height,
       usedFor: [],
     })),
   );

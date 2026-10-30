@@ -7,7 +7,9 @@ import { cn } from "@/lib/ui/cn";
 export interface KitTocEntry {
   id: string;
   label: string;
-  children?: { id: string; label: string }[];
+  /** Label for the phone chip bar, where a bare sub-type ("Story") would be ambiguous. */
+  chipLabel?: string;
+  children?: KitTocEntry[];
 }
 
 interface EpisodeKitTocProps {
@@ -21,9 +23,38 @@ interface EpisodeKitTocProps {
 /** Below the fixed navbar (64px) plus the mobile chip bar; a target above this line is "passed". */
 const ACTIVE_LINE_PX = 160;
 
-function flatten(entries: KitTocEntry[]) {
-  return entries.flatMap((entry) => [entry, ...(entry.children ?? [])]);
+function flatten(entries: KitTocEntry[]): KitTocEntry[] {
+  return entries.flatMap((entry) => [entry, ...flatten(entry.children ?? [])]);
 }
+
+/** id → ids of every entry above it, so a section can light up its network and "Artwork". */
+function ancestorsById(
+  entries: KitTocEntry[],
+  parents: string[] = [],
+  out = new Map<string, string[]>(),
+) {
+  for (const entry of entries) {
+    out.set(entry.id, parents);
+    ancestorsById(entry.children ?? [], [...parents, entry.id], out);
+  }
+  return out;
+}
+
+/** Keep an entry when its target exists or when any descendant is still on the page. */
+function pruneUnavailable(entries: KitTocEntry[], available: ReadonlySet<string>): KitTocEntry[] {
+  return entries.flatMap((entry) => {
+    const children = pruneUnavailable(entry.children ?? [], available);
+    if (!available.has(entry.id) && children.length === 0) return [];
+    return [{ ...entry, children }];
+  });
+}
+
+/** Rail typography per depth: section → network → sub-type. */
+const RAIL_DEPTH = [
+  "py-1.5 pl-4 font-mono text-[11px] tracking-[0.12em] uppercase",
+  "py-1 pl-7 text-[13px] leading-snug",
+  "py-0.5 pl-10 font-mono text-[10px] tracking-[0.14em] uppercase",
+] as const;
 
 /**
  * Jump list for the share kit: a sticky sidebar on desktop, a swipeable chip bar on phones.
@@ -101,13 +132,8 @@ export function EpisodeKitToc({ variant, entries, heading, ariaLabel }: EpisodeK
     setActive(id);
   };
 
-  const visibleEntries = entries
-    .filter((entry) => available.has(entry.id))
-    .map((entry) => ({
-      ...entry,
-      children: entry.children?.filter((child) => available.has(child.id)),
-    }));
-  const parentOfActive = entries.find((e) => e.children?.some((c) => c.id === active))?.id;
+  const visibleEntries = pruneUnavailable(entries, available);
+  const activeAncestors = new Set(ancestorsById(entries).get(active) ?? []);
 
   if (variant === "bar") {
     return (
@@ -117,31 +143,66 @@ export function EpisodeKitToc({ variant, entries, heading, ariaLabel }: EpisodeK
             ref={chipBarRef}
             className="flex [scrollbar-width:none] gap-2 overflow-x-auto px-4 py-2 sm:px-5 [&::-webkit-scrollbar]:hidden"
           >
-            {flatten(visibleEntries).map((entry) => {
-              const isActive = entry.id === active || entry.id === parentOfActive;
-              return (
-                <a
-                  key={entry.id}
-                  href={`#${entry.id}`}
-                  data-toc-id={entry.id}
-                  onClick={(e) => jump(e, entry.id)}
-                  aria-current={entry.id === active ? "location" : undefined}
-                  className={cn(
-                    "inline-flex min-h-9 shrink-0 items-center rounded-sm border px-3 font-mono text-[10px] tracking-[0.12em] whitespace-nowrap uppercase transition-colors",
-                    isActive
-                      ? "border-accent text-primary bg-accent/10"
-                      : "border-edge text-muted hover:text-primary",
-                  )}
-                >
-                  {entry.label}
-                </a>
-              );
-            })}
+            {flatten(visibleEntries)
+              .filter((entry) => available.has(entry.id))
+              .map((entry) => {
+                const isActive = entry.id === active;
+                return (
+                  <a
+                    key={entry.id}
+                    href={`#${entry.id}`}
+                    data-toc-id={entry.id}
+                    onClick={(e) => jump(e, entry.id)}
+                    aria-current={isActive ? "location" : undefined}
+                    className={cn(
+                      "inline-flex min-h-9 shrink-0 items-center rounded-sm border px-3 font-mono text-[10px] tracking-[0.12em] whitespace-nowrap uppercase transition-colors",
+                      isActive
+                        ? "border-accent text-primary bg-accent/10"
+                        : activeAncestors.has(entry.id)
+                          ? "border-edge text-primary"
+                          : "border-edge text-muted hover:text-primary",
+                    )}
+                  >
+                    {entry.chipLabel ?? entry.label}
+                  </a>
+                );
+              })}
           </div>
         </nav>
       </div>
     );
   }
+
+  const renderRail = (list: KitTocEntry[], depth: number) => (
+    <ul className={depth > 0 ? "mb-1" : "border-edge border-l"}>
+      {list.map((entry) => {
+        const isActive = entry.id === active;
+        return (
+          <li key={entry.id}>
+            <a
+              href={`#${entry.id}`}
+              onClick={(e) => jump(e, entry.id)}
+              aria-current={isActive ? "location" : undefined}
+              className={cn(
+                "-ml-px block border-l transition-colors",
+                RAIL_DEPTH[Math.min(depth, RAIL_DEPTH.length - 1)],
+                isActive
+                  ? "border-accent text-primary"
+                  : activeAncestors.has(entry.id)
+                    ? "text-primary border-transparent"
+                    : "text-muted hover:text-primary border-transparent",
+              )}
+            >
+              {entry.label}
+            </a>
+            {entry.children && entry.children.length > 0
+              ? renderRail(entry.children, depth + 1)
+              : null}
+          </li>
+        );
+      })}
+    </ul>
+  );
 
   return (
     <nav
@@ -149,52 +210,7 @@ export function EpisodeKitToc({ variant, entries, heading, ariaLabel }: EpisodeK
       className="sticky top-28 max-h-[calc(100vh-8rem)] [scrollbar-width:thin] overflow-y-auto overscroll-contain pb-4"
     >
       <p className="text-muted mb-3 font-mono text-[10px] tracking-[0.18em] uppercase">{heading}</p>
-      <ul className="border-edge border-l">
-        {visibleEntries.map((entry) => {
-          const isActive = entry.id === active;
-          const holdsActive = isActive || entry.id === parentOfActive;
-          return (
-            <li key={entry.id}>
-              <a
-                href={`#${entry.id}`}
-                onClick={(e) => jump(e, entry.id)}
-                aria-current={isActive ? "location" : undefined}
-                className={cn(
-                  "-ml-px block border-l py-1.5 pl-4 font-mono text-[11px] tracking-[0.12em] uppercase transition-colors",
-                  isActive ? "border-accent text-primary" : "border-transparent",
-                  !isActive && (holdsActive ? "text-primary" : "text-muted hover:text-primary"),
-                )}
-              >
-                {entry.label}
-              </a>
-              {entry.children && entry.children.length > 0 ? (
-                <ul className="mb-1">
-                  {entry.children.map((child) => {
-                    const childActive = child.id === active;
-                    return (
-                      <li key={child.id}>
-                        <a
-                          href={`#${child.id}`}
-                          onClick={(e) => jump(e, child.id)}
-                          aria-current={childActive ? "location" : undefined}
-                          className={cn(
-                            "-ml-px block border-l py-1 pl-7 text-[13px] leading-snug transition-colors",
-                            childActive
-                              ? "border-accent text-primary"
-                              : "text-muted hover:text-primary border-transparent",
-                          )}
-                        >
-                          {child.label}
-                        </a>
-                      </li>
-                    );
-                  })}
-                </ul>
-              ) : null}
-            </li>
-          );
-        })}
-      </ul>
+      {renderRail(visibleEntries, 0)}
     </nav>
   );
 }
