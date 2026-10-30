@@ -47,6 +47,7 @@ export async function EpisodeReviewAssets({ episode, locale }: EpisodeReviewAsse
     "facebook-post": t("reviewLayoutFacebookPost"),
     "linkedin-post": t("reviewLayoutLinkedinPost"),
     "youtube-keyart": t("reviewLayoutYoutubeKeyart"),
+    "x-post": t("reviewLayoutXPost"),
   };
 
   const usedForLabel: Record<ReviewAsset["usedFor"][number], string> = {

@@ -170,19 +170,35 @@ export function EpisodeReviewGallery({
 }: EpisodeReviewGalleryProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [missing, setMissing] = useState<ReadonlySet<string>>(() => new Set());
+  // Cache-busted URL per frame that failed once; see markMissing.
+  const [retryUrls, setRetryUrls] = useState<ReadonlyMap<string, string>>(() => new Map());
   const cardRefs = useRef(new Map<number, HTMLAnchorElement>());
   const focusAfterCloseRef = useRef<number | null>(null);
   const tone = kit ? TONE.kit : TONE.review;
 
-  const markMissing = (key: string) => {
+  /**
+   * A browser that saw a frame 404 before it was uploaded keeps serving that failure from its
+   * cache, so retry once with a cache-busting query before treating the frame as missing.
+   */
+  const markMissing = (item: ReviewGalleryItem) => {
     if (!kit) return;
-    setMissing((prev) => (prev.has(key) ? prev : new Set(prev).add(key)));
+    if (!retryUrls.has(item.key)) {
+      const sep = item.url.includes("?") ? "&" : "?";
+      setRetryUrls((prev) => new Map(prev).set(item.key, `${item.url}${sep}retry=${Date.now()}`));
+      return;
+    }
+    setMissing((prev) => (prev.has(item.key) ? prev : new Set(prev).add(item.key)));
   };
 
   const sections = kit
     ? allSections.map((section) => ({
         ...section,
-        items: section.items.filter((item) => !missing.has(item.key)),
+        items: section.items
+          .filter((item) => !missing.has(item.key))
+          .map((item) => {
+            const retryUrl = retryUrls.get(item.key);
+            return retryUrl ? { ...item, url: retryUrl } : item;
+          }),
       }))
     : allSections;
 
@@ -276,9 +292,9 @@ export function EpisodeReviewGallery({
                       unoptimized
                       // A frame that 404s before hydration never fires onError, so check on attach too.
                       ref={(el) => {
-                        if (el?.complete && el.naturalWidth === 0) markMissing(item.key);
+                        if (el?.complete && el.naturalWidth === 0) markMissing(item);
                       }}
-                      onError={() => markMissing(item.key)}
+                      onError={() => markMissing(item)}
                       className={cn(
                         "block w-full transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-[1.015] motion-reduce:transition-none motion-reduce:group-hover:scale-100",
                         // Inside a two-row cell the story should fill the cell height, not overflow it.

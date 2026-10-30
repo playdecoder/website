@@ -72,7 +72,7 @@ function buildFormatLayoutMetrics(layout) {
     return m;
   }
 
-  if (layout.id === "youtube-keyart") {
+  if (layout.artMode === "backdrop") {
     applyFormatLeftMetrics(m, m.height);
     m.titleSize = Math.round(32 * m.scale);
     m.titleLineHeight = Math.round(40 * m.scale);

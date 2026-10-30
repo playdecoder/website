@@ -43,7 +43,14 @@ function socialShortDescription(episode: Episode): string {
 }
 
 /** Stories first so the two-row frame packs beside stacked squares, as on the review gallery. */
-const SOCIAL_ORDER = ["ig-story", "ig-post", "facebook-post", "linkedin-post", "youtube-keyart"];
+const SOCIAL_ORDER = [
+  "ig-story",
+  "ig-post",
+  "facebook-post",
+  "linkedin-post",
+  "x-post",
+  "youtube-keyart",
+];
 
 /**
  * Everything a guest needs to share an episode: links, ready-to-paste copy, and every social

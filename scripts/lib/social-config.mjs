@@ -1,6 +1,8 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
+import { LAYOUTS } from "./social-layouts.mjs";
+
 export const SOCIAL_POSTS_FILE = "data/social-posts.json";
 
 /** @typedef {{ x: number, y: number }} ArtFocalPointCoords */
@@ -22,12 +24,18 @@ export function findSocialPost(file, episodeId) {
   return post;
 }
 
+/** A layout's own overrides, falling back to the layout it borrows crops from (`configFrom`). */
+function layoutOverrides(layouts, layoutId) {
+  const from = LAYOUTS[layoutId]?.configFrom;
+  return { ...(from ? layouts?.[from] : undefined), ...layouts?.[layoutId] };
+}
+
 /** Post layout → post → layout default → file default. */
 export function resolveArtFocalPoint({ file, post, layoutId }) {
   return (
-    post.layouts?.[layoutId]?.artFocalPoint ??
+    layoutOverrides(post.layouts, layoutId).artFocalPoint ??
     post.artFocalPoint ??
-    file.layouts?.[layoutId]?.artFocalPoint ??
+    layoutOverrides(file.layouts, layoutId).artFocalPoint ??
     file.defaults?.artFocalPoint ??
     "centre"
   );
@@ -35,7 +43,7 @@ export function resolveArtFocalPoint({ file, post, layoutId }) {
 
 /** Post layout art → post art (paths relative to repo root). */
 export function resolveArtPath({ repoRoot, post, layoutId }) {
-  const rel = post.layouts?.[layoutId]?.art ?? post.art;
+  const rel = layoutOverrides(post.layouts, layoutId).art ?? post.art;
   return rel ? join(repoRoot, rel) : undefined;
 }
 
@@ -45,9 +53,9 @@ export function resolveArtPath({ repoRoot, post, layoutId }) {
  */
 export function resolveArtZoom({ file, post, layoutId }) {
   const raw =
-    post.layouts?.[layoutId]?.artZoom ??
+    layoutOverrides(post.layouts, layoutId).artZoom ??
     post.artZoom ??
-    file.layouts?.[layoutId]?.artZoom ??
+    layoutOverrides(file.layouts, layoutId).artZoom ??
     file.defaults?.artZoom ??
     1;
   const zoom = Number(raw);

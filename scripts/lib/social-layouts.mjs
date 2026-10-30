@@ -41,6 +41,16 @@ export const LAYOUTS = {
     height: 1080,
     artMode: "backdrop",
   },
+  // X shows a single 16:9 image uncropped in the timeline; 1600×900 stays well under the 5 MB cap.
+  "x-post": {
+    id: "x-post",
+    label: "X post",
+    width: 1600,
+    height: 900,
+    artMode: "backdrop",
+    // Same composition as the YouTube key art, so reuse its per-episode crop settings.
+    configFrom: "youtube-keyart",
+  },
 };
 
 export const LAYOUT_IDS = Object.keys(LAYOUTS);

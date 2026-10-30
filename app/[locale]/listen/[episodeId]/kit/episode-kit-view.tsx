@@ -122,6 +122,7 @@ export async function EpisodeKitView({ episode, locale }: EpisodeKitViewProps) {
     "facebook-post": tListen("reviewLayoutFacebookPost"),
     "linkedin-post": tListen("reviewLayoutLinkedinPost"),
     "youtube-keyart": tListen("reviewLayoutYoutubeKeyart"),
+    "x-post": tListen("reviewLayoutXPost"),
   };
 
   const toItem = (asset: ReviewAsset): ReviewGalleryItem => {
