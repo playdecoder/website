@@ -57,13 +57,6 @@ export function EpisodeAudioPlayer({ episode, chapters, artBackground }: Episode
         className="dot-grid pointer-events-none absolute inset-0 opacity-[0.2] dark:opacity-[0.35]"
         aria-hidden
       />
-      {!hasArt ? (
-        <div
-          className={`pointer-events-none absolute top-0 right-0 left-0 bg-gradient-to-r from-transparent to-transparent transition-all duration-500 ease-out ${ctx.isPlaying ? "via-accent/80 h-[2px]" : "via-secondary/25 h-px"}`}
-          aria-hidden
-        />
-      ) : null}
-
       {hasArt ? <div className={PLAYER_ART_SHELL_CLASS.audio.frost} aria-hidden /> : null}
 
       {artBackground ?? (
@@ -73,6 +66,14 @@ export function EpisodeAudioPlayer({ episode, chapters, artBackground }: Episode
           fade="gradient"
         />
       )}
+
+      {/* Same 3px accent rule as the episode tabs panel below; dims while paused. */}
+      <div
+        className={`bg-accent pointer-events-none absolute inset-x-0 top-0 h-[3px] transition-opacity duration-300 ease-out ${
+          isPageEpisodeActive && ctx.isPlaying ? "opacity-100" : "opacity-55"
+        }`}
+        aria-hidden
+      />
 
       <div className="relative flex flex-col gap-4 p-4 sm:gap-5 sm:p-5 md:p-6">
         <EpisodeAudioPlayerHeader

@@ -23,8 +23,9 @@ export const episodePlayerArtMaskStyle = {
   WebkitMaskImage: "linear-gradient(to right, transparent, black 55%)",
 } as const;
 
+/** Light mode keeps more colour at lower opacity so dark key art tints the glass instead of greying it. */
 export const EPISODE_PLAYER_ART_IMAGE_CLASS =
-  "scale-[1.08] object-cover blur-[28px] saturate-[0.75]";
+  "scale-[1.08] object-cover blur-[28px] saturate-[1.15] dark:saturate-[0.75]";
 
 export const EPISODE_PLAYER_ART_WRAPPER_CLASS =
   "pointer-events-none absolute inset-y-0 right-0 z-0 w-1/2 overflow-hidden isolation-isolate";
@@ -33,8 +34,8 @@ export const EPISODE_PLAYER_ART_GRADIENT_FADE_CLASS =
   "absolute inset-0 bg-gradient-to-r from-surface via-surface/55 to-surface/10 dark:from-surface dark:via-surface/60 dark:to-surface/15";
 
 export const EPISODE_PLAYER_ART_INTENSITY_CLASS = {
-  default: "opacity-[0.52] dark:opacity-[0.30]",
-  subtle: "opacity-[0.42] dark:opacity-[0.24]",
+  default: "opacity-[0.34] dark:opacity-[0.30]",
+  subtle: "opacity-[0.28] dark:opacity-[0.24]",
 } as const;
 
 export const EPISODE_PLAYER_ART_SIZES = "(max-width: 640px) 50vw, 440px";

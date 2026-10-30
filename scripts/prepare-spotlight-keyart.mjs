@@ -24,6 +24,8 @@ const COLUMN_RATIO = 0.46;
 const PORTRAIT_MAX_H = 1600;
 const BG = "#0B0F14";
 const DEFAULT_BG_FOCAL = { x: 0.62, y: 0.42 };
+const DEFAULT_BG_BLUR = 18;
+const DEFAULT_BG_BRIGHTNESS = 0.72;
 
 function usage() {
   console.log(`Prepare spotlight episode art assets.
@@ -37,6 +39,8 @@ Options:
   --keyart PATH       16:9 output (default: <episode-id>-keyart.jpg in same dir)
   --focal X,Y         Portrait face focal point 0–1 (default: 0.5,0.28)
   --bg-focal X,Y      Background crop focal point 0–1 (default: 0.62,0.42)
+  --bg-blur N         Background blur sigma (default: ${DEFAULT_BG_BLUR})
+  --bg-brightness N   Background brightness multiplier (default: ${DEFAULT_BG_BRIGHTNESS})
   --skip-optimize     Skip portrait resize/compress step
   -h, --help          Show this help
 `);
@@ -54,6 +58,8 @@ function parseArgs(argv) {
   let keyart = "";
   let focal = { x: 0.5, y: 0.28 };
   let bgFocal = DEFAULT_BG_FOCAL;
+  let bgBlur = DEFAULT_BG_BLUR;
+  let bgBrightness = DEFAULT_BG_BRIGHTNESS;
   let skipOptimize = false;
 
   for (let i = 0; i < argv.length; i += 1) {
@@ -73,6 +79,12 @@ function parseArgs(argv) {
         break;
       case "--bg-focal":
         bgFocal = parseFocal(argv[++i], bgFocal);
+        break;
+      case "--bg-blur":
+        bgBlur = Number(argv[++i] ?? bgBlur);
+        break;
+      case "--bg-brightness":
+        bgBrightness = Number(argv[++i] ?? bgBrightness);
         break;
       case "--skip-optimize":
         skipOptimize = true;
@@ -95,7 +107,7 @@ function parseArgs(argv) {
     process.exit(1);
   }
 
-  return { portrait, background, keyart, focal, bgFocal, skipOptimize };
+  return { portrait, background, keyart, focal, bgFocal, bgBlur, bgBrightness, skipOptimize };
 }
 
 function defaultBackgroundPath(portraitPath) {
@@ -268,12 +280,24 @@ async function optimizePortrait(portraitPath) {
   return { width: after.width, height: after.height, bytes: buf.length };
 }
 
-async function composeBackgroundLayer(bgPath, w, h, bgFocal) {
+async function composeBackgroundLayer(bgPath, w, h, bgFocal, bgBlur, bgBrightness) {
   const cover = await coverArt(bgPath, w, h, normalizeArtFocalPoint(bgFocal));
-  return sharp(cover).blur(18).modulate({ brightness: 0.72, saturation: 0.88 }).png().toBuffer();
+  let pipeline = sharp(cover);
+  if (bgBlur >= 0.3) {
+    pipeline = pipeline.blur(bgBlur);
+  }
+  return pipeline.modulate({ brightness: bgBrightness, saturation: 0.88 }).png().toBuffer();
 }
 
-async function composeKeyart({ portraitPath, keyartPath, backgroundPath, focal, bgFocal }) {
+async function composeKeyart({
+  portraitPath,
+  keyartPath,
+  backgroundPath,
+  focal,
+  bgFocal,
+  bgBlur,
+  bgBrightness,
+}) {
   const colW = Math.round(KEYART_W * COLUMN_RATIO);
   const normalized = normalizeArtFocalPoint(focal);
   const transparent = await portraitHasAlpha(portraitPath);
@@ -289,7 +313,14 @@ async function composeKeyart({ portraitPath, keyartPath, backgroundPath, focal, 
 
   if (backgroundPath) {
     layers.push({
-      input: await composeBackgroundLayer(backgroundPath, KEYART_W, KEYART_H, bgFocal),
+      input: await composeBackgroundLayer(
+        backgroundPath,
+        KEYART_W,
+        KEYART_H,
+        bgFocal,
+        bgBlur,
+        bgBrightness,
+      ),
     });
   } else {
     layers.push({
@@ -327,9 +358,8 @@ async function composeKeyart({ portraitPath, keyartPath, backgroundPath, focal, 
 }
 
 async function main() {
-  const { portrait, background, keyart, focal, bgFocal, skipOptimize } = parseArgs(
-    process.argv.slice(2),
-  );
+  const { portrait, background, keyart, focal, bgFocal, bgBlur, bgBrightness, skipOptimize } =
+    parseArgs(process.argv.slice(2));
   const portraitPath = resolve(repoRoot, portrait);
 
   try {
@@ -368,6 +398,8 @@ async function main() {
     backgroundPath,
     focal,
     bgFocal,
+    bgBlur,
+    bgBrightness,
   });
   console.log(
     `Key art → ${keyartPath} (${key.width}×${key.height}, ${(key.bytes / 1024).toFixed(0)} KB)`,

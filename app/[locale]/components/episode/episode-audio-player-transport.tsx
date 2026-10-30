@@ -13,6 +13,58 @@ import type { EpisodeAudioPlayerTransportState } from "./use-episode-audio-playe
 
 const SKIP_SEC = 15;
 
+interface PlayPauseButtonProps {
+  className: string;
+  iconSize: number;
+  playing: boolean;
+  disabled: boolean;
+  onClick: () => void;
+  label: string;
+}
+
+function PlayPauseButton({
+  className,
+  iconSize,
+  playing,
+  disabled,
+  onClick,
+  label,
+}: PlayPauseButtonProps) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      data-state={playing ? "playing" : "paused"}
+      className={`decoder-play-btn shrink-0 items-center justify-center rounded-sm ${className}`}
+      aria-label={label}
+    >
+      {playing ? (
+        <svg
+          width={iconSize - 2}
+          height={iconSize - 2}
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          aria-hidden
+        >
+          <path d="M6 5h4v14H6V5zm8 0h4v14h-4V5z" />
+        </svg>
+      ) : (
+        <svg
+          width={iconSize}
+          height={iconSize}
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          aria-hidden
+          className="translate-x-px"
+        >
+          <path d="M8 5v14l11-7L8 5z" />
+        </svg>
+      )}
+    </button>
+  );
+}
+
 interface EpisodeAudioPlayerTransportProps {
   episode: Episode;
   ctx: PlayerContextValue;
@@ -34,6 +86,7 @@ export function EpisodeAudioPlayerTransport({
     progressPct,
     chapterTimelineMarkers,
     activeChapterStartT,
+    activeChapterLabel,
     showSeekBuffering,
     mainTransportShowsPause,
     rateLabel,
@@ -50,18 +103,26 @@ export function EpisodeAudioPlayerTransport({
     onMainPlayPause,
   } = transport;
 
+  const playPauseLabel = mainTransportShowsPause
+    ? t("playerPause")
+    : isPageEpisodeActive
+      ? t("playerPlay")
+      : t("playerPlayThisEpisode");
+
   return (
     <>
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
         <div className="min-w-0 space-y-2 sm:order-2 sm:flex-1 sm:space-y-2.5">
-          <div className="text-muted grid grid-cols-[1fr_auto_1fr] items-center gap-x-3 font-mono text-[11px] tracking-widest tabular-nums sm:text-xs">
-            <span className="text-primary min-w-0 text-left">
-              {formatPlaybackTime(displayPosition)}
-            </span>
-            <span className="text-edge shrink-0 justify-self-center" aria-hidden>
-              /
-            </span>
-            <span className="min-w-0 text-right">{formatPlaybackTime(timelineDuration)}</span>
+          <div className="flex items-baseline justify-between gap-4 font-mono text-[11px] tabular-nums sm:text-xs">
+            <p className="shrink-0 tracking-widest">
+              <span className="text-primary">{formatPlaybackTime(displayPosition)}</span>
+              <span className="text-muted"> / {formatPlaybackTime(timelineDuration)}</span>
+            </p>
+            {activeChapterLabel ? (
+              <p className="text-muted min-w-0 truncate text-right" title={activeChapterLabel}>
+                {activeChapterLabel}
+              </p>
+            ) : null}
           </div>
 
           <div
@@ -144,40 +205,14 @@ export function EpisodeAudioPlayerTransport({
               <span className="font-mono text-[10px] tracking-widest">{SKIP_SEC}</span>
             </button>
 
-            <button
-              type="button"
-              onClick={onMainPlayPause}
+            <PlayPauseButton
+              className="flex size-16"
+              iconSize={22}
+              playing={mainTransportShowsPause}
               disabled={ctx.loadError}
-              className={`group border-primary/15 bg-accent focus-visible:outline-accent relative flex size-[4rem] shrink-0 items-center justify-center rounded-sm border-2 text-[#0b0f14] transition-transform duration-200 hover:scale-[1.04] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 active:scale-[0.97] disabled:pointer-events-none disabled:opacity-40${mainTransportShowsPause ? " decoder-play-btn-playing" : " shadow-[inset_0_1px_0_rgb(255_255_255/0.35)]"}`}
-              aria-label={
-                mainTransportShowsPause
-                  ? t("playerPause")
-                  : isPageEpisodeActive
-                    ? t("playerPlay")
-                    : t("playerPlayThisEpisode")
-              }
-            >
-              {mainTransportShowsPause ? (
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-                  <path d="M6 5h4v14H6V5zm8 0h4v14h-4V5z" />
-                </svg>
-              ) : (
-                <svg
-                  width="22"
-                  height="22"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  aria-hidden
-                  className="translate-x-px"
-                >
-                  <path d="M8 5v14l11-7L8 5z" />
-                </svg>
-              )}
-              <span
-                className="pointer-events-none absolute inset-0 rounded-sm bg-[radial-gradient(circle_at_30%_30%,rgb(255_255_255/0.45),transparent_55%)] opacity-0 transition-opacity group-hover:opacity-100"
-                aria-hidden
-              />
-            </button>
+              onClick={onMainPlayPause}
+              label={playPauseLabel}
+            />
 
             <button
               type="button"
@@ -193,40 +228,14 @@ export function EpisodeAudioPlayerTransport({
             </button>
           </div>
 
-          <button
-            type="button"
-            onClick={onMainPlayPause}
+          <PlayPauseButton
+            className="hidden size-14 sm:flex"
+            iconSize={20}
+            playing={mainTransportShowsPause}
             disabled={ctx.loadError}
-            className={`group border-primary/15 bg-accent focus-visible:outline-accent relative hidden size-[3.75rem] shrink-0 items-center justify-center rounded-sm border-2 text-[#0b0f14] transition-transform duration-200 hover:scale-[1.04] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 active:scale-[0.97] disabled:pointer-events-none disabled:opacity-40 sm:flex${mainTransportShowsPause ? " decoder-play-btn-playing" : " shadow-[inset_0_1px_0_rgb(255_255_255/0.35)]"}`}
-            aria-label={
-              mainTransportShowsPause
-                ? t("playerPause")
-                : isPageEpisodeActive
-                  ? t("playerPlay")
-                  : t("playerPlayThisEpisode")
-            }
-          >
-            {mainTransportShowsPause ? (
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-                <path d="M6 5h4v14H6V5zm8 0h4v14h-4V5z" />
-              </svg>
-            ) : (
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                aria-hidden
-                className="translate-x-px"
-              >
-                <path d="M8 5v14l11-7L8 5z" />
-              </svg>
-            )}
-            <span
-              className="pointer-events-none absolute inset-0 rounded-sm bg-[radial-gradient(circle_at_30%_30%,rgb(255_255_255/0.45),transparent_55%)] opacity-0 transition-opacity group-hover:opacity-100"
-              aria-hidden
-            />
-          </button>
+            onClick={onMainPlayPause}
+            label={playPauseLabel}
+          />
         </div>
       </div>
 

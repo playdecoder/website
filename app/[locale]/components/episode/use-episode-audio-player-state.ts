@@ -32,6 +32,7 @@ export type EpisodeAudioPlayerTransportState = {
   progressPct: number;
   chapterTimelineMarkers: ChapterTimelineMarker[];
   activeChapterStartT: number | null;
+  activeChapterLabel: string | null;
   showSeekBuffering: boolean;
   mainTransportShowsPause: boolean;
   rateLabel: string;
@@ -114,10 +115,14 @@ export function useEpisodeAudioPlayerState(episode: Episode, chapters?: EpisodeH
   }
 
   let activeChapterStartT: number | null = null;
+  let activeChapterLabel: string | null = null;
   if (chapters?.length && timelineDuration > 0) {
     const sorted = chapters.toSorted((a, b) => a.t - b.t);
     for (const ch of sorted) {
-      if (ch.t <= displayPosition + 0.25) activeChapterStartT = ch.t;
+      if (ch.t <= displayPosition + 0.25) {
+        activeChapterStartT = ch.t;
+        activeChapterLabel = ch.label;
+      }
     }
   }
 
@@ -244,6 +249,7 @@ export function useEpisodeAudioPlayerState(episode: Episode, chapters?: EpisodeH
     progressPct,
     chapterTimelineMarkers,
     activeChapterStartT,
+    activeChapterLabel,
     showSeekBuffering,
     mainTransportShowsPause,
     rateLabel,

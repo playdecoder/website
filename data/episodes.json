@@ -2,12 +2,12 @@
   {
     "id": "SP03",
     "format": "spotlight",
-    "unreleased": true,
     "slug": "vojtech-schubert-proc-prekladat-hry-znamena-vic-nez-rozumet-slovum",
     "lang": "cs",
+    "explicit": true,
     "title": "Vojtěch Schubert: Proč překládat hry znamená víc než rozumět slovům",
     "date": "2026-10-29T19:00:00.000Z",
-    "duration": 0,
+    "duration": 8123,
     "description": "Jak přeložit vtip, který v češtině nefunguje? A co když k dialogu dostanete jen řádek v tabulce a netušíte, kdo s kým mluví? S Vojtěchem Schubertem, zakladatelem Context Heroes, se bavíme o překládání her jako o řemesle plném rozhodnutí, která hráč většinou vůbec nevidí. Od prvních titulků pro kamarády se dostáváme k vlastní firmě, hledání správného tónu i tomu, kolik tvůrčí svobody překladatel vlastně má. Otevíráme také debatu o AI, která do oboru přináší rychlost, tlak na cenu a otázky kolem kvality. Co dokáže převzít a kde pořád potřebuje člověka? A proč by si Vojta navzdory nejisté budoucnosti znovu vybral stejnou profesi?",
     "tags": [
       "Vojtěch Schubert",
@@ -37,7 +37,7 @@
     "links": {
       "spotify": "",
       "applePodcasts": "",
-      "youtube": "",
+      "youtube": "https://youtu.be/pz6jtxzD1bY",
       "mp3": "https://cdn.play-decoder.com/podcast/episodes/sp03.mp3",
       "transcript": "https://cdn.play-decoder.com/podcast/transcripts/sp03.transcript.json"
     }
