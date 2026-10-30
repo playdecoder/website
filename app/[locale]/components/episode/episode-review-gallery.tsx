@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import type { MouseEvent } from "react";
+import { Fragment, type MouseEvent } from "react";
 import { useEffect, useRef, useState } from "react";
 
 import { cn } from "@/lib/ui/cn";
@@ -33,6 +33,24 @@ export interface ReviewGallerySection {
   items: ReviewGalleryItem[];
   /** Shown instead of the grid when every frame in the section failed to load (kit tone only). */
   emptyNote?: string;
+  /** DOM id, so a table of contents can link straight to this group. */
+  id?: string;
+  /** Sections sharing a group get one `groupEmptyNotes` note when all of them end up empty. */
+  group?: string;
+  /**
+   * Kit only: consecutive sections with the same cluster render under one header (e.g. Instagram
+   * → Story, Post). `heading` then acts as the optional sub-type label.
+   */
+  cluster?: GalleryCluster;
+}
+
+export interface GalleryCluster {
+  key: string;
+  label: string;
+  /** Anchor for the table of contents. */
+  id?: string;
+  /** Classes for the small brand-colour square before the label. */
+  markerClass?: string;
 }
 
 /** Shared share-kit labels; providing them switches the gallery to the kit tone. */
@@ -41,6 +59,8 @@ export interface ShareKitGalleryLabels {
   downloadFailed: string;
   /** Lightbox dot label with an `{n}` placeholder, renumbered after missing frames are dropped. */
   goToTemplate: string;
+  /** Note per section group, shown once when every frame in that group is missing. */
+  groupEmptyNotes?: Record<string, string>;
 }
 
 interface EpisodeReviewGalleryProps {
@@ -60,7 +80,7 @@ const TONE = {
     card: "border-review/25 hover:border-review/60 focus-visible:ring-review/60",
   },
   kit: {
-    heading: "text-muted",
+    heading: "text-primary",
     card: "border-edge hover:border-accent focus-visible:ring-secondary/60",
   },
 } as const;
@@ -218,10 +238,45 @@ export function EpisodeReviewGallery({
     sections.slice(0, i).reduce((sum, section) => sum + section.items.length, 0),
   );
 
-  return (
-    <>
-      {sections.map((section, sectionIndex) => (
-        <div key={section.key}>
+  // Kit: an empty section disappears (and drops out of the ToC); a fully empty group leaves one note.
+  const groupIsEmpty = (group: string) =>
+    sections.every((section) => section.group !== group || section.items.length === 0);
+  const isFirstOfGroup = (index: number) =>
+    sections.findIndex((section) => section.group === sections[index].group) === index;
+
+  const renderSection = (section: ReviewGallerySection, sectionIndex: number) => {
+    if (kit && section.items.length === 0 && !section.emptyNote) {
+      const note = section.group ? kit.groupEmptyNotes?.[section.group] : undefined;
+      if (
+        !note ||
+        !section.group ||
+        !groupIsEmpty(section.group) ||
+        !isFirstOfGroup(sectionIndex)
+      ) {
+        return null;
+      }
+      return (
+        <p
+          key={section.key}
+          className="border-edge text-muted rounded-sm border border-dashed px-4 py-5 font-mono text-[11px] leading-relaxed"
+        >
+          {note}
+        </p>
+      );
+    }
+    return (
+      <div
+        key={section.key}
+        id={section.id}
+        className={section.id ? "scroll-mt-32 lg:scroll-mt-24" : undefined}
+      >
+        {section.cluster ? (
+          section.heading ? (
+            <h4 className="text-muted mb-3 font-mono text-[10px] tracking-[0.18em] uppercase">
+              {section.heading}
+            </h4>
+          ) : null
+        ) : (
           <h3
             className={cn(
               "mb-3 font-mono text-[9px] tracking-[0.22em] uppercase sm:text-[10px]",
@@ -230,115 +285,171 @@ export function EpisodeReviewGallery({
           >
             {section.heading}
           </h3>
-          {section.items.length === 0 && section.emptyNote ? (
-            <p className="border-edge text-muted rounded-sm border border-dashed px-4 py-5 font-mono text-[11px] leading-relaxed">
-              {section.emptyNote}
-            </p>
-          ) : null}
-          <ul className="grid grid-cols-1 gap-x-4 gap-y-5 sm:grid-flow-dense sm:grid-cols-2">
-            {section.items.map((item, itemIndex) => {
-              const globalIndex = offsets[sectionIndex] + itemIndex;
-              const shape = shapeOf(item);
-              return (
-                <li
-                  key={item.key}
-                  // Kit pairs dark/light per format, so every frame keeps one cell.
-                  className={cn("flex min-w-0 flex-col gap-2", !kit && SHAPE_SPAN[shape])}
+        )}
+        {section.items.length === 0 && section.emptyNote ? (
+          <p className="border-edge text-muted rounded-sm border border-dashed px-4 py-5 font-mono text-[11px] leading-relaxed">
+            {section.emptyNote}
+          </p>
+        ) : null}
+        <ul className="grid grid-cols-1 gap-x-4 gap-y-5 sm:grid-flow-dense sm:grid-cols-2">
+          {section.items.map((item, itemIndex) => {
+            const globalIndex = offsets[sectionIndex] + itemIndex;
+            const shape = shapeOf(item);
+            return (
+              <li
+                key={item.key}
+                // Kit pairs dark/light per format, so every frame keeps one cell.
+                className={cn("flex min-w-0 flex-col gap-2", !kit && SHAPE_SPAN[shape])}
+              >
+                {/* Always one line, so neighbouring images start at the same height in any language. */}
+                <div className="flex min-w-0 items-baseline gap-2 font-mono text-[10px] tracking-wide whitespace-nowrap sm:text-[11px]">
+                  {/* Kit sections are one platform each, so the heading already names it. */}
+                  {kit && item.themeLabel ? (
+                    <span className="text-primary min-w-0 truncate font-medium">
+                      {item.themeLabel}
+                    </span>
+                  ) : (
+                    <>
+                      <span className="text-primary shrink-0 font-medium">{item.layoutLabel}</span>
+                      {item.themeLabel ? (
+                        <span className="text-muted min-w-0 truncate">{item.themeLabel}</span>
+                      ) : null}
+                    </>
+                  )}
+                  <span className="text-muted ml-auto shrink-0 tabular-nums">
+                    {item.width}×{item.height}
+                  </span>
+                </div>
+                {/* Real link so new-tab and no-JS still open the original; plain clicks open the lightbox. */}
+                <a
+                  ref={(el) => {
+                    if (el) cardRefs.current.set(globalIndex, el);
+                    else cardRefs.current.delete(globalIndex);
+                  }}
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => {
+                    if (!isPlainClick(e)) return;
+                    e.preventDefault();
+                    setOpenIndex(globalIndex);
+                  }}
+                  className={cn(
+                    "group relative block min-h-0 flex-1 cursor-zoom-in overflow-hidden rounded-sm border transition-colors focus-visible:ring-2 focus-visible:outline-none",
+                    tone.card,
+                    item.theme === "dark"
+                      ? "bg-[#0b0f14]"
+                      : item.theme === "light"
+                        ? "bg-[#f7f9fc]"
+                        : "bg-surface-2",
+                  )}
+                  aria-label={item.alt}
+                  aria-haspopup="dialog"
+                  title={openFullLabel}
                 >
-                  {/* Always one line, so neighbouring images start at the same height in any language. */}
-                  <div className="flex min-w-0 items-baseline gap-2 font-mono text-[10px] tracking-wide whitespace-nowrap sm:text-[11px]">
-                    <span className="text-primary shrink-0 font-medium">{item.layoutLabel}</span>
-                    {item.themeLabel ? (
-                      <span className="text-muted min-w-0 truncate">{item.themeLabel}</span>
-                    ) : null}
-                    <span className="text-muted ml-auto shrink-0 tabular-nums">
-                      {item.width}×{item.height}
-                    </span>
-                  </div>
-                  {/* Real link so new-tab and no-JS still open the original; plain clicks open the lightbox. */}
-                  <a
+                  <Image
+                    src={item.url}
+                    alt=""
+                    width={item.width}
+                    height={item.height}
+                    sizes={kit ? SHAPE_SIZES.square : SHAPE_SIZES[shape]}
+                    // Skip the optimiser: its cache would keep showing a file for hours after a re-upload.
+                    unoptimized
+                    // A frame that 404s before hydration never fires onError, so check on attach too.
                     ref={(el) => {
-                      if (el) cardRefs.current.set(globalIndex, el);
-                      else cardRefs.current.delete(globalIndex);
+                      if (el?.complete && el.naturalWidth === 0) markMissing(item);
                     }}
-                    href={item.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) => {
-                      if (!isPlainClick(e)) return;
-                      e.preventDefault();
-                      setOpenIndex(globalIndex);
-                    }}
+                    onError={() => markMissing(item)}
                     className={cn(
-                      "group relative block min-h-0 flex-1 cursor-zoom-in overflow-hidden rounded-sm border transition-colors focus-visible:ring-2 focus-visible:outline-none",
-                      tone.card,
-                      item.theme === "dark"
-                        ? "bg-[#0b0f14]"
-                        : item.theme === "light"
-                          ? "bg-[#f7f9fc]"
-                          : "bg-surface-2",
+                      "block w-full transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-[1.015] motion-reduce:transition-none motion-reduce:group-hover:scale-100",
+                      // Inside a two-row cell the story should fill the cell height, not overflow it.
+                      shape === "portrait" && !kit
+                        ? "h-auto sm:h-full sm:object-contain"
+                        : "h-auto",
                     )}
-                    aria-label={item.alt}
-                    aria-haspopup="dialog"
-                    title={openFullLabel}
-                  >
-                    <Image
-                      src={item.url}
-                      alt=""
-                      width={item.width}
-                      height={item.height}
-                      sizes={kit ? SHAPE_SIZES.square : SHAPE_SIZES[shape]}
-                      // Skip the optimiser: its cache would keep showing a file for hours after a re-upload.
-                      unoptimized
-                      // A frame that 404s before hydration never fires onError, so check on attach too.
-                      ref={(el) => {
-                        if (el?.complete && el.naturalWidth === 0) markMissing(item);
-                      }}
-                      onError={() => markMissing(item)}
-                      className={cn(
-                        "block w-full transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-[1.015] motion-reduce:transition-none motion-reduce:group-hover:scale-100",
-                        // Inside a two-row cell the story should fill the cell height, not overflow it.
-                        shape === "portrait" && !kit
-                          ? "h-auto sm:h-full sm:object-contain"
-                          : "h-auto",
-                      )}
-                    />
-                    {item.usedForLabels.length > 0 ? (
-                      <span className="pointer-events-none absolute top-2 left-2 flex max-w-[calc(100%-1rem)] flex-wrap gap-1">
-                        {item.usedForLabels.map((label) => (
-                          <span
-                            key={label}
-                            className="bg-surface/90 text-review border-review/40 rounded-sm border px-1.5 py-0.5 font-mono text-[9px] tracking-[0.14em] whitespace-nowrap uppercase shadow-sm backdrop-blur-md"
-                          >
-                            {label}
-                          </span>
-                        ))}
-                      </span>
-                    ) : null}
-                    <span
-                      aria-hidden
-                      className="border-edge/60 bg-surface/85 text-primary pointer-events-none absolute right-2 bottom-2 inline-flex size-8 items-center justify-center rounded-sm border opacity-0 backdrop-blur-md transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100"
-                    >
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.75"
-                        strokeLinecap="square"
-                      >
-                        <path d="M14 4h6v6M10 20H4v-6M20 4l-6.5 6.5M4 20l6.5-6.5" />
-                      </svg>
+                  />
+                  {item.usedForLabels.length > 0 ? (
+                    <span className="pointer-events-none absolute top-2 left-2 flex max-w-[calc(100%-1rem)] flex-wrap gap-1">
+                      {item.usedForLabels.map((label) => (
+                        <span
+                          key={label}
+                          className="bg-surface/90 text-review border-review/40 rounded-sm border px-1.5 py-0.5 font-mono text-[9px] tracking-[0.14em] whitespace-nowrap uppercase shadow-sm backdrop-blur-md"
+                        >
+                          {label}
+                        </span>
+                      ))}
                     </span>
-                  </a>
-                  {kit ? <DownloadButton item={item} labels={kit} /> : null}
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      ))}
+                  ) : null}
+                  <span
+                    aria-hidden
+                    className="border-edge/60 bg-surface/85 text-primary pointer-events-none absolute right-2 bottom-2 inline-flex size-8 items-center justify-center rounded-sm border opacity-0 backdrop-blur-md transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100"
+                  >
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.75"
+                      strokeLinecap="square"
+                    >
+                      <path d="M14 4h6v6M10 20H4v-6M20 4l-6.5 6.5M4 20l6.5-6.5" />
+                    </svg>
+                  </span>
+                </a>
+                {kit ? <DownloadButton item={item} labels={kit} /> : null}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    );
+  };
+
+  /** Kit: group consecutive sections of one cluster under a single network header. */
+  const renderBlocks = () => {
+    if (!kit) return sections.map(renderSection);
+    const blocks: { cluster?: GalleryCluster; indices: number[] }[] = [];
+    sections.forEach((section, i) => {
+      const last = blocks.at(-1);
+      const hasContent = section.items.length > 0 || Boolean(section.emptyNote);
+      if (hasContent && section.cluster && last?.cluster?.key === section.cluster.key) {
+        last.indices.push(i);
+      } else if (renderSection(section, i)) {
+        blocks.push({ cluster: hasContent ? section.cluster : undefined, indices: [i] });
+      }
+    });
+    return blocks.map((block) =>
+      block.cluster ? (
+        <section
+          key={block.cluster.key}
+          id={block.cluster.id}
+          aria-label={block.cluster.label}
+          className="border-edge scroll-mt-32 space-y-5 border-t pt-7 first:border-t-0 first:pt-0 lg:scroll-mt-24"
+        >
+          <h3 className="font-display text-primary flex items-center gap-2.5 text-base font-bold tracking-tight sm:text-lg">
+            <span
+              className={cn(
+                "size-2.5 shrink-0 rounded-[2px]",
+                block.cluster.markerClass ?? "bg-accent",
+              )}
+              aria-hidden
+            />
+            {block.cluster.label}
+          </h3>
+          {block.indices.map((i) => renderSection(sections[i], i))}
+        </section>
+      ) : (
+        <Fragment key={sections[block.indices[0]].key}>
+          {block.indices.map((i) => renderSection(sections[i], i))}
+        </Fragment>
+      ),
+    );
+  };
+
+  return (
+    <>
+      {renderBlocks()}
 
       {openIndex === null ? null : (
         <ReviewLightbox

@@ -329,6 +329,7 @@
     "intro": "Odkazy, texty a grafika k epizodě na jednom místě. Odkaz nebo text zkopírujete jedním kliknutím, obrázky stáhnete tlačítkem pod náhledem.",
     "unreleasedNote": "Epizoda ještě nevyšla. Se sdílením prosím počkejte na zveřejnění.",
     "jumpAria": "Přejít na část stránky",
+    "tocHeading": "Obsah",
     "sectionLinks": "Odkazy",
     "sectionLinksNote": "Kliknutím na řádek odkaz zkopírujete, ikonou vpravo ho otevřete.",
     "sectionTexts": "Texty",
@@ -352,6 +353,8 @@
     "download": "Stáhnout",
     "downloadFailed": "Otevírám originál",
     "keyArtLabel": "Key art",
+    "subtypeStory": "Story",
+    "subtypePost": "Příspěvek",
     "socialEmpty": "Grafika pro sociální sítě k této epizodě zatím není nahraná."
   },
   "notFound": {

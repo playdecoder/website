@@ -32,6 +32,7 @@ import { Navbar } from "../../../components/layout/navbar";
 import { DecoderPageFrame } from "../../../components/layout/page-frame";
 
 import { KitCopyButton, KitLinkRow, type KitCopyLabels } from "./episode-kit-actions";
+import { EpisodeKitToc, type KitTocEntry } from "./episode-kit-toc";
 
 interface EpisodeKitViewProps {
   episode: Episode;
@@ -39,6 +40,30 @@ interface EpisodeKitViewProps {
 }
 
 const SECTION_ID = { links: "links", texts: "texts", images: "images" } as const;
+
+type Network = "instagram" | "facebook" | "linkedin" | "x" | "youtube";
+
+/** No brand logos in the icon set, so networks get the site's brand-colour marker instead. */
+const NETWORKS: Record<Network, { label: string; markerClass: string }> = {
+  instagram: {
+    label: "Instagram",
+    markerClass: "bg-[linear-gradient(45deg,#f58529,#dd2a7b_55%,#8134af)]",
+  },
+  facebook: { label: "Facebook", markerClass: "bg-[#1877f2]" },
+  linkedin: { label: "LinkedIn", markerClass: "bg-[#0a66c2]" },
+  x: { label: "X", markerClass: "bg-primary" },
+  youtube: { label: "YouTube", markerClass: "bg-[#ff0000]" },
+};
+
+/** Which network a social layout belongs to; a sub-type only where a network has several. */
+const SOCIAL_LAYOUT_NETWORK: Record<string, { network: Network; subtype?: "story" | "post" }> = {
+  "ig-story": { network: "instagram", subtype: "story" },
+  "ig-post": { network: "instagram", subtype: "post" },
+  "facebook-post": { network: "facebook" },
+  "linkedin-post": { network: "linkedin" },
+  "x-post": { network: "x" },
+  "youtube-keyart": { network: "youtube" },
+};
 
 function KitSection({
   id,
@@ -57,7 +82,7 @@ function KitSection({
     <section
       id={id}
       aria-labelledby={`${id}-heading`}
-      className="scroll-mt-24 space-y-4"
+      className="scroll-mt-32 space-y-4 lg:scroll-mt-24"
       style={{ animation: `fadeUp 0.6s ease both ${delay}` }}
     >
       <div className="space-y-1">
@@ -159,16 +184,73 @@ export async function EpisodeKitView({ episode, locale }: EpisodeKitViewProps) {
     };
   };
 
+  // One section per layout, clustered by network (Instagram → Story, Post), so the ToC can
+  // jump straight to e.g. Facebook.
+  const subtypeLabel = { story: t("subtypeStory"), post: t("subtypePost") };
+  const socialLayoutIds = [...new Set(kit.social.map((asset) => asset.layoutId))];
   const sections: ReviewGallerySection[] = [
+    ...socialLayoutIds.map((layoutId): ReviewGallerySection => {
+      const placement = SOCIAL_LAYOUT_NETWORK[layoutId];
+      const network = placement ? NETWORKS[placement.network] : undefined;
+      return {
+        key: layoutId,
+        group: "social",
+        heading: placement?.subtype
+          ? subtypeLabel[placement.subtype]
+          : network
+            ? ""
+            : (layoutNames[layoutId] ?? layoutId),
+        cluster: placement
+          ? {
+              key: placement.network,
+              id: `${SECTION_ID.images}-${placement.network}`,
+              label: NETWORKS[placement.network].label,
+              markerClass: NETWORKS[placement.network].markerClass,
+            }
+          : undefined,
+        items: kit.social.filter((asset) => asset.layoutId === layoutId).map(toItem),
+      };
+    }),
     {
-      key: "social",
-      heading: tListen("reviewSocialLabel"),
-      items: kit.social.map(toItem),
-      emptyNote: t("socialEmpty"),
+      key: "covers",
+      heading: "",
+      cluster: {
+        key: "covers",
+        id: `${SECTION_ID.images}-covers`,
+        label: tListen("reviewCoversLabel"),
+      },
+      items: kit.covers.map(toItem),
     },
-    { key: "covers", heading: tListen("reviewCoversLabel"), items: kit.covers.map(toItem) },
-    { key: "web", heading: t("keyArtLabel"), items: kit.web.map(toItem) },
+    {
+      key: "web",
+      heading: "",
+      cluster: { key: "keyart", id: `${SECTION_ID.images}-keyart`, label: t("keyArtLabel") },
+      items: kit.web.map(toItem),
+    },
   ].filter((section) => section.items.length > 0);
+
+  // ToC lists networks, not individual layouts.
+  const tocImageEntries = [
+    ...new Map(
+      sections
+        .filter((section) => section.cluster?.id)
+        .map((section) => [
+          section.cluster!.key,
+          { id: section.cluster!.id!, label: section.cluster!.label },
+        ]),
+    ).values(),
+  ];
+
+  const tocEntries: KitTocEntry[] = [
+    { id: SECTION_ID.links, label: t("sectionLinks") },
+    { id: SECTION_ID.texts, label: t("sectionTexts") },
+    {
+      id: SECTION_ID.images,
+      label: t("sectionImages"),
+      children: tocImageEntries,
+    },
+  ];
+  const tocProps = { entries: tocEntries, heading: t("tocHeading"), ariaLabel: t("jumpAria") };
 
   const lightboxLabels: LightboxLabels = {
     dialog: tListen("reviewLightboxDialog"),
@@ -196,7 +278,7 @@ export async function EpisodeKitView({ episode, locale }: EpisodeKitViewProps) {
 
       <DecoderPageFrame className="min-h-0" scanPeriodSec={16} scanOpacity={0.22}>
         <div
-          className="relative z-10 mx-auto w-full max-w-4xl px-4 pt-20 pb-16 sm:px-5 sm:pt-24 sm:pb-20 md:pt-28 md:pb-28"
+          className="relative z-10 mx-auto w-full max-w-6xl px-4 pt-20 pb-16 sm:px-5 sm:pt-24 sm:pb-20 md:pt-28 md:pb-28"
           data-episode-format={episodeFormat ?? undefined}
         >
           <nav
@@ -223,138 +305,135 @@ export async function EpisodeKitView({ episode, locale }: EpisodeKitViewProps) {
             <span className="text-accent-text">{t("breadcrumb")}</span>
           </nav>
 
-          <header className="space-y-4" style={{ animation: "fadeUp 0.6s ease both 0.06s" }}>
-            <p className="flex flex-wrap items-center gap-3">
-              <span className="episode-player-id-pill font-mono text-[11px] tracking-widest">
-                {episode.id}
-              </span>
-              <span className="text-muted font-mono text-[11px] tracking-[0.14em] uppercase">
-                {t("eyebrow")}
-              </span>
-            </p>
-            <h1
-              className="font-display text-primary leading-[1.08] font-bold tracking-tight text-balance"
-              style={{ fontSize: "clamp(1.5rem, 5vw, 2.5rem)" }}
-            >
-              {episode.title}
-            </h1>
-            <p className="text-muted font-mono text-[11px] tracking-wide sm:text-xs">
-              {meta.join(" · ")}
-            </p>
-            <p className="text-primary/80 font-body max-w-prose text-[15px] leading-relaxed">
-              {t("intro")}
-            </p>
-            {episode.unreleased ? (
-              <p
-                role="note"
-                className="review-surface text-primary rounded-sm px-4 py-3 font-mono text-[11px] leading-relaxed sm:text-xs"
-              >
-                {t("unreleasedNote")}
-              </p>
-            ) : null}
-            <nav aria-label={t("jumpAria")} className="flex flex-wrap gap-2 pt-1">
-              {(
-                [
-                  [SECTION_ID.links, t("sectionLinks")],
-                  [SECTION_ID.texts, t("sectionTexts")],
-                  [SECTION_ID.images, t("sectionImages")],
-                ] as const
-              ).map(([id, label]) => (
-                <a
-                  key={id}
-                  href={`#${id}`}
-                  className="border-edge text-muted hover:border-accent hover:text-primary inline-flex min-h-10 items-center rounded-sm border px-3 font-mono text-[10px] tracking-[0.14em] uppercase transition-colors"
+          <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_13rem] lg:gap-14">
+            <div className="min-w-0">
+              <header className="space-y-4" style={{ animation: "fadeUp 0.6s ease both 0.06s" }}>
+                <p className="flex flex-wrap items-center gap-3">
+                  <span className="episode-player-id-pill font-mono text-[11px] tracking-widest">
+                    {episode.id}
+                  </span>
+                  <span className="text-muted font-mono text-[11px] tracking-[0.14em] uppercase">
+                    {t("eyebrow")}
+                  </span>
+                </p>
+                <h1
+                  className="font-display text-primary leading-[1.08] font-bold tracking-tight text-balance"
+                  style={{ fontSize: "clamp(1.5rem, 5vw, 2.5rem)" }}
                 >
-                  {label}
-                </a>
-              ))}
-            </nav>
-          </header>
-
-          <div className="mt-12 space-y-14 sm:mt-14 sm:space-y-16">
-            <KitSection
-              id={SECTION_ID.links}
-              heading={t("sectionLinks")}
-              note={t("sectionLinksNote")}
-              delay="0.1s"
-            >
-              <ul className="border-edge bg-surface/85 dark:bg-surface/55 divide-edge/60 divide-y overflow-hidden rounded-sm border backdrop-blur-sm">
-                {kit.links.map((link) => (
-                  <KitLinkRow
-                    key={link.key}
-                    label={linkLabel[link.key]}
-                    url={link.url}
-                    copyAria={t("copyLinkAria", { label: linkLabel[link.key] })}
-                    openLabel={t("open")}
-                    openAria={t("openAria", { label: linkLabel[link.key] })}
-                    labels={copyLabels}
-                  />
-                ))}
-              </ul>
-            </KitSection>
-
-            <KitSection
-              id={SECTION_ID.texts}
-              heading={t("sectionTexts")}
-              note={t("sectionTextsNote")}
-              delay="0.14s"
-            >
-              <ul className="space-y-3">
-                {kit.texts.map((text) => (
-                  <li
-                    key={text.key}
-                    className={`bg-surface/85 dark:bg-surface/55 rounded-sm border backdrop-blur-sm ${
-                      text.key === "post" ? "border-accent/70" : "border-edge"
-                    }`}
+                  {episode.title}
+                </h1>
+                <p className="text-muted font-mono text-[11px] tracking-wide sm:text-xs">
+                  {meta.join(" · ")}
+                </p>
+                <p className="text-primary/80 font-body max-w-prose text-[15px] leading-relaxed">
+                  {t("intro")}
+                </p>
+                {episode.unreleased ? (
+                  <p
+                    role="note"
+                    className="review-surface text-primary rounded-sm px-4 py-3 font-mono text-[11px] leading-relaxed sm:text-xs"
                   >
-                    <div className="border-edge/60 flex flex-wrap items-center gap-x-3 gap-y-1 border-b px-4 py-2.5 sm:px-5">
-                      <h3 className="text-primary font-mono text-[11px] font-medium tracking-[0.12em] whitespace-nowrap uppercase">
-                        {textLabel[text.key]}
-                      </h3>
-                      <span className="text-muted font-mono text-[10px] tabular-nums">
-                        {t("chars", { count: text.text.length })}
-                      </span>
-                      <KitCopyButton
-                        text={text.text}
-                        aria={t("copyTextAria", { label: textLabel[text.key] })}
-                        labels={copyLabels}
-                        className="ml-auto"
-                      />
-                    </div>
-                    <p
-                      className={`text-primary px-4 py-4 whitespace-pre-line sm:px-5 ${
-                        text.key === "title"
-                          ? "font-display text-base font-semibold tracking-tight"
-                          : "font-body text-[15px] leading-relaxed"
-                      }`}
-                      lang={episode.lang}
-                    >
-                      {text.text}
-                    </p>
-                  </li>
-                ))}
-              </ul>
-            </KitSection>
+                    {t("unreleasedNote")}
+                  </p>
+                ) : null}
+              </header>
 
-            <KitSection
-              id={SECTION_ID.images}
-              heading={t("sectionImages")}
-              note={t("sectionImagesNote")}
-              delay="0.18s"
-            >
-              <div className="space-y-8">
-                <EpisodeReviewGallery
-                  sections={sections}
-                  openFullLabel={tListen("reviewOpenFull")}
-                  lightboxLabels={lightboxLabels}
-                  kit={{
-                    download: t("download"),
-                    downloadFailed: t("downloadFailed"),
-                    goToTemplate: tListen("reviewLightboxGoTo", { n: "{n}" }),
-                  }}
-                />
+              {/* Sticky wrapper lives in the long content column so the bar follows the whole page. */}
+              <div className="sticky top-16 z-20 mt-8 lg:hidden">
+                <EpisodeKitToc variant="bar" {...tocProps} />
               </div>
-            </KitSection>
+
+              <div className="mt-10 space-y-14 sm:mt-12 sm:space-y-16 lg:mt-14">
+                <KitSection
+                  id={SECTION_ID.links}
+                  heading={t("sectionLinks")}
+                  note={t("sectionLinksNote")}
+                  delay="0.1s"
+                >
+                  <ul className="border-edge bg-surface/85 dark:bg-surface/55 divide-edge/60 divide-y overflow-hidden rounded-sm border backdrop-blur-sm">
+                    {kit.links.map((link) => (
+                      <KitLinkRow
+                        key={link.key}
+                        label={linkLabel[link.key]}
+                        url={link.url}
+                        copyAria={t("copyLinkAria", { label: linkLabel[link.key] })}
+                        openLabel={t("open")}
+                        openAria={t("openAria", { label: linkLabel[link.key] })}
+                        labels={copyLabels}
+                      />
+                    ))}
+                  </ul>
+                </KitSection>
+
+                <KitSection
+                  id={SECTION_ID.texts}
+                  heading={t("sectionTexts")}
+                  note={t("sectionTextsNote")}
+                  delay="0.14s"
+                >
+                  <ul className="space-y-3">
+                    {kit.texts.map((text) => (
+                      <li
+                        key={text.key}
+                        className={`bg-surface/85 dark:bg-surface/55 rounded-sm border backdrop-blur-sm ${
+                          text.key === "post" ? "border-accent/70" : "border-edge"
+                        }`}
+                      >
+                        <div className="border-edge/60 flex flex-wrap items-center gap-x-3 gap-y-1 border-b px-4 py-2.5 sm:px-5">
+                          <h3 className="text-primary font-mono text-[11px] font-medium tracking-[0.12em] whitespace-nowrap uppercase">
+                            {textLabel[text.key]}
+                          </h3>
+                          <span className="text-muted font-mono text-[10px] tabular-nums">
+                            {t("chars", { count: text.text.length })}
+                          </span>
+                          <KitCopyButton
+                            text={text.text}
+                            aria={t("copyTextAria", { label: textLabel[text.key] })}
+                            labels={copyLabels}
+                            className="ml-auto"
+                          />
+                        </div>
+                        <p
+                          className={`text-primary px-4 py-4 whitespace-pre-line sm:px-5 ${
+                            text.key === "title"
+                              ? "font-display text-base font-semibold tracking-tight"
+                              : "font-body text-[15px] leading-relaxed"
+                          }`}
+                          lang={episode.lang}
+                        >
+                          {text.text}
+                        </p>
+                      </li>
+                    ))}
+                  </ul>
+                </KitSection>
+
+                <KitSection
+                  id={SECTION_ID.images}
+                  heading={t("sectionImages")}
+                  note={t("sectionImagesNote")}
+                  delay="0.18s"
+                >
+                  <div className="space-y-8">
+                    <EpisodeReviewGallery
+                      sections={sections}
+                      openFullLabel={tListen("reviewOpenFull")}
+                      lightboxLabels={lightboxLabels}
+                      kit={{
+                        download: t("download"),
+                        downloadFailed: t("downloadFailed"),
+                        goToTemplate: tListen("reviewLightboxGoTo", { n: "{n}" }),
+                        groupEmptyNotes: { social: t("socialEmpty") },
+                      }}
+                    />
+                  </div>
+                </KitSection>
+              </div>
+            </div>
+
+            <aside className="hidden lg:block">
+              <EpisodeKitToc variant="rail" {...tocProps} />
+            </aside>
           </div>
         </div>
       </DecoderPageFrame>
