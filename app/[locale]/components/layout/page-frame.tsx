@@ -15,7 +15,7 @@ export function DecoderPageFrame({
 }: DecoderPageFrameProps) {
   return (
     <section
-      className={`dot-grid page-frame-clip relative flex min-h-[calc(100vh-4rem)] flex-col ${className}`}
+      className={`dot-grid page-frame-clip relative flex min-h-[calc(100svh-var(--nav-h))] flex-col ${className}`}
     >
       <div
         className="pointer-events-none absolute inset-x-0 top-0 z-[3] h-px"

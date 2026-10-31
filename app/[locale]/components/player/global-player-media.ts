@@ -173,7 +173,18 @@ export function subscribeGlobalPlayerAudio(
 
   const onTime = () => {
     const d = Number.isFinite(el.duration) ? el.duration : 0;
-    dispatchMedia({ type: "patch", patch: { currentTime: el.currentTime, duration: d } });
+    // `stalled` can fire mid-playback while the buffer still covers us; advancing time with data
+    // ahead means playback is not actually blocked.
+    const advancing =
+      !el.paused && !el.seeking && el.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA;
+    dispatchMedia({
+      type: "patch",
+      patch: {
+        currentTime: el.currentTime,
+        duration: d,
+        ...(advancing ? { isSeekBuffering: false } : {}),
+      },
+    });
     if (el.paused) return;
     const now = Date.now();
     if (now - lastPersistAtRef.current < GLOBAL_PLAYER_PERSIST_THROTTLE_MS) return;
@@ -272,6 +283,17 @@ export function subscribeGlobalPlayerAudio(
     dispatchMedia({ type: "patch", patch: { isSeekBuffering: true } });
   };
 
+  // `stalled` only means the network went quiet; with data buffered ahead, playback continues.
+  const onStalled = () => {
+    if (el.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) return;
+    onWaiting();
+  };
+
+  const onPlaying = () => {
+    debugPlayerEvent("playing", el);
+    dispatchMedia({ type: "patch", patch: { isSeekBuffering: false } });
+  };
+
   const onProgress = () => patchBufferTelemetry("progress");
   const onCanPlay = () => patchBufferTelemetry("canplay");
   const onLoadedData = () => patchBufferTelemetry("loadeddata");
@@ -285,7 +307,8 @@ export function subscribeGlobalPlayerAudio(
   el.addEventListener("canplay", onCanPlay);
   el.addEventListener("loadeddata", onLoadedData);
   el.addEventListener("waiting", onWaiting);
-  el.addEventListener("stalled", onWaiting);
+  el.addEventListener("stalled", onStalled);
+  el.addEventListener("playing", onPlaying);
   const onError = () => {
     debugPlayerEvent("error", el);
     dispatchMedia({
@@ -311,7 +334,8 @@ export function subscribeGlobalPlayerAudio(
     el.removeEventListener("canplay", onCanPlay);
     el.removeEventListener("loadeddata", onLoadedData);
     el.removeEventListener("waiting", onWaiting);
-    el.removeEventListener("stalled", onWaiting);
+    el.removeEventListener("stalled", onStalled);
+    el.removeEventListener("playing", onPlaying);
     el.removeEventListener("error", onError);
   };
 }

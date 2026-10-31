@@ -648,7 +648,6 @@ export function HeroWaveformOsc() {
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    const H = CANVAS_HEIGHT;
     const ctx = canvas.getContext("2d", { alpha: false, desynchronized: true });
     if (!ctx) return;
 
@@ -678,6 +677,8 @@ export function HeroWaveformOsc() {
 
     const syncSize = () => {
       const W = Math.max(container.clientWidth, 320);
+      // Height follows the container (CSS --hero-wave-h shrinks it on short screens).
+      const H = container.clientHeight || CANVAS_HEIGHT;
       const r = dpr();
       canvas.width = W * r;
       canvas.height = H * r;
@@ -740,7 +741,7 @@ export function HeroWaveformOsc() {
   }, [inView, tabVisible, isDark]);
 
   return (
-    <div className="mb-12 w-full max-md:px-4 md:px-0" ref={rootRef}>
+    <div className="short:mb-5 mb-12 w-full max-md:px-4 md:px-0" ref={rootRef}>
       <div className="hero-osc" ref={containerRef} aria-hidden>
         <div className="hero-osc__screen">
           <div className="hero-osc__scanlines" />

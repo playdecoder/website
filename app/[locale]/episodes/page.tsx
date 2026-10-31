@@ -50,10 +50,10 @@ export default async function EpisodesArchivePage({ params }: PageProps) {
     <div className="page-shell">
       <Navbar locale={locale} />
 
-      <main className="pt-16">
+      <main className="pt-nav">
         <header className="border-edge relative overflow-hidden border-b">
           <div className="dot-grid pointer-events-none absolute inset-0 opacity-35" aria-hidden />
-          <div className="relative mx-auto max-w-6xl px-5 py-14 md:py-20">
+          <div className="short:py-8 relative mx-auto max-w-6xl px-5 py-14 md:py-20">
             <SectionHeading variant="rail" label={t("label")} barSize={0.85} className="mb-8" />
 
             <div className="scroll-reveal max-w-3xl">

@@ -13,8 +13,11 @@ interface WaveformSettleOptions {
 
 const DEFAULT_TRANSITION = "transform 1.1s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.9s ease 0.06s";
 
-/** Only these are touched — bars keep their own inline height, flex, background and CSS vars. */
-const SETTLE_PROPS = ["animation", "transform", "transition", "opacity"] as const;
+/**
+ * Only these are touched — bars keep their own inline height, flex, background and CSS vars.
+ * `animation` is deliberately left to the stylesheet so play always restarts it cleanly.
+ */
+const SETTLE_PROPS = ["transform", "transition", "opacity"] as const;
 
 function clearBarStyles(bar: HTMLElement) {
   for (const prop of SETTLE_PROPS) bar.style.removeProperty(prop);
@@ -30,8 +33,9 @@ function setBarStyles(
 /**
  * Freezes playing waveform bars mid-motion on pause and eases them into their idle pose.
  *
- * The returned flag drives the "playing" attribute; it lags `isPlaying` by a frame on pause so
- * the CSS animation is still running when the current frame is captured.
+ * The returned flag drives the "playing" attribute. On pause it stays set through the layout
+ * effect, so the live animation frame can be captured as an inline transform before the
+ * attribute (and with it the CSS animation) is dropped in the same pre-paint render.
  */
 export function useWaveformSettle(
   isPlaying: boolean,
@@ -87,23 +91,21 @@ export function useWaveformSettle(
     if (!wasPlayingRef.current) return cleanup;
     wasPlayingRef.current = false;
 
-    if (bars.length === 0) {
-      setVisualPlaying(false);
-      return cleanup;
-    }
-
     // The playing attribute is still set here, so computed styles reflect the live animation frame.
     const frozen = bars.map((bar) => {
       const computed = getComputedStyle(bar);
       return { bar, transform: computed.transform, opacity: computed.opacity };
     });
     for (const { bar, transform, opacity } of frozen) {
-      setBarStyles(bar, { animation: "none", transform, transition: "none", opacity });
+      setBarStyles(bar, { transform, transition: "none", opacity });
     }
+    // Layout-effect updates re-render before paint: the animation stops on the frozen frame.
+    setVisualPlaying(false);
+
+    if (bars.length === 0) return cleanup;
 
     rafRef.current = requestAnimationFrame(() => {
       if (cancelled) return;
-      setVisualPlaying(false);
       rafRef.current = requestAnimationFrame(() => {
         rafRef.current = null;
         if (cancelled) return;

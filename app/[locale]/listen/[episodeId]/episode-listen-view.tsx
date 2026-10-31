@@ -107,11 +107,11 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
         />
 
         <div
-          className="relative z-10 mx-auto w-full max-w-6xl px-4 pt-20 pb-16 sm:px-5 sm:pt-24 sm:pb-20 md:pt-28 md:pb-28"
+          className="short:pt-[calc(var(--nav-h)+1.25rem)] short:pb-14 relative z-10 mx-auto w-full max-w-6xl px-4 pt-[calc(var(--nav-h)+1rem)] pb-16 sm:px-5 sm:pt-[calc(var(--nav-h)+2rem)] sm:pb-20 md:pt-[calc(var(--nav-h)+3rem)] md:pb-28"
           data-episode-format={episodeFormat ?? undefined}
         >
           <nav
-            className="text-muted mb-5 flex flex-wrap items-center gap-x-2 gap-y-2 font-mono text-[10px] tracking-[0.12em] uppercase sm:mb-10 sm:tracking-[0.2em] md:mb-14 md:text-xs"
+            className="text-muted short:mb-4 mb-5 flex flex-wrap items-center gap-x-2 gap-y-2 font-mono text-[10px] tracking-[0.12em] uppercase sm:mb-10 sm:tracking-[0.2em] md:mb-14 md:text-xs"
             style={{ animation: "fadeUp 0.55s ease both" }}
             aria-label={t("breadcrumbAria")}
           >
@@ -143,7 +143,7 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
               latestDropLabel={t("latestDrop")}
             />
 
-            <div className="space-y-6 lg:col-span-8 lg:space-y-10">
+            <div className="fold:col-span-full space-y-6 lg:col-span-8 lg:space-y-10">
               <EpisodeListenMobileHeader
                 episode={episode}
                 isLatest={isLatest}
@@ -180,7 +180,7 @@ export async function EpisodeListenView({ episode, locale }: EpisodeListenViewPr
               <h1
                 className="font-display text-primary leading-[1.08] font-bold tracking-tight text-balance sm:leading-[1.05]"
                 style={{
-                  fontSize: "clamp(1.5rem, 6.5vw, 3.25rem)",
+                  fontSize: "clamp(1.5rem, min(6.5vw, 7.5svh), 3.25rem)",
                   animation: "fadeUp 0.65s ease both 0.1s",
                 }}
               >

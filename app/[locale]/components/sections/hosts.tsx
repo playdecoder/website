@@ -75,24 +75,24 @@ export async function Hosts({ locale }: { locale: string }) {
   return (
     <section
       id={PAGE_SECTION_ID.hosts}
-      className="border-edge bg-surface relative border-t py-24 md:py-32"
+      className="border-edge bg-surface short:py-12 relative border-t py-24 md:py-32"
     >
       <div className="dot-grid pointer-events-none absolute inset-0 opacity-40" />
 
       <div className="relative mx-auto max-w-6xl px-5">
-        <SectionHeading variant="rail" label={t("label")} className="mb-16" />
+        <SectionHeading variant="rail" label={t("label")} className="short:mb-8 mb-16" />
 
-        <div className="grid gap-6 md:grid-cols-2 md:items-stretch md:gap-8">
+        <div className="fold:grid-cols-(--fold-cols) fold:gap-x-(--fold-gap) grid gap-6 md:grid-cols-2 md:items-stretch md:gap-8">
           <div className="host-card group bg-bg border-edge hover:border-secondary/50 scroll-reveal relative flex h-full flex-col overflow-hidden rounded-sm border transition-colors duration-300">
             <div className="host-card__rail bg-secondary absolute top-0 right-0 left-0 z-10 h-0.5" />
 
-            <div className="flex min-h-0 flex-1 flex-col gap-6 p-6 sm:p-8 md:flex-row md:gap-8 md:p-10">
-              <div className="host-card__photo host-photo-shell host-photo-shell--tint-secondary border-edge/70 bg-surface group-hover:border-secondary/45 relative mx-auto aspect-[3/4] w-full max-w-[min(100%,17.5rem)] shrink-0 overflow-hidden rounded-sm border shadow-[inset_0_0_0_1px_rgba(255,255,255,0.04)] transition-[border-color,box-shadow] duration-300 md:mx-0 md:aspect-auto md:min-h-[17.5rem] md:w-[min(42%,13.75rem)] md:max-w-none md:self-stretch">
+            <div className="flex min-h-0 flex-1 flex-col gap-6 p-6 sm:p-8 lg:flex-row lg:gap-8 lg:p-10">
+              <div className="host-card__photo host-photo-shell host-photo-shell--tint-secondary border-edge/70 bg-surface group-hover:border-secondary/45 relative mx-auto aspect-[3/4] w-full max-w-[min(100%,17.5rem)] shrink-0 overflow-hidden rounded-sm border shadow-[inset_0_0_0_1px_rgba(255,255,255,0.04)] transition-[border-color,box-shadow] duration-300 lg:mx-0 lg:aspect-auto lg:min-h-[17.5rem] lg:w-[min(42%,13.75rem)] lg:max-w-none lg:self-stretch">
                 <Image
                   src={HOST_PHOTOS.jan}
                   alt={t("jan.imageAlt", { name: SHOW_HOST_NAMES[0], ...b })}
                   fill
-                  sizes="(max-width: 768px) 280px, 220px"
+                  sizes="(min-width: 58rem) 220px, 280px"
                   className="relative z-0 object-cover object-[66%_22%] transition-transform duration-700 ease-out group-hover:scale-[1.04]"
                   quality={92}
                 />
@@ -103,13 +103,13 @@ export async function Hosts({ locale }: { locale: string }) {
                   variant="secondary"
                   primary={t("jan.rolePrimary")}
                   secondary={t("jan.roleSecondary")}
-                  className="mb-6 md:mb-8"
+                  className="mb-6 lg:mb-8"
                 />
 
-                <h3 className="font-display text-primary mb-2 text-4xl font-bold md:text-5xl">
+                <h3 className="font-display text-primary mb-2 text-4xl font-bold lg:text-5xl">
                   {t("jan.firstName")}
                 </h3>
-                <h3 className="font-display text-primary mb-5 text-4xl font-bold md:mb-6 md:text-5xl">
+                <h3 className="font-display text-primary mb-5 text-4xl font-bold lg:mb-6 lg:text-5xl">
                   {t("jan.lastName")}
                 </h3>
 
@@ -140,13 +140,13 @@ export async function Hosts({ locale }: { locale: string }) {
           <div className="host-card group bg-bg border-edge hover:border-accent/50 scroll-reveal relative flex h-full flex-col overflow-hidden rounded-sm border transition-colors duration-300">
             <div className="host-card__rail host-card__rail--right bg-accent absolute top-0 right-0 left-0 z-10 h-0.5" />
 
-            <div className="flex min-h-0 flex-1 flex-col gap-6 p-6 sm:p-8 md:flex-row-reverse md:gap-8 md:p-10">
-              <div className="host-card__photo host-photo-shell host-photo-shell--tint-accent border-edge/70 bg-surface group-hover:border-accent/45 relative mx-auto aspect-[3/4] w-full max-w-[min(100%,17.5rem)] shrink-0 overflow-hidden rounded-sm border shadow-[inset_0_0_0_1px_rgba(255,255,255,0.04)] transition-[border-color,box-shadow] duration-300 md:mx-0 md:aspect-auto md:min-h-[17.5rem] md:w-[min(42%,13.75rem)] md:max-w-none md:self-stretch">
+            <div className="flex min-h-0 flex-1 flex-col gap-6 p-6 sm:p-8 lg:flex-row-reverse lg:gap-8 lg:p-10">
+              <div className="host-card__photo host-photo-shell host-photo-shell--tint-accent border-edge/70 bg-surface group-hover:border-accent/45 relative mx-auto aspect-[3/4] w-full max-w-[min(100%,17.5rem)] shrink-0 overflow-hidden rounded-sm border shadow-[inset_0_0_0_1px_rgba(255,255,255,0.04)] transition-[border-color,box-shadow] duration-300 lg:mx-0 lg:aspect-auto lg:min-h-[17.5rem] lg:w-[min(42%,13.75rem)] lg:max-w-none lg:self-stretch">
                 <Image
                   src={HOST_PHOTOS.martin}
                   alt={t("martin.imageAlt", { name: SHOW_HOST_NAMES[1], ...b })}
                   fill
-                  sizes="(max-width: 768px) 280px, 220px"
+                  sizes="(min-width: 58rem) 220px, 280px"
                   className="relative z-0 origin-center scale-[1.08] object-cover object-[69%_22%] transition-transform duration-700 ease-out group-hover:scale-[1.11]"
                   quality={92}
                 />
@@ -157,13 +157,13 @@ export async function Hosts({ locale }: { locale: string }) {
                   variant="accent"
                   primary={t("martin.rolePrimary")}
                   secondary={t("martin.roleSecondary")}
-                  className="mb-6 md:mb-8"
+                  className="mb-6 lg:mb-8"
                 />
 
-                <h3 className="font-display text-primary mb-2 text-4xl font-bold md:text-5xl">
+                <h3 className="font-display text-primary mb-2 text-4xl font-bold lg:text-5xl">
                   {t("martin.firstName")}
                 </h3>
-                <h3 className="font-display text-primary mb-5 text-4xl font-bold md:mb-6 md:text-5xl">
+                <h3 className="font-display text-primary mb-5 text-4xl font-bold lg:mb-6 lg:text-5xl">
                   {t("martin.lastName")}
                 </h3>
 

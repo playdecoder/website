@@ -67,7 +67,7 @@ export function EpisodeListenDecorations({
       </div>
 
       <div
-        className="pointer-events-none absolute inset-0 z-[2] flex items-start justify-center overflow-hidden pt-20 select-none sm:pt-24 md:pt-28"
+        className="short:pt-[calc(var(--nav-h)+1.25rem)] pointer-events-none absolute inset-0 z-[2] flex items-start justify-center overflow-hidden pt-[calc(var(--nav-h)+1rem)] select-none sm:pt-[calc(var(--nav-h)+2rem)] md:pt-[calc(var(--nav-h)+3rem)]"
         aria-hidden
       >
         <span

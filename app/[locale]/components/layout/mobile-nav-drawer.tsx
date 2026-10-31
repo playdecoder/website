@@ -147,7 +147,7 @@ export function MobileNavDrawer({
   const ctaDelayMs = ITEM_BASE_DELAY_MS + items.length * ITEM_STAGGER_MS + 48;
 
   return (
-    <div className="md:hidden">
+    <div className="rail:block lg:hidden">
       <button
         ref={openBtnRef}
         type="button"
@@ -194,7 +194,7 @@ export function MobileNavDrawer({
             <>
               {/* Portal: header `backdrop-filter` creates a containing block for `fixed` children. */}
               <div
-                className="fixed top-16 right-0 bottom-0 left-0 z-40 bg-[color-mix(in_srgb,var(--bg)_38%,transparent)] backdrop-blur-xl backdrop-saturate-150 transition-opacity duration-[var(--mobile-nav-scrim-ms,340ms)] ease-out motion-reduce:transition-none dark:bg-[color-mix(in_srgb,var(--bg)_52%,transparent)]"
+                className="rail:left-[var(--rail-w)] fixed top-[var(--nav-h)] right-0 bottom-0 left-0 z-40 bg-[color-mix(in_srgb,var(--bg)_38%,transparent)] backdrop-blur-xl backdrop-saturate-150 transition-opacity duration-[var(--mobile-nav-scrim-ms,340ms)] ease-out motion-reduce:transition-none dark:bg-[color-mix(in_srgb,var(--bg)_52%,transparent)]"
                 style={
                   {
                     "--mobile-nav-scrim-ms": `${SCRIM_MS}ms`,
@@ -209,7 +209,7 @@ export function MobileNavDrawer({
                 id={panelId}
                 open={mounted}
                 aria-label={openNavigationAria}
-                className="border-edge fixed top-16 right-3 left-3 z-[45] max-h-[min(32rem,calc(100dvh-5rem))] w-auto overflow-x-hidden overflow-y-auto rounded-sm border bg-[color-mix(in_srgb,var(--bg)_94%,var(--secondary)_4%)] p-0 shadow-[0_28px_56px_-28px_color-mix(in_srgb,var(--primary)_38%,transparent)] transition-[opacity,transform,box-shadow] duration-[var(--mobile-nav-panel-ms,420ms)] ease-[var(--mobile-nav-ease)] will-change-[transform,opacity] motion-reduce:transition-none motion-reduce:duration-0 dark:bg-[color-mix(in_srgb,var(--bg)_92%,var(--secondary)_6%)] dark:shadow-[0_28px_56px_-32px_rgb(0_0_0/0.5)]"
+                className="border-edge rail:top-3 rail:right-auto rail:left-[calc(var(--rail-w)+0.75rem)] rail:w-80 rail:max-h-[calc(100dvh-1.5rem)] fixed top-[var(--nav-h)] right-3 left-3 z-[45] max-h-[min(32rem,calc(100dvh-var(--nav-h)-1rem))] w-auto overflow-x-hidden overflow-y-auto rounded-sm border bg-[color-mix(in_srgb,var(--bg)_94%,var(--secondary)_4%)] p-0 shadow-[0_28px_56px_-28px_color-mix(in_srgb,var(--primary)_38%,transparent)] transition-[opacity,transform,box-shadow] duration-[var(--mobile-nav-panel-ms,420ms)] ease-[var(--mobile-nav-ease)] will-change-[transform,opacity] motion-reduce:transition-none motion-reduce:duration-0 dark:bg-[color-mix(in_srgb,var(--bg)_92%,var(--secondary)_6%)] dark:shadow-[0_28px_56px_-32px_rgb(0_0_0/0.5)]"
                 style={
                   {
                     "--mobile-nav-panel-ms": `${PANEL_MS}ms`,

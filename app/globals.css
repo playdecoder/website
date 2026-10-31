@@ -3,6 +3,80 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/*
+ * Breakpoints tuned for iPhone Duo (and other foldables / iPad mini), per the HIG's
+ * "compact width outside, regular width inside" model. Safari 27.1 viewports (CSS px):
+ *   outer 382×580 · outer landscape 594×368 · split view 385×571
+ *   inner portrait 669×867 · inner landscape 951×585
+ * md (660) puts the inner display in portrait on the regular-width layout;
+ * lg (928) gives the inner display in landscape the full two-column desktop layout.
+ */
+@theme {
+  --breakpoint-md: 41.25rem;
+  --breakpoint-lg: 58rem;
+}
+
+/* Short viewports: Duo outer display (580 tall), inner landscape (585), any phone in landscape. */
+@custom-variant short (@media (height < 40rem));
+/*
+ * Short landscape touch screens move navigation to a vertical rail on the leading edge,
+ * mirroring iPhone Duo's vertical controls and handing the height back to content.
+ * Keep in sync with --rail-w / --nav-h below.
+ */
+@custom-variant rail (@media (orientation: landscape) and (height < 40rem) and (pointer: coarse));
+/* Book pose on a folding display: two side-by-side viewport segments (Viewport Segments API). */
+@custom-variant fold (@media (horizontal-viewport-segments: 2));
+
+:root {
+  --nav-h: 4rem;
+  --rail-w: 0px;
+  --hero-wave-h: 200px;
+  --hero-wave-scale: 1;
+}
+
+@media (height < 40rem) {
+  :root {
+    --nav-h: 3.5rem;
+    /* Hero waveform shrinks with the screen so both CTAs stay above the fold. */
+    --hero-wave-h: clamp(4.5rem, 22svh, 12.5rem);
+    --hero-wave-scale: 0.62;
+  }
+}
+
+@media (height < 26rem) {
+  :root {
+    --hero-wave-scale: 0.4;
+  }
+}
+
+@media (orientation: landscape) and (height < 40rem) and (pointer: coarse) {
+  :root {
+    --nav-h: 0px;
+    --rail-w: 4.25rem;
+  }
+}
+
+/* Top offset under the fixed navbar; collapses to 0 when navigation lives in the side rail. */
+@utility pt-nav {
+  padding-top: var(--nav-h);
+}
+
+/*
+ * Book pose: a two-column grid whose gutter straddles the hinge, so neither column crosses
+ * the fold. Column 0 ends where viewport segment 0 ends, minus the rail and the page gutter
+ * (px-5). Use with `fold:grid-cols-(--fold-cols) fold:gap-x-(--fold-gap)`.
+ */
+@media (horizontal-viewport-segments: 2) {
+  :root {
+    --fold-pad: 1.5rem;
+    --fold-cols: calc(env(viewport-segment-right 0 0) - var(--rail-w) - 1.25rem - var(--fold-pad))
+      minmax(0, 1fr);
+    --fold-gap: calc(
+      env(viewport-segment-left 1 0) - env(viewport-segment-right 0 0) + 2 * var(--fold-pad)
+    );
+  }
+}
+
 /* app/global-error.tsx — standalone <html>; keep layout out of inline styles */
 .global-error-body {
   margin: 0;
@@ -826,6 +900,8 @@ html {
 }
 
 body {
+  /* Room for the side navigation rail (0 unless the rail variant is active). */
+  padding-left: var(--rail-w);
   background-color: var(--bg);
   color: var(--primary);
   font-family: var(--font-display);
@@ -833,6 +909,19 @@ body {
   transition:
     background-color 0.25s ease,
     color 0.25s ease;
+}
+
+/* Short viewports: top bar slides away on scroll-down (see nav-auto-hide.tsx). Never the rail. */
+@media (height < 40rem) {
+  html[data-nav-hidden] .site-header:not(:focus-within) {
+    transform: translateY(-100%);
+  }
+}
+
+@media (orientation: landscape) and (height < 40rem) and (pointer: coarse) {
+  html[data-nav-hidden] .site-header {
+    transform: none;
+  }
 }
 
 ::selection {
@@ -1215,7 +1304,7 @@ body {
     radial-gradient(ellipse 38% 46% at 50% 86%, var(--hero-waveform-heat) 0%, transparent 72%);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 41.25rem) {
   .hero-waveform::before {
     top: -12%;
     bottom: -48%;
@@ -1288,7 +1377,7 @@ body {
 .hero-osc {
   position: relative;
   width: 100%;
-  height: 200px;
+  height: var(--hero-wave-h);
   background: transparent;
   animation: fadeUp 0.7s ease both 0.4s;
 }
@@ -2950,7 +3039,7 @@ html[data-episode-playing="true"] .waveform-bar--listen-bg {
   word-spacing: 0.05em;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 41.25rem) {
   .topic-wall {
     padding-top: 4.25rem;
     padding-bottom: 4.25rem;

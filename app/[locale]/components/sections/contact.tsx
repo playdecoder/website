@@ -19,7 +19,7 @@ export async function Contact({ locale }: { locale: string }) {
   return (
     <section
       id={PAGE_SECTION_ID.contact}
-      className="border-edge bg-surface relative overflow-hidden border-t py-24 md:py-36"
+      className="border-edge bg-surface short:py-14 relative overflow-hidden border-t py-24 md:py-36"
     >
       <div className="dot-grid pointer-events-none absolute inset-0 opacity-30" />
 

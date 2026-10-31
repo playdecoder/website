@@ -13,11 +13,11 @@ export function HeroWaveformBars() {
   const tabVisible = useDocumentTabVisible();
 
   return (
-    <div className="mb-12 w-full max-md:px-4 md:px-0">
+    <div className="short:mb-5 mb-12 w-full max-md:px-4 md:px-0">
       <div
         ref={rootRef}
         className="hero-waveform flex w-full max-w-full items-end justify-center gap-px md:gap-[3px]"
-        style={{ height: 200 }}
+        style={{ height: "var(--hero-wave-h)" }}
         aria-hidden
         data-motion-state={!inView || !tabVisible ? "paused" : "running"}
       >
@@ -29,7 +29,7 @@ export function HeroWaveformBars() {
             data-alt={bar.alt ? "true" : undefined}
             style={
               {
-                height: bar.h,
+                height: `calc(${bar.h}px * var(--hero-wave-scale))`,
                 background: barColorCss[bar.color],
                 "--duration": scaleHeroWaveTime(bar.dur),
                 "--delay": scaleHeroWaveTime(bar.delay),

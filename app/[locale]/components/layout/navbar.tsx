@@ -12,6 +12,7 @@ import { LangSwitcher } from "../../lang-switcher";
 import { ThemeToggle } from "../../theme-toggle";
 
 import { MobileNavTray } from "./mobile-nav-tray";
+import { NavAutoHide } from "./nav-auto-hide";
 
 type NavLogo = {
   src: string;
@@ -21,33 +22,51 @@ type NavLogo = {
   loading?: "eager";
 };
 
-const NAV_LOGOS: NavLogo[] = [
+/* Square mark on compact widths and in the side rail; wide wordmark on the top bar from md. */
+const NAV_MARK_LOGOS: NavLogo[] = [
   {
     src: "/icon.svg",
     width: 128,
     height: 128,
-    className: "block md:hidden dark:hidden h-11 w-11 object-contain",
+    className: "block dark:hidden h-11 w-11 short:size-10 object-contain",
   },
   {
     src: "/icon-dark.svg",
     width: 128,
     height: 128,
-    className: "hidden dark:block dark:md:hidden h-11 w-11 object-contain",
+    className: "hidden dark:block h-11 w-11 short:size-10 object-contain",
   },
+];
+
+const NAV_WIDE_LOGOS: NavLogo[] = [
   {
     src: "/logo/wide-light-crop-v4.svg",
     width: 359,
     height: 113,
-    className: "hidden md:block dark:md:hidden h-11 w-auto max-h-11 object-contain object-left",
+    className: "block dark:hidden h-11 w-auto max-h-11 short:h-10 object-contain object-left",
     loading: "eager",
   },
   {
     src: "/logo/wide-dark-crop-v4.svg",
     width: 359,
     height: 113,
-    className: "hidden dark:md:block h-11 w-auto max-h-11 object-contain object-left",
+    className: "hidden dark:block h-11 w-auto max-h-11 short:h-10 object-contain object-left",
   },
 ];
+
+function NavLogoImages({ logos }: { logos: NavLogo[] }) {
+  return logos.map((logo) => (
+    <Image
+      key={logo.src}
+      src={logo.src}
+      alt={BRAND_NAME}
+      width={logo.width}
+      height={logo.height}
+      className={logo.className}
+      loading={logo.loading}
+    />
+  ));
+}
 
 export async function Navbar({ locale = routing.defaultLocale }: { locale?: string }) {
   const t = await getTranslations({ locale, namespace: "nav" });
@@ -58,23 +77,19 @@ export async function Navbar({ locale = routing.defaultLocale }: { locale?: stri
     : ROUTES.episodes;
 
   return (
-    <header className="border-edge bg-bg/90 fixed top-0 right-0 left-0 z-50 border-b backdrop-blur-md transition-colors duration-250">
-      <nav className="mx-auto flex h-16 max-w-6xl min-w-0 items-center justify-between gap-2 px-3 min-[400px]:px-4 sm:gap-4 sm:px-5">
+    <header className="site-header border-edge bg-bg/90 rail:right-auto rail:bottom-0 rail:w-[var(--rail-w)] rail:border-r rail:border-b-0 fixed top-0 right-0 left-0 z-50 border-b backdrop-blur-md transition-[color,background-color,border-color,transform] duration-250">
+      <NavAutoHide />
+      <nav className="short:h-14 rail:h-full rail:flex-col rail:justify-start rail:gap-3 rail:px-0 rail:py-3 mx-auto flex h-16 max-w-6xl min-w-0 items-center justify-between gap-2 px-3 min-[400px]:px-4 sm:gap-4 sm:px-5">
         <Link href={ROUTES.home} locale={hrefLocale} className="flex shrink-0 items-center">
-          {NAV_LOGOS.map((logo) => (
-            <Image
-              key={logo.src}
-              src={logo.src}
-              alt={BRAND_NAME}
-              width={logo.width}
-              height={logo.height}
-              className={logo.className}
-              loading={logo.loading}
-            />
-          ))}
+          <span className="rail:block block md:hidden">
+            <NavLogoImages logos={NAV_MARK_LOGOS} />
+          </span>
+          <span className="rail:hidden hidden md:block">
+            <NavLogoImages logos={NAV_WIDE_LOGOS} />
+          </span>
         </Link>
 
-        <div className="text-muted hidden items-center gap-7 font-mono text-xs tracking-widest uppercase md:flex">
+        <div className="text-muted rail:hidden hidden items-center gap-7 font-mono text-xs tracking-widest uppercase lg:flex">
           <Link
             href={homeSectionPath("about")}
             locale={hrefLocale}
@@ -112,7 +127,7 @@ export async function Navbar({ locale = routing.defaultLocale }: { locale?: stri
           </Link>
         </div>
 
-        <div className="flex h-10 shrink-0 items-center gap-1.5 sm:gap-2">
+        <div className="rail:h-auto rail:flex-1 rail:flex-col rail:gap-2 flex h-10 shrink-0 items-center gap-1.5 sm:gap-2">
           <MobileNavTray
             locale={hrefLocale}
             items={[
@@ -128,13 +143,16 @@ export async function Navbar({ locale = routing.defaultLocale }: { locale?: stri
             openNavigationAria={t("openNavigation")}
             closeNavigationAria={t("closeNavigation")}
           />
-          <LangSwitcher />
-          <ThemeToggle />
-          <span className="nav-cta-glow-wrap nav-cta-glow-wrap--header inline-flex h-10 items-center">
+          {/* Settings sit at the foot of the rail, away from navigation and the primary action. */}
+          <div className="rail:mt-auto rail:flex-col rail:gap-2 flex items-center gap-1.5 sm:gap-2">
+            <LangSwitcher />
+            <ThemeToggle />
+          </div>
+          <span className="nav-cta-glow-wrap nav-cta-glow-wrap--header rail:order-first rail:h-auto inline-flex h-10 items-center">
             <Link
               href={latestEpisodePath}
               locale={hrefLocale}
-              className="premium-cta cta-on-lime relative z-[1] inline-flex h-10 items-center justify-center gap-2 rounded-sm px-3 font-mono text-[10px] font-medium tracking-widest whitespace-nowrap uppercase shadow-[inset_0_1px_0_rgb(255_255_255/0.38),0_4px_14px_-4px_var(--accent)] transition-all duration-200 hover:scale-[1.02] hover:opacity-95 hover:shadow-[inset_0_1px_0_rgb(255_255_255/0.45),0_6px_22px_-6px_var(--accent)] focus-visible:ring-2 focus-visible:ring-[#0b0f14]/45 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--accent)] focus-visible:outline-none active:scale-[0.98] min-[400px]:px-4 min-[400px]:text-xs sm:gap-2.5 sm:px-5 sm:text-xs"
+              className="premium-cta cta-on-lime rail:size-11 rail:px-0 relative z-[1] inline-flex h-10 items-center justify-center gap-2 rounded-sm px-3 font-mono text-[10px] font-medium tracking-widest whitespace-nowrap uppercase shadow-[inset_0_1px_0_rgb(255_255_255/0.38),0_4px_14px_-4px_var(--accent)] transition-all duration-200 hover:scale-[1.02] hover:opacity-95 hover:shadow-[inset_0_1px_0_rgb(255_255_255/0.45),0_6px_22px_-6px_var(--accent)] focus-visible:ring-2 focus-visible:ring-[#0b0f14]/45 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--accent)] focus-visible:outline-none active:scale-[0.98] min-[400px]:px-4 min-[400px]:text-xs sm:gap-2.5 sm:px-5 sm:text-xs"
             >
               <svg
                 width="14"
@@ -146,8 +164,8 @@ export async function Navbar({ locale = routing.defaultLocale }: { locale?: stri
               >
                 <path d="M8 5v14l11-7L8 5z" />
               </svg>
-              <span className="hidden sm:inline">{t("listenNow")}</span>
-              <span className="sr-only sm:hidden">{t("listenNow")}</span>
+              <span className="rail:hidden hidden sm:inline">{t("listenNow")}</span>
+              <span className="rail:inline sr-only sm:hidden">{t("listenNow")}</span>
             </Link>
           </span>
         </div>

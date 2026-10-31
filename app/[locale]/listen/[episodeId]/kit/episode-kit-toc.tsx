@@ -207,7 +207,7 @@ export function EpisodeKitToc({ variant, entries, heading, ariaLabel }: EpisodeK
   return (
     <nav
       aria-label={ariaLabel}
-      className="sticky top-28 max-h-[calc(100vh-8rem)] [scrollbar-width:thin] overflow-y-auto overscroll-contain pb-4"
+      className="sticky top-[calc(var(--nav-h)+3rem)] max-h-[calc(100svh-var(--nav-h)-4rem)] [scrollbar-width:thin] overflow-y-auto overscroll-contain pb-4"
     >
       <p className="text-muted mb-3 font-mono text-[10px] tracking-[0.18em] uppercase">{heading}</p>
       {renderRail(visibleEntries, 0)}

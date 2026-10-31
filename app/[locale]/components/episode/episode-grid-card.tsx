@@ -41,7 +41,7 @@ export function EpisodeGridCard({
   latestLabel,
   playLabel,
   formatLabels,
-  artSizes = "(min-width: 1024px) 400px, (min-width: 640px) calc(50vw - 24px), calc(100vw - 40px)",
+  artSizes = "(min-width: 58rem) 400px, (min-width: 41.25rem) calc(50vw - 24px), calc(100vw - 40px)",
 }: EpisodeGridCardProps) {
   const href = listenEpisodePath(episodeListenPathSegment(ep));
   const hasArt = Boolean(ep.artImage);

@@ -304,7 +304,7 @@ export async function EpisodeKitView({ episode, locale }: EpisodeKitViewProps) {
 
       <DecoderPageFrame className="min-h-0" scanPeriodSec={16} scanOpacity={0.22}>
         <div
-          className="relative z-10 mx-auto w-full max-w-6xl px-4 pt-20 pb-16 sm:px-5 sm:pt-24 sm:pb-20 md:pt-28 md:pb-28"
+          className="short:pt-[calc(var(--nav-h)+1.25rem)] short:pb-14 relative z-10 mx-auto w-full max-w-6xl px-4 pt-[calc(var(--nav-h)+1rem)] pb-16 sm:px-5 sm:pt-[calc(var(--nav-h)+2rem)] sm:pb-20 md:pt-[calc(var(--nav-h)+3rem)] md:pb-28"
           data-episode-format={episodeFormat ?? undefined}
         >
           <nav
@@ -365,7 +365,7 @@ export async function EpisodeKitView({ episode, locale }: EpisodeKitViewProps) {
               </header>
 
               {/* Sticky wrapper lives in the long content column so the bar follows the whole page. */}
-              <div className="sticky top-16 z-20 mt-8 lg:hidden">
+              <div className="sticky top-[var(--nav-h)] z-20 mt-8 lg:hidden">
                 <EpisodeKitToc variant="bar" {...tocProps} />
               </div>
 

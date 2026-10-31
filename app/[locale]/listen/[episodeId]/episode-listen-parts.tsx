@@ -189,7 +189,7 @@ export function EpisodeListenDesktopSidebar({
 }) {
   return (
     <div
-      className="hidden lg:col-span-4 lg:flex lg:flex-col lg:gap-8"
+      className="fold:hidden hidden lg:col-span-4 lg:flex lg:flex-col lg:gap-8"
       style={{ animation: "fadeUp 0.65s ease both 0.05s" }}
     >
       <div className="flex items-center gap-3 sm:gap-4 lg:flex-col lg:items-start lg:gap-4">

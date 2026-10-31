@@ -26,14 +26,21 @@ export async function About({ locale }: { locale: string }) {
   ] as const;
 
   return (
-    <section id={PAGE_SECTION_ID.about} className="border-edge relative border-t py-24 md:py-32">
+    <section
+      id={PAGE_SECTION_ID.about}
+      className="border-edge short:py-12 relative border-t py-24 md:py-32"
+    >
       <div className="mx-auto max-w-6xl px-5">
-        <SectionHeading variant="rail" label={t("label")} className="mb-16" />
+        <SectionHeading variant="rail" label={t("label")} className="short:mb-8 mb-16" />
 
-        <div className="grid items-start gap-16 md:grid-cols-[1fr_1.1fr] md:gap-24">
+        {/*
+          md (Duo inner, iPad portrait): quote | prose, stats span the full row below.
+          lg: stats tuck under the quote and the prose spans both rows.
+        */}
+        <div className="short:gap-y-10 fold:grid-cols-(--fold-cols) fold:gap-x-(--fold-gap) grid items-start gap-x-12 gap-y-16 md:grid-cols-2 lg:grid-cols-[1fr_1.1fr] lg:gap-x-24">
           <div className="scroll-reveal">
             <blockquote
-              className="font-display text-primary mb-8 leading-tight font-bold"
+              className="font-display text-primary leading-tight font-bold"
               style={{ fontSize: "clamp(1.8rem, 4vw, 2.8rem)" }}
             >
               &ldquo;{t("quoteBefore")}
@@ -44,8 +51,10 @@ export async function About({ locale }: { locale: string }) {
               <br />
               <span className="text-accent-text">{t("quoteHighlight")}</span>&rdquo;
             </blockquote>
+          </div>
 
-            <div className="mt-10 grid grid-cols-[repeat(3,minmax(0,1fr))] gap-x-3 gap-y-4 sm:gap-x-4 sm:gap-y-4">
+          <div className="scroll-reveal md:col-span-2 lg:col-span-1">
+            <div className="grid grid-cols-[repeat(3,minmax(0,1fr))] gap-x-3 gap-y-4 sm:gap-x-4 sm:gap-y-4 md:gap-x-8 lg:gap-x-4">
               {stats.map((stat, i) => (
                 <div
                   key={stat.label}
@@ -70,7 +79,7 @@ export async function About({ locale }: { locale: string }) {
             </div>
           </div>
 
-          <div className="scroll-reveal space-y-5">
+          <div className="scroll-reveal space-y-5 md:col-start-2 md:row-start-1 lg:row-end-3">
             <LedeIntroParagraph className="leading-[1.8]">{t("p1", b)}</LedeIntroParagraph>
             <p className="font-body text-muted text-base leading-[1.8] md:text-lg">{t("p2")}</p>
             <p className="font-body text-muted text-base leading-[1.8] md:text-lg">{t("p3")}</p>

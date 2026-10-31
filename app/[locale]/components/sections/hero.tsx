@@ -22,12 +22,12 @@ export async function Hero({ locale }: { locale: string }) {
   return (
     <section
       id={PAGE_SECTION_ID.top}
-      className="dot-grid relative flex min-h-screen flex-col items-center justify-center overflow-hidden pt-16"
+      className="dot-grid pt-nav short:pb-6 rail:pt-6 relative flex min-h-svh flex-col items-center justify-center overflow-hidden"
     >
       <div className="hero-top-scanline pointer-events-none absolute inset-x-0 top-0 h-px" />
 
-      <span className="border-edge absolute top-20 left-6 size-5 border-t border-l" />
-      <span className="border-edge absolute top-20 right-6 size-5 border-t border-r" />
+      <span className="border-edge absolute top-[calc(var(--nav-h)+1rem)] left-6 size-5 border-t border-l" />
+      <span className="border-edge absolute top-[calc(var(--nav-h)+1rem)] right-6 size-5 border-t border-r" />
       <span className="border-edge absolute bottom-6 left-6 size-5 border-b border-l" />
       <span className="border-edge absolute right-6 bottom-6 size-5 border-r border-b" />
 
@@ -35,15 +35,16 @@ export async function Hero({ locale }: { locale: string }) {
         <SignalLabelRail
           label={t("badge")}
           dotClassName="bg-accent"
-          className="mb-8"
+          className="short:mb-3 mb-8"
           style={{ animation: "fadeUp 0.6s ease both" }}
         />
 
         <h1
           aria-label={BRAND_NAME}
-          className="font-display text-primary mb-6 leading-none font-bold tracking-tight whitespace-nowrap select-none"
+          className="font-display text-primary short:mb-3 mb-6 leading-none font-bold tracking-tight whitespace-nowrap select-none"
           style={{
-            fontSize: "clamp(2.5rem, 14vw, 13rem)",
+            /* svh cap keeps the wordmark from eating short screens (Duo outer, landscape). */
+            fontSize: "clamp(2.5rem, min(14vw, 24svh), 13rem)",
             letterSpacing: "-0.03em",
           }}
         >
@@ -69,7 +70,7 @@ export async function Hero({ locale }: { locale: string }) {
         </h1>
 
         <p
-          className="text-muted mb-12 max-w-xl font-mono text-sm leading-relaxed text-balance md:text-base"
+          className="text-muted short:mb-5 short:md:text-sm mb-12 max-w-xl font-mono text-sm leading-relaxed text-balance md:text-base"
           style={{ animation: "fadeUp 0.7s ease both 0.2s" }}
         >
           {t("taglineLine1")}
@@ -80,7 +81,7 @@ export async function Hero({ locale }: { locale: string }) {
         <HeroWaveform />
 
         <div
-          className="flex flex-col gap-3 sm:flex-row"
+          className="rail:flex-row flex flex-col gap-3 sm:flex-row"
           style={{ animation: "fadeUp 0.7s ease both 0.5s" }}
         >
           <Link
@@ -100,7 +101,7 @@ export async function Hero({ locale }: { locale: string }) {
         </div>
       </div>
 
-      <div className="pointer-events-none absolute top-0 right-0 left-0 z-20 hidden h-[100dvh] md:block">
+      <div className="short:hidden pointer-events-none absolute top-0 right-0 left-0 z-20 hidden h-[100dvh] md:block">
         <div
           className="absolute left-1/2 flex -translate-x-1/2 flex-col items-center gap-2 opacity-40"
           style={{ bottom: "calc(2rem + env(safe-area-inset-bottom, 0px))" }}

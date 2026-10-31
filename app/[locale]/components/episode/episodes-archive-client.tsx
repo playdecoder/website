@@ -156,7 +156,7 @@ export function EpisodesArchiveClient({
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-5 pt-12 pb-24 md:pt-16 md:pb-32 lg:pt-20">
+    <div className="short:pt-8 short:pb-16 mx-auto max-w-6xl px-5 pt-12 pb-24 md:pt-16 md:pb-32 lg:pt-20">
       <EpisodesArchiveFiltersPanel
         query={filters.q}
         onQueryChange={(value) => void setFilters({ q: value })}
@@ -172,7 +172,7 @@ export function EpisodesArchiveClient({
         archiveTotalForResults={archiveTotalForResults}
       />
 
-      <ul className="m-0 grid list-none gap-6 p-0 md:gap-8 lg:grid-cols-2">
+      <ul className="fold:grid-cols-(--fold-cols) fold:gap-x-(--fold-gap) m-0 grid list-none gap-6 p-0 md:grid-cols-2 lg:gap-8">
         {filtered.length === 0 && (
           <li className="border-edge bg-surface/30 col-span-full rounded-sm border px-8 py-16 text-center">
             <p className="font-display text-primary mb-3 text-xl">{t("emptyHeading")}</p>

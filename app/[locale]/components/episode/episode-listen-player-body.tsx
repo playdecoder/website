@@ -112,14 +112,17 @@ export function EpisodeListenPlayerAndBody({
   return (
     <div
       data-episode-format={episode.format ?? undefined}
-      className="flex flex-col gap-6 lg:gap-10"
+      className="fold:grid fold:items-start fold:grid-cols-(--fold-cols) fold:gap-x-(--fold-gap) flex flex-col gap-6 lg:gap-10"
     >
-      <EpisodeAudioPlayer
-        key={`listen-audio-${episode.id}`}
-        episode={episode}
-        chapters={hasChapters ? chapters : undefined}
-        artBackground={artBackground}
-      />
+      {/* Book pose: player pinned on the left page, about/chapters/transcript on the right. */}
+      <div className="fold:sticky fold:top-4">
+        <EpisodeAudioPlayer
+          key={`listen-audio-${episode.id}`}
+          episode={episode}
+          chapters={hasChapters ? chapters : undefined}
+          artBackground={artBackground}
+        />
+      </div>
 
       {afterPlayerSlot != null ? (
         <Fragment key="listen-after-player">{afterPlayerSlot}</Fragment>

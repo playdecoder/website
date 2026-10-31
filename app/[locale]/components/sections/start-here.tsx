@@ -48,7 +48,7 @@ export async function StartHere({ locale }: { locale: string }) {
   }
 
   return (
-    <section className="border-edge relative border-t py-24 md:py-32">
+    <section className="border-edge short:py-12 relative border-t py-24 md:py-32">
       <div className="mx-auto max-w-6xl px-5">
         <SectionHeading variant="rail" label={t("label")} className="mb-10" />
 
@@ -62,7 +62,7 @@ export async function StartHere({ locale }: { locale: string }) {
           <LedeIntroParagraph className="leading-relaxed">{t("intro")}</LedeIntroParagraph>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-3">
+        <div className="fold:grid-cols-(--fold-cols) fold:gap-x-(--fold-gap) grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {picks.map(({ key, episode }, index) =>
             (() => {
               const tone = curatedCardTone[key];
@@ -72,7 +72,7 @@ export async function StartHere({ locale }: { locale: string }) {
               return (
                 <article
                   key={key}
-                  className={`curated-card border-edge bg-surface/35 scroll-reveal group active:border-secondary/40 relative flex h-full flex-col overflow-hidden rounded-sm border p-6 transition-colors duration-300 ${tone.borderClass}`}
+                  className={`curated-card ${index === 0 ? "fold:col-span-1 md:col-span-2 lg:col-span-1" : ""} border-edge bg-surface/35 scroll-reveal group active:border-secondary/40 relative flex h-full flex-col overflow-hidden rounded-sm border p-6 transition-colors duration-300 ${tone.borderClass}`}
                   style={{ animationDelay: `${0.05 * index}s` }}
                 >
                   <div

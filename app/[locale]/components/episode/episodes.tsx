@@ -43,9 +43,12 @@ export async function Episodes({ locale }: { locale: string }) {
   );
 
   return (
-    <section id={PAGE_SECTION_ID.episodes} className="border-edge relative border-t py-24 md:py-32">
+    <section
+      id={PAGE_SECTION_ID.episodes}
+      className="border-edge short:py-12 relative border-t py-24 md:py-32"
+    >
       <div className="mx-auto max-w-6xl px-5">
-        <SectionHeading variant="rail" label={t("label")} className="mb-16" />
+        <SectionHeading variant="rail" label={t("label")} className="short:mb-8 mb-16" />
 
         <div className="scroll-reveal mb-6">
           <div
@@ -142,6 +145,20 @@ export async function Episodes({ locale }: { locale: string }) {
               ep,
               rowFormat ? tFormat(rowFormat) : undefined,
             );
+            const rowTagPills = (
+              <>
+                {rowTags.map((tag) => (
+                  <span key={tag} className="tag-pill">
+                    {tag}
+                  </span>
+                ))}
+                {rowTagOverflow > 0 ? (
+                  <span className="tag-pill opacity-80" aria-hidden>
+                    +{rowTagOverflow}
+                  </span>
+                ) : null}
+              </>
+            );
 
             return (
               <Link
@@ -189,28 +206,21 @@ export async function Episodes({ locale }: { locale: string }) {
                 </div>
 
                 <div className="min-w-0 flex-1">
-                  <p className="font-display text-primary group-hover:text-accent-text text-base leading-snug font-semibold transition-colors sm:truncate md:text-lg">
+                  <p className="font-display text-primary group-hover:text-accent-text text-base leading-snug font-semibold transition-colors sm:line-clamp-2 md:text-lg xl:line-clamp-none xl:truncate">
                     {rowTitle}
                   </p>
+                  {/* Below xl the title keeps the full row width; tags drop under it. */}
+                  <div className="mt-2 hidden flex-wrap gap-1.5 md:flex xl:hidden">
+                    {rowTagPills}
+                  </div>
                 </div>
 
                 <div className="hidden shrink-0 items-center gap-4 sm:flex">
-                  <div className="flex gap-1.5">
-                    {rowTags.map((tag) => (
-                      <span key={tag} className="tag-pill">
-                        {tag}
-                      </span>
-                    ))}
-                    {rowTagOverflow > 0 ? (
-                      <span className="tag-pill opacity-80" aria-hidden>
-                        +{rowTagOverflow}
-                      </span>
-                    ) : null}
-                  </div>
+                  <div className="hidden gap-1.5 xl:flex">{rowTagPills}</div>
                   <span className="text-muted w-20 text-right font-mono text-xs tracking-widest">
                     {formatEpisodeDuration(ep.duration)}
                   </span>
-                  <span className="text-muted hidden shrink-0 text-right font-mono text-xs tracking-widest whitespace-nowrap md:block">
+                  <span className="text-muted hidden shrink-0 text-right font-mono text-xs tracking-widest whitespace-nowrap lg:block">
                     {formatEpisodeDate(ep.date, locale)}
                   </span>
                   <span className="episode-row__arrow text-muted/30 group-hover:text-accent-text/70 transition-colors">

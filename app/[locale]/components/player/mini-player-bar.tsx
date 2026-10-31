@@ -223,7 +223,7 @@ export function MiniPlayerBar() {
       aria-label={t("regionAria")}
       onTransitionEnd={handleTransitionEnd}
       data-episode-format={episode.format ?? undefined}
-      className={`fixed right-0 bottom-0 left-0 z-50 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform ${
+      className={`rail:left-[var(--rail-w)] fixed right-0 bottom-0 left-0 z-50 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform ${
         show ? "translate-y-0" : "translate-y-full"
       }`}
     >
@@ -261,7 +261,7 @@ export function MiniPlayerBar() {
 
         {hasArt ? <div className={PLAYER_ART_SHELL_CLASS.mini.frost} aria-hidden /> : null}
 
-        <div className="relative mx-auto flex max-w-6xl items-center gap-2 px-3 py-2.5 sm:gap-3 sm:px-5">
+        <div className="short:py-1.5 relative mx-auto flex max-w-6xl items-center gap-2 px-3 py-2.5 sm:gap-3 sm:px-5">
           <Link
             href={listenHref}
             locale={hrefLocale}
