@@ -84,6 +84,7 @@ export async function Footer({ locale }: { locale: string }) {
               className="text-muted/50 font-mono text-xs tracking-widest"
               suppressHydrationWarning
             >
+              {/* oxlint-disable-next-line react/purity -- async server component, renders once per request */}
               © {new Date().getFullYear()}
             </span>
             <span className="text-edge mx-1">·</span>

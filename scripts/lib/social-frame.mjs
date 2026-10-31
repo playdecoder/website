@@ -188,13 +188,6 @@ function layoutTextPositions(m, titleBlockH, descBlockH) {
   return { badgeY, titleY, descStartY, accentTop };
 }
 
-function fitDescriptionLines(description, m, descStartY, descCharsPerLine) {
-  const availableDescH = Math.max(0, m.footerTop - descStartY - m.sectionGap);
-  const maxFitLines = Math.max(1, Math.floor(availableDescH / m.descLineHeight));
-  const lineCap = m.maxDescLines != null ? Math.min(m.maxDescLines, maxFitLines) : maxFitLines;
-  return capDescriptionLines(wrapLines(description, descCharsPerLine), lineCap);
-}
-
 /** Minimum Y the badge may occupy without colliding with art / leaving the safe zone. */
 function contentTopLimit(m) {
   if (m.artMode === "top") return m.textTop;
@@ -336,14 +329,12 @@ function computeContentLayout({ episodeId, title, description, m, logoWidth, log
     descBlockH = descLines.length * m.descLineHeight;
     ({ badgeY, titleY, descStartY, accentTop } = layoutTextPositions(m, titleBlockH, descBlockH));
   } else {
-    ({
-      badgeY,
-      titleY,
-      descStartY,
-      accentTop,
-      descLines,
-      descBlockH,
-    } = layoutWithDescription({ description, m, titleBlockH, descCharsPerLine }));
+    ({ badgeY, titleY, descStartY, accentTop, descLines, descBlockH } = layoutWithDescription({
+      description,
+      m,
+      titleBlockH,
+      descCharsPerLine,
+    }));
   }
 
   return {

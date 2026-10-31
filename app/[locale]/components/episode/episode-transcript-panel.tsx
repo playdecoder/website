@@ -76,8 +76,10 @@ export function EpisodeTranscriptPanel({
       dispatchBundle({ type: "applyError" });
       return;
     }
+    const audio = document.querySelector<HTMLAudioElement>("audio");
     startTransition(() => {
       dispatchBundle({ type: "applyReady", segments: result.segments });
+      if (audio) setCurrentTime(audio.currentTime);
     });
   }
 
@@ -93,12 +95,6 @@ export function EpisodeTranscriptPanel({
       void loadTranscriptRef.current();
     });
   }, [transcriptUrl, loadTranscriptRef]);
-
-  useEffect(() => {
-    if (loadState !== "ready") return;
-    const audio = document.querySelector<HTMLAudioElement>("audio");
-    if (audio) setCurrentTime(audio.currentTime);
-  }, [loadState]);
 
   useEffect(() => {
     const audio = document.querySelector<HTMLAudioElement>("audio");

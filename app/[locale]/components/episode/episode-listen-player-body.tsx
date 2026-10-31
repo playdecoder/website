@@ -76,7 +76,6 @@ export function EpisodeListenPlayerAndBody({
     isPlaying && isPageEpisodeActive && !isSeekBuffering,
     () => Array.from(document.querySelectorAll<HTMLElement>(".waveform-bar--listen-bg")),
     {
-      frozenOpacity: 1,
       settleScale: "scaleY(0.12)",
       settleTransition: "transform 1.3s cubic-bezier(0.22, 1, 0.36, 1), opacity 1s ease 0.08s",
       cleanupMs: 1500,

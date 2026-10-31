@@ -180,6 +180,7 @@ export function useEpisodeAudioPlayerState(episode: Episode, chapters?: EpisodeH
     isPageEpisodeActive && ctx.isPlaying && !ctx.isSeekBuffering,
     () =>
       Array.from(waveformRef.current?.querySelectorAll<HTMLElement>(".decoder-waveform-bar") ?? []),
+    { settleScale: "scaleY(0.34)", settleOpacity: 0.4 },
   );
 
   useEffect(() => {

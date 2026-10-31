@@ -134,7 +134,7 @@ export default async function AttributionPage({ params }: PageProps) {
                     </p>
 
                     {notice.extras === "ownership" ? (
-                      <div className="border-edge/80 bg-surface/55 space-y-3 border-l-2 border-l-secondary/50 py-1 pl-4">
+                      <div className="border-edge/80 bg-surface/55 border-l-secondary/50 space-y-3 border-l-2 py-1 pl-4">
                         <p className="text-muted font-mono text-[11px] tracking-[0.16em] uppercase">
                           {t("ownershipExamplesLead")}
                         </p>
