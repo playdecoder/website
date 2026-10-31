@@ -1741,15 +1741,18 @@ html[data-episode-playing="true"] .waveform-bar--listen-bg {
   opacity: 1;
 }
 
+/* Pure hit area: the visible track and knob are sibling divs. Safari 26+ still paints its own
+   glass knob on a transparent `appearance: none` thumb, so the input itself is fully invisible. */
 .mini-player-seek {
   -webkit-appearance: none;
   appearance: none;
   margin: 0;
   background: transparent;
+  opacity: 0;
   touch-action: none;
 }
 
-.mini-player-seek:focus-visible {
+:has(> .mini-player-seek:focus-visible) {
   outline: 2px solid var(--secondary);
   outline-offset: 2px;
 }
