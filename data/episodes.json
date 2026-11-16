@@ -1,5 +1,105 @@
 [
   {
+    "id": "EP06",
+    "slug": "the-legend-of-zelda-40-let-odvahy-menit-vsechno",
+    "lang": "cs",
+    "explicit": true,
+    "unreleased": true,
+    "title": "The Legend of Zelda: 40 let odvahy měnit všechno",
+    "date": "2026-11-16T19:00:00.000Z",
+    "duration": 9108,
+    "description": "The Legend of Zelda slaví 40 let a Ocarina of Time se vrací v novém zpracování pro Switch 2. Bereme to jako záminku projít celou sérii – od první Zeldy, která hráče v roce 1986 hodila do světa bez vysvětlování, přes odvážné odbočky jako Adventure of Link, Majora's Mask, Wind Waker nebo A Link Between Worlds až po Breath of the Wild, Tears of the Kingdom a Echoes of Wisdom. Řešíme, proč se série skoro s každým dílem nebála přepsat vlastní pravidla, jak moc ji formoval hardware od Wii Remote po stereoskopické 3DS a kde naopak ztrácí kouzlo. Hlavně se ale vracíme k Ocarině: co nová verze mění, proč už Water Temple není noční můra, co v ní chybí a jestli hra, ze které dodnes čerpá půlka akčních adventur, obstojí i po 28 letech. A co dál – další bezpečný remake, nebo zase velký risk?",
+    "tags": [
+      "The Legend of Zelda",
+      "Ocarina of Time",
+      "Nintendo",
+      "Nintendo Switch 2",
+      "Breath of the Wild",
+      "Remake",
+      "Herní design",
+      "Action adventure"
+    ],
+    "artImage": "/social/art/ep06-zelda.jpg",
+    "artFocalPoint": {
+      "x": 0.4,
+      "y": 0.5
+    },
+    "coverImage": {
+      "dark": {
+        "url": "https://cdn.play-decoder.com/podcast/covers/ep06.jpg"
+      },
+      "light": {
+        "url": "https://cdn.play-decoder.com/podcast/covers/ep06-light.jpg",
+        "useForRss": true
+      }
+    },
+    "chapters": [
+      {
+        "t": 30,
+        "label": "Úvod a co nás zaujalo"
+      },
+      {
+        "t": 542,
+        "label": "Hlavní téma: 40 let Zeldy a první díl"
+      },
+      {
+        "t": 1554,
+        "label": "Adventure of Link, A Link to the Past a Link's Awakening"
+      },
+      {
+        "t": 2101,
+        "label": "Ocarina of Time: skok do 3D, hudba a dungeony"
+      },
+      {
+        "t": 2476,
+        "label": "Nová Ocarina na Switch 2: věrnost, vizuál a loutkové postavy"
+      },
+      {
+        "t": 2883,
+        "label": "Majora's Mask: časová smyčka a zlý sen"
+      },
+      {
+        "t": 3322,
+        "label": "Wind Waker: zatopené Hyrule a cel-shading"
+      },
+      {
+        "t": 3870,
+        "label": "Twilight Princess: temná Zelda"
+      },
+      {
+        "t": 4211,
+        "label": "Handheldové Zeldy: Oracles, Minish Cap, Phantom Hourglass a Spirit Tracks"
+      },
+      {
+        "t": 4954,
+        "label": "Skyward Sword, A Link Between Worlds a stereoskopické 3D"
+      },
+      {
+        "t": 6059,
+        "label": "Breath of the Wild: návrat k esenci Zeldy"
+      },
+      {
+        "t": 6915,
+        "label": "Tears of the Kingdom a Echoes of Wisdom"
+      },
+      {
+        "t": 7648,
+        "label": "Zpátky k Ocarině: Water Temple, dabing a Master Quest"
+      },
+      {
+        "t": 8521,
+        "label": "Prodeje, budoucnost série a závěr"
+      }
+    ],
+    "links": {
+      "spotify": "",
+      "applePodcasts": "",
+      "youtube": "https://youtu.be/C8GmVP2N5Ds",
+      "mp3": "https://cdn.play-decoder.com/podcast/episodes/ep06.mp3",
+      "transcript": "https://cdn.play-decoder.com/podcast/transcripts/ep06.transcript.json"
+    }
+  },
+  {
     "id": "SP03",
     "format": "spotlight",
     "slug": "vojtech-schubert-proc-prekladat-hry-znamena-vic-nez-rozumet-slovum",

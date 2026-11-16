@@ -27,6 +27,39 @@
   },
   "posts": [
     {
+      "episodeId": "EP06",
+      "shortDescription": "Čtyřicet let Zeldy, Ocarina of Time na Switch 2 a otázka, jestli si Nintendo u své nejodvážnější série nezačíná hrát na jistotu.",
+      "art": "public/social/art/ep06-zelda.jpg",
+      "artFocalPoint": {
+        "x": 0.4,
+        "y": 0.5
+      },
+      "layouts": {
+        "ig-story": {
+          "artFocalPoint": {
+            "x": 0.24,
+            "y": 0.55
+          }
+        },
+        "facebook-post": {
+          "artFocalPoint": {
+            "x": 0.26,
+            "y": 0.5
+          }
+        },
+        "linkedin-post": {
+          "artFocalPoint": {
+            "x": 0.26,
+            "y": 0.5
+          }
+        },
+        "youtube-keyart": {
+          "art": "public/social/art/ep06-zelda-wide.jpg",
+          "artFocalPoint": "centre"
+        }
+      }
+    },
+    {
       "episodeId": "SP03",
       "format": "spotlight",
       "title": "Vojtěch Schubert",
