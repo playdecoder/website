@@ -41,8 +41,11 @@ function toItunesDuration(totalSeconds: number): string {
   return [hh, mm, ss].map((v) => String(v).padStart(2, "0")).join(":");
 }
 
+/** Episodes are mastered as 64 kbps CBR MP3, i.e. 8,000 bytes per second. */
+const MP3_BYTES_PER_SECOND = 8_000;
+
 function estimateMp3Bytes(durationSeconds: number): number {
-  return Math.round(durationSeconds * 16_000);
+  return Math.round(durationSeconds * MP3_BYTES_PER_SECOND);
 }
 
 function buildItem(ep: Episode): string {
