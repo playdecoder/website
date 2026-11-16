@@ -91,8 +91,8 @@
       }
     ],
     "links": {
-      "spotify": "",
-      "applePodcasts": "",
+      "spotify": "https://open.spotify.com/episode/3rWCqYYDCDSB3LBJSTxJ0Y?si=JjFBGa-3SsqBXen4Q0B_Fw",
+      "applePodcasts": "https://podcasts.apple.com/us/podcast/the-legend-of-zelda-40-let-odvahy-m%C4%9Bnit-v%C5%A1echno/id1895560433?i=1000802329724",
       "youtube": "https://youtu.be/C8GmVP2N5Ds",
       "mp3": "https://cdn.play-decoder.com/podcast/episodes/ep06.mp3",
       "transcript": "https://cdn.play-decoder.com/podcast/transcripts/ep06.transcript.json"
